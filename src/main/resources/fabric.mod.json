@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Meteor Rejects Addon",
-  "description": "An addon to Meteor Client that adds modules and commands that were to useless to be added to Meteor directly.",
+  "description": "An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly.",
   "authors": [
     "Cloudburst"
   ],

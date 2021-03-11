@@ -1,6 +1,6 @@
 # Meteor Rejects Addon
 
-An addon to Meteor Client that adds modules and commands that were to useless to be added to Meteor directly.
+An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly.
 
 ### How to use:  
 - Download the latest release of this mod from the releases tab.
