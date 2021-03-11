@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "cloudburst.rejects.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "client": [
+    "EntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
