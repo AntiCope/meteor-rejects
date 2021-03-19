@@ -2,6 +2,7 @@ package cloudburst.rejects.modules;
 
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
+import minegame159.meteorclient.modules.Categories;
 import minegame159.meteorclient.modules.Module;
 import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.Setting;
@@ -9,8 +10,6 @@ import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.utils.entity.EntityUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-
-import cloudburst.rejects.RejectCategory;
 
 
 public class AntiBot extends Module {
@@ -26,7 +25,7 @@ public class AntiBot extends Module {
 
 	public AntiBot()
 	{
-		super(RejectCategory.Rejects, "anti-bot", "Detects and removes bots.");
+		super(Categories.Render, "anti-bot", "Detects and removes bots.");
 	}
 
 	@EventHandler

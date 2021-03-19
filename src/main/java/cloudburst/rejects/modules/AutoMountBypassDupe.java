@@ -10,9 +10,10 @@ package cloudburst.rejects.modules;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.packets.PacketEvent;
 import minegame159.meteorclient.events.world.TickEvent;
+import minegame159.meteorclient.modules.Categories;
 import minegame159.meteorclient.modules.Module;
 import minegame159.meteorclient.modules.Modules;
-import minegame159.meteorclient.modules.player.MountBypass;
+import minegame159.meteorclient.modules.world.MountBypass;
 import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
@@ -35,7 +36,6 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
-import cloudburst.rejects.RejectCategory;
 
 public class AutoMountBypassDupe extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -70,7 +70,7 @@ public class AutoMountBypassDupe extends Module {
     private int timer;
 
     public AutoMountBypassDupe() {
-        super(RejectCategory.Rejects, "auto-mount-bypass-dupe", "Does the mount bypass dupe for you. Disable with esc.");
+        super(Categories.World, "auto-mount-bypass-dupe", "Does the mount bypass dupe for you. Disable with esc.");
     }
 
     @Override

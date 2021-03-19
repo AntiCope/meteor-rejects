@@ -19,14 +19,9 @@ public class MeteorRejectsAddon extends MeteorAddon {
 
 		Modules.get().add(new AntiBot());
 		Modules.get().add(new AutoMountBypassDupe());
-		Modules.get().add(new Baconator());
+		Modules.get().add(new AutoPot());
 		Modules.get().add(new RenderInvisible());
 
 		Commands.get().add(new GiveCommand());
-	}
-
-	@Override
-	public void onRegisterCategories() {
-		RejectCategory.register();
 	}
 }
