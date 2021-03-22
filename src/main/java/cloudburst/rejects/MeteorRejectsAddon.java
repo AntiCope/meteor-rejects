@@ -17,7 +17,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
 	public void onInitialize() {
 		LOG.info("Initializing Meteor Rejects Addon");
 
-		Modules.get().add(new AntiBot());
 		Modules.get().add(new AutoMountBypassDupe());
 		Modules.get().add(new AutoPot());
 		Modules.get().add(new RenderInvisible());
