@@ -22,5 +22,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		Modules.get().add(new RenderInvisible());
 
 		Commands.get().add(new GiveCommand());
+		Commands.get().add(new Notebot());
 	}
 }
