@@ -199,7 +199,7 @@ public class Notebot extends Command {
             currentNote++;
             return;
         }
-        mc.player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, 2f, note);
+        mc.player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_HARP, 2f, (float) Math.pow(2.0D, (note - 12) / 12.0D));
         currentNote++;
     }
 
