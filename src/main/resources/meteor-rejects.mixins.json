@@ -5,7 +5,9 @@
   "mixins": [
   ],
   "client": [
-    "EntityMixin"
+    "EntityMixin",
+    "ClientWorldMixin",
+    "StructureVoidMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -12,7 +12,7 @@ import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 
 import cloudburst.rejects.arguments.EnumStringArgumentType;
-import minegame159.meteorclient.commands.Command;
+import minegame159.meteorclient.systems.commands.Command;
 import minegame159.meteorclient.utils.player.ChatUtils;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;

@@ -1,6 +1,6 @@
 package cloudburst.rejects.mixin;
 
-import minegame159.meteorclient.modules.Modules;
+import minegame159.meteorclient.systems.modules.Modules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -17,6 +17,6 @@ public abstract class EntityMixin {
     private void isInvisibleToCanceller(PlayerEntity player, CallbackInfoReturnable<Boolean> info) {
         if (player == null) info.setReturnValue(false);
 
-        if (Modules.get().isActive(RenderInvisible.class)) info.setReturnValue(false);
+        if (Modules.get().get(RenderInvisible.class).renderEntities()) info.setReturnValue(false);
     }
 }
