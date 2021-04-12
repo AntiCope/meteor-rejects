@@ -1,4 +1,4 @@
-package minegame159.meteorclient.mixin;
+package cloudburst.rejects.mixin;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
