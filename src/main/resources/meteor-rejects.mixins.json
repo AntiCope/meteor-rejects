@@ -7,7 +7,7 @@
   "client": [
     "EntityMixin",
     "ClientWorldMixin",
-    "StructureVoidMixin"
+    "StructureVoidBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1

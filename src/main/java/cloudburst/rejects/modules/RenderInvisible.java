@@ -41,6 +41,16 @@ public class RenderInvisible extends Module {
 			.build()
 	);
 
+    @Override
+    public void onActivate() {
+        mc.worldRenderer.reload();
+    }
+
+    @Override
+    public void onDeactivate() {
+        mc.worldRenderer.reload();
+    }
+
     public RenderInvisible() {
         super(Categories.Render, "render-invisible", "Renders invisible entities and blocks.");
     }
