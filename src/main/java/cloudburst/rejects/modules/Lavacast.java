@@ -1,5 +1,6 @@
 package cloudburst.rejects.modules;
 
+import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.render.RenderEvent;
 import minegame159.meteorclient.events.world.TickEvent;
@@ -95,7 +96,7 @@ public class Lavacast extends Module {
     );
 
     public Lavacast() {
-        super(Categories.World, "lavacast", "Automatically Lavacasts");
+        super(MeteorRejectsAddon.CATEGORY, "lavacast", "Automatically Lavacasts");
     }
 
     @Override

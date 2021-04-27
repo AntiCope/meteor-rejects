@@ -2,6 +2,7 @@ package cloudburst.rejects.modules;
 
 import java.util.Random;
 
+import cloudburst.rejects.MeteorRejectsAddon;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.hit.BlockHitResult;
@@ -37,7 +38,7 @@ public class Confuse extends Module {
     }
 
     public Confuse() {
-        super(Categories.Misc, "confuse", "Makes your enemies shit themselves");
+        super(MeteorRejectsAddon.CATEGORY, "confuse", "Makes your enemies shit themselves");
     }
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

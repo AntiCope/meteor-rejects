@@ -1,5 +1,6 @@
 package cloudburst.rejects.modules;
 
+import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.PlaySoundEvent;
 import minegame159.meteorclient.settings.Setting;
@@ -30,7 +31,7 @@ public class SoundLocator extends Module {
     );
 
     public SoundLocator() {
-        super(Categories.Misc, "sound-locator", "Prints locations of sound events.");
+        super(MeteorRejectsAddon.CATEGORY, "sound-locator", "Prints locations of sound events.");
     }
 
     @EventHandler

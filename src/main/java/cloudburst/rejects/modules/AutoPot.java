@@ -1,6 +1,7 @@
 package cloudburst.rejects.modules;
 
 import baritone.api.BaritoneAPI;
+import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
 import minegame159.meteorclient.events.world.TickEvent;
@@ -84,7 +85,7 @@ public class AutoPot extends Module {
     private final List<Class<? extends Module>> wasAura = new ArrayList<>();
     private boolean wasBaritone;
     public AutoPot() {
-        super(Categories.Player, "auto-pot", "Automatically Drinks Potions");
+        super(MeteorRejectsAddon.CATEGORY, "auto-pot", "Automatically Drinks Potions");
     }
     //Gilded's first module, lets see how much i'll die making this
     //TODO:Rework everything to accept all pots

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import cloudburst.rejects.MeteorRejectsAddon;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +24,7 @@ public class Glide extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     
     public Glide() {
-        super(Categories.Movement, "glide", "Makes you glide down slowly when falling.");
+        super(MeteorRejectsAddon.CATEGORY, "glide", "Makes you glide down slowly when falling.");
     }
     
     private final Setting<Double> fallSpeed  = sgGeneral.add(new DoubleSetting.Builder()

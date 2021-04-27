@@ -1,5 +1,6 @@
 package cloudburst.rejects.modules;
 
+import cloudburst.rejects.MeteorRejectsAddon;
 import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
@@ -52,7 +53,7 @@ public class RenderInvisible extends Module {
     }
 
     public RenderInvisible() {
-        super(Categories.Render, "render-invisible", "Renders invisible entities and blocks.");
+        super(MeteorRejectsAddon.CATEGORY, "render-invisible", "Renders invisible entities and blocks.");
     }
     
     public boolean renderEntities() {
