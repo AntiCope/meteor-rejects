@@ -7,8 +7,7 @@
   "client": [
     "EntityMixin",
     "ClientWorldMixin",
-    "StructureVoidBlockMixin",
-    "HorseBaseEntityAccessor"
+    "StructureVoidBlockMixin"
   ],
   "injectors": {
     "defaultRequire": 1
