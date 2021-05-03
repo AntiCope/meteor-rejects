@@ -14,6 +14,7 @@ import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import cloudburst.rejects.arguments.EnumStringArgumentType;
 import minegame159.meteorclient.systems.commands.Command;
 import minegame159.meteorclient.utils.player.ChatUtils;
+import minegame159.meteorclient.utils.player.SlotUtils;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
@@ -56,7 +57,7 @@ public class GiveCommand extends Command {
             tag.putString("CustomName", Text.Serializer.toJson(new LiteralText(message)));
             tag.put("Pos", listTag);
             stack.putSubTag("EntityTag", tag);
-            placeStackInHotbar(stack);
+            addItem(stack);
             return SINGLE_SUCCESS;
         })));
 
@@ -88,7 +89,7 @@ public class GiveCommand extends Command {
             tagCompound.put("Explosions", explosionList);
             baseCompound.put("Fireworks", tagCompound);
             firework.setTag(baseCompound);
-            placeStackInHotbar(firework);
+            addItem(firework);
             return SINGLE_SUCCESS;
         }));
 
@@ -102,7 +103,7 @@ public class GiveCommand extends Command {
             CompoundTag tag = new CompoundTag();
             tag.putString("SkullOwner", playerName);
             itemStack.setTag(tag);
-            placeStackInHotbar(itemStack);
+            addItem(itemStack);
             return SINGLE_SUCCESS;
         })));
 
@@ -114,30 +115,18 @@ public class GiveCommand extends Command {
                     }
                     String name = context.getArgument("name", String.class);
                     String container = context.getArgument("container", String.class);
-                    placeStackInHotbar(createPreset(name, container));
+                    addItem(createPreset(name, container));
                     return SINGLE_SUCCESS;
                 }))));
-
-        builder.then(literal("item").then(argument("item", ItemStackArgumentType.itemStack()).executes(context -> {
-            ItemStackArgument item = ItemStackArgumentType.getItemStackArgument(context, "item");
-            if (!mc.player.abilities.creativeMode) {
-                ChatUtils.error("Not In Creative Mode!");
-                return SINGLE_SUCCESS;
-            }
-            placeStackInHotbar(item.createStack(1, false));
-            return SINGLE_SUCCESS;
-        })));
-
     }
 
-    private void placeStackInHotbar(ItemStack stack) {
-        for (int i = 0; i < 9; i++) {
-            if (!mc.player.inventory.getStack(i).isEmpty()) continue;
-
-            mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(36 + i, stack));
-            return;
-        }
-
-        ChatUtils.error("No space in hotbar.");
+    private void addItem(ItemStack item) {
+		for(int i = 0; i < 36; i++) {
+		    ItemStack stack = mc.player.inventory.getStack(SlotUtils.indexToId(i));
+			if (!stack.isEmpty()) continue;
+			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
+			return;
+		}
+        ChatUtils.error("No space in inventory.");
     }
 }
