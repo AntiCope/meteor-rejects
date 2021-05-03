@@ -33,6 +33,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new Lavacast());
 		//modules.add(new ObsidianFarm());
 		modules.add(new RenderInvisible());
+		modules.add(new SkeletonESP());
 		modules.add(new SoundLocator());
 		modules.add(new TPSSync());
 
