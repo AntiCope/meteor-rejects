@@ -4,25 +4,18 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import cloudburst.rejects.modules.InteractionMenu;
 import minegame159.meteorclient.MeteorClient;
 import minegame159.meteorclient.systems.commands.commands.PeekCommand;
 import minegame159.meteorclient.systems.modules.Modules;
-import minegame159.meteorclient.utils.player.ChatUtils;
-import minegame159.meteorclient.utils.player.InvUtils;
+
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.passive.HorseBaseEntity;
-import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.ChestMinecartEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -34,9 +27,7 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -56,6 +47,7 @@ public class InteractionScreen extends Screen {
     public InteractionScreen(Entity entity) {
         super(new LiteralText("Menu Screen"));
         this.entity = entity;
+        //MeteorClient.EVENT_BUS.subscribe(this);
         functions = new HashMap<>();
         functions.put("Stats", (Entity e) -> {
             closeScreen();
@@ -67,25 +59,16 @@ public class InteractionScreen extends Screen {
                 closeScreen();
                 client.openScreen(new InventoryScreen((PlayerEntity) e));
             });
-            functions.put("Message", (Entity e) -> {
-                this.cursorMode(GLFW.GLFW_CURSOR);
-                closeScreen();
-                client.openScreen(new ChatScreen(String.format("/msg %s ", ((PlayerEntity)e).getGameProfile().getName())));
-            });
         }
+        
         else if (entity instanceof HorseBaseEntity) {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 if (client.player.isRiding()) {
                     client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(0, 0, false, true));
                 }
-                client.player.networkHandler.sendPacket(new PlayerInteractEntityC2SPacket(entity, Hand.MAIN_HAND, false));
-                client.player.openRidingInventory();
-                client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(0, 0, false, true));
-            });
-            functions.put("Ride", (Entity e) -> {
-                closeScreen();
-                client.player.networkHandler.sendPacket(new PlayerInteractEntityC2SPacket(entity, Hand.MAIN_HAND, false));
+                client.player.networkHandler.sendPacket(new PlayerInteractEntityC2SPacket(entity, Hand.MAIN_HAND, true));
+                client.player.setSneaking(false);
             });
         }
         else if (entity instanceof StorageMinecartEntity) {
@@ -126,12 +109,33 @@ public class InteractionScreen extends Screen {
                 closeScreen();
             });
         }
+        if (entity.noClip) {
+            functions.put("Disable NoClip", (Entity e) -> {
+                entity.noClip = false;
+                closeScreen();
+            });
+        } else {
+            functions.put("NoClip", (Entity e) -> {
+                entity.noClip = true;
+                closeScreen();
+            });
+        }
         msgs = Modules.get().get(InteractionMenu.class).messages;
         msgs.keySet().forEach((key) -> {
-            functions.put(key, (Entity e) -> {
-                closeScreen();
-                client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
-            });
+            if (msgs.get(key).contains("{username}")) {
+                if (entity instanceof PlayerEntity) {
+                    functions.put(key, (Entity e) -> {
+                        closeScreen();
+                        client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
+                    });
+                }
+            } else {
+                functions.put(key, (Entity e) -> {
+                    closeScreen();
+                    client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
+                });
+            }
+            
         });
         functions.put("Cancel", (Entity e) -> {closeScreen();});
     }
@@ -156,6 +160,7 @@ public class InteractionScreen extends Screen {
     }
 
     private void closeScreen() {
+        //MeteorClient.EVENT_BUS.unsubscribe(this);
         client.openScreen((Screen) null);
         //Modules.get().get(InteractionMenu.class).isOpen = false;
     }
