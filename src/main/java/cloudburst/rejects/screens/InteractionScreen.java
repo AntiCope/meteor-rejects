@@ -13,8 +13,11 @@ import minegame159.meteorclient.systems.modules.Modules;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.*;
+import net.minecraft.entity.mob.EndermanEntity;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
@@ -30,7 +33,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -79,23 +81,8 @@ public class InteractionScreen extends Screen {
         }
         else {
             functions.put("Open Inventory", (Entity e) -> {
-                ItemStack[] stack = new ItemStack[27];
-                final int[] index = {0};
-                e.getItemsHand().forEach(itemStack -> {
-                    if (itemStack!=null) {
-                        stack[index[0]] = itemStack;
-                        index[0]++;
-                    }
-                });
-                e.getArmorItems().forEach(itemStack -> {
-                    if (itemStack!=null) {
-                        stack[index[0]] = itemStack;
-                        index[0]++;
-                    }
-                });
-                for (int i = index[0]; i < 27; i++) stack[i] = Items.AIR.getDefaultStack();
                 closeScreen();
-                client.openScreen(new PeekCommand.PeekShulkerBoxScreen(new ShulkerBoxScreenHandler(0, client.player.inventory, new SimpleInventory(stack)), client.player.inventory, entity.getName()));
+                client.openScreen(new PeekCommand.PeekShulkerBoxScreen(new ShulkerBoxScreenHandler(0, client.player.inventory, getSimpleInventory(e)), client.player.inventory, entity.getName()));
             });
         }
         if (entity.isGlowing()) {
@@ -138,6 +125,35 @@ public class InteractionScreen extends Screen {
             
         });
         functions.put("Cancel", (Entity e) -> {closeScreen();});
+    }
+
+    private SimpleInventory getSimpleInventory(Entity e) {
+        ItemStack[] stack = new ItemStack[27];
+        final int[] index = {0};
+        if (e instanceof EndermanEntity) {
+            stack[index[0]] = ((EndermanEntity)e).getCarriedBlock().getBlock().asItem().getDefaultStack();
+            index[0]++;
+        }
+        if (Saddleable.class.isInstance(e)) {
+            if (((Saddleable)e).isSaddled()){
+                stack[index[0]] = Items.SADDLE.getDefaultStack();
+                index[0]++;
+            }
+        }
+        e.getItemsHand().forEach(itemStack -> {
+            if (itemStack!=null) {
+                stack[index[0]] = itemStack;
+                index[0]++;
+            }
+        });
+        e.getArmorItems().forEach(itemStack -> {
+            if (itemStack!=null) {
+                stack[index[0]] = itemStack;
+                index[0]++;
+            }
+        });
+        for (int i = index[0]; i < 27; i++) stack[i] = Items.AIR.getDefaultStack();
+        return  new SimpleInventory(stack);
     }
 
     public void init() {
