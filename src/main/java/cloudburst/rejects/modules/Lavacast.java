@@ -265,4 +265,8 @@ public class Lavacast extends Module {
         if (new_dist>dist) dist = new_dist;
     }
 
+    @Override
+    public String getInfoString() {
+        return stage.toString();
+    }
 }
