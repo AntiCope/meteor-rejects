@@ -131,8 +131,11 @@ public class InteractionScreen extends Screen {
         ItemStack[] stack = new ItemStack[27];
         final int[] index = {0};
         if (e instanceof EndermanEntity) {
-            stack[index[0]] = ((EndermanEntity)e).getCarriedBlock().getBlock().asItem().getDefaultStack();
-            index[0]++;
+            try {
+                stack[index[0]] = ((EndermanEntity)e).getCarriedBlock().getBlock().asItem().getDefaultStack();
+                index[0]++;
+            }
+            catch (NullPointerException ex) {}
         }
         if (Saddleable.class.isInstance(e)) {
             if (((Saddleable)e).isSaddled()){
