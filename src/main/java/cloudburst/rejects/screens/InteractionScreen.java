@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 import cloudburst.rejects.modules.InteractionMenu;
-import minegame159.meteorclient.MeteorClient;
 import minegame159.meteorclient.systems.commands.commands.PeekCommand;
 import minegame159.meteorclient.systems.modules.Modules;
 
@@ -17,7 +16,6 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
