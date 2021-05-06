@@ -26,7 +26,7 @@ import java.util.*;
 public class GiveCommand extends Command {
 
     public GiveCommand() {
-        super("give", "Gives items in creative", "item");
+        super("give", "Gives items in creative", "item", "kit");
     }
 
     private final Collection<String> PRESETS = Arrays.asList("forceop", "negs", "stacked", "spawners", "bookban",
