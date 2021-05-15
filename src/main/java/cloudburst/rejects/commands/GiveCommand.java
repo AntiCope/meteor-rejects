@@ -6,8 +6,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.*;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 
@@ -17,6 +16,7 @@ import minegame159.meteorclient.utils.player.ChatUtils;
 import minegame159.meteorclient.utils.player.SlotUtils;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.registry.Registry;
 
 import static cloudburst.rejects.utils.GiveUtils.createPreset;
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
@@ -32,10 +32,43 @@ public class GiveCommand extends Command {
     private final Collection<String> PRESETS = Arrays.asList("forceop", "negs", "stacked", "spawners", "bookban",
             "test", "eggs");
     private final Collection<String> CONTAINERS = Arrays.asList("chest", "shulker", "trapped_chest", "barrel",
-            "dispenser");
+            "dispenser", "egg");
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
+        builder.then(literal("egg").executes(ctx -> {
+            ItemStack inHand = mc.player.getMainHandStack();
+            ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
+            CompoundTag ct = new CompoundTag();
+            if (inHand.getItem() instanceof BlockItem) {
+                ct.putInt("Time",1);
+                ct.putString("id", "minecraft:falling_block");
+                ct.put("BlockState", new CompoundTag());
+                ct.getCompound("BlockState").putString("Name", Registry.ITEM.getId(inHand.getItem()).toString());
+                if (inHand.hasTag() && inHand.getTag().contains("BlockEntityTag")) {
+                    ct.put("TileEntityData", inHand.getTag().getCompound("BlockEntityTag"));
+                }
+                CompoundTag t = new CompoundTag();
+                t.put("EntityTag", ct);
+                item.setTag(t);
+            } else {
+                ct.putString("id", "minecraft:item");
+                CompoundTag it = new CompoundTag();
+                it.putString("id", Registry.ITEM.getId(inHand.getItem()).toString());
+                it.putInt("Count",inHand.getCount());
+                if (inHand.hasTag()) {
+                    it.put("tag", inHand.getTag());
+                }
+                ct.put("Item",it);
+            }
+            CompoundTag t = new CompoundTag();
+            t.put("EntityTag", ct);
+            item.setTag(t);
+            item.setCustomName(inHand.getName());
+            addItem(item);
+            return SINGLE_SUCCESS;
+        }));
+
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
             if (!mc.player.abilities.creativeMode) {
                 ChatUtils.error("Not In Creative Mode!");

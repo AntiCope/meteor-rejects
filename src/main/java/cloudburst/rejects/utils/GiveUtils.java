@@ -5,6 +5,7 @@ import minegame159.meteorclient.utils.player.ChatUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringNbtReader;
 
 import java.util.Random;
@@ -27,6 +28,9 @@ public class GiveUtils {
                 break;
             case "dispenser":
                 item = new ItemStack(Items.DISPENSER);
+                break;
+            case "egg":
+                item = new ItemStack(Items.CHEST);
                 break;
             default:
                 item = new ItemStack(Items.PINK_SHULKER_BOX);
@@ -266,6 +270,15 @@ public class GiveUtils {
                     break;
                 default:
                     break;
+            }
+
+            if (container.equals("egg")) {
+                CompoundTag ct = new CompoundTag();
+                ct.put("EntityTag", StringNbtReader.parse("{Time:1,id:\"minecraft:falling_block\",BlockState:{Name:\"minecraft:chest\"}}"));
+                ((CompoundTag) ct.get("EntityTag")).put("TileEntityData", item.getTag().get("BlockEntityTag"));
+                ct.put("display", item.getTag().get("display"));
+                item = new ItemStack(Items.STRIDER_SPAWN_EGG);
+                item.setTag(ct);
             }
         } catch (CommandSyntaxException e) {
             ChatUtils.error("An NBT parsing error occured");
