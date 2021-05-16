@@ -11,7 +11,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class AntiAntiXrayCommand extends Command {
     public AntiAntiXrayCommand() {
-        super("anti-anti-xray", "Circumvent antiantixray plugin", "aax");
+        super("anti-anti-xray", "Circumvent antixray plugin", "aax");
     }
 
     @Override
