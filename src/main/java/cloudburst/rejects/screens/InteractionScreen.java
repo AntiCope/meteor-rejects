@@ -9,6 +9,7 @@ import cloudburst.rejects.modules.InteractionMenu;
 import minegame159.meteorclient.systems.commands.commands.PeekCommand;
 import minegame159.meteorclient.systems.modules.Modules;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.options.KeyBinding;
@@ -83,6 +84,12 @@ public class InteractionScreen extends Screen {
                 client.openScreen(new PeekCommand.PeekShulkerBoxScreen(new ShulkerBoxScreenHandler(0, client.player.inventory, getSimpleInventory(e)), client.player.inventory, entity.getName()));
             });
         }
+
+        functions.put("Spectate", (Entity e) -> {
+            MinecraftClient.getInstance().setCameraEntity(e);
+            closeScreen();
+        });
+
         if (entity.isGlowing()) {
             functions.put("Remove highlight", (Entity e) -> {
                 entity.setGlowing(false);
