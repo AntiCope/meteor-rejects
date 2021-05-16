@@ -26,16 +26,17 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AntiVanish());
 		modules.add(new Auto32K());
 		modules.add(new AutoExtinguish());
-		//modules.add(new AutoHighway());
+		modules.add(new AutoHighway());
 		modules.add(new AutoPot());
-		//modules.add(new Confuse());
+		modules.add(new Confuse());
 		modules.add(new InteractionMenu());
 		modules.add(new Glide());
 		modules.add(new Lavacast());
 		modules.add(new NewChunks());
-		//modules.add(new ObsidianFarm());
+		modules.add(new ObsidianFarm());
 		modules.add(new RenderInvisible());
 		modules.add(new SkeletonESP());
+		modules.add(new Sneak());
 		modules.add(new SoundLocator());
 		modules.add(new TPSSync());
 
