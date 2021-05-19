@@ -28,6 +28,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AutoExtinguish());
 		modules.add(new AutoHighway());
 		modules.add(new AutoPot());
+		modules.add(new AutoTNT());
 		modules.add(new Confuse());
 		modules.add(new InteractionMenu());
 		modules.add(new Glide());
@@ -38,6 +39,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new SkeletonESP());
 		modules.add(new Sneak());
 		modules.add(new SoundLocator());
+		modules.add(new SpawnProofer());
 		modules.add(new TPSSync());
 
 		Commands commands = Commands.get();
