@@ -8,7 +8,6 @@ import minegame159.meteorclient.rendering.Renderer;
 import minegame159.meteorclient.rendering.ShapeMode;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.render.RenderUtils;
 import minegame159.meteorclient.utils.render.color.Color;
 import minegame159.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.fluid.FluidState;
@@ -64,7 +63,6 @@ public class NewChunks extends Module {
     @EventHandler
     private void onRender(RenderEvent event) {
         if (newChunksColor.get().a>3) {
-            int color = newChunksColor.get().getPacked();
             synchronized (newChunks) {
                 for (ChunkPos c : newChunks) {
                     if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
@@ -75,7 +73,6 @@ public class NewChunks extends Module {
         }
 
         if (oldChunksColor.get().a>3){
-            int color = oldChunksColor.get().getPacked();
             synchronized (oldChunks) {
                 for (ChunkPos c : oldChunks) {
                     if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {

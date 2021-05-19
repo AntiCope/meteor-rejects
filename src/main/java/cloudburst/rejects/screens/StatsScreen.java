@@ -3,7 +3,6 @@ package cloudburst.rejects.screens;
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectUtil;
 import net.minecraft.util.Language;
 import net.minecraft.util.math.Box;

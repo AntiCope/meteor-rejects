@@ -6,7 +6,6 @@ import minegame159.meteorclient.events.world.PlaySoundEvent;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.settings.SoundEventListSetting;
-import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.ChatUtils;
 
