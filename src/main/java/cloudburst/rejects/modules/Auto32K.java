@@ -15,6 +15,8 @@ import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.Utils;
 import minegame159.meteorclient.utils.player.*;
+import minegame159.meteorclient.utils.world.BlockUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.gui.screen.ingame.Generic3x3ContainerScreen;
@@ -113,16 +115,14 @@ public class Auto32K extends Module {
                 if(sortedIterator.hasNext()) bestBlock = sortedIterator.next();
 
                 if (bestBlock != null) {
-                    mc.player.inventory.selectedSlot = hopperSlot;
-                    while (!PlayerUtils.placeBlock(bestBlock, Hand.MAIN_HAND)) {
+                    while (!BlockUtils.place(bestBlock, Hand.MAIN_HAND,hopperSlot,true,100,false)) {
                         if(sortedIterator.hasNext()) {
                             bestBlock = sortedIterator.next().up();
                         }else break;
                     }
                     mc.player.setSneaking(true);
-                    mc.player.inventory.selectedSlot = shulkerSlot;
-                    if (!PlayerUtils.placeBlock(bestBlock.up(), Hand.MAIN_HAND)) {
-                        ChatUtils.moduleError(this,"Failed to place.");
+                    if (!BlockUtils.place(bestBlock.up(), Hand.MAIN_HAND, shulkerSlot,true,100,false)) {
+                        error("Failed to place.");
                         this.toggle();
                         return;
                     }
@@ -139,10 +139,9 @@ public class Auto32K extends Module {
                     return;
                 if (phase == 0) {
                     bestBlock = findValidBlocksDispenser();
-                    mc.player.inventory.selectedSlot = hopperSlot;
                     if(bestBlock == null) return;
-                    if (!PlayerUtils.placeBlock(bestBlock.add(x, 0, z), Hand.MAIN_HAND)) {
-                        ChatUtils.moduleError(this,"Failed to place.");
+                    if (!BlockUtils.place(bestBlock.add(x, 0, z), Hand.MAIN_HAND, hopperSlot, true, 100, false)) {
+                        error("Failed to place.");
                         this.toggle();
                         return;
                     }

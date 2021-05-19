@@ -9,6 +9,7 @@ import minegame159.meteorclient.settings.SoundEventListSetting;
 import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.ChatUtils;
+
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundEvent;
@@ -51,6 +52,6 @@ public class SoundLocator extends Module {
         Vec3d pos = new Vec3d(sound.getX(), sound.getY(), sound.getZ());
         text.append(ChatUtils.formatCoords(pos));
         text.append(String.format("%s.", Formatting.RESET));
-        ChatUtils.moduleInfo(this,text);
+        info(text);
     }
 }

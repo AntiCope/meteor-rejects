@@ -3,7 +3,6 @@ package cloudburst.rejects.commands;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import minegame159.meteorclient.systems.commands.Command;
-import minegame159.meteorclient.utils.player.ChatUtils;
 import minegame159.meteorclient.utils.player.InvUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.item.ItemStack;
@@ -49,7 +48,7 @@ public class BookDupeCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.executes(context -> {
-            if (InvUtils.getHand(Items.WRITABLE_BOOK) != Hand.MAIN_HAND) ChatUtils.prefixError("BOOK DUPE", "No book found, you must be holding a writable book!");
+            if (InvUtils.getHand(Items.WRITABLE_BOOK) != Hand.MAIN_HAND) error("No book found, you must be holding a writable book!");
             else mc.player.networkHandler.sendPacket(new BookUpdateC2SPacket(DUPE_BOOK, true, mc.player.inventory.selectedSlot));
 
             return SINGLE_SUCCESS;

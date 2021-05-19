@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 import cloudburst.rejects.modules.InteractionMenu;
-import minegame159.meteorclient.systems.commands.commands.PeekCommand;
 import minegame159.meteorclient.systems.modules.Modules;
+import minegame159.meteorclient.utils.render.PeekScreen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
@@ -18,12 +18,10 @@ import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.screen.ShulkerBoxScreenHandler;
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -81,7 +79,9 @@ public class InteractionScreen extends Screen {
         else {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
-                client.openScreen(new PeekCommand.PeekShulkerBoxScreen(new ShulkerBoxScreenHandler(0, client.player.inventory, getSimpleInventory(e)), client.player.inventory, entity.getName()));
+                ItemStack container = new ItemStack(Items.CHEST);
+                container.setCustomName(e.getName());
+                client.openScreen(new PeekScreen(container, getInventory(e)));
             });
         }
 
@@ -132,7 +132,7 @@ public class InteractionScreen extends Screen {
         functions.put("Cancel", (Entity e) -> {closeScreen();});
     }
 
-    private SimpleInventory getSimpleInventory(Entity e) {
+    private ItemStack[] getInventory(Entity e) {
         ItemStack[] stack = new ItemStack[27];
         final int[] index = {0};
         if (e instanceof EndermanEntity) {
@@ -161,7 +161,7 @@ public class InteractionScreen extends Screen {
             }
         });
         for (int i = index[0]; i < 27; i++) stack[i] = Items.AIR.getDefaultStack();
-        return  new SimpleInventory(stack);
+        return  stack;
     }
 
     public void init() {

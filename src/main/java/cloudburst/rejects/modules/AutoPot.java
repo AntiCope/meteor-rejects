@@ -14,7 +14,6 @@ import minegame159.meteorclient.systems.modules.combat.CrystalAura;
 import minegame159.meteorclient.systems.modules.combat.KillAura;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.utils.Utils;
-import minegame159.meteorclient.utils.player.ChatUtils;
 import minegame159.meteorclient.utils.player.Rotations;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -116,7 +115,7 @@ public class AutoPot extends Module {
                     if (isNotPotion(mc.player.inventory.getStack(slot))) {
                         slot = HealingpotionSlot();
                         if (slot == -1) {
-                            ChatUtils.moduleInfo(this, "Ran out of Pots while drinking");
+                            info("Ran out of Pots while drinking");
                             stopDrinking();
                             return;
                         }
@@ -124,7 +123,7 @@ public class AutoPot extends Module {
                 }
                 drink();
                 if (ShouldNotDrinkHealth()) {
-                    ChatUtils.moduleInfo(this, "Health Full");
+                    info("Health Full");
                     stopDrinking();
                     return;
                 }
@@ -134,14 +133,14 @@ public class AutoPot extends Module {
                     if (isNotSplashPotion(mc.player.inventory.getStack(slot))) {
                         slot = HealingSplashpotionSlot();
                         if (slot == -1) {
-                            ChatUtils.moduleInfo(this, "Ran out of Pots while splashing");
+                            info("Ran out of Pots while splashing");
                             stopSplashing();
                             return;
                         } else changeSlot(slot);
                     }
                     splash();
                     if (ShouldNotDrinkHealth()) {
-                        ChatUtils.moduleInfo(this, "Health Full");
+                        info("Health Full");
                         stopSplashing();
                         return;
                     }
@@ -169,7 +168,7 @@ public class AutoPot extends Module {
                         slot = StrengthpotionSlot();
                         if (slot == -1) {
                             stopDrinking();
-                            ChatUtils.moduleInfo(this, "Out of Pots");
+                            info("Out of Pots");
                             return;
                         } else changeSlot(slot);
                     }
@@ -183,7 +182,7 @@ public class AutoPot extends Module {
                     if (isNotSplashPotion(mc.player.inventory.getStack(slot))) {
                         slot = StrengthSplashpotionSlot();
                         if (slot == -1) {
-                            ChatUtils.moduleInfo(this, "Ran out of Pots while splashing");
+                            info("Ran out of Pots while splashing");
                             stopSplashing();
                             return;
                         } else changeSlot(slot);

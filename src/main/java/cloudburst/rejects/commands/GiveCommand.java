@@ -4,15 +4,12 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
 import net.minecraft.command.CommandSource;
-import net.minecraft.command.argument.ItemStackArgument;
-import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.*;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 
 import cloudburst.rejects.arguments.EnumStringArgumentType;
 import minegame159.meteorclient.systems.commands.Command;
-import minegame159.meteorclient.utils.player.ChatUtils;
 import minegame159.meteorclient.utils.player.SlotUtils;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -71,7 +68,7 @@ public class GiveCommand extends Command {
 
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
             if (!mc.player.abilities.creativeMode) {
-                ChatUtils.error("Not In Creative Mode!");
+                error("Not In Creative Mode!");
                 return SINGLE_SUCCESS;
             }
             String message = ctx.getArgument("message", String.class);
@@ -96,7 +93,7 @@ public class GiveCommand extends Command {
 
         builder.then(literal("firework").executes(ctx -> {
             if (!mc.player.abilities.creativeMode) {
-                ChatUtils.error("Not In Creative Mode!");
+                error("Not In Creative Mode!");
                 return SINGLE_SUCCESS;
             }
             ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
@@ -128,7 +125,7 @@ public class GiveCommand extends Command {
 
         builder.then(literal("head").then(argument("owner",StringArgumentType.greedyString()).executes(ctx -> {
             if (!mc.player.abilities.creativeMode) {
-                ChatUtils.error("Not In Creative Mode!");
+                error("Not In Creative Mode!");
                 return SINGLE_SUCCESS;
             }
             String playerName = ctx.getArgument("owner",String.class);
@@ -143,7 +140,7 @@ public class GiveCommand extends Command {
         builder.then(literal("preset").then(argument("name", new EnumStringArgumentType(PRESETS))
                 .then(argument("container", new EnumStringArgumentType(CONTAINERS)).executes(context -> {
                     if (!mc.player.abilities.creativeMode) {
-                        ChatUtils.error("Not In Creative Mode!");
+                        error("Not In Creative Mode!");
                         return SINGLE_SUCCESS;
                     }
                     String name = context.getArgument("name", String.class);
@@ -160,6 +157,6 @@ public class GiveCommand extends Command {
 			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
 			return;
 		}
-        ChatUtils.error("No space in inventory.");
+        error("No space in inventory.");
     }
 }

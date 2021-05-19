@@ -4,15 +4,12 @@ import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.render.RenderEvent;
 import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.rendering.Renderer;
 import minegame159.meteorclient.rendering.ShapeMode;
-import minegame159.meteorclient.settings.EnumSetting;
 import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.utils.player.ChatUtils;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.Rotations;
 import minegame159.meteorclient.utils.render.color.SettingColor;
@@ -116,11 +113,11 @@ public class Lavacast extends Module {
         getDistance(new Vec3i(0,0,1));
         getDistance(new Vec3i(1,0,-1));
         if (dist<1) {
-            ChatUtils.moduleError(this,"Couldn't locate bottom.");
+            error("Couldn't locate bottom.");
             toggle();
             return;
         }
-        ChatUtils.moduleInfo(this,"Distance: (highlight)%d(default).", dist);
+        info("Distance: (highlight)%d(default).", dist);
     }
 
     @EventHandler
@@ -204,7 +201,7 @@ public class Lavacast extends Module {
     private void placeLava() {
         int slot = InvUtils.findItemInHotbar(Items.LAVA_BUCKET);
         if (slot == -1) {
-            ChatUtils.moduleError(this,"No lava bucket found.");
+            error("No lava bucket found.");
             toggle();
             return;
         }
@@ -217,7 +214,7 @@ public class Lavacast extends Module {
     private void placeWater() {
         int slot = InvUtils.findItemInHotbar(Items.WATER_BUCKET);
         if (slot == -1) {
-            ChatUtils.moduleError(this,"No water bucket found.");
+            error("No water bucket found.");
             toggle();
             return;
         }
@@ -230,7 +227,7 @@ public class Lavacast extends Module {
     private void pickupLiquid() {
         int slot = InvUtils.findItemInHotbar(Items.BUCKET);
         if (slot == -1) {
-            ChatUtils.moduleError(this,"No bucket found.");
+            error("No bucket found.");
             toggle();
             return;
         }

@@ -12,7 +12,6 @@ import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.entity.EntityUtils;
-import minegame159.meteorclient.utils.player.ChatUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
@@ -63,7 +62,7 @@ public class AntiVanish extends Module {
             try {
                 String name = getPlayerNameFromUUID(lookup);
                 if (name != null) {
-                    ChatUtils.moduleWarning(this, name + " has gone into vanish.");
+                   warning(name + " has gone into vanish.");
                 }
             } catch (Exception ignore) {}
             lastTick = time;

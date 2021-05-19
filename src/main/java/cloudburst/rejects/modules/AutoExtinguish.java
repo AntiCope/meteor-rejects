@@ -7,10 +7,7 @@ import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.player.ChatUtils;
-import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.PlayerUtils;
 import minegame159.meteorclient.utils.player.RotationUtils;
 import minegame159.meteorclient.utils.world.BlockIterator;
@@ -98,13 +95,13 @@ public class AutoExtinguish extends Module {
     private void onTick(TickEvent.Pre event) {
         if (mc.world.getDimension().isRespawnAnchorWorking()) {
             if (doesWaterBucketWork) {
-                ChatUtils.warning("Water Buckets don't work in this dimension!");
+                warning("Water Buckets don't work in this dimension!");
                 doesWaterBucketWork = false;
 
             }
         } else {
             if (!doesWaterBucketWork) {
-                ChatUtils.warning("Enabled Water Buckets!");
+                warning("Enabled Water Buckets!");
                 doesWaterBucketWork = true;
             }
         }
