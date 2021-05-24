@@ -4,7 +4,7 @@ import minegame159.meteorclient.systems.modules.Modules;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 
-import cloudburst.rejects.modules.RenderInvisible;
+import cloudburst.rejects.modules.Rendering;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,6 +17,6 @@ public abstract class EntityMixin {
     private void isInvisibleToCanceller(PlayerEntity player, CallbackInfoReturnable<Boolean> info) {
         if (player == null) info.setReturnValue(false);
 
-        if (Modules.get().get(RenderInvisible.class).renderEntities()) info.setReturnValue(false);
+        if (Modules.get().get(Rendering.class).renderEntities()) info.setReturnValue(false);
     }
 }

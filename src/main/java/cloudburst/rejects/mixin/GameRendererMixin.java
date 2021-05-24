@@ -9,7 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.client.render.GameRenderer;
 
-import cloudburst.rejects.modules.Shaders;
+import cloudburst.rejects.modules.Rendering;
 import minegame159.meteorclient.systems.modules.Modules;
 
 @Mixin(GameRenderer.class)
@@ -18,7 +18,7 @@ public class GameRendererMixin {
 
     @Redirect(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/GameRenderer;shader:Lnet/minecraft/client/gl/ShaderEffect;", ordinal = 0))
 	private ShaderEffect renderShader(GameRenderer renderer, float tickDelta) {
-        ShaderEffect shader = Modules.get().get(Shaders.class).getShaderEffect();
+        ShaderEffect shader = Modules.get().get(Rendering.class).getShaderEffect();
 
         if (shader != null) {
             shader.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());

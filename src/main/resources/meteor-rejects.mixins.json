@@ -7,7 +7,9 @@
   "client": [
     "EntityMixin",
     "ClientWorldMixin",
+    "Deadmau5FeatureRendererMixin",
     "StructureVoidBlockMixin",
+    "LivingEntityRendererMixin",
     "GameRendererMixin"
   ],
   "injectors": {

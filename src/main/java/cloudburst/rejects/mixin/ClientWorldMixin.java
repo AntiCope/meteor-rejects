@@ -14,7 +14,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
 
-import cloudburst.rejects.modules.RenderInvisible;
+import cloudburst.rejects.modules.Rendering;
 import minegame159.meteorclient.systems.modules.Modules;
 
 @Mixin(ClientWorld.class)
@@ -27,7 +27,7 @@ public abstract class ClientWorldMixin {
     public void doRandomBlockDisplayTicks(int xCenter, int yCenter, int i, CallbackInfo info) {
         Random random = new Random();
         boolean showBarrierParticles = this.client.interactionManager.getCurrentGameMode() == GameMode.CREATIVE && (this.client.player.inventory.getMainHandStack().getItem() == Items.BARRIER || this.client.player.inventory.offHand.get(0).getItem() == Items.BARRIER);
-        if (Modules.get().get(RenderInvisible.class).renderBarriers()) showBarrierParticles = true;
+        if (Modules.get().get(Rendering.class).renderBarriers()) showBarrierParticles = true;
 
         BlockPos.Mutable mutable = new BlockPos.Mutable();
 

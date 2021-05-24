@@ -7,7 +7,7 @@ import net.minecraft.block.StructureVoidBlock;
 import net.minecraft.util.math.Direction;
 
 import minegame159.meteorclient.systems.modules.Modules;
-import cloudburst.rejects.modules.RenderInvisible;
+import cloudburst.rejects.modules.Rendering;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +28,7 @@ public abstract class StructureVoidBlockMixin extends Block {
 
 	@Override
 	public boolean isSideInvisible(BlockState state, BlockState neighbor, Direction facing) {
-		return !(Modules.get().get(RenderInvisible.class).renderStructureVoid());
+		return !(Modules.get().get(Rendering.class).renderStructureVoid());
 	}
 
 }

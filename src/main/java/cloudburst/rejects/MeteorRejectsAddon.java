@@ -35,8 +35,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new Lavacast());
 		modules.add(new NewChunks());
 		modules.add(new ObsidianFarm());
-		modules.add(new RenderInvisible());
-		modules.add(new Shaders());
+		modules.add(new Rendering());
 		modules.add(new SkeletonESP());
 		modules.add(new Sneak());
 		modules.add(new SoundLocator());
