@@ -39,7 +39,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new SkeletonESP());
 		modules.add(new Sneak());
 		modules.add(new SoundLocator());
-		modules.add(new SpawnProofer());
 		modules.add(new TPSSync());
 
 		Commands commands = Commands.get();
