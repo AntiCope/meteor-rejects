@@ -109,14 +109,6 @@ public class Rendering extends Module {
         }
     }
 
-    public boolean renderEntities() {
-        return this.isActive() && entities.get();
-    }
-
-    public boolean renderBarriers() {
-        return this.isActive() && barrier.get();
-    }
-
     public boolean renderStructureVoid() {
         return this.isActive() && structureVoid.get();
     }
