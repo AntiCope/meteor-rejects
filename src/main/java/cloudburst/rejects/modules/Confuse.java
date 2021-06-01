@@ -25,19 +25,10 @@ import minegame159.meteorclient.utils.render.color.Color;
 
 public class Confuse extends Module {
 
-    int delayWaited = 0;
-    double circleProgress = 0;
-    double addition = 0.0;
-    Entity target = null;
-
     public enum Mode {
         RandomTP,
         Switch,
         Circle
-    }
-
-    public Confuse() {
-        super(MeteorRejectsAddon.CATEGORY, "confuse", "Makes your enemies shit themselves");
     }
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -74,6 +65,15 @@ public class Confuse extends Module {
             .defaultValue(false)
             .build()
     );
+    
+    int delayWaited = 0;
+    double circleProgress = 0;
+    double addition = 0.0;
+    Entity target = null;
+    
+    public Confuse() {
+        super(MeteorRejectsAddon.CATEGORY, "confuse", "Makes your enemies shit themselves");
+    }
 
     @Override
     public void onActivate() {

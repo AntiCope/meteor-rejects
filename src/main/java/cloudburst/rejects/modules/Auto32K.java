@@ -41,10 +41,6 @@ public class Auto32K extends Module {
         Dispenser
     }
 
-    public Auto32K(){
-        super(MeteorRejectsAddon.CATEGORY, "auto-32k", "Automatically attacks other players with a 32k weapon.");
-    }
-
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Mode> mode = sgGeneral.add(new EnumSetting.Builder<Mode>()
@@ -88,7 +84,11 @@ public class Auto32K extends Module {
     private int z;
     private int phase = 0;
     private BlockPos bestBlock;
-
+    
+    public Auto32K(){
+        super(MeteorRejectsAddon.CATEGORY, "auto-32k", "Automatically attacks other players with a 32k weapon.");
+    }
+    
     @Override
     public void onDeactivate() {
         phase = 0;

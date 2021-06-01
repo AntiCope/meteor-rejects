@@ -35,11 +35,6 @@ public class Lavacast extends Module {
         WaterUp
     }
 
-    private int dist;
-    private BlockPos placeFluidPos;
-    private int tick;
-    private Stage stage = Stage.None;
-
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgShape = settings.createGroup("Shape", false);
     private final Setting<Integer> tickInterval = sgGeneral.add(new IntSetting.Builder()
@@ -91,6 +86,11 @@ public class Lavacast extends Module {
             .sliderMax(100)
             .build()
     );
+    
+    private int dist;
+    private BlockPos placeFluidPos;
+    private int tick;
+    private Stage stage = Stage.None;
 
     public Lavacast() {
         super(MeteorRejectsAddon.CATEGORY, "lavacast", "Automatically Lavacasts");

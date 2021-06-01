@@ -59,14 +59,12 @@ public class AntiBot extends Module {
             .build()
     );
 
-    public AntiBot()
-    {
+    public AntiBot() {
         super(MeteorRejectsAddon.CATEGORY, "anti-bot", "Detects and removes bots.");
     }
 
     @EventHandler
-    public void onTick(TickEvent.Post tickEvent)
-    {
+    public void onTick(TickEvent.Post tickEvent) {
         for (Entity entity : mc.world.getEntities())
         {
             if (removeInvisible.get() && !entity.isInvisible()) continue;
@@ -75,8 +73,7 @@ public class AntiBot extends Module {
         }
     }
 
-    private boolean isBot(Entity entity)
-    {
+    private boolean isBot(Entity entity) {
         if (entity == null) return false;
         if (!(entity instanceof PlayerEntity)) return false;
 
@@ -92,7 +89,6 @@ public class AntiBot extends Module {
         } catch (NullPointerException e) {
             if (nullException.get()) return true;
         }
-
 
         return false;
     }

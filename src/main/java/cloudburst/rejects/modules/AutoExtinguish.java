@@ -26,12 +26,6 @@ import net.minecraft.util.registry.Registry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class AutoExtinguish extends Module {
-    private static final StatusEffect FIRE_RESISTANCE = Registry.STATUS_EFFECT.get(new Identifier("fire_resistance"));
-
-    public AutoExtinguish() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");
-    }
-
     private final SettingGroup sgGeneral = settings.createGroup("Extinguish Fire around you");
     private final SettingGroup sgBucket = settings.createGroup("Extinguish yourself");
 
@@ -85,11 +79,15 @@ public class AutoExtinguish extends Module {
             .build()
     );
 
-
     private boolean hasPlacedWater = false;
     private BlockPos blockPos = null;
     private boolean doesWaterBucketWork = true;
-
+    
+    private static final StatusEffect FIRE_RESISTANCE = Registry.STATUS_EFFECT.get(new Identifier("fire_resistance"));
+    
+    public AutoExtinguish() {
+        super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");
+    }
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {

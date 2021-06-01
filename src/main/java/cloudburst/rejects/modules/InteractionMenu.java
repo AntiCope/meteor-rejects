@@ -23,9 +23,8 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class InteractionMenu extends Module {
+    
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
-    public final HashMap<String,String> messages = new HashMap<>();
-    private String currMsgK = "", currMsgV = "";
     
     private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
@@ -40,8 +39,10 @@ public class InteractionMenu extends Module {
             .action(this::onKey)
             .build()
     );
-
-
+    
+    public final HashMap<String,String> messages = new HashMap<>();
+    private String currMsgK = "", currMsgV = "";
+    
     public InteractionMenu() {
         super(MeteorRejectsAddon.CATEGORY,"interaction-menu","An interaction screen when looking at an entity.");
     }
