@@ -51,25 +51,6 @@ public class Rendering extends Module {
         super(MeteorRejectsAddon.CATEGORY, "Rendering", "Various Render Tweaks");
     }
 
-    private final Setting<Boolean> entities = sgInvisible.add(new BoolSetting.Builder()
-			.name("entities")
-			.description("Render invisible entities.")
-			.defaultValue(true)
-			.build()
-	);
-
-    private final Setting<Boolean> barrier = sgInvisible.add(new BoolSetting.Builder()
-			.name("barrier")
-			.description("Render barrier blocks.")
-			.defaultValue(true)
-            .onChanged(onChanged -> {
-                if(this.isActive()) {
-                    mc.worldRenderer.reload();
-                }
-            })
-			.build()
-	);
-
     private final Setting<Boolean> structureVoid = sgInvisible.add(new BoolSetting.Builder()
 			.name("structure-void")
 			.description("Render structure void blocks.")
