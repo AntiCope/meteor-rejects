@@ -20,14 +20,6 @@ import java.util.*;
 
 public class NewChunks extends Module {
 
-    private Set<ChunkPos> newChunks = Collections.synchronizedSet(new HashSet<>());
-    private Set<ChunkPos> oldChunks = Collections.synchronizedSet(new HashSet<>());
-    private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
-
-    public NewChunks() {
-        super(MeteorRejectsAddon.CATEGORY,"new-chunks", "Detects completely new chunks using certain traits of them");
-    }
-
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Boolean> remove = sgGeneral.add(new BoolSetting.Builder()
@@ -50,6 +42,14 @@ public class NewChunks extends Module {
             .defaultValue(new SettingColor(230, 51, 51))
             .build()
     );
+    
+    private Set<ChunkPos> newChunks = Collections.synchronizedSet(new HashSet<>());
+    private Set<ChunkPos> oldChunks = Collections.synchronizedSet(new HashSet<>());
+    private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
+    
+    public NewChunks() {
+        super(MeteorRejectsAddon.CATEGORY,"new-chunks", "Detects completely new chunks using certain traits of them");
+    }
 
     @Override
     public void onDeactivate() {

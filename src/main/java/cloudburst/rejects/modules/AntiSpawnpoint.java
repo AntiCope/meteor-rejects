@@ -50,8 +50,6 @@ public class AntiSpawnpoint extends Module {
             }
         }
 
-        //
-
         if((BlockIsBed && IsOverWorld)||(BlockIsAnchor && IsNetherWorld)) {
             event.cancel();
         }

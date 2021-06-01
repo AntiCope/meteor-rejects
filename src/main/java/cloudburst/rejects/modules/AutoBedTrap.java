@@ -25,7 +25,23 @@ import net.minecraft.util.hit.HitResult;
 public class AutoBedTrap extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
-
+    
+    private final Setting<Integer> bpt = sgGeneral.add(new IntSetting.Builder()
+            .name("blocks-per-tick")
+            .description("How many blocks to place per tick")
+            .defaultValue(2)
+            .min(1)
+            .sliderMax(8)
+            .build()
+    );
+    
+    private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
+            .name("rotate")
+            .description("Rotates when placing")
+            .defaultValue(true)
+            .build()
+    );
+    
     BlockPos bed1;
     Direction bed2direction;
     BlockPos bed2;
@@ -35,24 +51,6 @@ public class AutoBedTrap extends Module {
     public AutoBedTrap() {
         super(MeteorRejectsAddon.CATEGORY, "auto-bed-trap", "Automatically places obsidian around bed");
     }
-    
-
-    private final Setting<Integer> bpt = sgGeneral.add(new IntSetting.Builder()
-            .name("blocks-per-tick")
-            .description("How many blocks to place per tick")
-            .defaultValue(2)
-            .min(1)
-            .sliderMax(8)
-            .build()
-    );
-
-    private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
-            .name("rotate")
-            .description("Rotates when placing")
-            .defaultValue(true)
-            .build()
-    );
-
 
     @Override
     public void onActivate() {

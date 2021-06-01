@@ -18,9 +18,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
 public class AutoHighway extends Module {
+    private enum Direction {
+        SOUTH,
+        SOUTH_WEST,
+        WEST,
+        WEST_NORTH,
+        NORTH,
+        NORTH_EAST,
+        EAST,
+        EAST_SOUTH
+    }
+    
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Boolean> disableOnJump = sgGeneral.add(new BoolSetting.Builder()
@@ -48,24 +60,10 @@ public class AutoHighway extends Module {
             .build()
     );
 
-    private enum Direction {
-        SOUTH,
-        SOUTH_WEST,
-        WEST,
-        WEST_NORTH,
-        NORTH,
-        NORTH_EAST,
-        EAST,
-        EAST_SOUTH
-    }
     private Direction direction;
     private final BlockPos.Mutable blockPos = new BlockPos.Mutable();
     private boolean return_;
     private int highwaySize;
-
-
-
-
 
     public AutoHighway() {
         super(MeteorRejectsAddon.CATEGORY, "auto-highway", "Automatically build highway.");

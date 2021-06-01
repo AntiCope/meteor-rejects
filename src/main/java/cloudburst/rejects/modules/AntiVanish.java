@@ -22,9 +22,14 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AntiVanish extends Module {
+    
     private final Queue<UUID> toLookup = new ConcurrentLinkedQueue<UUID>();
     private long lastTick = 0;
-
+    
+    public AntiVanish() {
+        super(MeteorRejectsAddon.CATEGORY, "anti-vanish", "Notifies user when a admin uses /vanish");
+    }
+    
     @Override
     public void onDeactivate() {
         toLookup.clear();
@@ -76,10 +81,6 @@ public class AntiVanish extends Module {
         } catch (Exception ignored) {
             return null;
         }
-    }
-
-    public AntiVanish() {
-        super(MeteorRejectsAddon.CATEGORY, "anti-vanish", "Notifies user when a admin uses /vanish");
     }
 
     public static class NameLookup implements Runnable {

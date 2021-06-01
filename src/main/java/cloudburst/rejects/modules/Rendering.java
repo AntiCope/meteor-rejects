@@ -45,12 +45,6 @@ public class Rendering extends Module {
     private final SettingGroup sgInvisible = settings.createGroup("Invisible");
     private final SettingGroup sgFun = settings.createGroup("Fun");
 
-    private ShaderEffect shader = null;
-
-    public Rendering() {
-        super(MeteorRejectsAddon.CATEGORY, "Rendering", "Various Render Tweaks");
-    }
-
     private final Setting<Boolean> entities = sgInvisible.add(new BoolSetting.Builder()
 			.name("entities")
 			.description("Render invisible entities.")
@@ -91,6 +85,12 @@ public class Rendering extends Module {
 			.defaultValue(false)
 			.build()
 	);
+    
+    private ShaderEffect shader = null;
+    
+    public Rendering() {
+        super(MeteorRejectsAddon.CATEGORY, "Rendering", "Various Render Tweaks");
+    }
 
     @Override
     public void onActivate() {

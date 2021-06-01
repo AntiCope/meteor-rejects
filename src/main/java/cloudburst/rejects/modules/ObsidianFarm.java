@@ -20,12 +20,11 @@ import java.util.Optional;
 
 public class ObsidianFarm extends Module {
 
+    private boolean allowBreakAgain;
+    
     public ObsidianFarm() {
         super(MeteorRejectsAddon.CATEGORY, "obsidian-farm", "Auto obsidian farm(portals).");
     }
-
-
-    private boolean allowBreakAgain;
 
     @Override
     public void onActivate() {
