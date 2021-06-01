@@ -58,18 +58,6 @@ public class Rendering extends Module {
 			.build()
 	);
 
-    private final Setting<Boolean> barrier = sgInvisible.add(new BoolSetting.Builder()
-			.name("barrier")
-			.description("Render barrier blocks.")
-			.defaultValue(true)
-            .onChanged(onChanged -> {
-                if(this.isActive()) {
-                    mc.worldRenderer.reload();
-                }
-            })
-			.build()
-	);
-
     private final Setting<Boolean> structureVoid = sgInvisible.add(new BoolSetting.Builder()
 			.name("structure-void")
 			.description("Render structure void blocks.")
@@ -132,9 +120,6 @@ public class Rendering extends Module {
         return this.isActive() && entities.get();
     }
 
-    public boolean renderBarriers() {
-        return this.isActive() && barrier.get();
-    }
 
     public boolean renderStructureVoid() {
         return this.isActive() && structureVoid.get();
