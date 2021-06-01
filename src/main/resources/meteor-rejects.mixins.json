@@ -5,7 +5,6 @@
   "mixins": [
   ],
   "client": [
-    "EntityMixin",
     "Deadmau5FeatureRendererMixin",
     "StructureVoidBlockMixin",
     "LivingEntityRendererMixin",

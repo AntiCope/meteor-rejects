@@ -45,13 +45,6 @@ public class Rendering extends Module {
     private final SettingGroup sgInvisible = settings.createGroup("Invisible");
     private final SettingGroup sgFun = settings.createGroup("Fun");
 
-    private final Setting<Boolean> entities = sgInvisible.add(new BoolSetting.Builder()
-			.name("entities")
-			.description("Render invisible entities.")
-			.defaultValue(true)
-			.build()
-	);
-
     private final Setting<Boolean> structureVoid = sgInvisible.add(new BoolSetting.Builder()
 			.name("structure-void")
 			.description("Render structure void blocks.")
@@ -115,11 +108,6 @@ public class Rendering extends Module {
             this.shader = null;
         }
     }
-
-    public boolean renderEntities() {
-        return this.isActive() && entities.get();
-    }
-
 
     public boolean renderStructureVoid() {
         return this.isActive() && structureVoid.get();
