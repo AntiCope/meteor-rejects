@@ -14,51 +14,51 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import org.lwjgl.opengl.GL11;
 
+public class Render3DUtils {
 
-public enum Render3DUtils {
-    INSTANCE;
+    private final static MinecraftClient mc = MinecraftClient.getInstance();
 
-    public Vec3d getEntityRenderPosition(Entity entity, double partial) {
-        double x = entity.prevX + ((entity.getX() - entity.prevX) * partial) - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().x;
-        double y = entity.prevY + ((entity.getY() - entity.prevY) * partial) - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().y;
-        double z = entity.prevZ + ((entity.getZ() - entity.prevZ) * partial) - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().z;
+    public static Vec3d getEntityRenderPosition(Entity entity, double partial) {
+        double x = entity.prevX + ((entity.getX() - entity.prevX) * partial) - mc.getEntityRenderDispatcher().camera.getPos().x;
+        double y = entity.prevY + ((entity.getY() - entity.prevY) * partial) - mc.getEntityRenderDispatcher().camera.getPos().y;
+        double z = entity.prevZ + ((entity.getZ() - entity.prevZ) * partial) - mc.getEntityRenderDispatcher().camera.getPos().z;
         return new Vec3d(x, y, z);
     }
 
-    public Vec3d getRenderPosition(double x, double y, double z) {
-        double minX = x - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().x;
-        double minY = y - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().y;
-        double minZ = z - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().z;
+    public static Vec3d getRenderPosition(double x, double y, double z) {
+        double minX = x - mc.getEntityRenderDispatcher().camera.getPos().x;
+        double minY = y - mc.getEntityRenderDispatcher().camera.getPos().y;
+        double minZ = z - mc.getEntityRenderDispatcher().camera.getPos().z;
         return new Vec3d(minX, minY, minZ);
     }
 
-    public Vec3d getRenderPosition(Vec3d vec3d) {
-        double minX = vec3d.getX() - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().x;
-        double minY = vec3d.getY() - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().y;
-        double minZ = vec3d.getZ() - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().z;
+    public static Vec3d getRenderPosition(Vec3d vec3d) {
+        double minX = vec3d.getX() - mc.getEntityRenderDispatcher().camera.getPos().x;
+        double minY = vec3d.getY() - mc.getEntityRenderDispatcher().camera.getPos().y;
+        double minZ = vec3d.getZ() - mc.getEntityRenderDispatcher().camera.getPos().z;
         return new Vec3d(minX, minY, minZ);
     }
 
-    public Vec3d getRenderPosition(BlockPos blockPos) {
-        double minX = blockPos.getX() - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().x;
-        double minY = blockPos.getY() - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().y;
-        double minZ = blockPos.getZ() - MinecraftClient.getInstance().getEntityRenderDispatcher().camera.getPos().z;
+    public static Vec3d getRenderPosition(BlockPos blockPos) {
+        double minX = blockPos.getX() - mc.getEntityRenderDispatcher().camera.getPos().x;
+        double minY = blockPos.getY() - mc.getEntityRenderDispatcher().camera.getPos().y;
+        double minZ = blockPos.getZ() - mc.getEntityRenderDispatcher().camera.getPos().z;
         return new Vec3d(minX, minY, minZ);
     }
 
-    public void fixCameraRots() {
-        Camera camera = MinecraftClient.getInstance().getEntityRenderDispatcher().camera;
+    public static void fixCameraRots() {
+        Camera camera = mc.getEntityRenderDispatcher().camera;
         GL11.glRotated(-MathHelper.wrapDegrees(camera.getYaw() + 180.0D), 0.0D, 1.0D, 0.0D);
         GL11.glRotated(-MathHelper.wrapDegrees(camera.getPitch()), 1.0D, 0.0D, 0.0D);
     }
 
-    public void applyCameraRots() {
-        Camera camera = MinecraftClient.getInstance().getEntityRenderDispatcher().camera;
+    public static void applyCameraRots() {
+        Camera camera = mc.getEntityRenderDispatcher().camera;
         GL11.glRotated(MathHelper.wrapDegrees(camera.getPitch()), 1.0D, 0.0D, 0.0D);
         GL11.glRotated(MathHelper.wrapDegrees(camera.getYaw() + 180.0D), 0.0D, 1.0D, 0.0D);
     }
 
-    public void setup3DRender(boolean disableDepth) {
+    public static void setup3DRender(boolean disableDepth) {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ZERO);
@@ -68,7 +68,7 @@ public enum Render3DUtils {
         RenderSystem.enableCull();
     }
 
-    public void end3DRender() {
+    public static void end3DRender() {
         RenderSystem.enableTexture();
         RenderSystem.disableCull();
         RenderSystem.disableBlend();
@@ -76,7 +76,7 @@ public enum Render3DUtils {
         RenderSystem.depthMask(true);
     }
 
-    public void drawSphere(MatrixStack matrixStack, float radius, int gradation, Color color, boolean testDepth, Vec3d pos) {
+    public static void drawSphere(MatrixStack matrixStack, float radius, int gradation, Color color, boolean testDepth, Vec3d pos) {
         Matrix4f matrix4f = matrixStack.peek().getModel();
         final float PI = 3.141592f;
         float x, y, z, alpha, beta;
@@ -88,12 +88,12 @@ public enum Render3DUtils {
                 x = (float) (pos.getX() +  (radius * Math.cos(beta) * Math.sin(alpha)));
                 y = (float) (pos.getY() +  (radius * Math.sin(beta) * Math.sin(alpha)));
                 z = (float) (pos.getZ() +  (radius * Math.cos(alpha)));
-                Vec3d renderPos = Render3DUtils.INSTANCE.getRenderPosition(x, y, z);
+                Vec3d renderPos = Render3DUtils.getRenderPosition(x, y, z);
                 bufferBuilder.vertex(matrix4f, (float)renderPos.x, (float)renderPos.y, (float)renderPos.z).color(color.r, color.g, color.b, color.a).next();
                 x = (float) (pos.getX() +  (radius * Math.cos(beta) * Math.sin(alpha + PI / gradation)));
                 y = (float) (pos.getY() +  (radius * Math.sin(beta) * Math.sin(alpha + PI / gradation)));
                 z = (float) (pos.getZ() +  (radius * Math.cos(alpha + PI / gradation)));
-                renderPos = Render3DUtils.INSTANCE.getRenderPosition(x, y, z);
+                renderPos = Render3DUtils.getRenderPosition(x, y, z);
                 bufferBuilder.vertex(matrix4f, (float)renderPos.x, (float)renderPos.y, (float)renderPos.z).color(color.r, color.g, color.b, color.a).next();
             }
             bufferBuilder.end();
@@ -102,7 +102,7 @@ public enum Render3DUtils {
         end3DRender();
     }
 
-    public void drawBox(MatrixStack matrixStack, Box bb, Color color) {
+    public static void drawBox(MatrixStack matrixStack, Box bb, Color color) {
         setup3DRender(true);
         drawFilledBox(matrixStack, bb, color);
         RenderSystem.lineWidth(1);
@@ -110,26 +110,26 @@ public enum Render3DUtils {
         end3DRender();
     }
 
-    public void drawBoxOutline(MatrixStack matrixStack, Box bb, Color color) {
+    public static void drawBoxOutline(MatrixStack matrixStack, Box bb, Color color) {
         setup3DRender(true);
         RenderSystem.lineWidth(1);
         drawOutlineBox(matrixStack, bb, color);
         end3DRender();
     }
 
-    public void drawBoxInside(MatrixStack matrixStack, Box bb, Color color) {
+    public static void drawBoxInside(MatrixStack matrixStack, Box bb, Color color) {
         setup3DRender(true);
         drawFilledBox(matrixStack, bb, color);
         end3DRender();
     }
 
-    public void drawEntityBox(MatrixStack matrixStack, Entity entity, float partialTicks, Color color) {
+    public static void drawEntityBox(MatrixStack matrixStack, Entity entity, float partialTicks, Color color) {
         Vec3d renderPos = getEntityRenderPosition(entity, partialTicks);
         drawEntityBox(matrixStack, entity, renderPos.x, renderPos.y, renderPos.z, color);
     }
 
-    public void drawEntityBox(MatrixStack matrixStack, Entity entity, double x, double y, double z, Color color) {
-        float yaw = MathHelper.lerpAngleDegrees(MinecraftClient.getInstance().getTickDelta(), entity.prevYaw, entity.yaw);
+    public static void drawEntityBox(MatrixStack matrixStack, Entity entity, double x, double y, double z, Color color) {
+        float yaw = MathHelper.lerpAngleDegrees(mc.getTickDelta(), entity.prevYaw, entity.yaw);
         setup3DRender(true);
         matrixStack.translate(x, y, z);
         matrixStack.multiply(new Quaternion(new Vector3f(0, -1, 0), yaw, true));
@@ -149,11 +149,11 @@ public enum Render3DUtils {
         matrixStack.translate(-x, -y, -z);
     }
 
-    public double interpolate(final double now, final double then, final double percent) {
+    public static double interpolate(final double now, final double then, final double percent) {
         return (then + (now - then) * percent);
     }
 
-    public void drawFilledBox(MatrixStack matrixStack, Box bb, Color color) {
+    public static void drawFilledBox(MatrixStack matrixStack, Box bb, Color color) {
         Matrix4f matrix4f = matrixStack.peek().getModel();
 
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
@@ -198,7 +198,7 @@ public enum Render3DUtils {
         BufferRenderer.draw(bufferBuilder);
     }
 
-    public void drawOutlineBox(MatrixStack matrixStack, Box bb, Color color) {
+    public static void drawOutlineBox(MatrixStack matrixStack, Box bb, Color color) {
         Matrix4f matrix4f = matrixStack.peek().getModel();
 
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();

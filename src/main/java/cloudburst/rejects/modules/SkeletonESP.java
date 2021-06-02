@@ -40,7 +40,7 @@ public class SkeletonESP extends Module {
     private void onRender(RenderEvent event) {
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
-        Render3DUtils.INSTANCE.setup3DRender(true);
+        Render3DUtils.setup3DRender(true);
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;
             if (mc.options.getPerspective() == Perspective.FIRST_PERSON && (Entity)mc.player == entity) return;
@@ -48,7 +48,7 @@ public class SkeletonESP extends Module {
             Color skeletonColor = PlayerUtils.getPlayerColor((PlayerEntity)entity, skeletonColorSetting.get());
             PlayerEntity playerEntity = (PlayerEntity) entity;
 
-            Vec3d footPos = Render3DUtils.INSTANCE.getEntityRenderPosition(playerEntity, g);
+            Vec3d footPos = Render3DUtils.getEntityRenderPosition(playerEntity, g);
             PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer)(LivingEntityRenderer) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
             PlayerEntityModel playerEntityModel = (PlayerEntityModel)livingEntityRenderer.getModel();
 
@@ -131,7 +131,7 @@ public class SkeletonESP extends Module {
             matrixStack.multiply(new Quaternion(new Vector3f(0, 1, 0), playerEntity.bodyYaw + 180, true));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
         });
-        Render3DUtils.INSTANCE.end3DRender();
+        Render3DUtils.end3DRender();
     }
 
     private void rotate(MatrixStack matrix, ModelPart modelPart) {
