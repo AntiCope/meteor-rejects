@@ -83,10 +83,11 @@ public class AutoTNT extends Module {
         if (ticks <= 0) {
             // Clear and get tnt blocks
             blocks.clear();
-            for (BlockPos blockPos : BlockUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
-                bp.set(blockPos);
-                if (mc.world.getBlockState(blockPos).getBlock() instanceof TntBlock) blocks.add(bp);
-            }
+            // TODO: Fix
+            // for (BlockPos blockPos : BlockUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
+            //     bp.set(blockPos);
+            //     if (mc.world.getBlockState(blockPos).getBlock() instanceof TntBlock) blocks.add(bp);
+            // }
             
             // Make sure there are TNTs around us
             if (blocks.size() <= 0) {
@@ -144,4 +145,5 @@ public class AutoTNT extends Module {
     private void setBpToVec3d(Vec3d pos) {
         bp.set(pos.getX(), pos.getY(), pos.getZ());
     }
+    
 }
