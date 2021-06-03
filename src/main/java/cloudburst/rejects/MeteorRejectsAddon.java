@@ -29,7 +29,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AutoExtinguish());
 		modules.add(new AutoHighway());
 		modules.add(new AutoPot());
-		//modules.add(new AutoTNT());
+		modules.add(new AutoTNT());
 		modules.add(new Confuse());
 		modules.add(new InteractionMenu());
 		modules.add(new Glide());

@@ -1,5 +1,6 @@
 package cloudburst.rejects.modules;
 
+import cloudburst.rejects.utils.WorldUtils;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.settings.BoolSetting;
@@ -9,7 +10,6 @@ import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.PlayerUtils;
-import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.TntBlock;
 import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.util.ActionResult;
@@ -83,11 +83,11 @@ public class AutoTNT extends Module {
         if (ticks <= 0) {
             // Clear and get tnt blocks
             blocks.clear();
-            // TODO: Fix
-            // for (BlockPos blockPos : BlockUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
-            //     bp.set(blockPos);
-            //     if (mc.world.getBlockState(blockPos).getBlock() instanceof TntBlock) blocks.add(bp);
-            // }
+
+            for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
+                bp.set(blockPos);
+                if (mc.world.getBlockState(blockPos).getBlock() instanceof TntBlock) blocks.add(bp);
+            }
             
             // Make sure there are TNTs around us
             if (blocks.size() <= 0) {
@@ -129,9 +129,12 @@ public class AutoTNT extends Module {
         // Set slots
         preSlot = mc.player.inventory.selectedSlot;
         mc.player.inventory.selectedSlot = slot;
-        
+
+
+
         // Ignited the tnt
-        ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
+        //ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
+        ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
         if (result == ActionResult.CONSUME || result == ActionResult.SUCCESS) ignited = true;
         
         // Reset slot
