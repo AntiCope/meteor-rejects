@@ -3,7 +3,8 @@ package cloudburst.rejects.utils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorldUtils {
     private static final ArrayList<BlockPos> blocks = new ArrayList<>();
@@ -23,10 +24,10 @@ public class WorldUtils {
         return blocks;
     }
 
-    public static double distanceBetween(BlockPos blockPos1, BlockPos blockPos2) {
-        double d = blockPos1.getX() - blockPos2.getX();
-        double e = blockPos1.getY() - blockPos2.getY();
-        double f = blockPos1.getZ() - blockPos2.getZ();
+    public static double distanceBetween(BlockPos pos1, BlockPos pos2) {
+        double d = pos1.getX() - pos2.getX();
+        double e = pos1.getY() - pos2.getY();
+        double f = pos1.getZ() - pos2.getZ();
         return MathHelper.sqrt(d * d + e * e + f * f);
     }
 }

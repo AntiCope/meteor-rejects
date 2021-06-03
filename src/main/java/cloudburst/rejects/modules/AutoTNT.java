@@ -1,5 +1,6 @@
 package cloudburst.rejects.modules;
 
+import cloudburst.rejects.MeteorRejectsAddon;
 import cloudburst.rejects.utils.WorldUtils;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
@@ -10,7 +11,7 @@ import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.PlayerUtils;
-import net.minecraft.block.TntBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.FlintAndSteelItem;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -19,10 +20,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
-import cloudburst.rejects.MeteorRejectsAddon;
-
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class AutoTNT extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -58,8 +58,7 @@ public class AutoTNT extends Module {
     );
     
     private final ArrayList<BlockPos> blocks = new ArrayList<>();
-    private final BlockPos.Mutable bp = new BlockPos.Mutable();
-    private boolean ignited, messaged;
+    private boolean ignited;
     private int ticks = 0;
     private int preSlot, slot;
     
@@ -70,7 +69,6 @@ public class AutoTNT extends Module {
     @Override
     public void onActivate() {
         ignited = false;
-        messaged = false;
     }
     
     @Override
@@ -81,44 +79,43 @@ public class AutoTNT extends Module {
     @EventHandler
     private void onTick(TickEvent.Post event) {
         if (ticks <= 0) {
+            
             // Clear and get tnt blocks
             blocks.clear();
-
-            for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
-                bp.set(blockPos);
-                if (mc.world.getBlockState(blockPos).getBlock() instanceof TntBlock) blocks.add(bp);
+            
+            List<BlockPos> searchBlocks = WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get());
+            for (BlockPos blockPos : searchBlocks) {
+                if (mc.world.getBlockState(blockPos).getBlock() == Blocks.TNT) blocks.add(blockPos);
             }
             
-            // Make sure there are TNTs around us
+            
+            // If there isn't any tnt
             if (blocks.size() <= 0) {
                 
-                // If already ignited and turnOff.get()
+                // Give a warning
+                error("No TNT in range");
+    
+                // If we should just turn off after igniting
                 if (turnOff.get() && ignited) {
                     toggle();
-                    return;
                 }
                 
-                // If we haven't warned yet
-                if (!messaged) {
-                    error("No TNT in range");
-                    messaged = true;
-                }
                 return;
-            } else messaged = false;
+            }
             
             // Sort based on closest tnt
             blocks.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
             
             // Get slot
-            slot = getSlot();
+            slot = getFlintAndSteelSlot();
             if (slot == -1) {
                 error("No flint and steel in hotbar");
+                toggle();
                 return;
             }
             
             // Ignition
-            bp.set(blocks.get(0));
-            ignite(bp, slot);
+            ignite(blocks.get(0), slot);
             
             // Reset ticks
             ticks = delay.get();
@@ -131,22 +128,15 @@ public class AutoTNT extends Module {
         mc.player.inventory.selectedSlot = slot;
 
 
-
-        // Ignited the tnt
-        //ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
-        ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
+        ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
+//        ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
         if (result == ActionResult.CONSUME || result == ActionResult.SUCCESS) ignited = true;
         
         // Reset slot
         mc.player.inventory.selectedSlot = preSlot;
     }
     
-    private int getSlot() {
+    private int getFlintAndSteelSlot() {
         return InvUtils.findItemInHotbar(item -> item.getItem() instanceof FlintAndSteelItem && (antiBreak.get() && (item.getMaxDamage() - item.getDamage()) > 10));
     }
-    
-    private void setBpToVec3d(Vec3d pos) {
-        bp.set(pos.getX(), pos.getY(), pos.getZ());
-    }
-    
 }
