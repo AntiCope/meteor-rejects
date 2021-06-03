@@ -18,13 +18,13 @@ public class TeleportCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(argument("pos", ClientPosArgumentType.blockPos()).executes(ctx -> {
+        builder.then(argument("pos", ClientPosArgumentType.pos()).executes(ctx -> {
             Vec3d pos = ClientPosArgumentType.getPos(ctx, "pos");
             mc.player.updatePosition(pos.getX(), pos.getY(), pos.getZ());
             return SINGLE_SUCCESS;
         }));
 
-        builder.then(argument("pos", ClientPosArgumentType.blockPos()).then(argument("yaw", FloatArgumentType.floatArg()).then(argument("pitch",FloatArgumentType.floatArg()).executes(ctx -> {
+        builder.then(argument("pos", ClientPosArgumentType.pos()).then(argument("yaw", FloatArgumentType.floatArg()).then(argument("pitch",FloatArgumentType.floatArg()).executes(ctx -> {
             Vec3d pos = ClientPosArgumentType.getPos(ctx, "pos");
             float yaw = FloatArgumentType.getFloat(ctx, "yaw");
             float pitch = FloatArgumentType.getFloat(ctx, "pitch");

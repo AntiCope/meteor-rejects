@@ -22,7 +22,7 @@ public class ClientPosArgumentType implements ArgumentType<Vec3d> {
     public ClientPosArgumentType() {
     }
 
-    public static ClientPosArgumentType blockPos() {
+    public static ClientPosArgumentType pos() {
         return new ClientPosArgumentType();
     }
 
