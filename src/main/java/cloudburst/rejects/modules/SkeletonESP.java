@@ -6,6 +6,8 @@ import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.render.RenderEvent;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.systems.modules.Modules;
+import minegame159.meteorclient.systems.modules.render.Freecam;
 import minegame159.meteorclient.utils.player.PlayerUtils;
 import minegame159.meteorclient.utils.render.color.Color;
 import minegame159.meteorclient.utils.render.color.SettingColor;
@@ -25,6 +27,8 @@ import net.minecraft.util.math.*;
 public class SkeletonESP extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
+    private final Freecam freecam;
+
     private final Setting<SettingColor> skeletonColorSetting = sgGeneral.add(new ColorSetting.Builder()
             .name("players-color")
             .description("The other player's color.")
@@ -34,6 +38,7 @@ public class SkeletonESP extends Module {
 
     public SkeletonESP() {
         super(MeteorRejectsAddon.CATEGORY, "skeleton-esp", "Looks cool as fuck");
+        freecam = Modules.get().get(Freecam.class);
     }
 
     @EventHandler
@@ -43,7 +48,7 @@ public class SkeletonESP extends Module {
         Render3DUtils.setup3DRender(true);
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;
-            if (mc.options.getPerspective() == Perspective.FIRST_PERSON && (Entity)mc.player == entity) return;
+            if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && (Entity)mc.player == entity) return;
             
             Color skeletonColor = PlayerUtils.getPlayerColor((PlayerEntity)entity, skeletonColorSetting.get());
             PlayerEntity playerEntity = (PlayerEntity) entity;
