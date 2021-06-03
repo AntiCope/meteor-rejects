@@ -1,6 +1,7 @@
 package cloudburst.rejects.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import minegame159.meteorclient.systems.commands.Command;
 import minegame159.meteorclient.utils.player.InvUtils;
 import net.minecraft.command.CommandSource;
@@ -9,6 +10,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
@@ -17,6 +19,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 public class BookDupeCommand extends Command {
 
     private final ItemStack DUPE_BOOK = new ItemStack(Items.WRITABLE_BOOK, 1);
+    private final static SimpleCommandExceptionType NO_BOOK_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("No book found"));
 
     public BookDupeCommand() {
         super("dupe", "Dupes using a held, writable book.");
@@ -45,8 +48,9 @@ public class BookDupeCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.executes(context -> {
-            if (InvUtils.getHand(Items.WRITABLE_BOOK) != Hand.MAIN_HAND) error("No book found, you must be holding a writable book!");
-            else mc.player.networkHandler.sendPacket(new BookUpdateC2SPacket(DUPE_BOOK, true, mc.player.inventory.selectedSlot));
+            if (InvUtils.getHand(Items.WRITABLE_BOOK) != Hand.MAIN_HAND) throw NO_BOOK_EXCEPTION.create();
+
+            mc.player.networkHandler.sendPacket(new BookUpdateC2SPacket(DUPE_BOOK, true, mc.player.inventory.selectedSlot));
 
             return SINGLE_SUCCESS;
         });

@@ -2,9 +2,11 @@ package cloudburst.rejects.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import minegame159.meteorclient.systems.commands.Command;
 
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
 
 import org.lwjgl.BufferUtils;
@@ -21,6 +23,8 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 public class TerrainExport extends Command {
 
     private final PointerBuffer filters;
+
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("An IOException occurred"));
 
     public TerrainExport() {
         super("terrain-export", "Export an area to the c++ terrain finder format (very popbob command).");
@@ -51,8 +55,7 @@ public class TerrainExport extends Command {
             }
 
             String path = TinyFileDialogs.tinyfd_saveFileDialog("Save data", null, filters, null);
-            if (path == null)
-                return SINGLE_SUCCESS;
+            if (path == null) throw IO_EXCEPTION.create();
             if (!path.endsWith(".txt"))
                 path += ".txt";
             try {
@@ -60,7 +63,7 @@ public class TerrainExport extends Command {
                 file.write(stringBuilder.toString().trim());
                 file.close();
             } catch (IOException e) {
-                error("IOException");
+                throw IO_EXCEPTION.create();
             }
 
             return SINGLE_SUCCESS;

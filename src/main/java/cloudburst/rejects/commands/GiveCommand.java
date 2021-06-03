@@ -3,6 +3,8 @@ package cloudburst.rejects.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.item.*;
 import net.minecraft.nbt.*;
@@ -26,6 +28,8 @@ public class GiveCommand extends Command {
         super("give", "Gives items in creative", "item", "kit");
     }
 
+    private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(new LiteralText("You must be in creative mode to use this."));
+    private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(new LiteralText("No space in hotbar"));
     private final Collection<String> PRESETS = Arrays.asList("forceop", "negs", "stacked", "spawners", "bookban",
             "test", "eggs");
     private final Collection<String> CONTAINERS = Arrays.asList("chest", "shulker", "trapped_chest", "barrel",
@@ -34,6 +38,7 @@ public class GiveCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(literal("egg").executes(ctx -> {
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             ItemStack inHand = mc.player.getMainHandStack();
             ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
             CompoundTag ct = new CompoundTag();
@@ -67,10 +72,7 @@ public class GiveCommand extends Command {
         }));
 
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
-            if (!mc.player.abilities.creativeMode) {
-                error("Not In Creative Mode!");
-                return SINGLE_SUCCESS;
-            }
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             String message = ctx.getArgument("message", String.class);
             message = message.replace("&", "\247");
             ItemStack stack = new ItemStack(Items.ARMOR_STAND);
@@ -92,10 +94,7 @@ public class GiveCommand extends Command {
         })));
 
         builder.then(literal("firework").executes(ctx -> {
-            if (!mc.player.abilities.creativeMode) {
-                error("Not In Creative Mode!");
-                return SINGLE_SUCCESS;
-            }
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
             CompoundTag baseCompound = new CompoundTag();
             CompoundTag tagCompound = new CompoundTag();
@@ -124,10 +123,7 @@ public class GiveCommand extends Command {
         }));
 
         builder.then(literal("head").then(argument("owner",StringArgumentType.greedyString()).executes(ctx -> {
-            if (!mc.player.abilities.creativeMode) {
-                error("Not In Creative Mode!");
-                return SINGLE_SUCCESS;
-            }
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             String playerName = ctx.getArgument("owner",String.class);
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
             CompoundTag tag = new CompoundTag();
@@ -139,10 +135,7 @@ public class GiveCommand extends Command {
 
         builder.then(literal("preset").then(argument("name", new EnumStringArgumentType(PRESETS))
                 .then(argument("container", new EnumStringArgumentType(CONTAINERS)).executes(context -> {
-                    if (!mc.player.abilities.creativeMode) {
-                        error("Not In Creative Mode!");
-                        return SINGLE_SUCCESS;
-                    }
+                    if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
                     String name = context.getArgument("name", String.class);
                     String container = context.getArgument("container", String.class);
                     addItem(createPreset(name, container));
@@ -150,13 +143,13 @@ public class GiveCommand extends Command {
                 }))));
     }
 
-    private void addItem(ItemStack item) {
+    private void addItem(ItemStack item) throws CommandSyntaxException {
 		for(int i = 0; i < 36; i++) {
 		    ItemStack stack = mc.player.inventory.getStack(SlotUtils.indexToId(i));
 			if (!stack.isEmpty()) continue;
 			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
 			return;
 		}
-        error("No space in inventory.");
+        throw NO_SPACE.create();
     }
 }

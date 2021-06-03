@@ -2,11 +2,14 @@ package cloudburst.rejects.commands;
 
 import com.google.gson.*;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import minegame159.meteorclient.systems.commands.Command;
 import minegame159.meteorclient.systems.commands.arguments.PlayerArgumentType;
 import minegame159.meteorclient.utils.network.HttpUtils;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.LiteralText;
 import org.apache.commons.codec.binary.Base64;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
@@ -21,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class SaveSkinCommand extends Command {
+
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("An IOException occurred"));
 
     private final PointerBuffer filters;
     private final Gson GSON = new Gson();
@@ -41,13 +46,14 @@ public class SaveSkinCommand extends Command {
         builder.then(argument("player", PlayerArgumentType.player()).executes(ctx -> {
             PlayerEntity playerEntity = ctx.getArgument("player", PlayerEntity.class);
             String path = TinyFileDialogs.tinyfd_saveFileDialog("Save image", null, filters, null);
+            if (path == null) IO_EXCEPTION.create();
             if (!path.endsWith(".png")) path += ".png";
             saveSkin(playerEntity.getUuidAsString(),path);
             return SINGLE_SUCCESS;
         }));
     }
 
-    private void saveSkin(String uuid, String path) {
+    private void saveSkin(String uuid, String path) throws CommandSyntaxException {
         try {
             //going to explain what happens so I don't forget
             //request their minecraft profile, all so we can get a base64 encoded string that contains ANOTHER json that then has the skin URL
@@ -82,7 +88,7 @@ public class SaveSkinCommand extends Command {
             fos.write(response);
             fos.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw IO_EXCEPTION.create();
         }
     }
 }
