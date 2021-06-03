@@ -45,6 +45,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		commands.add(new BookDupeCommand());
 		commands.add(new GiveCommand());
 		commands.add(new SaveSkinCommand());
+		commands.add(new TeleportCommand());
 		commands.add(new TerrainExport());
 	}
 
