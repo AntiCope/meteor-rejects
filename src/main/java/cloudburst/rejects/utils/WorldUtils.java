@@ -1,9 +1,5 @@
 package cloudburst.rejects.utils;
 
-import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.MeteorClient;
-import minegame159.meteorclient.events.game.GameLeftEvent;
-import net.minecraft.client.render.BlockBreakingInfo;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
