@@ -29,7 +29,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AutoExtinguish());
 		modules.add(new AutoHighway());
 		modules.add(new AutoPot());
-		modules.add(new AutoTNT());
+//		modules.add(new AutoTNT());
 		modules.add(new ColorSigns());
 		modules.add(new Confuse());
 		modules.add(new InteractionMenu());
@@ -40,7 +40,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new Rendering());
 		modules.add(new SkeletonESP());
 		modules.add(new SoundLocator());
-		modules.add(new SpawnProofer());
+//		modules.add(new SpawnProofer());
 
 		Commands commands = Commands.get();
 		commands.add(new AntiAntiXrayCommand());
