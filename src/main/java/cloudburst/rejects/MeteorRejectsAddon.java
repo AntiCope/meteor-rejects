@@ -41,7 +41,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new Rendering());
 		modules.add(new SkeletonESP());
 		modules.add(new SoundLocator());
-//		modules.add(new SpawnProofer());
+		modules.add(new SpawnProofer());
 
 		Commands commands = Commands.get();
 		commands.add(new AntiAntiXrayCommand());

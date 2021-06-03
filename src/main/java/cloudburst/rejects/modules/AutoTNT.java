@@ -92,9 +92,6 @@ public class AutoTNT extends Module {
             // If there isn't any tnt
             if (blocks.size() <= 0) {
                 
-                // Give a warning
-                error("No TNT in range");
-    
                 // If we should just turn off after igniting
                 if (turnOff.get() && ignited) {
                     toggle();
