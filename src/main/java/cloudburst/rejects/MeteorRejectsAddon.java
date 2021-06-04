@@ -59,6 +59,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 
 		HUD hud = modules.get(HUD.class);
 		hud.elements.add(new AppleHud(hud));
+		hud.elements.add(new ContainerViewerHud(hud));
 		hud.elements.add(new CrystalHud(hud));
 		hud.elements.add(new ExpHud(hud));
 	}
