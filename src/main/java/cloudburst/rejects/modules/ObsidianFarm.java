@@ -1,10 +1,8 @@
 package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
-import com.google.common.collect.Streams;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.systems.modules.Modules;
 import minegame159.meteorclient.systems.modules.player.AutoEat;
@@ -78,7 +76,7 @@ public class ObsidianFarm extends Module {
             }
         }
 
-        Optional<BlockPos> result = Streams.stream(blocksList)
+        Optional<BlockPos> result = blocksList.stream()
                 .parallel()
                 .filter(blockPos -> mc.world.getBlockState(blockPos).getBlock() == Blocks.OBSIDIAN)
                 .min(Comparator.comparingDouble(blockPos -> mc.player.squaredDistanceTo(blockPos.getX(), blockPos.getY(), blockPos.getZ())));
@@ -94,7 +92,7 @@ public class ObsidianFarm extends Module {
             }
         }
 
-        Optional<BlockPos> result2 = Streams.stream(blocksList)
+        Optional<BlockPos> result2 = blocksList.stream()
                 .parallel()
                 .filter(blockPos -> !mc.player.getBlockPos().down().equals(blockPos))
                 .filter(blockPos -> mc.world.getBlockState(blockPos).getBlock() == Blocks.OBSIDIAN)
