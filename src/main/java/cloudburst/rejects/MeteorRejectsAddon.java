@@ -4,12 +4,14 @@ import minegame159.meteorclient.MeteorAddon;
 import minegame159.meteorclient.systems.commands.Commands;
 import minegame159.meteorclient.systems.modules.Category;
 import minegame159.meteorclient.systems.modules.Modules;
+import minegame159.meteorclient.systems.modules.render.hud.HUD;
 
 import net.minecraft.item.Items;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cloudburst.rejects.commands.*;
+import cloudburst.rejects.hud.*;
 import cloudburst.rejects.modules.*;
 
 public class MeteorRejectsAddon extends MeteorAddon {
@@ -54,6 +56,11 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		commands.add(new SetBlockCommand());
 		commands.add(new TeleportCommand());
 		commands.add(new TerrainExport());
+
+		HUD hud = modules.get(HUD.class);
+		hud.elements.add(new AppleHud(hud));
+		hud.elements.add(new CrystalHud(hud));
+		hud.elements.add(new ExpHud(hud));
 	}
 
 	@Override
