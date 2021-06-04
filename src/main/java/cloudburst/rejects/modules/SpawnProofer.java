@@ -3,15 +3,10 @@ package cloudburst.rejects.modules;
 import cloudburst.rejects.MeteorRejectsAddon;
 import cloudburst.rejects.utils.WorldUtils;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.render.RenderEvent;
 import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.rendering.MeshBuilder;
-import minegame159.meteorclient.rendering.Renderer;
-import minegame159.meteorclient.rendering.ShapeMode;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.InvUtils;
-import minegame159.meteorclient.utils.render.color.SettingColor;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.BlockHalf;
@@ -41,29 +36,9 @@ public class SpawnProofer extends Module {
     
     private final Setting<List<Block>> blocks = sgGeneral.add(new BlockListSetting.Builder()
             .name("blocks")
-            .description("Blocks to use for spawn proofing")
+            .description("Block to use for spawn proofing")
             .defaultValue(getDefaultBlocks())
-            .build()
-    );
-    
-    private final Setting<ShapeMode> shapeMode = sgGeneral.add(new EnumSetting.Builder<ShapeMode>()
-            .name("shape-mode")
-            .description("Shape mode")
-            .defaultValue(ShapeMode.Both)
-            .build()
-    );
-    
-    private final Setting<SettingColor> sideColor = sgGeneral.add(new ColorSetting.Builder()
-            .name("side-color")
-            .description("Edge color")
-            .defaultValue(new SettingColor(255, 0, 0, 75))
-            .build()
-    );
-    
-    private final Setting<SettingColor> lineColor = sgGeneral.add(new ColorSetting.Builder()
-            .name("line-color")
-            .description("Line color")
-            .defaultValue(new SettingColor(255, 0, 0, 255))
+            .filter(this::filterBlocks)
             .build()
     );
     
@@ -74,11 +49,29 @@ public class SpawnProofer extends Module {
             .build()
     );
     
+    private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
+            .name("delay")
+            .description("Delay in ticks between placing blocks")
+            .defaultValue(0)
+            .min(0).max(10)
+            .build()
+    );
+    
     private final ArrayList<BlockPos> positions = new ArrayList<>();
-    private final MeshBuilder mb = new MeshBuilder();
+    private int ticksWaited;
     
     public SpawnProofer() {
-        super(MeteorRejectsAddon.CATEGORY, "spawn-proofer", "Spawn proofs things using slabs.");
+        super(MeteorRejectsAddon.CATEGORY, "spawn-proofer", "Automatically spawnproofs using blocks.");
+    }
+    
+    @Override
+    public void onActivate() {
+        ticksWaited = 0;
+    }
+    
+    @Override
+    public void onDeactivate() {
+        ticksWaited = 0;
     }
     
     @EventHandler
@@ -89,27 +82,56 @@ public class SpawnProofer extends Module {
             if (validSpawn(blockPos)) positions.add(blockPos);
         }
         
-        for (BlockPos blockPos : positions) {
-            // Set slot
-            int slot = findSlot();
-            // Place blocks
-            BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, true);
-        }
-    }
+        if (positions.size() == 0) return;
     
-    @EventHandler
-    private void onRender(RenderEvent event) {
-        // Render all positions
-        for (BlockPos blockPos : positions) {
-            Renderer.boxWithLines(Renderer.NORMAL, Renderer.LINES, blockPos.down(), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        // Tick delay
+        if (ticksWaited < delay.get()) {
+            ticksWaited++;
+            return;
         }
+        
+        // Find slot
+        int slot = findSlot();
+        if (slot == -1) {
+            error("Found none of the chosen blocks in hotbar");
+            toggle();
+            return;
+        }
+        
+        // If is light source
+        if (isLightSource(Block.getBlockFromItem(
+                mc.player.inventory.getStack(slot).getItem()
+        ))) {
+            
+            // Find lowest light level block
+            int lowestLightLevel = 16;
+            BlockPos selectedBlockPos = positions.get(0); // Just for initialization
+            for (BlockPos blockPos : positions) {
+                
+                int lightLevel = mc.world.getLightLevel(blockPos);
+                if (lightLevel < lowestLightLevel) {
+                    lowestLightLevel = lightLevel;
+                    selectedBlockPos = blockPos;
+                }
+            }
+            
+            BlockUtils.place(selectedBlockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            
+        } else {
+            
+            // Place first in positions
+            BlockUtils.place(positions.get(0), Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+        }
+        
+        // Reset tick delay
+        ticksWaited = 0;
     }
     
     private int findSlot() {
         return InvUtils.findItemInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
     }
     
-    private boolean validSpawn(BlockPos blockPos) {
+    private boolean validSpawn(BlockPos blockPos) { // Copied from Light Overlay
         BlockState blockState = mc.world.getBlockState(blockPos);
         
         if (blockPos.getY() == 0) return false;
@@ -124,20 +146,33 @@ public class SpawnProofer extends Module {
         else return mc.world.getLightLevel(LightType.BLOCK, blockPos) <= 7;
     }
     
-    private boolean topSurface(BlockState blockState) {
+    private boolean topSurface(BlockState blockState) { // Copied from Light Overlay
         if (blockState.getBlock() instanceof SlabBlock && blockState.get(SlabBlock.TYPE) == SlabType.TOP) return true;
         else return blockState.getBlock() instanceof StairsBlock && blockState.get(StairsBlock.HALF) == BlockHalf.TOP;
     }
     
     private List<Block> getDefaultBlocks() {
-        List<Block> defaultBlocks = new ArrayList<>();
         
+        ArrayList<Block> defaultBlocks = new ArrayList<>();
         for (Block block : Registry.BLOCK) {
-            if (block instanceof SlabBlock) defaultBlocks.add(block);
-            if (block instanceof AbstractButtonBlock) defaultBlocks.add(block);
-            if (block instanceof TorchBlock) defaultBlocks.add(block);
+            if (filterBlocks(block)) defaultBlocks.add(block);
         }
-        
         return defaultBlocks;
+    }
+    
+    private boolean filterBlocks(Block block) {
+        return isNonOpaqueBlock(block) || isLightSource(block);
+    }
+    
+    private boolean isNonOpaqueBlock(Block block) {
+        return block instanceof AbstractButtonBlock ||
+                block instanceof SlabBlock ||
+                block instanceof AbstractPressurePlateBlock ||
+                block instanceof GlassBlock ||
+                block instanceof TripwireBlock;
+    }
+    
+    private boolean isLightSource(Block block) {
+        return block instanceof TorchBlock;
     }
 }
