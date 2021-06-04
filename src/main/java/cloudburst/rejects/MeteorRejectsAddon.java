@@ -33,7 +33,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AutoWither());
 		modules.add(new ColorSigns());
 		modules.add(new Confuse());
-		modules.add(new Dolphin());
+		modules.add(new Gravity());
 		modules.add(new InteractionMenu());
 		modules.add(new Glide());
 		modules.add(new Lavacast());
