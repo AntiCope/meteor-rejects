@@ -78,6 +78,13 @@ public class Rendering extends Module {
 			.defaultValue(false)
 			.build()
 	);
+
+    private final Setting<Boolean> disableToasts = sgFun.add(new BoolSetting.Builder()
+			.name("disable-toasts")
+			.description("Disable toasts (e.g. advancements)")
+			.defaultValue(false)
+			.build()
+	);
     
     private ShaderEffect shader = null;
     
@@ -126,5 +133,10 @@ public class Rendering extends Module {
     public boolean deadmau5EarsEnabled() {
         if (!this.isActive()) return false;
         return deadmau5Ears.get();
+    }
+
+    public boolean disableToasts() {
+        if (!this.isActive()) return false;
+        return disableToasts.get();
     }
 }

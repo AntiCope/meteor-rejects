@@ -8,7 +8,8 @@
     "Deadmau5FeatureRendererMixin",
     "StructureVoidBlockMixin",
     "LivingEntityRendererMixin",
-    "GameRendererMixin"
+    "GameRendererMixin",
+    "ToastManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
