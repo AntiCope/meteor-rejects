@@ -42,6 +42,13 @@ public class SpawnProofer extends Module {
             .build()
     );
     
+    private final Setting<Boolean> multiPlace = sgGeneral.add(new BoolSetting.Builder()
+            .name("multi-place")
+            .description("Places multiple blocks per tick")
+            .defaultValue(false)
+            .build()
+    );
+    
     private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
             .name("rotate")
             .description("Rotates towards the blocks being placed.")
@@ -56,6 +63,21 @@ public class SpawnProofer extends Module {
             .min(0).max(10)
             .build()
     );
+    
+    private final Setting<Boolean> spawnProofPotentialSpawns = sgGeneral.add(new BoolSetting.Builder()
+            .name("potential-spawns")
+            .description("Spawn Proofs Potential Spawns (Spots that have access to sunlight and only spawns mobs during night time)")
+            .defaultValue(true)
+            .build()
+    );
+    
+    private final Setting<Boolean> spawnProofAlwaysSpawns = sgGeneral.add(new BoolSetting.Builder()
+            .name("always-spawns")
+            .description("Spawn Proofs Always Spawns (Spots that undoubtedly will spawn mobs)")
+            .defaultValue(true)
+            .build()
+    );
+    
     
     private final ArrayList<BlockPos> positions = new ArrayList<>();
     private int ticksWaited;
@@ -121,6 +143,14 @@ public class SpawnProofer extends Module {
             
             // Place first in positions
             BlockUtils.place(positions.get(0), Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            
+            // Multiplace
+            if (multiPlace.get()) {
+                slot = findSlot();
+                
+                positions.remove(0);
+                for (BlockPos blockPos : positions) BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            }
         }
         
         // Reset tick delay
@@ -131,7 +161,7 @@ public class SpawnProofer extends Module {
         return InvUtils.findItemInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
     }
     
-    private boolean validSpawn(BlockPos blockPos) { // Copied from Light Overlay
+    private boolean validSpawn(BlockPos blockPos) { // Copied from Light Overlay and modified slightly
         BlockState blockState = mc.world.getBlockState(blockPos);
         
         if (blockPos.getY() == 0) return false;
@@ -142,8 +172,10 @@ public class SpawnProofer extends Module {
             if (mc.world.getBlockState(blockPos.down()).isTranslucent(mc.world, blockPos.down())) return false;
         }
         
-        if (mc.world.getLightLevel(blockPos, 0) <= 7) return false;
-        else return mc.world.getLightLevel(LightType.BLOCK, blockPos) <= 7;
+        if (mc.world.getLightLevel(blockPos, 0) <= 7) return spawnProofPotentialSpawns.get();
+        else if (mc.world.getLightLevel(LightType.BLOCK, blockPos) <= 7) return spawnProofAlwaysSpawns.get();
+        
+        return false;
     }
     
     private boolean topSurface(BlockState blockState) { // Copied from Light Overlay
