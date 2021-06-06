@@ -9,6 +9,7 @@
     "ClientPlayerInteractionManagerMixin",
     "Deadmau5FeatureRendererMixin",
     "StructureVoidBlockMixin",
+    "TitleScreenMixin",
     "LivingEntityRendererMixin",
     "GameRendererMixin",
     "ToastManagerMixin"

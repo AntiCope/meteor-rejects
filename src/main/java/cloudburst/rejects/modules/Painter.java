@@ -104,7 +104,6 @@ public class Painter extends Module {
         // Find spots
         for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
             if (shouldPlace(blockPos, block.get())) positions.add(blockPos);
-            
         }
         
         // Place
@@ -117,7 +116,7 @@ public class Painter extends Module {
     }
     
     private int findSlot(Block block) {
-        return InvUtils.findItemInHotbar(itemStack -> this.block.get() == block);
+        return InvUtils.findItemInHotbar(itemStack -> block == Block.getBlockFromItem(itemStack.getItem()));
     }
     
     private boolean shouldPlace(BlockPos blockPos, Block useBlock) {
