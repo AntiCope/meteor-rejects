@@ -3,10 +3,10 @@
   "package": "cloudburst.rejects.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ClientPlayerInteractionManagerMixin",
     "RecipeManagerMixin"
   ],
   "client": [
+    "ClientPlayerInteractionManagerMixin",
     "Deadmau5FeatureRendererMixin",
     "StructureVoidBlockMixin",
     "LivingEntityRendererMixin",
