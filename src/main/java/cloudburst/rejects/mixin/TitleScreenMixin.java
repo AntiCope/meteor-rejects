@@ -23,13 +23,13 @@ public class TitleScreenMixin extends Screen {
     
     private String rejectsText1;
     private String rejectsText2;
-//    private String rejectsText3;
-//    private String rejectsText4;
+    private String rejectsText3;
+    private String rejectsText4;
     
     private int rejectsLength1;
     private int rejectsLength2;
-//    private int rejectsLength3;
-//    private int rejectsLength4;
+    private int rejectsLength3;
+    private int rejectsLength4;
     
     private int rejectsFullLength;
     private int rejectsPrevWidth;
@@ -41,20 +41,18 @@ public class TitleScreenMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
         
-        rejectsText1 = "Meteor Rejects Addon by ";
+        rejectsText1 = "Meteor Rejects by ";
         rejectsText2 = "Cloudburst";
-//        rejectsText3 = "& ";
-//        rejectsText4 = "StormyBytes";
+        rejectsText3 = " & ";
+        rejectsText4 = "StormyBytes";
         
-        // I commented out my credit in case cloudburst didn't want it
         
         rejectsLength1 = textRenderer.getWidth(rejectsText1);
         rejectsLength2 = textRenderer.getWidth(rejectsText2);
-//        rejectsLength3 = textRenderer.getWidth(rejectsText3);
-//        rejectsLength4 = textRenderer.getWidth(rejectsText4);
+        rejectsLength3 = textRenderer.getWidth(rejectsText3);
+        rejectsLength4 = textRenderer.getWidth(rejectsText4);
 
-//        fullLength = rejectsLength1 + rejectsLength2 + rejectsLength3 + rejectsLength4;
-        rejectsFullLength = rejectsLength1 + rejectsLength2;
+        rejectsFullLength = rejectsLength1 + rejectsLength2 + rejectsLength3 + rejectsLength4;
         rejectsPrevWidth = 0;
     }
     
@@ -62,12 +60,12 @@ public class TitleScreenMixin extends Screen {
     private void onRender(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo info) {
         if (!Config.get().titleScreenCredits) return;
         rejectsPrevWidth = 0;
-        textRenderer.drawWithShadow(matrices, rejectsText1, width - rejectsFullLength - 3, 20, rejectsTextColor);
+        textRenderer.drawWithShadow(matrices, rejectsText1, width - rejectsFullLength - 3, 17, rejectsTextColor);
         rejectsPrevWidth += rejectsLength1;
-        textRenderer.drawWithShadow(matrices, rejectsText2, width - rejectsFullLength + rejectsPrevWidth - 3, 20, rejectsCreditColor);
-//        rejectsPrevWidth += rejectsLength2;
-//        textRenderer.drawWithShadow(matrices, rejectsText3, width - rejectsFullLength + rejectsPrevWidth - 3, 5, rejectsTextColor);
-//        prevWidth += rejectsLength3;
-//        textRenderer.drawWithShadow(matrices, rejectsText4, width - rejectsFullLength + rejectsPrevWidth - 3, 5, rejectsCreditColor);
+        textRenderer.drawWithShadow(matrices, rejectsText2, width - rejectsFullLength + rejectsPrevWidth - 3, 17, rejectsCreditColor);
+        rejectsPrevWidth += rejectsLength2;
+        textRenderer.drawWithShadow(matrices, rejectsText3, width - rejectsFullLength + rejectsPrevWidth - 3, 17, rejectsTextColor);
+        rejectsPrevWidth += rejectsLength3;
+        textRenderer.drawWithShadow(matrices, rejectsText4, width - rejectsFullLength + rejectsPrevWidth - 3, 17, rejectsCreditColor);
     }
 }
