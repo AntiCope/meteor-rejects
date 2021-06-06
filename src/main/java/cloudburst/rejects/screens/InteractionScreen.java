@@ -1,38 +1,36 @@
 package cloudburst.rejects.screens;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.function.Consumer;
-
 import cloudburst.rejects.modules.InteractionMenu;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import minegame159.meteorclient.systems.modules.Modules;
 import minegame159.meteorclient.utils.render.PeekScreen;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.options.KeyBinding;
-import net.minecraft.entity.*;
+import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.passive.*;
+import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import org.lwjgl.glfw.GLFW;
-
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.function.Consumer;
 
 public class InteractionScreen extends Screen {
 

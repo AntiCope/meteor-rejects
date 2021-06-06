@@ -1,8 +1,5 @@
 package cloudburst.rejects.modules;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
@@ -11,16 +8,15 @@ import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.world.BlockUtils;
-
-import org.lwjgl.system.CallbackI.P;
-
 import net.minecraft.block.BedBlock;
 import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 public class AutoBedTrap extends Module {
 
@@ -95,14 +91,14 @@ public class AutoBedTrap extends Module {
                 return;
             }
 
-            int block_slot = InvUtils.findItemInHotbar(Items.OBSIDIAN);
-            if (block_slot == -1) {
+            FindItemResult findBlock = InvUtils.findInHotbar(Items.OBSIDIAN);
+            if (findBlock.slot == -1) {
                 error("No specified blocks found. Disabling.");
                 toggle();
             }
 
 
-            if (BlockUtils.place(b, Hand.MAIN_HAND, block_slot, rotate.get(), 10, false)) {
+            if (BlockUtils.place(b, findBlock, rotate.get(), 10, false)) {
                 cap++;
                 if (cap >= bpt.get()) {
                     return;

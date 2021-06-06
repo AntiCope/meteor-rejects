@@ -9,7 +9,7 @@ import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.PlayerUtils;
-import minegame159.meteorclient.utils.player.RotationUtils;
+import minegame159.meteorclient.utils.player.Rotations;
 import minegame159.meteorclient.utils.world.BlockIterator;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffect;
@@ -123,12 +123,12 @@ public class AutoExtinguish extends Module {
                     if (center.get()) {
                         PlayerUtils.centerPlayer();
                     }
-                    RotationUtils.packetRotate(yaw, 90);
+                    Rotations.rotate(yaw, 90);
                     mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, blockPos, Direction.UP));
                     mc.player.swingHand(Hand.MAIN_HAND);
                     mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, blockPos, Direction.UP));
 
-                    RotationUtils.packetRotate(yaw, pitch);
+                    Rotations.rotate(yaw, pitch);
                 }
                 place(slot);
                 hasPlacedWater = true;
@@ -158,10 +158,10 @@ public class AutoExtinguish extends Module {
             float yaw = mc.gameRenderer.getCamera().getYaw() % 360;
             float pitch = mc.gameRenderer.getCamera().getPitch() % 360;
 
-            RotationUtils.packetRotate(yaw, 90);
+            Rotations.rotate(yaw, 90);
             mc.interactionManager.interactItem(mc.player, mc.player.world, Hand.MAIN_HAND);
             mc.player.inventory.selectedSlot = preSlot;
-            RotationUtils.packetRotate(yaw, pitch);
+            Rotations.rotate(yaw, pitch);
 
         }
     }

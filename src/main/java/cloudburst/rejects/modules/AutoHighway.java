@@ -3,22 +3,18 @@ package cloudburst.rejects.modules;
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.systems.modules.Categories;
-import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
+import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
 public class AutoHighway extends Module {
@@ -83,7 +79,7 @@ public class AutoHighway extends Module {
             return;
         }
         // Check Obsidian
-        if(InvUtils.findItemInHotbar(Items.OBSIDIAN) == -1) return;
+        if(!InvUtils.findInHotbar(Items.OBSIDIAN).found()) return;
         // Get Size
         highwaySize = getSize();
         // Place
@@ -576,8 +572,8 @@ public class AutoHighway extends Module {
 
         if (!blockState.getMaterial().isReplaceable()) return true;
 
-        int slot = findSlot();
-        if (BlockUtils.place(placePos, Hand.MAIN_HAND, slot, rotate.get(), 10, true)) {
+        FindItemResult slot = InvUtils.find(Items.OBSIDIAN);
+        if (BlockUtils.place(placePos, slot, rotate.get(), 10, true)) {
             return_ = true;
         }
 
@@ -632,22 +628,4 @@ public class AutoHighway extends Module {
         if(yaw >= 112.5 && yaw < 157.5) return Direction.WEST_NORTH;
         return Direction.SOUTH;
     }
-
-
-    private int findSlot() {
-        for (int i = 0; i < 9; i++) {
-            Item item = mc.player.inventory.getStack(i).getItem();
-
-            if (!(item instanceof BlockItem)) continue;
-
-            if (item == Items.OBSIDIAN) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-
-
 }

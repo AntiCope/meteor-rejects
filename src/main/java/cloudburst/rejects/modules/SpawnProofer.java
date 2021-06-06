@@ -6,12 +6,12 @@ import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShapes;
@@ -87,8 +87,8 @@ public class SpawnProofer extends Module {
         }
     
         // Find slot
-        int slot = findSlot();
-        if (slot == -1) {
+        FindItemResult findItemResult = InvUtils.findInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
+        if (!findItemResult.found()) {
             error("Found none of the chosen blocks in hotbar");
             toggle();
             return;
@@ -105,12 +105,12 @@ public class SpawnProofer extends Module {
         // Place the blocks
         if (delay.get() == 0) {
             
-            for (BlockPos blockPos : positions)  BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            for (BlockPos blockPos : positions)  BlockUtils.place(blockPos, findItemResult, rotate.get(), -50, false);
             
         } else {
             
             // If is light source
-            if (isLightSource(Block.getBlockFromItem(mc.player.inventory.getStack(slot).getItem()))) {
+            if (isLightSource(Block.getBlockFromItem(mc.player.inventory.getStack(findItemResult.slot).getItem()))) {
         
                 // Find lowest light level block
                 int lowestLightLevel = 16;
@@ -123,22 +123,18 @@ public class SpawnProofer extends Module {
                         selectedBlockPos = blockPos;
                     }
                 }
-                BlockUtils.place(selectedBlockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+                BlockUtils.place(selectedBlockPos, findItemResult, rotate.get(), -50, false);
                 
             } else {
     
                 // Place first in positions
-                BlockUtils.place(positions.get(0), Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+                BlockUtils.place(positions.get(0), findItemResult, rotate.get(), -50, false);
     
             }
         }
         
         // Reset tick delay
         ticksWaited = 0;
-    }
-    
-    private int findSlot() {
-        return InvUtils.findItemInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
     }
     
     private boolean validSpawn(BlockPos blockPos) { // Copied from Light Overlay and modified slightly

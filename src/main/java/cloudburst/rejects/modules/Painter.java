@@ -6,12 +6,12 @@ import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -94,8 +94,8 @@ public class Painter extends Module {
         else ticksWaited = 0;
         
         // Get slot
-        int slot = findSlot(block.get());
-        if (slot == -1) {
+        FindItemResult findItemResult = InvUtils.findInHotbar(itemStack -> block.get() == Block.getBlockFromItem(itemStack.getItem()));
+        if (findItemResult.slot == -1) {
             error("No selected blocks in hotbar");
             toggle();
             return;
@@ -108,15 +108,11 @@ public class Painter extends Module {
         
         // Place
         for (BlockPos blockPos : positions) {
-            BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -100, false);
+            BlockUtils.place(blockPos, findItemResult, rotate.get(), -100, false);
     
             // Delay 0
             if (delay.get() != 0) break;
         }
-    }
-    
-    private int findSlot(Block block) {
-        return InvUtils.findItemInHotbar(itemStack -> block == Block.getBlockFromItem(itemStack.getItem()));
     }
     
     private boolean shouldPlace(BlockPos blockPos, Block useBlock) {

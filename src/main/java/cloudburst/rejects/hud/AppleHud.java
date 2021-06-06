@@ -41,8 +41,8 @@ public class AppleHud extends HudElement {
         if (isInEditor()) {
             RenderUtils.drawItem(Items.GOLDEN_APPLE.getDefaultStack(), (int) x, (int) y, scale.get(), true);
         } else {
-            int count = InvUtils.findItemWithCount(Items.GOLDEN_APPLE).count;
-            count += InvUtils.findItemWithCount(Items.ENCHANTED_GOLDEN_APPLE).count;
+            int count = InvUtils.find(Items.GOLDEN_APPLE).count;
+            count += InvUtils.find(Items.ENCHANTED_GOLDEN_APPLE).count;
             if (count > 0)
                 RenderUtils.drawItem(new ItemStack(Items.GOLDEN_APPLE, count), (int) x, (int) y, scale.get(), true);
         }

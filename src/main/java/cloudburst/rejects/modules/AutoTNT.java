@@ -9,6 +9,7 @@ import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.PlayerUtils;
 import net.minecraft.block.Blocks;
@@ -60,7 +61,8 @@ public class AutoTNT extends Module {
     private final ArrayList<BlockPos> blocks = new ArrayList<>();
     private boolean ignited;
     private int ticks = 0;
-    private int preSlot, slot;
+    private int preSlot;
+    private FindItemResult findSlot;
     
     public AutoTNT() {
         super(MeteorRejectsAddon.CATEGORY, "auto-tnt", "Ignites TNT for you");
@@ -104,25 +106,25 @@ public class AutoTNT extends Module {
             blocks.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
             
             // Get slot
-            slot = getFlintAndSteelSlot();
-            if (slot == -1) {
+            findSlot = getFlintAndSteelSlot();
+            if (!findSlot.found()) {
                 error("No flint and steel in hotbar");
                 toggle();
                 return;
             }
             
             // Ignition
-            ignite(blocks.get(0), slot);
+            ignite(blocks.get(0), findSlot);
             
             // Reset ticks
             ticks = delay.get();
         } else ticks--;
     }
     
-    private void ignite(BlockPos pos, int slot) {
+    private void ignite(BlockPos pos, FindItemResult item) {
         // Set slots
         preSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = slot;
+        mc.player.inventory.selectedSlot = item.slot;
 
 
         ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
@@ -133,7 +135,7 @@ public class AutoTNT extends Module {
         mc.player.inventory.selectedSlot = preSlot;
     }
     
-    private int getFlintAndSteelSlot() {
-        return InvUtils.findItemInHotbar(item -> item.getItem() instanceof FlintAndSteelItem && (antiBreak.get() && (item.getMaxDamage() - item.getDamage()) > 10));
+    private FindItemResult getFlintAndSteelSlot() {
+        return InvUtils.findInHotbar(item -> item.getItem() instanceof FlintAndSteelItem && (antiBreak.get() && (item.getMaxDamage() - item.getDamage()) > 10));
     }
 }

@@ -10,6 +10,7 @@ import minegame159.meteorclient.rendering.ShapeMode;
 import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.Rotations;
 import minegame159.meteorclient.utils.render.color.SettingColor;
@@ -199,40 +200,40 @@ public class Lavacast extends Module {
     }
 
     private void placeLava() {
-        int slot = InvUtils.findItemInHotbar(Items.LAVA_BUCKET);
-        if (slot == -1) {
+        FindItemResult findItemResult = InvUtils.findInHotbar(Items.LAVA_BUCKET);
+        if (!findItemResult.found()) {
             error("No lava bucket found.");
             toggle();
             return;
         }
         int prevSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = slot;
+        mc.player.inventory.selectedSlot = findItemResult.slot;
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
         mc.player.inventory.selectedSlot = prevSlot;
     }
 
     private void placeWater() {
-        int slot = InvUtils.findItemInHotbar(Items.WATER_BUCKET);
-        if (slot == -1) {
+        FindItemResult findItemResult = InvUtils.findInHotbar(Items.WATER_BUCKET);
+        if (!findItemResult.found()) {
             error("No water bucket found.");
             toggle();
             return;
         }
         int prevSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = slot;
+        mc.player.inventory.selectedSlot = findItemResult.slot;
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
         mc.player.inventory.selectedSlot = prevSlot;
     }
 
     private void pickupLiquid() {
-        int slot = InvUtils.findItemInHotbar(Items.BUCKET);
-        if (slot == -1) {
+        FindItemResult findItemResult = InvUtils.findInHotbar(Items.BUCKET);
+        if (!findItemResult.found()) {
             error("No bucket found.");
             toggle();
             return;
         }
         int prevSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = slot;
+        mc.player.inventory.selectedSlot = findItemResult.slot;
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
         mc.player.inventory.selectedSlot = prevSlot;
     }

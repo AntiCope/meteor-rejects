@@ -103,9 +103,9 @@ public class Auto32K extends Module {
     private void onTick(TickEvent.Post event) {
         if (phase <= 7) {
             if (mode.get() == Mode.Hopper) {
-                int shulkerSlot = InvUtils.findItemWithCount(Items.SHULKER_BOX).slot;
-                int hopperSlot = InvUtils.findItemWithCount(Items.HOPPER).slot;
-                if (isValidSlot(shulkerSlot) || isValidSlot(hopperSlot)) return;
+                FindItemResult findShulker = InvUtils.findInHotbar(Items.SHULKER_BOX);
+                FindItemResult findHopper = InvUtils.findInHotbar(Items.HOPPER);
+                if (isValidSlot(findShulker) || isValidSlot(findHopper)) return;
                 List<BlockPos> sortedBlocks = findValidBlocksHopper();
                 sortedBlocks.sort(Comparator.comparingDouble(value -> mc.player.squaredDistanceTo(value.getX(), value.getY(), value.getZ())));
                 Iterator<BlockPos> sortedIterator = sortedBlocks.iterator();
@@ -113,13 +113,13 @@ public class Auto32K extends Module {
                 if(sortedIterator.hasNext()) bestBlock = sortedIterator.next();
 
                 if (bestBlock != null) {
-                    while (!BlockUtils.place(bestBlock, Hand.MAIN_HAND,hopperSlot,true,100,false)) {
+                    while (!BlockUtils.place(bestBlock, findHopper,true,100,false)) {
                         if(sortedIterator.hasNext()) {
                             bestBlock = sortedIterator.next().up();
                         }else break;
                     }
                     mc.player.setSneaking(true);
-                    if (!BlockUtils.place(bestBlock.up(), Hand.MAIN_HAND, shulkerSlot,true,100,false)) {
+                    if (!BlockUtils.place(bestBlock.up(),  findShulker,true,100,false)) {
                         error("Failed to place.");
                         this.toggle();
                         return;
@@ -129,23 +129,23 @@ public class Auto32K extends Module {
                     phase = 8;
                 }
             } else if (mode.get() == Mode.Dispenser) {
-                int shulkerSlot = InvUtils.findItemWithCount(Items.SHULKER_BOX).slot;
-                int hopperSlot = InvUtils.findItemWithCount(Items.HOPPER).slot;
-                int dispenserSlot = InvUtils.findItemWithCount(Items.DISPENSER).slot;
-                int redstoneSlot = InvUtils.findItemWithCount(Items.REDSTONE_BLOCK).slot;
+                FindItemResult shulkerSlot = InvUtils.find(Items.SHULKER_BOX);
+                FindItemResult hopperSlot = InvUtils.find(Items.HOPPER);
+                FindItemResult dispenserSlot = InvUtils.find(Items.DISPENSER);
+                FindItemResult redstoneSlot = InvUtils.find(Items.REDSTONE_BLOCK);
                 if ((isValidSlot(shulkerSlot) && mode.get() == Mode.Hopper) || isValidSlot(hopperSlot) || isValidSlot(dispenserSlot) || isValidSlot(redstoneSlot))
                     return;
                 if (phase == 0) {
                     bestBlock = findValidBlocksDispenser();
                     if(bestBlock == null) return;
-                    if (!BlockUtils.place(bestBlock.add(x, 0, z), Hand.MAIN_HAND, hopperSlot, true, 100, false)) {
+                    if (!BlockUtils.place(bestBlock.add(x, 0, z), hopperSlot, true, 100, false)) {
                         error("Failed to place.");
                         this.toggle();
                         return;
                     }
                     phase += 1;
                 } else if (phase == 1) {
-                    mc.player.inventory.selectedSlot = dispenserSlot;
+                    mc.player.inventory.selectedSlot = dispenserSlot.slot;
                     if (x == -1) {
                         mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookOnly(-90f, mc.player.pitch, mc.player.isOnGround()));
                     } else if (x == 1) {
@@ -164,13 +164,13 @@ public class Auto32K extends Module {
                     phase += 1;
                 }else if (phase == 4 && mc.currentScreen instanceof Generic3x3ContainerScreen) {
                     mc.player.getSpeed();
-                    InvUtils.move().from(shulkerSlot).toId(4);
+                    InvUtils.move().from(shulkerSlot.slot).toId(4);
                     phase += 1;
                 }else if (phase == 5 && mc.currentScreen instanceof Generic3x3ContainerScreen) {
                     mc.player.closeHandledScreen();
                     phase += 1;
                 }else if (phase == 6) {
-                    mc.player.inventory.selectedSlot = redstoneSlot;
+                    mc.player.inventory.selectedSlot = redstoneSlot.slot;
                     mc.player.setSneaking(true);
                     mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(2), false));
                     mc.player.setSneaking(false);
@@ -295,8 +295,8 @@ public class Auto32K extends Module {
         return allBlocks;
     }
 
-    private boolean isValidSlot(int slot){
-        return slot == -1 || slot >= 9;
+    private boolean isValidSlot(FindItemResult findItemResult){
+        return findItemResult.slot == -1 || findItemResult.slot >= 9;
     }
 
     private List<Block> setDefaultBlocks(){

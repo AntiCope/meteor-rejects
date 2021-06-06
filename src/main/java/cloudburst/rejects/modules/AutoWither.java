@@ -7,12 +7,12 @@ import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
 import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
 import minegame159.meteorclient.utils.player.PlayerUtils;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
@@ -70,8 +70,8 @@ public class AutoWither extends Module {
     }
     
     private boolean hasEnoughMaterials() {
-        if ((InvUtils.findItemWithCount(Items.SOUL_SAND).count < 4 && InvUtils.findItemWithCount(Items.SOUL_SOIL).count < 4) ||
-                InvUtils.findItemWithCount(Items.WITHER_SKELETON_SKULL).count < 3)
+        if ((InvUtils.find(Items.SOUL_SAND).count < 4 && InvUtils.find(Items.SOUL_SOIL).count < 4) ||
+                InvUtils.find(Items.WITHER_SKELETON_SKULL).count < 3)
             return false;
         
         return true;
@@ -118,30 +118,30 @@ public class AutoWither extends Module {
     private void spawnWither(BlockPos blockPos, Direction direction) {
         
         // Soul sand/soil slot
-        int soulSlot = InvUtils.findItemInHotbar(Items.SOUL_SAND);
-        if (soulSlot == -1) InvUtils.findItemInHotbar(Items.SOUL_SOIL);
+        FindItemResult findSoulSand = InvUtils.findInHotbar(Items.SOUL_SAND);
+        if (!findSoulSand.found()) InvUtils.findInHotbar(Items.SOUL_SOIL);
         
         // Skull slot
-        int skullSlot = InvUtils.findItemInHotbar(Items.WITHER_SKELETON_SKULL);
+        FindItemResult findWitherSkull = InvUtils.findInHotbar(Items.WITHER_SKELETON_SKULL);
         
-        BlockUtils.place(blockPos, Hand.MAIN_HAND, soulSlot, rotate.get(), -50, true);
-        BlockUtils.place(blockPos.up(), Hand.MAIN_HAND, soulSlot, rotate.get(), -50, true);
+        BlockUtils.place(blockPos, findSoulSand, rotate.get(), -50, true);
+        BlockUtils.place(blockPos.up(), findSoulSand, rotate.get(), -50, true);
         
         if (direction == Direction.EAST || direction == Direction.WEST) {
-            BlockUtils.place(blockPos.up().north(), Hand.MAIN_HAND, soulSlot, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().south(), Hand.MAIN_HAND, soulSlot, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().north(), findSoulSand, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().south(), findSoulSand, rotate.get(), -50, true);
             
-            BlockUtils.place(blockPos.up().up(), Hand.MAIN_HAND, skullSlot, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().north(), Hand.MAIN_HAND, skullSlot, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().south(), Hand.MAIN_HAND, skullSlot, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().up(), findWitherSkull, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().up().north(), findWitherSkull, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().up().south(), findWitherSkull, rotate.get(), -50, true);
         }
         else if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-            BlockUtils.place(blockPos.up().east(), Hand.MAIN_HAND, soulSlot, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().west(), Hand.MAIN_HAND, soulSlot, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().east(), findSoulSand, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().west(), findSoulSand, rotate.get(), -50, true);
             
-            BlockUtils.place(blockPos.up().up(), Hand.MAIN_HAND, skullSlot, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().east(), Hand.MAIN_HAND, skullSlot, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().west(), Hand.MAIN_HAND, skullSlot, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().up(), findWitherSkull, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().up().east(), findWitherSkull, rotate.get(), -50, true);
+            BlockUtils.place(blockPos.up().up().west(), findWitherSkull, rotate.get(), -50, true);
         }
     }
 }
