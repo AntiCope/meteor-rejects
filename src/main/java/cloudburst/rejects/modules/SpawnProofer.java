@@ -26,10 +26,8 @@ public class SpawnProofer extends Module {
     private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
             .name("range")
             .description("Range for block placement and rendering")
-            .min(1)
-            .max(4)
-            .sliderMin(1)
-            .sliderMax(1)
+            .min(0)
+            .sliderMax(10)
             .defaultValue(3)
             .build()
     );
@@ -42,10 +40,11 @@ public class SpawnProofer extends Module {
             .build()
     );
     
-    private final Setting<Boolean> multiPlace = sgGeneral.add(new BoolSetting.Builder()
-            .name("multi-place")
-            .description("Places multiple blocks per tick")
-            .defaultValue(false)
+    private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
+            .name("delay")
+            .description("Delay in ticks between placing blocks")
+            .defaultValue(0)
+            .min(0).sliderMax(10)
             .build()
     );
     
@@ -53,14 +52,6 @@ public class SpawnProofer extends Module {
             .name("rotate")
             .description("Rotates towards the blocks being placed.")
             .defaultValue(true)
-            .build()
-    );
-    
-    private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
-            .name("delay")
-            .description("Delay in ticks between placing blocks")
-            .defaultValue(0)
-            .min(0).max(10)
             .build()
     );
     
@@ -86,32 +77,15 @@ public class SpawnProofer extends Module {
         super(MeteorRejectsAddon.CATEGORY, "spawn-proofer", "Automatically spawnproofs using blocks.");
     }
     
-    @Override
-    public void onActivate() {
-        ticksWaited = 0;
-    }
-    
-    @Override
-    public void onDeactivate() {
-        ticksWaited = 0;
-    }
-    
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        // Clear and set positions
-        positions.clear();
-        for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
-            if (validSpawn(blockPos)) positions.add(blockPos);
-        }
-        
-        if (positions.size() == 0) return;
     
         // Tick delay
         if (ticksWaited < delay.get()) {
             ticksWaited++;
             return;
         }
-        
+    
         // Find slot
         int slot = findSlot();
         if (slot == -1) {
@@ -120,36 +94,42 @@ public class SpawnProofer extends Module {
             return;
         }
         
-        // If is light source
-        if (isLightSource(Block.getBlockFromItem(
-                mc.player.inventory.getStack(slot).getItem()
-        ))) {
+        // Clear and set positions
+        positions.clear();
+        for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
+            if (validSpawn(blockPos)) positions.add(blockPos);
+        }
+        if (positions.size() == 0) return;
+    
+        
+        // Place the blocks
+        if (delay.get() == 0) {
             
-            // Find lowest light level block
-            int lowestLightLevel = 16;
-            BlockPos selectedBlockPos = positions.get(0); // Just for initialization
-            for (BlockPos blockPos : positions) {
-                
-                int lightLevel = mc.world.getLightLevel(blockPos);
-                if (lightLevel < lowestLightLevel) {
-                    lowestLightLevel = lightLevel;
-                    selectedBlockPos = blockPos;
-                }
-            }
-            
-            BlockUtils.place(selectedBlockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            for (BlockPos blockPos : positions)  BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
             
         } else {
             
-            // Place first in positions
-            BlockUtils.place(positions.get(0), Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            // If is light source
+            if (isLightSource(Block.getBlockFromItem(mc.player.inventory.getStack(slot).getItem()))) {
+        
+                // Find lowest light level block
+                int lowestLightLevel = 16;
+                BlockPos selectedBlockPos = positions.get(0); // Just for initialization
+                for (BlockPos blockPos : positions) {
             
-            // Multiplace
-            if (multiPlace.get()) {
-                slot = findSlot();
+                    int lightLevel = mc.world.getLightLevel(blockPos);
+                    if (lightLevel < lowestLightLevel) {
+                        lowestLightLevel = lightLevel;
+                        selectedBlockPos = blockPos;
+                    }
+                }
+                BlockUtils.place(selectedBlockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
                 
-                positions.remove(0);
-                for (BlockPos blockPos : positions) BlockUtils.place(blockPos, Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+            } else {
+    
+                // Place first in positions
+                BlockUtils.place(positions.get(0), Hand.MAIN_HAND, slot, rotate.get(), -50, false);
+    
             }
         }
         
@@ -200,11 +180,11 @@ public class SpawnProofer extends Module {
         return block instanceof AbstractButtonBlock ||
                 block instanceof SlabBlock ||
                 block instanceof AbstractPressurePlateBlock ||
-                block instanceof GlassBlock ||
+                block instanceof TransparentBlock ||
                 block instanceof TripwireBlock;
     }
     
     private boolean isLightSource(Block block) {
-        return block instanceof TorchBlock;
+        return block.getDefaultState().getLuminance() > 0;
     }
 }
