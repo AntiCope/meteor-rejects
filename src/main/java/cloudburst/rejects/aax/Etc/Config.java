@@ -3,7 +3,6 @@ package cloudburst.rejects.aax.Etc;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 
-
 import java.io.IOException;
 
 public class Config {
