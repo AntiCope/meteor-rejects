@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(GuiRenderer.class)
 public interface GuiRendererAccessor {
     @Accessor("mb")
-    public MeshBuilder getMeshbuilder();
+    MeshBuilder getMeshbuilder();
 }

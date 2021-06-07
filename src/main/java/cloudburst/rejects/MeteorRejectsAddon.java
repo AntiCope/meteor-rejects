@@ -1,6 +1,8 @@
 package cloudburst.rejects;
 
+import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import minegame159.meteorclient.MeteorAddon;
+import minegame159.meteorclient.gui.GuiThemes;
 import minegame159.meteorclient.systems.commands.Commands;
 import minegame159.meteorclient.systems.modules.Category;
 import minegame159.meteorclient.systems.modules.Modules;
@@ -64,6 +66,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		hud.elements.add(new AppleHud(hud));
 		hud.elements.add(new CrystalHud(hud));
 		hud.elements.add(new ExpHud(hud));
+
+		GuiThemes.add(new MeteorRoundedGuiTheme());
 	}
 
 	@Override
