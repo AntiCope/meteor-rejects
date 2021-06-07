@@ -6,7 +6,8 @@
   "name": "Meteor Rejects Addon",
   "description": "An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly.",
   "authors": [
-    "Cloudburst"
+    "Cloudburst",
+    "StormyBytes"
   ],
   "contact": {
 
@@ -22,7 +23,8 @@
     ]
   },
   "mixins": [
-    "meteor-rejects.mixins.json"
+    "meteor-rejects.mixins.json",
+    "meteor-rejects-meteor.mixins.json"
   ],
 
   "depends": {
