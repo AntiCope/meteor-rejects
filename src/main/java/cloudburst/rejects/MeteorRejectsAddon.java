@@ -59,7 +59,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		commands.add(new SetBlockCommand());
 		commands.add(new TeleportCommand());
 		commands.add(new TerrainExport());
-		commands.add(new RecipeCommand());
 
 		HUD hud = modules.get(HUD.class);
 		hud.elements.add(new AppleHud(hud));
