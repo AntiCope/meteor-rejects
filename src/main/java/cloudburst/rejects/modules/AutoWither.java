@@ -5,7 +5,6 @@ import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Categories;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
@@ -15,6 +14,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+
+import cloudburst.rejects.MeteorRejectsAddon;
 
 public class AutoWither extends Module {
     
@@ -30,7 +31,7 @@ public class AutoWither extends Module {
     // Part 1 : Build wither directly infront of player (complete)
     // Part 2 : Build wither based on where the player is looking
     public AutoWither() {
-        super(Categories.World, "auto-wither", "Automatically builds withers.");
+        super(MeteorRejectsAddon.CATEGORY, "auto-wither", "Automatically builds withers.");
     }
     
     @EventHandler

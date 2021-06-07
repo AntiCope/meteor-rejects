@@ -18,6 +18,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.registry.Registry;
 
+import cloudburst.rejects.MeteorRejectsAddon;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class NoInteract extends Module {
     );
     
     public NoInteract() {
-        super(Categories.Player, "no-interact", "Blocks interactions with certain types of inputs.");
+        super(MeteorRejectsAddon.CATEGORY, "no-interact", "Blocks interactions with certain types of inputs.");
     }
     @EventHandler
     private void onScreenOpen(OpenScreenEvent event) {
