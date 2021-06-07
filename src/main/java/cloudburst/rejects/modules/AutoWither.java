@@ -71,8 +71,8 @@ public class AutoWither extends Module {
     }
     
     private boolean hasEnoughMaterials() {
-        if ((InvUtils.find(Items.SOUL_SAND).count < 4 && InvUtils.find(Items.SOUL_SOIL).count < 4) ||
-                InvUtils.find(Items.WITHER_SKELETON_SKULL).count < 3)
+        if ((InvUtils.find(Items.SOUL_SAND).getCount() < 4 && InvUtils.find(Items.SOUL_SOIL).getCount() < 4) ||
+                InvUtils.find(Items.WITHER_SKELETON_SKULL).getCount() < 3)
             return false;
         
         return true;
