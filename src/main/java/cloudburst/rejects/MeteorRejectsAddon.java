@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import cloudburst.rejects.commands.*;
-import cloudburst.rejects.hud.*;
+import cloudburst.rejects.gui.hud.*;
 import cloudburst.rejects.modules.*;
 
 public class MeteorRejectsAddon extends MeteorAddon {

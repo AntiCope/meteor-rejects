@@ -1,7 +1,7 @@
 package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
-import cloudburst.rejects.screens.InteractionScreen;
+import cloudburst.rejects.gui.screens.InteractionScreen;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import minegame159.meteorclient.gui.GuiTheme;
 import minegame159.meteorclient.gui.widgets.WWidget;

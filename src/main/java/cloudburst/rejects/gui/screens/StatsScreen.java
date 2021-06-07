@@ -1,4 +1,4 @@
-package cloudburst.rejects.screens;
+package cloudburst.rejects.gui.screens;
 
 import net.minecraft.client.resource.language.TranslationStorage;
 import net.minecraft.entity.Entity;

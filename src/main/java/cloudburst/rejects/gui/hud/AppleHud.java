@@ -1,4 +1,4 @@
-package cloudburst.rejects.hud;
+package cloudburst.rejects.gui.hud;
 
 import minegame159.meteorclient.settings.DoubleSetting;
 import minegame159.meteorclient.settings.Setting;
@@ -11,12 +11,12 @@ import minegame159.meteorclient.utils.render.RenderUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
-public class ExpHud extends HudElement {
+public class AppleHud extends HudElement {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Double> scale = sgGeneral.add(new DoubleSetting.Builder()
             .name("scale")
-            .description("Scale of exp bottle counter.")
+            .description("Scale of golden apple counter.")
             .defaultValue(3)
             .min(1)
             .sliderMin(1)
@@ -24,8 +24,8 @@ public class ExpHud extends HudElement {
             .build()
     );
 
-    public ExpHud(HUD hud) {
-        super(hud, "exp", "Displays the amount of exp bottles in your inventory.", false);
+    public AppleHud(HUD hud) {
+        super(hud, "apples", "Displays the amount of golden apples in your inventory.", false);
     }
 
     @Override
@@ -39,9 +39,12 @@ public class ExpHud extends HudElement {
         double y = box.getY();
 
         if (isInEditor()) {
-            RenderUtils.drawItem(Items.EXPERIENCE_BOTTLE.getDefaultStack(), (int) x, (int) y, scale.get(), true);
-        } else if (InvUtils.find(Items.EXPERIENCE_BOTTLE).getCount() > 0) {
-            RenderUtils.drawItem(new ItemStack(Items.EXPERIENCE_BOTTLE, InvUtils.find(Items.EXPERIENCE_BOTTLE).getCount()), (int) x, (int) y, scale.get(), true);
+            RenderUtils.drawItem(Items.GOLDEN_APPLE.getDefaultStack(), (int) x, (int) y, scale.get(), true);
+        } else {
+            int count = InvUtils.find(Items.GOLDEN_APPLE).getCount();
+            count += InvUtils.find(Items.ENCHANTED_GOLDEN_APPLE).getCount();
+            if (count > 0)
+                RenderUtils.drawItem(new ItemStack(Items.GOLDEN_APPLE, count), (int) x, (int) y, scale.get(), true);
         }
     }
 } 

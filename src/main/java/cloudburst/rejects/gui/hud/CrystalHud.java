@@ -1,4 +1,4 @@
-package cloudburst.rejects.hud;
+package cloudburst.rejects.gui.hud;
 
 import minegame159.meteorclient.settings.DoubleSetting;
 import minegame159.meteorclient.settings.Setting;

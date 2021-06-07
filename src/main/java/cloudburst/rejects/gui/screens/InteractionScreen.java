@@ -1,4 +1,4 @@
-package cloudburst.rejects.screens;
+package cloudburst.rejects.gui.screens;
 
 import cloudburst.rejects.modules.InteractionMenu;
 import com.mojang.blaze3d.platform.GlStateManager;
