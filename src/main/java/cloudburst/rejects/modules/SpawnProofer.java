@@ -1,13 +1,14 @@
 package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
-import cloudburst.rejects.utils.WorldUtils;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
+import minegame159.meteorclient.utils.misc.Pool;
 import minegame159.meteorclient.utils.player.FindItemResult;
 import minegame159.meteorclient.utils.player.InvUtils;
+import minegame159.meteorclient.utils.world.BlockIterator;
 import minegame159.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.BlockHalf;
@@ -55,22 +56,23 @@ public class SpawnProofer extends Module {
             .build()
     );
     
-    private final Setting<Boolean> spawnProofPotentialSpawns = sgGeneral.add(new BoolSetting.Builder()
-            .name("potential-spawns")
-            .description("Spawn Proofs Potential Spawns (Spots that have access to sunlight and only spawns mobs during night time)")
-            .defaultValue(true)
-            .build()
-    );
-    
-    private final Setting<Boolean> spawnProofAlwaysSpawns = sgGeneral.add(new BoolSetting.Builder()
+    private final Setting<Boolean> alwaysSpawns = sgGeneral.add(new BoolSetting.Builder()
             .name("always-spawns")
-            .description("Spawn Proofs Always Spawns (Spots that undoubtedly will spawn mobs)")
+            .description("Spawn Proofs spots that will spawn mobs")
+            .defaultValue(true)
+            .build()
+    );
+    
+    private final Setting<Boolean> potentialSpawns = sgGeneral.add(new BoolSetting.Builder()
+            .name("potential-spawns")
+            .description("Spawn Proofs spots that will potentially spawn mobs (eg at night)")
             .defaultValue(true)
             .build()
     );
     
     
-    private final ArrayList<BlockPos> positions = new ArrayList<>();
+    private final Pool<Spawn> spawnPool = new Pool<Spawn>(Spawn::new);
+    private final List<Spawn> spawns = new ArrayList<>();
     private int ticksWaited;
     
     public SpawnProofer() {
@@ -78,62 +80,67 @@ public class SpawnProofer extends Module {
     }
     
     @EventHandler
-    private void onTick(TickEvent.Post event) {
-    
+    private void onTickPre(TickEvent.Pre event) {
         // Tick delay
-        if (ticksWaited < delay.get()) {
-            ticksWaited++;
+        if (delay.get() != 0 && ticksWaited < delay.get() - 1) {
             return;
         }
     
         // Find slot
-        FindItemResult findItemResult = InvUtils.findInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
-        if (!findItemResult.found()) {
+        FindItemResult block = InvUtils.findInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
+        if (!block.found()) {
             error("Found none of the chosen blocks in hotbar");
             toggle();
             return;
         }
         
-        // Clear and set positions
-        positions.clear();
-        for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
-            if (validSpawn(blockPos)) positions.add(blockPos);
+        for (Spawn spawn : spawns) spawnPool.free(spawn);
+        spawns.clear();
+        BlockIterator.register(range.get(), range.get(), (blockPos, blockState) -> {
+            if (validSpawn(blockPos)) spawns.add(spawnPool.get().set(blockPos));
+        });
+    }
+    
+    @EventHandler
+    private void onTickPost(TickEvent.Post event) {
+        if (delay.get() != 0 && ticksWaited < delay.get() - 1) {
+            ticksWaited++;
+            return;
         }
-        if (positions.size() == 0) return;
+        
+        if (!spawns.isEmpty()) {
     
-        
-        // Place the blocks
-        if (delay.get() == 0) {
-            
-            for (BlockPos blockPos : positions)  BlockUtils.place(blockPos, findItemResult, rotate.get(), -50, false);
-            
-        } else {
-            
-            // If is light source
-            if (isLightSource(Block.getBlockFromItem(mc.player.inventory.getStack(findItemResult.slot).getItem()))) {
-        
-                // Find lowest light level block
-                int lowestLightLevel = 16;
-                BlockPos selectedBlockPos = positions.get(0); // Just for initialization
-                for (BlockPos blockPos : positions) {
-            
-                    int lightLevel = mc.world.getLightLevel(blockPos);
-                    if (lightLevel < lowestLightLevel) {
-                        lowestLightLevel = lightLevel;
-                        selectedBlockPos = blockPos;
-                    }
-                }
-                BlockUtils.place(selectedBlockPos, findItemResult, rotate.get(), -50, false);
-                
+            // Find slot
+            FindItemResult block = InvUtils.findInHotbar(itemStack -> blocks.get().contains(Block.getBlockFromItem(itemStack.getItem())));
+    
+            // Place blocks
+            if (delay.get() == 0) {
+                for (Spawn spawn : spawns) BlockUtils.place(spawn.blockPos, block, rotate.get(), -50, false);
             } else {
-    
-                // Place first in positions
-                BlockUtils.place(positions.get(0), findItemResult, rotate.get(), -50, false);
-    
+                
+                // Check if light source
+                if (isLightSource(Block.getBlockFromItem(mc.player.inventory.getStack(block.slot).getItem()))) {
+                    
+                    // Find lowest light level
+                    int lowestLightLevel = 16;
+                    Spawn selectedSpawn = spawns.get(0);
+                    for (Spawn spawn : spawns) {
+                        int lightLevel = mc.world.getLightLevel(spawn.blockPos);
+                        if (lightLevel < lowestLightLevel) {
+                            lowestLightLevel = lightLevel;
+                            selectedSpawn = spawn;
+                        }
+                    }
+                    
+                    BlockUtils.place(selectedSpawn.blockPos, block, rotate.get(), -50, false);
+                    
+                } else {
+                    BlockUtils.place(spawns.get(0).blockPos, block, rotate.get(), -50, false);
+                }
+                
             }
         }
         
-        // Reset tick delay
         ticksWaited = 0;
     }
     
@@ -148,8 +155,8 @@ public class SpawnProofer extends Module {
             if (mc.world.getBlockState(blockPos.down()).isTranslucent(mc.world, blockPos.down())) return false;
         }
         
-        if (mc.world.getLightLevel(blockPos, 0) <= 7) return spawnProofPotentialSpawns.get();
-        else if (mc.world.getLightLevel(LightType.BLOCK, blockPos) <= 7) return spawnProofAlwaysSpawns.get();
+        if (mc.world.getLightLevel(blockPos, 0) <= 7) return potentialSpawns.get();
+        else if (mc.world.getLightLevel(LightType.BLOCK, blockPos) <= 7) return alwaysSpawns.get();
         
         return false;
     }
@@ -182,5 +189,15 @@ public class SpawnProofer extends Module {
     
     private boolean isLightSource(Block block) {
         return block.getDefaultState().getLuminance() > 0;
+    }
+    
+    private static class Spawn {
+        public BlockPos.Mutable blockPos = new BlockPos.Mutable();
+        
+        public Spawn set(BlockPos blockPos) {
+            this.blockPos.set(blockPos);
+            
+            return this;
+        }
     }
 }
