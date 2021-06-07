@@ -124,7 +124,7 @@ public class AutoTNT extends Module {
     private void ignite(BlockPos pos, FindItemResult item) {
         // Set slots
         preSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = item.slot;
+        mc.player.inventory.selectedSlot = item.getSlot();
 
 
         ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));

@@ -145,7 +145,7 @@ public class Auto32K extends Module {
                     }
                     phase += 1;
                 } else if (phase == 1) {
-                    mc.player.inventory.selectedSlot = dispenserSlot.slot;
+                    mc.player.inventory.selectedSlot = dispenserSlot.getSlot();
                     if (x == -1) {
                         mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookOnly(-90f, mc.player.pitch, mc.player.isOnGround()));
                     } else if (x == 1) {
@@ -164,13 +164,13 @@ public class Auto32K extends Module {
                     phase += 1;
                 }else if (phase == 4 && mc.currentScreen instanceof Generic3x3ContainerScreen) {
                     mc.player.getSpeed();
-                    InvUtils.move().from(shulkerSlot.slot).toId(4);
+                    InvUtils.move().from(shulkerSlot.getSlot()).toId(4);
                     phase += 1;
                 }else if (phase == 5 && mc.currentScreen instanceof Generic3x3ContainerScreen) {
                     mc.player.closeHandledScreen();
                     phase += 1;
                 }else if (phase == 6) {
-                    mc.player.inventory.selectedSlot = redstoneSlot.slot;
+                    mc.player.inventory.selectedSlot = redstoneSlot.getSlot();
                     mc.player.setSneaking(true);
                     mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(2), false));
                     mc.player.setSneaking(false);
@@ -296,7 +296,7 @@ public class Auto32K extends Module {
     }
 
     private boolean isValidSlot(FindItemResult findItemResult){
-        return findItemResult.slot == -1 || findItemResult.slot >= 9;
+        return findItemResult.getSlot() == -1 || findItemResult.getSlot() >= 9;
     }
 
     private List<Block> setDefaultBlocks(){

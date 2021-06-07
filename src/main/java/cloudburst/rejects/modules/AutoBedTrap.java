@@ -92,7 +92,7 @@ public class AutoBedTrap extends Module {
             }
 
             FindItemResult findBlock = InvUtils.findInHotbar(Items.OBSIDIAN);
-            if (findBlock.slot == -1) {
+            if (!findBlock.found()) {
                 error("No specified blocks found. Disabling.");
                 toggle();
             }

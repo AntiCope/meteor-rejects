@@ -95,7 +95,7 @@ public class Painter extends Module {
         
         // Get slot
         FindItemResult findItemResult = InvUtils.findInHotbar(itemStack -> block.get() == Block.getBlockFromItem(itemStack.getItem()));
-        if (findItemResult.slot == -1) {
+        if (!findItemResult.found()) {
             error("No selected blocks in hotbar");
             toggle();
             return;
