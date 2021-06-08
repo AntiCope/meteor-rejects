@@ -86,7 +86,7 @@ public class BoatGlitch extends Module {
             }
             if (boat != null) {
                 boat.noClip = true;
-                boat.pushSpeedReduction = 1;
+                //boat.pushSpeedReduction = 1;
                 dismountTicks = 5;
             }
         }
@@ -112,7 +112,7 @@ public class BoatGlitch extends Module {
         if (remountTicks > 0) {
             remountTicks--;
             if (remountTicks == 0) {
-                mc.getNetworkHandler().sendPacket(new PlayerInteractEntityC2SPacket(boat, Hand.MAIN_HAND, false));
+                mc.getNetworkHandler().sendPacket( PlayerInteractEntityC2SPacket.interact(boat, false, Hand.MAIN_HAND));
                 if (toggleAfter.get()) {
                     toggle();
                 }

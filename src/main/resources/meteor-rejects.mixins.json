@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "cloudburst.rejects.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "mixins": [
   ],
   "client": [

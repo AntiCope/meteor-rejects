@@ -11,7 +11,7 @@ import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.render.color.Color;
 import minegame159.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.chunk.WorldChunk;
@@ -131,7 +131,7 @@ public class NewChunks extends Module {
 
             if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getX(), packet.getZ()) == null) {
                 WorldChunk chunk = new WorldChunk(mc.world, pos, null);
-                chunk.loadFromPacket(null, packet.getReadBuffer(), new CompoundTag(), packet.getVerticalStripBitmask());
+                chunk.loadFromPacket(null, packet.getReadBuffer(), new NbtCompound(), packet.getVerticalStripBitmask());
 
                 for (int x = 0; x < 16; x++) {
                     for (int y = 0; y < mc.world.getHeight(); y++) {
