@@ -38,24 +38,24 @@ public class GiveCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(literal("egg").executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             ItemStack inHand = mc.player.getMainHandStack();
             ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
-            NbtCompound ct = new NbtCompound();
+            CompoundTag ct = new CompoundTag();
             if (inHand.getItem() instanceof BlockItem) {
                 ct.putInt("Time",1);
                 ct.putString("id", "minecraft:falling_block");
-                ct.put("BlockState", new NbtCompound());
+                ct.put("BlockState", new CompoundTag());
                 ct.getCompound("BlockState").putString("Name", Registry.ITEM.getId(inHand.getItem()).toString());
                 if (inHand.hasTag() && inHand.getTag().contains("BlockEntityTag")) {
                     ct.put("TileEntityData", inHand.getTag().getCompound("BlockEntityTag"));
                 }
-                NbtCompound t = new NbtCompound();
+                CompoundTag t = new CompoundTag();
                 t.put("EntityTag", ct);
                 item.setTag(t);
             } else {
                 ct.putString("id", "minecraft:item");
-                NbtCompound it = new NbtCompound();
+                CompoundTag it = new CompoundTag();
                 it.putString("id", Registry.ITEM.getId(inHand.getItem()).toString());
                 it.putInt("Count",inHand.getCount());
                 if (inHand.hasTag()) {
@@ -63,7 +63,7 @@ public class GiveCommand extends Command {
                 }
                 ct.put("Item",it);
             }
-            NbtCompound t = new NbtCompound();
+            CompoundTag t = new CompoundTag();
             t.put("EntityTag", ct);
             item.setTag(t);
             item.setCustomName(inHand.getName());
@@ -72,37 +72,37 @@ public class GiveCommand extends Command {
         }));
 
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             String message = ctx.getArgument("message", String.class);
             message = message.replace("&", "\247");
             ItemStack stack = new ItemStack(Items.ARMOR_STAND);
-            NbtCompound tag = new NbtCompound();
-            NbtList NbtList = new NbtList();
-            NbtList.add(NbtDouble.of(mc.player.getX()));
-            NbtList.add(NbtDouble.of(mc.player.getY()));
-            NbtList.add(NbtDouble.of(mc.player.getZ()));
+            CompoundTag tag = new CompoundTag();
+            ListTag listTag = new ListTag();
+            listTag.add(DoubleTag.of(mc.player.getX()));
+            listTag.add(DoubleTag.of(mc.player.getY()));
+            listTag.add(DoubleTag.of(mc.player.getZ()));
             tag.putBoolean("Invisible", true);
             tag.putBoolean("Invulnerable", true);
             tag.putBoolean("Interpret", true);
             tag.putBoolean("NoGravity", true);
             tag.putBoolean("CustomNameVisible", true);
             tag.putString("CustomName", Text.Serializer.toJson(new LiteralText(message)));
-            tag.put("Pos", NbtList);
+            tag.put("Pos", listTag);
             stack.putSubTag("EntityTag", tag);
             addItem(stack);
             return SINGLE_SUCCESS;
         })));
 
         builder.then(literal("firework").executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
-            NbtCompound baseCompound = new NbtCompound();
-            NbtCompound tagCompound = new NbtCompound();
-            NbtList explosionList = new NbtList();
+            CompoundTag baseCompound = new CompoundTag();
+            CompoundTag tagCompound = new CompoundTag();
+            ListTag explosionList = new ListTag();
 
             for(int i = 0; i < 5000; i++)
             {
-                NbtCompound explosionCompound = new NbtCompound();
+                CompoundTag explosionCompound = new CompoundTag();
 
                 Random rand = new Random();
                 explosionCompound.putByte("Type", (byte)rand.nextInt(5));
@@ -123,10 +123,10 @@ public class GiveCommand extends Command {
         }));
 
         builder.then(literal("head").then(argument("owner",StringArgumentType.greedyString()).executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+            if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
             String playerName = ctx.getArgument("owner",String.class);
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
-            NbtCompound tag = new NbtCompound();
+            CompoundTag tag = new CompoundTag();
             tag.putString("SkullOwner", playerName);
             itemStack.setTag(tag);
             addItem(itemStack);
@@ -135,7 +135,7 @@ public class GiveCommand extends Command {
 
         builder.then(literal("preset").then(argument("name", new EnumStringArgumentType(PRESETS))
                 .then(argument("container", new EnumStringArgumentType(CONTAINERS)).executes(context -> {
-                    if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+                    if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
                     String name = context.getArgument("name", String.class);
                     String container = context.getArgument("container", String.class);
                     addItem(createPreset(name, container));
@@ -145,7 +145,7 @@ public class GiveCommand extends Command {
 
     private void addItem(ItemStack item) throws CommandSyntaxException {
 		for(int i = 0; i < 36; i++) {
-		    ItemStack stack = mc.player.getInventory().getStack(SlotUtils.indexToId(i));
+		    ItemStack stack = mc.player.inventory.getStack(SlotUtils.indexToId(i));
 			if (!stack.isEmpty()) continue;
 			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
 			return;

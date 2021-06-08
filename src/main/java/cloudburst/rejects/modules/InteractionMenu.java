@@ -16,8 +16,8 @@ import minegame159.meteorclient.utils.misc.Keybind;
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.StringTag;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -98,12 +98,12 @@ public class InteractionMenu extends Module {
     }
 
     @Override
-    public NbtCompound toTag() {
-        NbtCompound tag = super.toTag();
+    public CompoundTag toTag() {
+        CompoundTag tag = super.toTag();
         
-        NbtCompound messTag = new NbtCompound();
+        CompoundTag messTag = new CompoundTag();
         messages.keySet().forEach((key) -> {
-            messTag.put(key, NbtString.of(messages.get(key)));
+            messTag.put(key, StringTag.of(messages.get(key)));
         });
 
         tag.put("messages", messTag);
@@ -111,10 +111,10 @@ public class InteractionMenu extends Module {
     }
 
     @Override
-    public Module fromTag(NbtCompound tag) {
+    public Module fromTag(CompoundTag tag) {
         
         if (tag.contains("messages")) {
-            NbtCompound msgs = tag.getCompound("messages");
+            CompoundTag msgs = tag.getCompound("messages");
             msgs.getKeys().forEach((key) -> {
                 messages.put(key, msgs.getString(key));
             });

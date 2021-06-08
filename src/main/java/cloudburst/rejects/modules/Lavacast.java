@@ -206,10 +206,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = findItemResult.getSlot();
+        int prevSlot = mc.player.inventory.selectedSlot;
+        mc.player.inventory.selectedSlot = findItemResult.getSlot();
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
-        mc.player.getInventory().selectedSlot = prevSlot;
+        mc.player.inventory.selectedSlot = prevSlot;
     }
 
     private void placeWater() {
@@ -219,10 +219,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = findItemResult.getSlot();
+        int prevSlot = mc.player.inventory.selectedSlot;
+        mc.player.inventory.selectedSlot = findItemResult.getSlot();
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
-        mc.player.getInventory().selectedSlot = prevSlot;
+        mc.player.inventory.selectedSlot = prevSlot;
     }
 
     private void pickupLiquid() {
@@ -232,10 +232,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = findItemResult.getSlot();
+        int prevSlot = mc.player.inventory.selectedSlot;
+        mc.player.inventory.selectedSlot = findItemResult.getSlot();
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
-        mc.player.getInventory().selectedSlot = prevSlot;
+        mc.player.inventory.selectedSlot = prevSlot;
     }
 
     private void updateBlockBreakingProgress() {

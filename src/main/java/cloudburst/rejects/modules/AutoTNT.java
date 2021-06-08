@@ -123,8 +123,8 @@ public class AutoTNT extends Module {
     
     private void ignite(BlockPos pos, FindItemResult item) {
         // Set slots
-        preSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = item.getSlot();
+        preSlot = mc.player.inventory.selectedSlot;
+        mc.player.inventory.selectedSlot = item.getSlot();
 
 
         ActionResult result = mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
@@ -132,7 +132,7 @@ public class AutoTNT extends Module {
         if (result == ActionResult.CONSUME || result == ActionResult.SUCCESS) ignited = true;
         
         // Reset slot
-        mc.player.getInventory().selectedSlot = preSlot;
+        mc.player.inventory.selectedSlot = preSlot;
     }
     
     private FindItemResult getFlintAndSteelSlot() {

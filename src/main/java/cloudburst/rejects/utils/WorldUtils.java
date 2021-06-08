@@ -28,6 +28,6 @@ public class WorldUtils {
         double d = pos1.getX() - pos2.getX();
         double e = pos1.getY() - pos2.getY();
         double f = pos1.getZ() - pos2.getZ();
-        return MathHelper.sqrt((float) (d * d + e * e + f * f));
+        return MathHelper.sqrt(d * d + e * e + f * f);
     }
 }

@@ -169,8 +169,8 @@ public class PacketFly extends Module {
             BlockPos pos = new BlockPos(mc.player.getPos().x, mc.player.getPos().y, mc.player.getPos().z);
             PlayerPositionLookS2CPacket packet = (PlayerPositionLookS2CPacket) event.packet;
             if (setYaw.get()) {
-                ((PlayerPositionLookS2CPacketAccessor) event.packet).setPitch(mc.player.getPitch());
-                ((PlayerPositionLookS2CPacketAccessor) event.packet).setYaw(mc.player.getYaw());
+                ((PlayerPositionLookS2CPacketAccessor) event.packet).setPitch(mc.player.pitch);
+                ((PlayerPositionLookS2CPacketAccessor) event.packet).setYaw(mc.player.yaw);
             }
             if (setID.get()) {
                 teleportID = packet.getTeleportId();
@@ -194,9 +194,9 @@ public class PacketFly extends Module {
         Vec3d vec = new Vec3d(x, y, z);
         Vec3d position = mc.player.getPos().add(vec);
         Vec3d outOfBoundsVec = outOfBoundsVec(vec, position);
-        packetSender(new PlayerMoveC2SPacket.PositionAndOnGround(position.x, position.y, position.z, mc.player.isOnGround()));
+        packetSender(new PlayerMoveC2SPacket.PositionOnly(position.x, position.y, position.z, mc.player.isOnGround()));
         if (invalidPacket.get()) {
-            packetSender(new PlayerMoveC2SPacket.PositionAndOnGround(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, mc.player.isOnGround()));
+            packetSender(new PlayerMoveC2SPacket.PositionOnly(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, mc.player.isOnGround()));
         }
         if (setPos.get()) {
             mc.player.setPos(position.x, position.y, position.z);

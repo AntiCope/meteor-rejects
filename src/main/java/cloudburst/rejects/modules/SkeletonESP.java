@@ -13,13 +13,13 @@ import minegame159.meteorclient.utils.render.color.Color;
 import minegame159.meteorclient.utils.render.color.SettingColor;
 
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.option.Perspective;
+import net.minecraft.client.options.Perspective;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.*;
@@ -64,7 +64,7 @@ public class SkeletonESP extends Module {
             float p = MathHelper.lerp(g, playerEntity.lastLimbDistance, playerEntity.limbDistance);
             float o = (float)playerEntity.age + g;
             float k = j - h;
-            float m = MathHelper.lerp(g, playerEntity.prevPitch, playerEntity.getPitch());
+            float m = MathHelper.lerp(g, playerEntity.prevPitch, playerEntity.pitch);
 
             playerEntityModel.setAngles(playerEntity, q, p, o, k, m);
             boolean sneaking = playerEntity.isSneaking();
@@ -76,9 +76,9 @@ public class SkeletonESP extends Module {
             ModelPart rightLeg = playerEntityModel.rightLeg;
 
             matrixStack.translate(footPos.x, footPos.y, footPos.z);
-            matrixStack.multiply(new Quaternion(new Vec3f(0, -1, 0), playerEntity.bodyYaw + 180, true));
+            matrixStack.multiply(new Quaternion(new Vector3f(0, -1, 0), playerEntity.bodyYaw + 180, true));
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-            bufferBuilder.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
+            bufferBuilder.begin(1, VertexFormats.POSITION_COLOR);
 
             Matrix4f matrix4f = matrixStack.peek().getModel();
             bufferBuilder.vertex(matrix4f, 0, sneaking ? 0.6f : 0.7f, sneaking ? 0.23f : 0).color(skeletonColor.r, skeletonColor.g, skeletonColor.b, skeletonColor.a).next();
@@ -133,7 +133,7 @@ public class SkeletonESP extends Module {
             bufferBuilder.end();
             BufferRenderer.draw(bufferBuilder);
 
-            matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), playerEntity.bodyYaw + 180, true));
+            matrixStack.multiply(new Quaternion(new Vector3f(0, 1, 0), playerEntity.bodyYaw + 180, true));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
         });
         Render3DUtils.end3DRender();
@@ -141,15 +141,15 @@ public class SkeletonESP extends Module {
 
     private void rotate(MatrixStack matrix, ModelPart modelPart) {
         if (modelPart.roll != 0.0F) {
-            matrix.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(modelPart.roll));
+            matrix.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(modelPart.roll));
         }
 
         if (modelPart.yaw != 0.0F) {
-            matrix.multiply(Vec3f.NEGATIVE_Y.getRadialQuaternion(modelPart.yaw));
+            matrix.multiply(Vector3f.NEGATIVE_Y.getRadialQuaternion(modelPart.yaw));
         }
 
         if (modelPart.pitch != 0.0F) {
-            matrix.multiply(Vec3f.NEGATIVE_X.getRadialQuaternion(modelPart.pitch));
+            matrix.multiply(Vector3f.NEGATIVE_X.getRadialQuaternion(modelPart.pitch));
         }
     }
 }

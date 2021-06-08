@@ -69,7 +69,7 @@ public class AntiBot extends Module {
         {
             if (removeInvisible.get() && !entity.isInvisible()) continue;
 
-            if (isBot(entity)) entity.remove(Entity.RemovalReason.DISCARDED);
+            if (isBot(entity)) entity.remove();
         }
     }
 

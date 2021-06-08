@@ -5,7 +5,7 @@ import minegame159.meteorclient.utils.player.ChatUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringNbtReader;
 
 import java.util.Random;
@@ -273,9 +273,9 @@ public class GiveUtils {
             }
 
             if (container.equals("egg")) {
-                NbtCompound ct = new NbtCompound();
+                CompoundTag ct = new CompoundTag();
                 ct.put("EntityTag", StringNbtReader.parse("{Time:1,id:\"minecraft:falling_block\",BlockState:{Name:\"minecraft:chest\"}}"));
-                ((NbtCompound) ct.get("EntityTag")).put("TileEntityData", item.getTag().get("BlockEntityTag"));
+                ((CompoundTag) ct.get("EntityTag")).put("TileEntityData", item.getTag().get("BlockEntityTag"));
                 ct.put("display", item.getTag().get("display"));
                 item = new ItemStack(Items.STRIDER_SPAWN_EGG);
                 item.setTag(ct);

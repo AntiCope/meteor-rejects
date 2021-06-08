@@ -110,7 +110,7 @@ public class AutoPot extends Module {
             }
             if (drinking) {
                 if (ShouldDrinkHealth()) {
-                    if (isNotPotion(mc.player.getInventory().getStack(slot))) {
+                    if (isNotPotion(mc.player.inventory.getStack(slot))) {
                         slot = HealingpotionSlot();
                         if (slot == -1) {
                             info("Ran out of Pots while drinking");
@@ -128,7 +128,7 @@ public class AutoPot extends Module {
             }
             if (splashing) {
                 if (ShouldDrinkHealth()) {
-                    if (isNotSplashPotion(mc.player.getInventory().getStack(slot))) {
+                    if (isNotSplashPotion(mc.player.inventory.getStack(slot))) {
                         slot = HealingSplashpotionSlot();
                         if (slot == -1) {
                             info("Ran out of Pots while splashing");
@@ -162,7 +162,7 @@ public class AutoPot extends Module {
             }
             if (drinking) {
                 if (ShouldDrinkStrength()) {
-                    if (isNotPotion(mc.player.getInventory().getStack(slot))) {
+                    if (isNotPotion(mc.player.inventory.getStack(slot))) {
                         slot = StrengthpotionSlot();
                         if (slot == -1) {
                             stopDrinking();
@@ -177,7 +177,7 @@ public class AutoPot extends Module {
             }
             if (splashing) {
                 if (ShouldDrinkStrength()) {
-                    if (isNotSplashPotion(mc.player.getInventory().getStack(slot))) {
+                    if (isNotSplashPotion(mc.player.inventory.getStack(slot))) {
                         slot = StrengthSplashpotionSlot();
                         if (slot == -1) {
                             info("Ran out of Pots while splashing");
@@ -200,7 +200,7 @@ public class AutoPot extends Module {
         mc.options.keyUse.setPressed(pressed);
     }
     private void startDrinking() {
-        prevSlot = mc.player.getInventory().selectedSlot;
+        prevSlot = mc.player.inventory.selectedSlot;
         drink();
         // Pause auras
         wasAura.clear();
@@ -222,9 +222,9 @@ public class AutoPot extends Module {
         }
     }
     private void startSplashing() {
-        prevSlot = mc.player.getInventory().selectedSlot;
+        prevSlot = mc.player.inventory.selectedSlot;
         if (lookDown.get()){
-            Rotations.rotate(mc.player.getYaw(), 90); splash();
+            Rotations.rotate(mc.player.yaw, 90); splash();
         }
         splash();
         // Pause auras
@@ -304,7 +304,7 @@ public class AutoPot extends Module {
         return mc.player.getHealth();
     }
     private void changeSlot(int slot) {
-        mc.player.getInventory().selectedSlot = slot;
+        mc.player.inventory.selectedSlot = slot;
         this.slot = slot;
     }
     //Sunk 7 hours into these checks, if i die blame checks
@@ -313,11 +313,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.POTION) continue;
             if (stack.getItem() == Items.POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
@@ -333,11 +333,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.SPLASH_POTION) continue;
             if (stack.getItem() == Items.SPLASH_POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
@@ -354,11 +354,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.SPLASH_POTION) continue;
             if (stack.getItem() == Items.SPLASH_POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
@@ -375,11 +375,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.inventory.getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.POTION) continue;
             if (stack.getItem() == Items.POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
