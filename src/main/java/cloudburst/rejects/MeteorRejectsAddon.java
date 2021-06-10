@@ -12,6 +12,7 @@ import minegame159.meteorclient.systems.modules.render.hud.HUD;
 import net.minecraft.item.Items;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.lang.invoke.MethodHandles;
 
 import cloudburst.rejects.commands.*;
 import cloudburst.rejects.gui.hud.*;
