@@ -2,6 +2,7 @@ package cloudburst.rejects;
 
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import minegame159.meteorclient.MeteorAddon;
+import minegame159.meteorclient.MeteorClient;
 import minegame159.meteorclient.gui.GuiThemes;
 import minegame159.meteorclient.systems.commands.Commands;
 import minegame159.meteorclient.systems.modules.Category;
@@ -23,6 +24,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
 	@Override
 	public void onInitialize() {
 		LOG.info("Initializing Meteor Rejects Addon");
+		
+		MeteorClient.EVENT_BUS.registerLambdaFactory("cloudburst.rejects", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
 		Modules modules = Modules.get();
 		modules.add(new AntiBot());
