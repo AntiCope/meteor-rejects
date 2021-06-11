@@ -3,7 +3,7 @@ package cloudburst.rejects.utils.gui;
 import cloudburst.rejects.mixin.meteor.GuiRendererAccessor;
 import minegame159.meteorclient.gui.renderer.GuiRenderer;
 import minegame159.meteorclient.gui.widgets.WWidget;
-import minegame159.meteorclient.rendering.Renderer2D;
+import minegame159.meteorclient.renderer.Renderer2D;
 import minegame159.meteorclient.utils.render.color.Color;
 
 public class GuiUtils {

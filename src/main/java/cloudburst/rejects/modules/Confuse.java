@@ -194,7 +194,7 @@ public class Confuse extends Module {
                 double sin = Math.sin(rad) * 3;
                 double cos = Math.cos(rad) * 3;
                 Vec3d c = new Vec3d(tp.x + sin, tp.y + target.getHeight() / 2, tp.z + cos);
-                if (last != null) RenderUtils.drawLine(last, c.x, c.y, c.z, c1, event);
+                if (last != null) event.renderer.line(last.x, last.y, last.z, c.x, c.y, c.z, c1);
                 last = c;
             }
     }

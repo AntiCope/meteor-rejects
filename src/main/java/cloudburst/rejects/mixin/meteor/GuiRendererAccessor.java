@@ -1,7 +1,7 @@
 package cloudburst.rejects.mixin.meteor;
 
 import minegame159.meteorclient.gui.renderer.GuiRenderer;
-import minegame159.meteorclient.rendering.Renderer2D;
+import minegame159.meteorclient.renderer.Renderer2D;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.Accessor;
 

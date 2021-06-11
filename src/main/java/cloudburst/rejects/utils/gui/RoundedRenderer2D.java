@@ -10,7 +10,7 @@ public class RoundedRenderer2D {
     private static final double circleHalf = circleQuarter * 2;
     private static final double circleThreeQuarter = circleQuarter * 3;
 
-    public static void quadRoundedOutline(MeshBuilder mb, double x, double y, double width, double height, Color color, int r, double s) {
+    public static void quadRoundedOutline(Renderer2D  mb, double x, double y, double width, double height, Color color, int r, double s) {
         r = getR(r, width, height);
         if (r == 0) {
             mb.quad(x, y, width, s, color);
@@ -33,7 +33,7 @@ public class RoundedRenderer2D {
         }
     }
 
-    public static void quadRounded(MeshBuilder mb, double x, double y, double width, double height, Color color, int r, boolean roundTop) {
+    public static void quadRounded(Renderer2D  mb, double x, double y, double width, double height, Color color, int r, boolean roundTop) {
         r = getR(r, width, height);
         if (r == 0)
             mb.quad(x, y, width, height, color);
@@ -57,7 +57,7 @@ public class RoundedRenderer2D {
         }
     }
 
-    public static void quadRoundedSide(MeshBuilder mb, double x, double y, double width, double height, Color color, int r, boolean right) {
+    public static void quadRoundedSide(Renderer2D  mb, double x, double y, double width, double height, Color color, int r, boolean right) {
         r = getR(r, width, height);
         if (r == 0)
             mb.quad(x, y, width, height, color);
@@ -91,43 +91,21 @@ public class RoundedRenderer2D {
         return Math.max(1, (int)(angle * r / circleQuarter));
     }
 
-    public static void circlePart(MeshBuilder mb, double x, double y, double r, double startAngle, double angle, Color color) {
+    public static void circlePart(Renderer2D  mb, double x, double y, double r, double startAngle, double angle, Color color) {
         int cirDepth = getCirDepth(r, angle);
         double cirPart = angle / cirDepth;
-        vert2(mb,x + Math.sin(startAngle) * r, y - Math.cos(startAngle) * r, color);
+        int center = mb.triangles.vec2(x, y).color(color).next();
+        int prev = mb.triangles.vec2(x + Math.sin(startAngle) * r, y - Math.cos(startAngle) * r).color(color).next();
         for (int i = 1; i < cirDepth + 1; i++) {
             double xV = x + Math.sin(startAngle + cirPart * i) * r;
             double yV = y - Math.cos(startAngle + cirPart * i) * r;
-            vert2(mb, xV, yV, color);
-            if (i != cirDepth)
-                vert2(mb, xV, yV, color);
+            int next = mb.triangles.vec2(xV, yV).color(color).next();
+            mb.triangles.quad(prev, center, next, next);
+            prev = next;
         }
     }
 
-    public static void circlePartOutline(MeshBuilder mb, double x, double y, double r, double startAngle, double angle, Color color, double outlineWidth) {
-        int cirDepth = getCirDepth(r, angle);
-        double cirPart = angle / cirDepth;
-        for (int i = 0; i < cirDepth; i++) {
-            double xOC = x + Math.sin(startAngle + cirPart * i) * r;
-            double yOC = y - Math.cos(startAngle + cirPart * i) * r;
-            double xIC = x + Math.sin(startAngle + cirPart * i) * (r - outlineWidth);
-            double yIC = y - Math.cos(startAngle + cirPart * i) * (r - outlineWidth);
-            double xON = x + Math.sin(startAngle + cirPart * (i + 1)) * r;
-            double yON = y - Math.cos(startAngle + cirPart * (i + 1)) * r;
-            double xIN = x + Math.sin(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
-            double yIN = y - Math.cos(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
-            //
-            vert2(mb, xOC, yOC, color);
-            vert2(mb, xON, yON, color);
-            vert2(mb, xIC, yIC, color);
-            //
-            vert2(mb, xIC, yIC, color);
-            vert2(mb, xON, yON, color);
-            vert2(mb, xIN, yIN, color);
-        }
-    }
-
-    public static void circlePartOutline(MeshBuilder mb, double x, double y, double r, double startAngle, double angle, Color color, double outlineWidth) {
+    public static void circlePartOutline(Renderer2D  mb, double x, double y, double r, double startAngle, double angle, Color color, double outlineWidth) {
         int cirDepth = getCirDepth(r, angle);
         double cirPart = angle / cirDepth;
         for (int i = 0; i < cirDepth; i++) {
@@ -140,11 +118,11 @@ public class RoundedRenderer2D {
             double xIN = x + Math.sin(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
             double yIN = y - Math.cos(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
 
-            triangles.quad(
-                triangles.vec2(xOC, yOC).color(color).next(),
-                triangles.vec2(xON, yON).color(color).next(),
-                triangles.vec2(xIC, yIC).color(color).next(),
-                triangles.vec2(xIN, yIN).color(color).next()
+            mb.triangles.quad(
+                    mb.triangles.vec2(xOC, yOC).color(color).next(),
+                    mb.triangles.vec2(xON, yON).color(color).next(),
+                    mb.triangles.vec2(xIC, yIC).color(color).next(),
+                    mb.triangles.vec2(xIN, yIN).color(color).next()
             );
         }
     }
