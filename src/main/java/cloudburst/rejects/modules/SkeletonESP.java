@@ -3,7 +3,7 @@ package cloudburst.rejects.modules;
 import cloudburst.rejects.MeteorRejectsAddon;
 import cloudburst.rejects.utils.Render3DUtils;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.render.RenderEvent;
+import minegame159.meteorclient.events.render.Render3DEvent;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.systems.modules.Modules;
@@ -42,7 +42,7 @@ public class SkeletonESP extends Module {
     }
 
     @EventHandler
-    private void onRender(RenderEvent event) {
+    private void onRender(Render3DEvent event) {
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
         Render3DUtils.setup3DRender(true);

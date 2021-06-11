@@ -1,9 +1,9 @@
 package cloudburst.rejects.utils.gui;
 
-import minegame159.meteorclient.rendering.MeshBuilder;
+import minegame159.meteorclient.renderer.Renderer2D;
 import minegame159.meteorclient.utils.render.color.Color;
 
-public class RoundedMeshBuilder {
+public class RoundedRenderer2D {
 
     private static final double circleNone = 0;
     private static final double circleQuarter = Math.PI / 2;
@@ -96,7 +96,6 @@ public class RoundedMeshBuilder {
         double cirPart = angle / cirDepth;
         vert2(mb,x + Math.sin(startAngle) * r, y - Math.cos(startAngle) * r, color);
         for (int i = 1; i < cirDepth + 1; i++) {
-            vert2(mb, x, y, color);
             double xV = x + Math.sin(startAngle + cirPart * i) * r;
             double yV = y - Math.cos(startAngle + cirPart * i) * r;
             vert2(mb, xV, yV, color);
@@ -128,7 +127,25 @@ public class RoundedMeshBuilder {
         }
     }
 
-    public static void vert2(MeshBuilder mb, double x, double y, Color c) {
-        mb.pos(x, y, 0).color(c).endVertex();
+    public static void circlePartOutline(MeshBuilder mb, double x, double y, double r, double startAngle, double angle, Color color, double outlineWidth) {
+        int cirDepth = getCirDepth(r, angle);
+        double cirPart = angle / cirDepth;
+        for (int i = 0; i < cirDepth; i++) {
+            double xOC = x + Math.sin(startAngle + cirPart * i) * r;
+            double yOC = y - Math.cos(startAngle + cirPart * i) * r;
+            double xIC = x + Math.sin(startAngle + cirPart * i) * (r - outlineWidth);
+            double yIC = y - Math.cos(startAngle + cirPart * i) * (r - outlineWidth);
+            double xON = x + Math.sin(startAngle + cirPart * (i + 1)) * r;
+            double yON = y - Math.cos(startAngle + cirPart * (i + 1)) * r;
+            double xIN = x + Math.sin(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
+            double yIN = y - Math.cos(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
+
+            triangles.quad(
+                triangles.vec2(xOC, yOC).color(color).next(),
+                triangles.vec2(xON, yON).color(color).next(),
+                triangles.vec2(xIC, yIC).color(color).next(),
+                triangles.vec2(xIN, yIN).color(color).next()
+            );
+        }
     }
 }
