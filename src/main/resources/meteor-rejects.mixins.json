@@ -11,6 +11,7 @@
     "TitleScreenMixin",
     "LivingEntityRendererMixin",
     "GameRendererMixin",
+    "MinecraftClientMixin",
     "ToastManagerMixin"
   ],
   "injectors": {
