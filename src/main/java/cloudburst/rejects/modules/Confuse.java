@@ -12,7 +12,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.render.RenderEvent;
+import minegame159.meteorclient.events.render.Render3DEvent;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.settings.BoolSetting;
 import minegame159.meteorclient.settings.EnumSetting;
@@ -122,10 +122,10 @@ public class Confuse extends Module {
                 double z = r.nextDouble() * 6 - 3;
                 Vec3d addend = new Vec3d(x, y, z);
                 Vec3d goal = entityPos.add(addend);
-                if (!mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock().is(Blocks.AIR)) {
+                if (mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock() != Blocks.AIR) {
                     goal = new Vec3d(x, playerPos.y, z);
                 }
-                if (mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock().is(Blocks.AIR)) {
+                if (mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock() == Blocks.AIR) {
                     hit = mc.world.raycast(new RaycastContext(
                         mc.player.getPos(),goal, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player
                     ));
@@ -170,7 +170,7 @@ public class Confuse extends Module {
     }
 
     @EventHandler
-    private void onRender(RenderEvent event) {
+    private void onRender(Render3DEvent event) {
         if (target == null) return;
 
         boolean flag = budgetGraphics.get();
@@ -194,7 +194,7 @@ public class Confuse extends Module {
                 double sin = Math.sin(rad) * 3;
                 double cos = Math.cos(rad) * 3;
                 Vec3d c = new Vec3d(tp.x + sin, tp.y + target.getHeight() / 2, tp.z + cos);
-                if (last != null) RenderUtils.drawLine(last, c.x, c.y, c.z, c1, event);
+                if (last != null) event.renderer.line(last.x, last.y, last.z, c.x, c.y, c.z, c1);
                 last = c;
             }
     }

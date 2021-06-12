@@ -1,6 +1,6 @@
 package cloudburst.rejects.modules;
 
-import baritone.api.BaritoneAPI;
+//import baritone.api.BaritoneAPI;
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
@@ -110,7 +110,7 @@ public class AutoPot extends Module {
             }
             if (drinking) {
                 if (ShouldDrinkHealth()) {
-                    if (isNotPotion(mc.player.inventory.getStack(slot))) {
+                    if (isNotPotion(mc.player.getInventory().getStack(slot))) {
                         slot = HealingpotionSlot();
                         if (slot == -1) {
                             info("Ran out of Pots while drinking");
@@ -128,7 +128,7 @@ public class AutoPot extends Module {
             }
             if (splashing) {
                 if (ShouldDrinkHealth()) {
-                    if (isNotSplashPotion(mc.player.inventory.getStack(slot))) {
+                    if (isNotSplashPotion(mc.player.getInventory().getStack(slot))) {
                         slot = HealingSplashpotionSlot();
                         if (slot == -1) {
                             info("Ran out of Pots while splashing");
@@ -162,7 +162,7 @@ public class AutoPot extends Module {
             }
             if (drinking) {
                 if (ShouldDrinkStrength()) {
-                    if (isNotPotion(mc.player.inventory.getStack(slot))) {
+                    if (isNotPotion(mc.player.getInventory().getStack(slot))) {
                         slot = StrengthpotionSlot();
                         if (slot == -1) {
                             stopDrinking();
@@ -177,7 +177,7 @@ public class AutoPot extends Module {
             }
             if (splashing) {
                 if (ShouldDrinkStrength()) {
-                    if (isNotSplashPotion(mc.player.inventory.getStack(slot))) {
+                    if (isNotSplashPotion(mc.player.getInventory().getStack(slot))) {
                         slot = StrengthSplashpotionSlot();
                         if (slot == -1) {
                             info("Ran out of Pots while splashing");
@@ -200,7 +200,7 @@ public class AutoPot extends Module {
         mc.options.keyUse.setPressed(pressed);
     }
     private void startDrinking() {
-        prevSlot = mc.player.inventory.selectedSlot;
+        prevSlot = mc.player.getInventory().selectedSlot;
         drink();
         // Pause auras
         wasAura.clear();
@@ -216,15 +216,15 @@ public class AutoPot extends Module {
         }
         // Pause baritone
         wasBaritone = false;
-        if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
-            wasBaritone = true;
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
-        }
+        //if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
+        //    wasBaritone = true;
+        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
+        //}
     }
     private void startSplashing() {
-        prevSlot = mc.player.inventory.selectedSlot;
+        prevSlot = mc.player.getInventory().selectedSlot;
         if (lookDown.get()){
-            Rotations.rotate(mc.player.yaw, 90); splash();
+            Rotations.rotate(mc.player.getYaw(), 90); splash();
         }
         splash();
         // Pause auras
@@ -240,11 +240,11 @@ public class AutoPot extends Module {
             }
         }
         // Pause baritone
-        wasBaritone = false;
-        if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
-            wasBaritone = true;
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
-        }
+        //wasBaritone = false;
+        //if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
+        //    wasBaritone = true;
+        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
+        //}
     }
     private void drink() {
         changeSlot(slot);
@@ -274,9 +274,9 @@ public class AutoPot extends Module {
             }
         }
         // Resume baritone
-        if (pauseBaritone.get() && wasBaritone) {
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
-        }
+        //if (pauseBaritone.get() && wasBaritone) {
+        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
+        //}
     }
     private void stopSplashing() {
         changeSlot(prevSlot);
@@ -295,16 +295,16 @@ public class AutoPot extends Module {
             }
         }
         // Resume baritone
-        if (pauseBaritone.get() && wasBaritone) {
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
-        }
+        //if (pauseBaritone.get() && wasBaritone) {
+        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
+        //}
     }
     private double truehealth() {
         assert mc.player != null;
         return mc.player.getHealth();
     }
     private void changeSlot(int slot) {
-        mc.player.inventory.selectedSlot = slot;
+        mc.player.getInventory().selectedSlot = slot;
         this.slot = slot;
     }
     //Sunk 7 hours into these checks, if i die blame checks
@@ -313,11 +313,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.inventory.getStack(i);
+            ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.POTION) continue;
             if (stack.getItem() == Items.POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
@@ -333,11 +333,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.inventory.getStack(i);
+            ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.SPLASH_POTION) continue;
             if (stack.getItem() == Items.SPLASH_POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
@@ -354,11 +354,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.inventory.getStack(i);
+            ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.SPLASH_POTION) continue;
             if (stack.getItem() == Items.SPLASH_POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
@@ -375,11 +375,11 @@ public class AutoPot extends Module {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
             // Skip if item stack is empty
-            ItemStack stack = mc.player.inventory.getStack(i);
+            ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.POTION) continue;
             if (stack.getItem() == Items.POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.inventory.getStack(i)).getEffects();
+                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
                 if (effects.size() > 0) {
                     StatusEffectInstance effect = effects.get(0);
                     if (effect.getTranslationKey().equals("effect.minecraft.strength")) {

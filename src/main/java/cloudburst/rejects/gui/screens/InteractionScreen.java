@@ -9,7 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -64,14 +64,14 @@ public class InteractionScreen extends Screen {
                 if (client.player.isRiding()) {
                     client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(0, 0, false, true));
                 }
-                client.player.networkHandler.sendPacket(new PlayerInteractEntityC2SPacket(entity, Hand.MAIN_HAND, true));
+                client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
                 client.player.setSneaking(false);
             });
         }
         else if (entity instanceof StorageMinecartEntity) {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
-                client.player.networkHandler.sendPacket(new PlayerInteractEntityC2SPacket(entity, Hand.MAIN_HAND, false));
+                client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
             });
         }
         else {
@@ -165,8 +165,8 @@ public class InteractionScreen extends Screen {
     public void init() {
         super.init();
         this.cursorMode(GLFW.GLFW_CURSOR_HIDDEN);
-        yaw = client.player.yaw;
-        pitch = client.player.pitch;
+        yaw = client.player.getYaw();
+        pitch = client.player.getPitch();
     }
 
     private void cursorMode(int mode) {
@@ -237,8 +237,8 @@ public class InteractionScreen extends Screen {
         this.crosshairX = (int) mouse.x + width / 2;
         this.crosshairY = (int) mouse.y + height / 2;
 
-        client.player.yaw = yaw + cross.x / 3;
-        client.player.pitch = MathHelper.clamp(pitch + cross.y / 3, -90f, 90f);
+        client.player.setYaw( yaw + cross.x / 3);
+        client.player.setPitch(MathHelper.clamp(pitch + cross.y / 3, -90f, 90f));
         super.render(matrix, mouseX, mouseY, delta);
     }
 

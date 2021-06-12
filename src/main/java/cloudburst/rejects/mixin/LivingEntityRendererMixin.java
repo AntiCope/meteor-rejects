@@ -6,7 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +22,7 @@ public class LivingEntityRendererMixin {
     private void dinnerboneEntities(LivingEntity entity, MatrixStack matrices, float _animationProgress, float _bodyYaw, float _tickDelta, CallbackInfo _info) {
         if ((!(entity instanceof PlayerEntity)) && Modules.get().get(Rendering.class).dinnerboneEnabled()) {
             matrices.translate(0.0D, entity.getHeight() + 0.1F, 0.0D);
-            matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+            matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
         }
     }
 

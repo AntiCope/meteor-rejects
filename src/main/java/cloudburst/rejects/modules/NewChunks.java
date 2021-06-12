@@ -3,15 +3,14 @@ package cloudburst.rejects.modules;
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import minegame159.meteorclient.events.packets.PacketEvent;
-import minegame159.meteorclient.events.render.RenderEvent;
-import minegame159.meteorclient.rendering.Renderer;
-import minegame159.meteorclient.rendering.ShapeMode;
+import minegame159.meteorclient.events.render.Render3DEvent;
+import minegame159.meteorclient.renderer.ShapeMode;
 import minegame159.meteorclient.settings.*;
 import minegame159.meteorclient.systems.modules.Module;
 import minegame159.meteorclient.utils.render.color.Color;
 import minegame159.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.util.math.*;
 import net.minecraft.world.chunk.WorldChunk;
@@ -61,12 +60,12 @@ public class NewChunks extends Module {
     }
 
     @EventHandler
-    private void onRender(RenderEvent event) {
+    private void onRender(Render3DEvent event) {
         if (newChunksColor.get().a>3) {
             synchronized (newChunks) {
                 for (ChunkPos c : newChunks) {
                     if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
-                        drawBoxOutline(new Box(c.getStartPos(), c.getStartPos().add(16, 0, 16)), newChunksColor.get());
+                        drawBoxOutline(new Box(c.getStartPos(), c.getStartPos().add(16, 0, 16)), newChunksColor.get(), event);
                     }
                 }
             }
@@ -76,15 +75,15 @@ public class NewChunks extends Module {
             synchronized (oldChunks) {
                 for (ChunkPos c : oldChunks) {
                     if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
-                        drawBoxOutline(new Box(c.getStartPos(), c.getStartPos().add(16, 0, 16)), oldChunksColor.get());
+                        drawBoxOutline(new Box(c.getStartPos(), c.getStartPos().add(16, 0, 16)), oldChunksColor.get(), event);
                     }
                 }
             }
         }
     }
 
-    private void drawBoxOutline(Box box, Color color) {
-        Renderer.boxWithLines(Renderer.NORMAL, Renderer.LINES,
+    private void drawBoxOutline(Box box, Color color, Render3DEvent event) {
+        event.renderer.box(
                 box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ,
                 new Color(0,0,0,0), color, ShapeMode.Lines, 0
                 );
@@ -131,7 +130,7 @@ public class NewChunks extends Module {
 
             if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getX(), packet.getZ()) == null) {
                 WorldChunk chunk = new WorldChunk(mc.world, pos, null);
-                chunk.loadFromPacket(null, packet.getReadBuffer(), new CompoundTag(), packet.getVerticalStripBitmask());
+                chunk.loadFromPacket(null, packet.getReadBuffer(), new NbtCompound(), packet.getVerticalStripBitmask());
 
                 for (int x = 0; x < 16; x++) {
                     for (int y = 0; y < mc.world.getHeight(); y++) {

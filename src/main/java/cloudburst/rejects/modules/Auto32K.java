@@ -145,15 +145,15 @@ public class Auto32K extends Module {
                     }
                     phase += 1;
                 } else if (phase == 1) {
-                    mc.player.inventory.selectedSlot = dispenserSlot.getSlot();
+                    mc.player.getInventory().selectedSlot = dispenserSlot.getSlot();
                     if (x == -1) {
-                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookOnly(-90f, mc.player.pitch, mc.player.isOnGround()));
+                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(-90f, mc.player.getPitch(), mc.player.isOnGround()));
                     } else if (x == 1) {
-                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookOnly(90f, mc.player.pitch, mc.player.isOnGround()));
+                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(90f, mc.player.getPitch(), mc.player.isOnGround()));
                     } else if (z == -1) {
-                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookOnly(1f, mc.player.pitch, mc.player.isOnGround()));
+                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(1f, mc.player.getPitch(), mc.player.isOnGround()));
                     } else if (z == 1) {
-                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookOnly(179f, mc.player.pitch, mc.player.isOnGround()));
+                        mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.LookAndOnGround(179f, mc.player.getPitch(), mc.player.isOnGround()));
                     }
                     phase += 1;
                 } else if (phase == 2) {
@@ -170,7 +170,7 @@ public class Auto32K extends Module {
                     mc.player.closeHandledScreen();
                     phase += 1;
                 }else if (phase == 6) {
-                    mc.player.inventory.selectedSlot = redstoneSlot.getSlot();
+                    mc.player.getInventory().selectedSlot = redstoneSlot.getSlot();
                     mc.player.setSneaking(true);
                     mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(2), false));
                     mc.player.setSneaking(false);
@@ -188,7 +188,7 @@ public class Auto32K extends Module {
                     Iterator<Block> blocks = throwawayItems.get().iterator();
                     for (Item item = blocks.next().asItem(); blocks.hasNext(); item = blocks.next().asItem()) {
                         for (int i = 5; i <= 40; i++) {
-                            ItemStack stack = mc.player.inventory.getStack(i);
+                            ItemStack stack = mc.player.getInventory().getStack(i);
                             if (stack.getItem() == item && stack.getCount() >= 4) {
                                 slot = i;
                                 count = stack.getCount();
@@ -218,7 +218,7 @@ public class Auto32K extends Module {
                 }
                 if (dropSlot != -1) InvUtils.drop().slot(dropSlot);
                 if(autoMove.get() && manage){
-                    int slot2 = mc.player.inventory.getEmptySlot();
+                    int slot2 = mc.player.getInventory().getEmptySlot();
                     if (slot2 < 9 && slot2 != -1 && EnchantmentHelper.getLevel(Enchantments.SHARPNESS, mc.player.currentScreenHandler.getSlot(0).getStack()) > 5) {
                         InvUtils.move().fromId(0).to(slot2 - 4);
                     } else if (EnchantmentHelper.getLevel(Enchantments.SHARPNESS, mc.player.currentScreenHandler.getSlot(0).getStack()) <= 5 && mc.player.currentScreenHandler.getSlot(0).getStack().getItem() != Items.AIR) {
@@ -226,7 +226,7 @@ public class Auto32K extends Module {
                     }
                 }
                 if(slot != -1) {
-                    mc.player.inventory.selectedSlot = slot - 32;
+                    mc.player.getInventory().selectedSlot = slot - 32;
                 }
             }else this.toggle();
         }

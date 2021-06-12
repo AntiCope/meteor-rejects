@@ -50,7 +50,7 @@ public class ObsidianFarm extends Module {
                     return;
                 }
             }
-            mc.player.inventory.selectedSlot = pickAxe;
+            mc.player.getInventory().selectedSlot = pickAxe;
         }
 
         BlockPos obsidian = findObsidian();
@@ -109,8 +109,8 @@ public class ObsidianFarm extends Module {
     private int findPickAxe() {
         int result = -1;
         for (int i = 0; i < 9; i++) {
-            if (mc.player.inventory.getStack(i).getItem() == Items.NETHERITE_PICKAXE) return i;
-            if (mc.player.inventory.getStack(i).getItem() == Items.DIAMOND_PICKAXE) result = i;
+            if (mc.player.getInventory().getStack(i).getItem() == Items.NETHERITE_PICKAXE) return i;
+            if (mc.player.getInventory().getStack(i).getItem() == Items.DIAMOND_PICKAXE) result = i;
         }
         return result;
     }

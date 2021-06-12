@@ -2,11 +2,10 @@ package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.render.RenderEvent;
+import minegame159.meteorclient.events.render.Render3DEvent;
 import minegame159.meteorclient.events.world.TickEvent;
 import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.rendering.Renderer;
-import minegame159.meteorclient.rendering.ShapeMode;
+import minegame159.meteorclient.renderer.ShapeMode;
 import minegame159.meteorclient.settings.IntSetting;
 import minegame159.meteorclient.settings.Setting;
 import minegame159.meteorclient.settings.SettingGroup;
@@ -179,7 +178,7 @@ public class Lavacast extends Module {
     }
 
     @EventHandler
-    private void onRender(RenderEvent event) {
+    private void onRender(Render3DEvent event) {
         if (placeFluidPos == null) return;
         double x1 = placeFluidPos.getX();
         double y1 = placeFluidPos.getY();
@@ -196,7 +195,7 @@ public class Lavacast extends Module {
         SettingColor color1 = color;
         color1.a = 75;
 
-        Renderer.boxWithLines(Renderer.NORMAL, Renderer.LINES, x1, y1, z1, x2, y2, z2, color1, color, ShapeMode.Both, 0);
+        event.renderer.box(x1, y1, z1, x2, y2, z2, color1, color, ShapeMode.Both, 0);
     }
 
     private void placeLava() {
@@ -206,10 +205,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = findItemResult.getSlot();
+        int prevSlot = mc.player.getInventory().selectedSlot;
+        mc.player.getInventory().selectedSlot = findItemResult.getSlot();
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
-        mc.player.inventory.selectedSlot = prevSlot;
+        mc.player.getInventory().selectedSlot = prevSlot;
     }
 
     private void placeWater() {
@@ -219,10 +218,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = findItemResult.getSlot();
+        int prevSlot = mc.player.getInventory().selectedSlot;
+        mc.player.getInventory().selectedSlot = findItemResult.getSlot();
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
-        mc.player.inventory.selectedSlot = prevSlot;
+        mc.player.getInventory().selectedSlot = prevSlot;
     }
 
     private void pickupLiquid() {
@@ -232,10 +231,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.inventory.selectedSlot;
-        mc.player.inventory.selectedSlot = findItemResult.getSlot();
+        int prevSlot = mc.player.getInventory().selectedSlot;
+        mc.player.getInventory().selectedSlot = findItemResult.getSlot();
         mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
-        mc.player.inventory.selectedSlot = prevSlot;
+        mc.player.getInventory().selectedSlot = prevSlot;
     }
 
     private void updateBlockBreakingProgress() {
