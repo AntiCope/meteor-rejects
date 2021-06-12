@@ -9,19 +9,20 @@ import minegame159.meteorclient.MeteorClient;
 import minegame159.meteorclient.gui.GuiThemes;
 import minegame159.meteorclient.systems.commands.Command;
 
-public class ScreenCommand extends Command {
+import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
-    public ScreenCommand() {
-        super("screen", "Displays different screens", "gui");
+public class HeadsCommand extends Command {
+
+    public HeadsCommand() {
+        super("heads", "Display heads gui");
     }
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(literal("heads").executes(ctx -> {
+        builder.executes(ctx -> {
             MeteorClient.INSTANCE.screenToOpen = new HeadScreen(GuiThemes.get());
-
-            return 1;
-        }));
+            return SINGLE_SUCCESS;
+        });
         
     }
     
