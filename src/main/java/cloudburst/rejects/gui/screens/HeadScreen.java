@@ -8,7 +8,6 @@ import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.text.LiteralText;
 
 import minegame159.meteorclient.gui.GuiTheme;
-import minegame159.meteorclient.gui.WidgetScreen;
 import minegame159.meteorclient.gui.WindowScreen;
 import minegame159.meteorclient.gui.widgets.containers.WTable;
 import minegame159.meteorclient.gui.widgets.pressable.WButton;
