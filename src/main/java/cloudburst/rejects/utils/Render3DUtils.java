@@ -6,7 +6,7 @@ import minegame159.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.util.math.*;
@@ -83,7 +83,7 @@ public class Render3DUtils {
         setup3DRender(!testDepth);
         for (alpha = 0.0f; alpha < Math.PI; alpha += PI / gradation) {
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-            bufferBuilder.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
+            bufferBuilder.begin(1, VertexFormats.POSITION_COLOR);
             for (beta = 0.0f; beta < 2.01f * Math.PI; beta += PI / gradation) {
                 x = (float) (pos.getX() +  (radius * Math.cos(beta) * Math.sin(alpha)));
                 y = (float) (pos.getY() +  (radius * Math.sin(beta) * Math.sin(alpha)));
@@ -129,10 +129,10 @@ public class Render3DUtils {
     }
 
     public static void drawEntityBox(MatrixStack matrixStack, Entity entity, double x, double y, double z, Color color) {
-        float yaw = MathHelper.lerpAngleDegrees(mc.getTickDelta(), entity.prevYaw, entity.getYaw());
+        float yaw = MathHelper.lerpAngleDegrees(mc.getTickDelta(), entity.prevYaw, entity.yaw);
         setup3DRender(true);
         matrixStack.translate(x, y, z);
-        matrixStack.multiply(new Quaternion(new Vec3f(0, -1, 0), yaw, true));
+        matrixStack.multiply(new Quaternion(new Vector3f(0, -1, 0), yaw, true));
         matrixStack.translate(-x, -y, -z);
 
         Box bb = new Box(x - entity.getWidth() + 0.25, y, z - entity.getWidth() + 0.25, x + entity.getWidth() - 0.25, y + entity.getHeight() + 0.1, z + entity.getWidth() - 0.25);
@@ -145,7 +145,7 @@ public class Render3DUtils {
 
         end3DRender();
         matrixStack.translate(x, y, z);
-        matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), yaw, true));
+        matrixStack.multiply(new Quaternion(new Vector3f(0, 1, 0), yaw, true));
         matrixStack.translate(-x, -y, -z);
     }
 
@@ -157,7 +157,7 @@ public class Render3DUtils {
         Matrix4f matrix4f = matrixStack.peek().getModel();
 
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        bufferBuilder.begin(7/*QUADS*/, VertexFormats.POSITION_COLOR);
         float minX = (float)bb.minX;
         float minY = (float)bb.minY;
         float minZ = (float)bb.minZ;
@@ -202,7 +202,7 @@ public class Render3DUtils {
         Matrix4f matrix4f = matrixStack.peek().getModel();
 
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
+        bufferBuilder.begin(1/*LINES*/, VertexFormats.POSITION_COLOR);
 
         VoxelShape shape = VoxelShapes.cuboid(bb);
         shape.forEachEdge((x1, y1, z1, x2, y2, z2) -> {

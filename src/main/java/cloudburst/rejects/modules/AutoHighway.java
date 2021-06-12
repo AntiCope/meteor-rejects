@@ -604,7 +604,7 @@ public class AutoHighway extends Module {
     }
 
     private Direction getDirection(PlayerEntity player){
-        double yaw = player.getYaw();
+        double yaw = player.yaw;
         if(yaw==0) return Direction.SOUTH;
         if(yaw<0){
             yaw = yaw - MathHelper.ceil(yaw / 360) * 360;

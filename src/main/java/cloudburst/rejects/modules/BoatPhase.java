@@ -107,10 +107,10 @@ public class BoatPhase extends Module {
 
         if (boat != null) {
             boat.noClip = true;
-            //boat.pushSpeedReduction = 1;
+            boat.pushSpeedReduction = 1;
 
             if (lockYaw.get()) {
-                boat.setYaw(mc.player.getYaw());
+                boat.yaw = mc.player.yaw;
             }
 
             Vec3d vel;

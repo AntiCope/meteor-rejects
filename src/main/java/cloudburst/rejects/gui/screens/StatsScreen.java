@@ -78,7 +78,7 @@ public class StatsScreen extends WindowScreen {
             dimensionExpanded = dimension.isExpanded();
         };
         dimension.add(theme.label(String.format("Position: %.2f, %.2f, %.2f", entity.getX(), entity.getY(), entity.getZ()))).expandX();
-        dimension.add(theme.label(String.format("Yaw: %.2f, Pitch: %.2f", entity.getYaw(), entity.getPitch()))).expandX();
+        dimension.add(theme.label(String.format("Yaw: %.2f, Pitch: %.2f", entity.yaw, entity.pitch))).expandX();
         Box box = entity.getBoundingBox();
         dimension.add(theme.label(String.format("Bounding Box: %.2f, %.2f, %.2f", 
             box.maxX-box.minX, box.maxY-box.minY, box.maxZ-box.minZ
