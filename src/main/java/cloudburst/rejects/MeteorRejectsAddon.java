@@ -56,6 +56,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		Commands commands = Commands.get();
 		commands.add(new AntiAntiXrayCommand());
 		commands.add(new GiveCommand());
+		commands.add(new HeadsCommand());
 		commands.add(new SaveSkinCommand());
 		commands.add(new ServerCommand());
 		commands.add(new SetBlockCommand());
