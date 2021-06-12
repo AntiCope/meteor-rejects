@@ -17,6 +17,7 @@ import java.lang.invoke.MethodHandles;
 import cloudburst.rejects.commands.*;
 import cloudburst.rejects.gui.hud.*;
 import cloudburst.rejects.modules.*;
+import cloudburst.rejects.utils.Utils;
 
 public class MeteorRejectsAddon extends MeteorAddon {
 	public static final Logger LOG = LogManager.getLogger();
@@ -27,6 +28,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		LOG.info("Initializing Meteor Rejects Addon");
 		
 		MeteorClient.EVENT_BUS.registerLambdaFactory("cloudburst.rejects", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
+		Utils.init();
 
 		Modules modules = Modules.get();
 		modules.add(new AntiBot());
@@ -71,6 +73,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		hud.elements.add(new AppleHud(hud));
 		hud.elements.add(new CrystalHud(hud));
 		hud.elements.add(new ExpHud(hud));
+		hud.elements.add(new CpsHud(hud));
 
 		GuiThemes.add(new MeteorRoundedGuiTheme());
 	}
