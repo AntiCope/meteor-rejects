@@ -100,7 +100,7 @@ public class HeadScreen extends WindowScreen {
                 WButton equip = t.add(theme.button("Equip")).widget();
                 equip.tooltip = "Equip client-side.";
                 equip.action = () -> {
-                    mc.player.getInventory().armor.set(3, head);
+                    mc.player.inventory.armor.set(3, head);
                 };
                 t.row();
             }
@@ -128,12 +128,12 @@ public class HeadScreen extends WindowScreen {
     }
 
     private void addItem(ItemStack item) {
-        if (!mc.player.getAbilities().creativeMode) {
+        if (!mc.player.abilities.creativeMode) {
             ChatUtils.error("Heads", "You must be in creative mode to use this.");
             return;
         }
 		for(int i = 0; i < 36; i++) {
-		    ItemStack stack = mc.player.getInventory().getStack(SlotUtils.indexToId(i));
+		    ItemStack stack = mc.player.inventory.getStack(SlotUtils.indexToId(i));
 			if (stack == null || !stack.isEmpty() || stack.getItem() != Items.AIR) continue;
 			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
 			return;
