@@ -4,7 +4,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.text.LiteralText;
 
 import minegame159.meteorclient.gui.GuiTheme;
@@ -18,7 +17,7 @@ import minegame159.meteorclient.settings.Settings;
 import minegame159.meteorclient.utils.network.HttpUtils;
 import minegame159.meteorclient.utils.network.MeteorExecutor;
 import minegame159.meteorclient.utils.player.ChatUtils;
-import minegame159.meteorclient.utils.player.SlotUtils;
+import cloudburst.rejects.utils.GiveUtils;
 
 import static minegame159.meteorclient.utils.Utils.mc;
 
@@ -31,6 +30,7 @@ import java.lang.reflect.Type;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 public class HeadScreen extends WindowScreen {
 
@@ -95,7 +95,11 @@ public class HeadScreen extends WindowScreen {
                 t.add(theme.label(head.getName().asString()));
                 WButton give = t.add(theme.button("Give")).widget();
                 give.action = () -> {
-                    addItem(head);
+                    try {
+                        GiveUtils.giveItem(head);
+                    } catch (CommandSyntaxException e) {
+                        ChatUtils.error("Heads", e.getMessage());
+                    }
                 };
                 WButton equip = t.add(theme.button("Equip")).widget();
                 equip.tooltip = "Equip client-side.";
@@ -125,19 +129,5 @@ public class HeadScreen extends WindowScreen {
         head.setTag(tag);
         head.setCustomName(new LiteralText(name));
         return head;
-    }
-
-    private void addItem(ItemStack item) {
-        if (!mc.player.abilities.creativeMode) {
-            ChatUtils.error("Heads", "You must be in creative mode to use this.");
-            return;
-        }
-		for(int i = 0; i < 36; i++) {
-		    ItemStack stack = mc.player.inventory.getStack(SlotUtils.indexToId(i));
-			if (stack == null || !stack.isEmpty() || stack.getItem() != Items.AIR) continue;
-			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
-			return;
-		}
-        ChatUtils.error("Heads", "No space in hotbar.");
     }
 }

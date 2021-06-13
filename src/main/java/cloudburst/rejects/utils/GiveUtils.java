@@ -1,301 +1,202 @@
 package cloudburst.rejects.utils;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import minegame159.meteorclient.utils.player.ChatUtils;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
+
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+
+import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.lang3.tuple.Triple;
+
+import static minegame159.meteorclient.utils.Utils.mc;
 
 public class GiveUtils {
 
-    private static final MinecraftClient mc = MinecraftClient.getInstance();
+    public static final Map<String, Function<Boolean, ItemStack>> PRESETS = new HashMap<>();
 
-    public static ItemStack createPreset(String name, String container) {
-        ItemStack item = null;
-        switch (container) {
-            case "chest":
-                item = new ItemStack(Items.CHEST);
-                break;
-            case "trapped_chest":
-                item = new ItemStack(Items.TRAPPED_CHEST);
-                break;
-            case "barrel":
-                item = new ItemStack(Items.BARREL);
-                break;
-            case "dispenser":
-                item = new ItemStack(Items.DISPENSER);
-                break;
-            case "egg":
-                item = new ItemStack(Items.CHEST);
-                break;
-            default:
-                item = new ItemStack(Items.PINK_SHULKER_BOX);
-                break;
+    private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(new LiteralText("You must be in creative mode to use this."));
+    private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(new LiteralText("No space in hotbar."));
+
+    private static final List<Identifier> HIDDEN_ENTITIES = Arrays.asList(
+        new Identifier("giant"),
+        new Identifier("ender_dragon"),
+        new Identifier("wither"),
+        new Identifier("iron_golem"),
+        new Identifier("ender_dragon"),
+        new Identifier("tnt_minecart"),
+        new Identifier("lightning_bolt"));
+
+    private static final List<Triple<String, Item, String>> STRING_PRESETS = Arrays.asList(
+        Triple.of("lag_spawner", Items.SPAWNER, "{BlockEntityTag:{MaxNearbyEntities:32767,RequiredPlayerRange:32767,SpawnCount:32767,MaxSpawnDelay:0,SpawnRange:32767,Delay:0,MinSpawnDelay:0}}"),
+        Triple.of("tnt_spawner", Items.SPAWNER, "{BlockEntityTag:{MaxNearbyEntities:32767,RequiredPlayerRange:32767,SpawnCount:50,SpawnData:{Fuse:1,id:\"minecraft:tnt\"},MaxSpawnDelay:0,SpawnRange:10,Delay:0,MinSpawnDelay:0}}"),
+        Triple.of("boat_spawner", Items.SPAWNER, "{BlockEntityTag:{SpawnData:{Type:\"jungle\",CustomName:'{\"text\":\"Boat\",\"color\":\"aqua\",\"bold\":true,\"italic\":true,\"underlined\":true}',Invulnerable:1b,id:\"minecraft:boat\",Glowing:1b,CustomNameVisible:1b},SpawnRange:10,SpawnCount:50}}"),
+        Triple.of("pigs_egg", Items.CHICKEN_SPAWN_EGG, "{EntityTag:{MaxNearbyEntities:1000,RequiredPlayerRange:100,CustomDisplayTile:1b,DisplayState:{Properties:{hinge:\"left\",half:\"upper\",open:\"true\"},Name:\"minecraft:acacia_door\"},SpawnData:{id:\"minecraft:minecart\"},id:\"minecraft:spawner_minecart\",MaxSpawnDelay:0,Delay:1,MinSpawnDelay:0}}"),
+        Triple.of("end_portal_arrow", Items.ELDER_GUARDIAN_SPAWN_EGG, "{EntityTag:{SoundEvent:\"block.end_portal.spawn\",pickup:1b,id:\"minecraft:arrow\"}}"),
+        Triple.of("wither_spawn_arrow", Items.ELDER_GUARDIAN_SPAWN_EGG, "{EntityTag:{SoundEvent:\"entity.wither.spawn\",pickup:1b,id:\"minecraft:arrow\"}}"),
+        Triple.of("eg_curse_arrow", Items.ELDER_GUARDIAN_SPAWN_EGG, "{EntityTag:{SoundEvent:\"entity.elder_guardian.curse\",pickup:1b,id:\"minecraft:arrow\"}}"),
+        Triple.of("big_slime", Items.SLIME_SPAWN_EGG, "{EntityTag:{Size:50,id:\"minecraft:slime\"}}"),
+        Triple.of("particle_area_expand", Items.SKELETON_SPAWN_EGG, "{EntityTag:{Particle:\"angry_villager\",Radius:1.0f,RadiusOnUse:1.0f,Duration:10000,id:\"minecraft:area_effect_cloud\",RadiusPerTick:10.0f}}"),
+        Triple.of("armor_stand_spawner_minecart", Items.BAT_SPAWN_EGG, "{EntityTag:{SpawnData:{id:\"minecraft:armor_stand\"},id:\"minecraft:spawner_minecart\"}}")
+    );
+
+    private static final Random random = new Random();
+
+    public static void giveItem(ItemStack item) throws CommandSyntaxException {
+        if (!mc.player.abilities.creativeMode) throw NOT_IN_CREATIVE.create();
+        
+        if (!mc.player.inventory.insertStack(item)) {
+            throw NO_SPACE.create();
         }
-        String nick = mc.player.getName().asString();
-        try {
-            switch (name.toLowerCase()) {
-                case "negs":
-
-                    item.setTag(StringNbtReader.parse("{display:{Name:\"{\\\"text\\\":\\\"" + nick
-                            + "'s Negative Items\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:1b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:2b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:3b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:4b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:5b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:6b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:7b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:8b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:9b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:10b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:11b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:12b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:13b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:14b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:15b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:16b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:17b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:18b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:19b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:20b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:21b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:22b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:23b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:24b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:25b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:26b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Negative Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Damage:1981,Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}}]}}"));
-
-                    break;
-                case "stacked":
-                    item.setTag(StringNbtReader.parse("{display:{Name:\"{\\\"text\\\":\\\"" + nick
-                            + "'s Stacked Items\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:diamond_helmet\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Helmet\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:1b,id:\"minecraft:diamond_chestplate\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Chestplate\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:2b,id:\"minecraft:diamond_leggings\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Leggings\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:3b,id:\"minecraft:diamond_boots\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Boots\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:4b,id:\"minecraft:diamond_sword\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Sword\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:5b,id:\"minecraft:diamond_shovel\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Shovel\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:6b,id:\"minecraft:diamond_pickaxe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Pickaxe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:7b,id:\"minecraft:diamond_axe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Axe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:8b,id:\"minecraft:diamond_hoe\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Hoe\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:9b,id:\"minecraft:water_bucket\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Water Bucket\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:10b,id:\"minecraft:lava_bucket\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Lava Buckets\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:11b,id:\"minecraft:milk_bucket\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Milk Buckets\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:12b,id:\"minecraft:bow\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Bows\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:13b,id:\"minecraft:fishing_rod\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Fishing Rods\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},Enchantments:[{id:\"minecraft:vanishing_curse\",lvl:1s}]}},{Slot:14b,id:\"minecraft:writable_book\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Book And Quills\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},pages:[\"\"]}},{Slot:15b,id:\"minecraft:enchanted_book\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Enchanted Books\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:16b,id:\"minecraft:saddle\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Saddles\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:17b,id:\"minecraft:potion\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Bottles\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:18b,id:\"minecraft:music_disc_11\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:19b,id:\"minecraft:music_disc_13\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:20b,id:\"minecraft:music_disc_blocks\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:21b,id:\"minecraft:music_disc_cat\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:22b,id:\"minecraft:music_disc_chirp\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:23b,id:\"minecraft:music_disc_far\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:24b,id:\"minecraft:music_disc_mall\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:25b,id:\"minecraft:music_disc_mellohi\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:26b,id:\"minecraft:music_disc_stal\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Stacked Discs\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}}]}}"));
-                    break;
-                case "spawners":
-                    item.setTag(StringNbtReader.parse("{display:{Name:\"{\\\"text\\\":\\\"" + nick
-                            + "'s Spawners\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:spawner\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Pig Spawners\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"}}},{Slot:1b,id:\"minecraft:spawner\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Lag Spawners\\\",\\\"color\\\":\\\"dark_red\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},BlockEntityTag:{SpawnCount:32767,SpawnRange:32767,Delay:0,MinSpawnDelay:0,MaxSpawnDelay:0,MaxNearbyEntities:32767,RequiredPlayerRange:32767}}},{Slot:2b,id:\"minecraft:spawner\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Lag Spawners #2\\\",\\\"color\\\":\\\"dark_red\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},BlockEntityTag:{SpawnCount:32767,SpawnRange:32767,Delay:0,MinSpawnDelay:0,MaxSpawnDelay:0,MaxNearbyEntities:32767,RequiredPlayerRange:32767}}},{Slot:3b,id:\"minecraft:spawner\",Count:64b,tag:{display:{Name:\"{\\\"text\\\":\\\""
-                            + nick
-                            + "'s Tnt Spawners\\\",\\\"color\\\":\\\"aqua\\\",\\\"bold\\\":true,\\\"italic\\\":true,\\\"underlined\\\":true}\"},BlockEntityTag:{SpawnCount:50,SpawnRange:10,Delay:0,MinSpawnDelay:0,MaxSpawnDelay:0,MaxNearbyEntities:32767,RequiredPlayerRange:32767,SpawnData:{id:\"minecraft:tnt\",Fuse:1}}}},{Slot:4b,id:\"minecraft:spawner\",Count:64b,tag:{display:{Name:'{\"text\":\""
-                            + nick
-                            + "\\'s Boat Spawner\",\"color\":\"aqua\",\"bold\":true,\"italic\":true,\"underlined\":true}'},BlockEntityTag:{SpawnCount:50,SpawnRange:10,SpawnData:{id:\"minecraft:boat\",Glowing:1b,Invulnerable:1b,CustomNameVisible:1b,Type:\"jungle\",CustomName:'{\"text\":\""
-                            + nick
-                            + "_Knight Ontop\",\"color\":\"aqua\",\"bold\":true,\"italic\":true,\"underlined\":true}'}}}}]}}"));
-                    break;
-                case "bookban":
-                    String n = mc.player.getName().asString().toUpperCase();
-                    item.setTag(StringNbtReader.parse("{display:{Name:'{\"text\":\"" + nick
-                            + "\\'s Bookban Shulker\",\"color\":\"aqua\",\"bold\":true,\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:1b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:2b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:3b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:4b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:5b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:6b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:7b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:8b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:9b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:10b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:11b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:12b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:13b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:14b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:15b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:16b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:17b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:18b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:19b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:20b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:21b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:22b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:23b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:24b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:25b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}},{Slot:26b,id:\"minecraft:writable_book\",Count:16b,tag:{display:{Name:'{\"text\":\""
-                            + n + " OWNS ALL\",\"color\":\"dark_red\",\"bold\":true}'},pages:[" + getBookbanTag()
-                            + "]}}]}}"));
-                    break;
-                case "test":
-                    String s = "";
-                    String s1 = "";
-                    Random r = new Random();
-                    for (int i = 0; i < 500; i++)
-                        s1 += ",{Type:0}";
-                    for (int i = 0; i < 100; i++)
-                        s += "," + r.nextInt(16777215);
-                    item.setTag(StringNbtReader.parse(
-                            "{BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:firework_rocket\",Count:1b,tag:{Fireworks:{Explosions:[{Type:0}"
-                                    + s1
-                                    + "]}}},{Slot:1b,id:\"minecraft:firework_rocket\",Count:64b,tag:{Fireworks:{Flight:127b,Explosions:[{Type:0,Flicker:1b,Trail:1b,Colors:[I;16711680],FadeColors:[I;16711680"
-                                    + s + "]},{Type:1,Flicker:1b,Trail:1b,Colors:[I;16711680],FadeColors:[I;16711680"
-                                    + s + "]},{Type:2,Flicker:1b,Trail:1b,Colors:[I;16711680" + s
-                                    + "],FadeColors:[I;16711680" + s
-                                    + "]},{Type:3,Flicker:1b,Trail:1b,Colors:[I;16711680" + s
-                                    + "],FadeColors:[I;16711680" + s
-                                    + "]},{Type:4,Flicker:1b,Trail:1b,Colors:[I;16711680" + s
-                                    + "],FadeColors:[I;16711680" + s
-                                    + "]}]}}},{Slot:2b,id:\"minecraft:lingering_potion\",Count:64b,tag:{display:{Name:'{\"text\":\""
-                                    + nick
-                                    + "\\'s B R U H M O M E N T Potion\",\"color\":\"aqua\",\"bold\":true,\"italic\":true}'},AttributeModifiers:[{AttributeName:\"generic.maxHealth\",Name:\"generic.maxHealth\",Amount:1,Operation:0,UUIDLeast:338793,UUIDMost:213301}],CustomPotionEffects:[{Id:1b,Amplifier:127b,Duration:32767},{Id:2b,Amplifier:127b,Duration:32767},{Id:3b,Amplifier:127b,Duration:32767},{Id:4b,Amplifier:127b,Duration:32767},{Id:5b,Amplifier:127b,Duration:32767},{Id:6b,Amplifier:127b,Duration:32767},{Id:7b,Amplifier:127b,Duration:32767},{Id:8b,Amplifier:127b,Duration:32767},{Id:9b,Amplifier:127b,Duration:32767},{Id:10b,Amplifier:127b,Duration:32767},{Id:11b,Amplifier:127b,Duration:32767},{Id:12b,Amplifier:127b,Duration:32767},{Id:13b,Amplifier:127b,Duration:32767},{Id:14b,Amplifier:127b,Duration:32767},{Id:15b,Amplifier:127b,Duration:32767},{Id:16b,Amplifier:127b,Duration:32767},{Id:17b,Amplifier:127b,Duration:32767},{Id:18b,Amplifier:127b,Duration:32767},{Id:19b,Amplifier:127b,Duration:32767},{Id:20b,Amplifier:127b,Duration:32767},{Id:21b,Amplifier:127b,Duration:32767},{Id:22b,Amplifier:127b,Duration:32767},{Id:23b,Amplifier:127b,Duration:32767},{Id:24b,Amplifier:127b,Duration:32767},{Id:25b,Amplifier:127b,Duration:32767},{Id:26b,Amplifier:127b,Duration:32767},{Id:27b,Amplifier:127b,Duration:32767},{Id:28b,Amplifier:127b,Duration:32767},{Id:29b,Amplifier:127b,Duration:32767},{Id:30b,Amplifier:127b,Duration:32767},{Id:31b,Amplifier:127b,Duration:32767}],Potion:\"minecraft:leaping\"}},{Slot:3b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:13b,id:\"minecraft:pink_shulker_box\",Count:64b,tag:{display:{Name:'{\"text\":\"nested shulker boxes\",\"color\":\"red\",\"italic\":true,\"underlined\":true}'}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}}]}}},{Slot:4b,id:\"minecraft:chicken_spawn_egg\",Count:1b,tag:{EntityTag:{id:\"minecraft:spawner_minecart\",CustomDisplayTile:1b,Delay:1,MinSpawnDelay:0,MaxSpawnDelay:0,MaxNearbyEntities:1000,RequiredPlayerRange:100,DisplayState:{Name:\"minecraft:acacia_door\",Properties:{half:\"upper\",hinge:\"left\",open:\"true\"}},SpawnData:{id:\"minecraft:minecart\"}}}}]}}"));
-                    break;
-                case "eggs":
-                    item.setTag(StringNbtReader.parse("{display:{Name:'{\"text\":\"" + nick
-                            + "\\'s Spawn Eggs\",\"color\":\"aqua\",\"bold\":true,\"italic\":true,\"underlined\":true}'},BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:zombie_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Spawn Giant\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:giant\",Invulnerable:1b,Glowing:1b}}},{Slot:1b,id:\"minecraft:enderman_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Enderman With Cmd block\",\"color\":\"aqua\"}'},EntityTag:{carriedBlockState:{Name:\"minecraft:command_block\",Properties:{conditional:\"true\"}}}}},{Slot:2b,id:\"minecraft:bat_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Cmd minecart (kill @a)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:command_block_minecart\",Command:\"kill @a\"}}},{Slot:3b,id:\"minecraft:bat_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Spawner minecart (turn particles off)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:spawner_minecart\",SpawnData:{id:\"minecraft:armor_stand\"}}}},{Slot:4b,id:\"minecraft:cave_spider_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"E G G\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:egg\",NoGravity:1b,Fire:2100000000,Glowing:1b}}},{Slot:5b,id:\"minecraft:stray_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"area_effect_cloud (50 range)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:area_effect_cloud\",Particle:\"angry_villager\",ReapplicationDelay:1,Radius:50f,RadiusPerTick:0f,RadiusOnUse:0f,Duration:500000,DurationOnUse:0f,Color:16711680,Potion:\"minecraft:strong_swiftness\"}}},{Slot:6b,id:\"minecraft:evoker_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"area_effect_cloud (E X P A N D)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:area_effect_cloud\",Particle:\"angry_villager\",Radius:1f,RadiusPerTick:10f,RadiusOnUse:1f,Duration:10000}}},{Slot:7b,id:\"minecraft:elder_guardian_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Arrow (End Portal Sound)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:arrow\",pickup:1b,SoundEvent:\"block.end_portal.spawn\"}}},{Slot:8b,id:\"minecraft:elder_guardian_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Arrow (EG Curse Sound)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:arrow\",pickup:1b,SoundEvent:\"entity.elder_guardian.curse\"}}},{Slot:9b,id:\"minecraft:drowned_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Big chungus slime\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:slime\",Size:50}}},{Slot:10b,id:\"minecraft:fox_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Invis Armor Stand\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:armor_stand\",Invulnerable:1b,Invisible:1b,PersistenceRequired:1b,ArmorItems:[{},{},{},{id:\"minecraft:spawner\",Count:1b}]}}},{Slot:11b,id:\"minecraft:ghast_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Enderdragon\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:ender_dragon\",DragonPhase:8}}},{Slot:12b,id:\"minecraft:cow_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Lightning\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:lightning_bolt\"}}},{Slot:13b,id:\"minecraft:guardian_spawn_egg\",Count:1b,tag:{EntityTag:{id:\"minecraft:iron_golem\"}}},{Slot:14b,id:\"minecraft:evoker_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"area_effect_cloud (expand slow)\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:area_effect_cloud\",Particle:\"angry_villager\",Radius:1f,RadiusPerTick:10f,RadiusOnUse:1f,Duration:1000000}}},{Slot:15b,id:\"minecraft:bee_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Tnt Minecart\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:tnt_minecart\",TNTFuse:1000000}}},{Slot:16b,id:\"minecraft:bat_spawn_egg\",Count:1b,tag:{display:{Name:'{\"text\":\"Invalid translate name test\",\"color\":\"aqua\"}'},EntityTag:{id:\"minecraft:boat\",CustomNameVisible:1b,Type:\"acacia\",CustomName:'{\"translate\":\"translation.test.invalid\"}'}}}]}}"));
-                    break;
-                case "forceop":
-                    item.setTag(StringNbtReader.parse(
-                            "{BlockEntityTag:{Items:[{Slot:0b,id:\"minecraft:command_block\",Count:64b,tag:{BlockEntityTag:{conditionMet:0b,auto:0b,CustomName:'{\"text\":\"@\"}',powered:0b,Command:\"execute as @e run op "
-                                    + nick
-                                    + "\",id:\"minecraft:command_block\",SuccessCount:0,TrackOutput:1b,UpdateLastExecution:1b},display:{Lore:['\"(+NBT)\"']}}},{Slot:1b,id:\"minecraft:bat_spawn_egg\",Count:64b,tag:{EntityTag:{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "
-                                    + nick
-                                    + "\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}}}]},display:{Name:'{\"bold\":true,\"italic\":true,\"underlined\":true,\"color\":\"aqua\",\"text\":\""
-                                    + nick + "\\'s ForceOP\"}'}}"));
-                    break;
-                default:
-                    break;
-            }
-
-            if (container.equals("egg")) {
-                CompoundTag ct = new CompoundTag();
-                ct.put("EntityTag", StringNbtReader.parse("{Time:1,id:\"minecraft:falling_block\",BlockState:{Name:\"minecraft:chest\"}}"));
-                ((CompoundTag) ct.get("EntityTag")).put("TileEntityData", item.getTag().get("BlockEntityTag"));
-                ct.put("display", item.getTag().get("display"));
-                item = new ItemStack(Items.STRIDER_SPAWN_EGG);
-                item.setTag(ct);
-            }
-        } catch (CommandSyntaxException e) {
-            ChatUtils.error("An NBT parsing error occured");
-        }
-
-        return item;
     }
 
-    private static String getBookbanTag() {
-        String book = "";
-        String page = "";
-        for (int i = 0; i < 100; i++)
-            page += "\uffff";
-        for (int i = 0; i < 99; i++)
-            book += "\"" + page + "\",";
-        book += "\"" + page + "\"";
+    public static void init() {
+        STRING_PRESETS.forEach((preset) -> {
+            PRESETS.put(preset.getLeft(), (preview) -> {
+                if (preview) preset.getMiddle().getDefaultStack();
+                ItemStack item = preset.getMiddle().getDefaultStack();
+                try {
+                    item.setTag(StringNbtReader.parse(preset.getRight()));
+                } catch (CommandSyntaxException e) { }
+                item.setCustomName(new LiteralText(toName(preset.getLeft())));
+                return item;
+            });
+        });
 
-        return book;
+        PRESETS.put("force_op", (preview) -> {
+            if (preview) Items.SPIDER_SPAWN_EGG.getDefaultStack();
+            ItemStack item = Items.SPIDER_SPAWN_EGG.getDefaultStack();
+            String nick = mc.player.getName().asString();
+            try {
+                item.setTag(StringNbtReader.parse("{EntityTag:{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}}"));
+            } catch (CommandSyntaxException e) { }
+            item.setCustomName(new LiteralText("Force OP"));
+            return item;
+        });
+
+        PRESETS.put("troll_potion", (preview) -> {
+            if (preview) Items.LINGERING_POTION.getDefaultStack();
+            ItemStack stack = Items.LINGERING_POTION.getDefaultStack();
+            ListTag effects = new ListTag();
+            for(int i = 1; i <= 31; i++)
+            {
+                CompoundTag effect = new CompoundTag();
+                effect.putByte("Amplifier", (byte)127);
+                effect.putInt("Duration", Integer.MAX_VALUE);
+                effect.putInt("Id", i);
+                effects.add(effect);
+            }
+            CompoundTag nbt = new CompoundTag();
+            nbt.put("CustomPotionEffects", effects);
+            stack.setTag(nbt);
+            stack.setCustomName(new LiteralText("Lingering Potion of Trolling"));
+            return stack;
+        });
+
+        PRESETS.put("32k", (preview) -> {
+            if (preview) return Items.DIAMOND_SWORD.getDefaultStack();
+            ItemStack stack =Items.DIAMOND_SWORD.getDefaultStack();
+            ListTag enchants = new ListTag();
+            addEnchant(enchants, "minecraft:sharpness");
+            addEnchant(enchants, "minecraft:knockback");
+            addEnchant(enchants, "minecraft:fire_aspect");
+            addEnchant(enchants, "minecraft:looting", (short)10);
+            addEnchant(enchants, "minecraft:sweeping", (short)3);
+            addEnchant(enchants, "minecraft:unbreaking");
+            addEnchant(enchants, "minecraft:mending", (short)1);
+            addEnchant(enchants, "minecraft:vanishing_curse", (short)1);
+            CompoundTag nbt = new CompoundTag();
+            nbt.put("Enchantments", enchants);
+            stack.setTag(nbt);
+            stack.setCustomName(new LiteralText("Bonk"));
+            return stack;
+        });
+
+        PRESETS.put("crash_chest", (preview) -> {
+            if (preview) return Items.CHEST.getDefaultStack();
+            ItemStack stack = Items.CHEST.getDefaultStack();
+            CompoundTag CompoundTag = new CompoundTag();
+            ListTag ListTag = new ListTag();
+            for(int i = 0; i < 40000; i++)
+                ListTag.add(new ListTag());
+            CompoundTag.put("nothingsuspicioushere", ListTag);
+            stack.setTag(CompoundTag);
+            stack.setCustomName(new LiteralText("Copy Me"));
+            return stack;
+        });
+
+        PRESETS.put("firework", (preview) -> {
+            if (preview) return Items.FIREWORK_ROCKET.getDefaultStack();
+
+            ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
+            CompoundTag baseCompound = new CompoundTag();
+            CompoundTag tagCompound = new CompoundTag();
+            ListTag explosionList = new ListTag();
+            for(int i = 0; i < 5000; i++)
+            {
+                CompoundTag explosionCompound = new CompoundTag();
+                explosionCompound.putByte("Type", (byte)random.nextInt(5));
+
+                int colors[] = {1973019,11743532,3887386,5320730,2437522,8073150,2651799,11250603,4408131,14188952,4312372,14602026,6719955,12801229,15435844,15790320};
+
+                explosionCompound.putIntArray("Colors", colors);
+                explosionList.add(explosionCompound);
+            }
+            tagCompound.putInt("Flight", 0);
+            tagCompound.put("Explosions", explosionList);
+            baseCompound.put("Fireworks", tagCompound);
+            firework.setTag(baseCompound);
+            return firework;
+        });
+    
+        HIDDEN_ENTITIES.forEach((id) -> {
+            PRESETS.put(id.getPath()+"_spawn_egg", (preview) -> {
+                if (preview) return Items.PIG_SPAWN_EGG.getDefaultStack();
+                ItemStack egg = Items.PIG_SPAWN_EGG.getDefaultStack();
+                CompoundTag tag = new CompoundTag();
+                CompoundTag entityTag = new CompoundTag();
+                entityTag.putString("id", id.toString());
+                tag.put("EntityTag", entityTag);
+                egg.setTag(tag);
+                egg.setCustomName(new LiteralText(String.format("%s", toName(id.getPath()))));
+                return egg;
+            });
+        });
+    }
+
+    public static ItemStack getPreset(String name, boolean preview) {
+        return PRESETS.get(name).apply(preview);
+    }
+
+    public static ItemStack getPreset(String name) {
+        return getPreset(name, false);
+    }
+
+    private static String toName(Object id) {
+        return WordUtils.capitalizeFully(id.toString().replace("_", " "));
+    }
+
+    private static void addEnchant(ListTag tag, String id, short v) {
+        CompoundTag enchant = new CompoundTag();
+        enchant.putShort("lvl", v);
+        enchant.putString("id", id);
+        tag.add(enchant);
+    }
+
+    private static void addEnchant(ListTag tag, String id) {
+        addEnchant(tag, id, Short.MAX_VALUE);
     }
 }

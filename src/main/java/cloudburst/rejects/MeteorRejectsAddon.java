@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import cloudburst.rejects.commands.*;
 import cloudburst.rejects.gui.hud.*;
 import cloudburst.rejects.modules.*;
+import cloudburst.rejects.utils.GiveUtils;
 import cloudburst.rejects.utils.Utils;
 
 public class MeteorRejectsAddon extends MeteorAddon {
@@ -26,6 +27,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		LOG.info("Initializing Meteor Rejects Addon");
 
 		Utils.init();
+		GiveUtils.init();
 
 		Modules modules = Modules.get();
 		modules.add(new AntiBot());
