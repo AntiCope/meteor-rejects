@@ -46,7 +46,7 @@ public class Gravity extends Module {
         }
         else if (moon.get()) {
             Vec3d velocity = mc.player.getVelocity();
-            ((IVec3d) velocity).set(velocity.x, velocity.y + 0.0568000030517578, velocity.z); // Yes, this was precisely calculated.
+            ((IVec3d) velocity).set(velocity.x, velocity.y + 0.0568000030517578, velocity.z); // Yes, this was precisely calculated by the cornos dev (https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/MoonGravity.java)
         }
     }
 }

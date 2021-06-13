@@ -28,6 +28,10 @@ import java.util.List;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 
+/*
+    Ported from Cornos
+    https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java
+*/
 public class ServerCommand extends Command {
 
     private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(new LiteralText("Couldn't obtain server address"));

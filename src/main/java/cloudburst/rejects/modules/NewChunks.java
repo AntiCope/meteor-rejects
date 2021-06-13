@@ -17,6 +17,9 @@ import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.*;
 
+/*
+    Ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/module/mods/NewChunks.java
+*/
 public class NewChunks extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

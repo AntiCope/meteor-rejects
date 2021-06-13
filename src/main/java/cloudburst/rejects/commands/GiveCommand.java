@@ -3,21 +3,17 @@ package cloudburst.rejects.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.item.*;
 import net.minecraft.nbt.*;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 
 import cloudburst.rejects.arguments.EnumStringArgumentType;
+import cloudburst.rejects.utils.GiveUtils;
 import minegame159.meteorclient.systems.commands.Command;
-import minegame159.meteorclient.utils.player.SlotUtils;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 
-import static cloudburst.rejects.utils.GiveUtils.createPreset;
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 import java.util.*;
@@ -27,18 +23,11 @@ public class GiveCommand extends Command {
     public GiveCommand() {
         super("give", "Gives items in creative", "item", "kit");
     }
-
-    private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(new LiteralText("You must be in creative mode to use this."));
-    private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(new LiteralText("No space in hotbar"));
-    private final Collection<String> PRESETS = Arrays.asList("forceop", "negs", "stacked", "spawners", "bookban",
-            "test", "eggs");
-    private final Collection<String> CONTAINERS = Arrays.asList("chest", "shulker", "trapped_chest", "barrel",
-            "dispenser", "egg");
+    private final Collection<String> PRESETS = GiveUtils.PRESETS.keySet();
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(literal("egg").executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
             ItemStack inHand = mc.player.getMainHandStack();
             ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
             NbtCompound ct = new NbtCompound();
@@ -67,12 +56,11 @@ public class GiveCommand extends Command {
             t.put("EntityTag", ct);
             item.setTag(t);
             item.setCustomName(inHand.getName());
-            addItem(item);
+            GiveUtils.giveItem(item);
             return SINGLE_SUCCESS;
         }));
 
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
             String message = ctx.getArgument("message", String.class);
             message = message.replace("&", "\247");
             ItemStack stack = new ItemStack(Items.ARMOR_STAND);
@@ -89,67 +77,24 @@ public class GiveCommand extends Command {
             tag.putString("CustomName", Text.Serializer.toJson(new LiteralText(message)));
             tag.put("Pos", NbtList);
             stack.putSubTag("EntityTag", tag);
-            addItem(stack);
+            GiveUtils.giveItem(stack);
             return SINGLE_SUCCESS;
         })));
 
-        builder.then(literal("firework").executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
-            ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
-            NbtCompound baseCompound = new NbtCompound();
-            NbtCompound tagCompound = new NbtCompound();
-            NbtList explosionList = new NbtList();
-
-            for(int i = 0; i < 5000; i++)
-            {
-                NbtCompound explosionCompound = new NbtCompound();
-
-                Random rand = new Random();
-                explosionCompound.putByte("Type", (byte)rand.nextInt(5));
-
-                int colors[] = {1973019,11743532,3887386,5320730,2437522,8073150,2651799,11250603,4408131,14188952,4312372,14602026,6719955,12801229,15435844,15790320};
-
-                explosionCompound.putIntArray("Colors", colors);
-                explosionList.add(explosionCompound);
-            }
-
-
-            tagCompound.putInt("Flight", 0);
-            tagCompound.put("Explosions", explosionList);
-            baseCompound.put("Fireworks", tagCompound);
-            firework.setTag(baseCompound);
-            addItem(firework);
-            return SINGLE_SUCCESS;
-        }));
-
         builder.then(literal("head").then(argument("owner",StringArgumentType.greedyString()).executes(ctx -> {
-            if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
             String playerName = ctx.getArgument("owner",String.class);
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
             NbtCompound tag = new NbtCompound();
             tag.putString("SkullOwner", playerName);
             itemStack.setTag(tag);
-            addItem(itemStack);
+            GiveUtils.giveItem(itemStack);
             return SINGLE_SUCCESS;
         })));
 
-        builder.then(literal("preset").then(argument("name", new EnumStringArgumentType(PRESETS))
-                .then(argument("container", new EnumStringArgumentType(CONTAINERS)).executes(context -> {
-                    if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
-                    String name = context.getArgument("name", String.class);
-                    String container = context.getArgument("container", String.class);
-                    addItem(createPreset(name, container));
-                    return SINGLE_SUCCESS;
-                }))));
-    }
-
-    private void addItem(ItemStack item) throws CommandSyntaxException {
-		for(int i = 0; i < 36; i++) {
-		    ItemStack stack = mc.player.getInventory().getStack(SlotUtils.indexToId(i));
-			if (!stack.isEmpty()) continue;
-			mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(SlotUtils.indexToId(i), item));
-			return;
-		}
-        throw NO_SPACE.create();
+        builder.then(literal("preset").then(argument("name", new EnumStringArgumentType(PRESETS)).executes(context -> {
+            String name = context.getArgument("name", String.class);
+            GiveUtils.giveItem(GiveUtils.getPreset(name));
+            return SINGLE_SUCCESS;
+        })));
     }
 }

@@ -3,7 +3,7 @@
 ![Last commit](https://img.shields.io/github/last-commit/C10udburst/meteor-rejects)
 
 An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly. 
-Also includes unmerged PRs.
+Also includes unmerged PRs. Some features are blatantly stolen from other clients ([Cornos](https://github.com/cornos/Cornos), [BleachHack](https://github.com/BleachDrinker420/BleachHack)).
 
 ### How to use:  
 - Download the latest release of this mod from the releases tab.
