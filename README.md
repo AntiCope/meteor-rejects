@@ -42,7 +42,7 @@ Also includes unmerged PRs.
 - SpawnProofer
 
 ## Commands
-- `.anti-anti-xray`
+- `.ghost` (Ported from [AntiGhost](https://github.com/gbl/AntiGhost/blob/fabric_1_16/src/main/java/de/guntram/mcmod/antighost/AntiGhost.java))
 - `.give` (Some preset were taken from [BleackHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdGive.java))
 - `.save-skin`
 - `.heads`
@@ -52,6 +52,6 @@ Also includes unmerged PRs.
 - `.terrain-export` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdTerrain.java))
 
 ## Other
-- "Meteor Rounded" (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/619))
+- "Meteor Rounded" theme (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/619))
 - Apple, Exp & Crystal HUD (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/757))
 - CPS HUD (Ported from [AuroraKeystrokes](https://github.com/LambdAurora/AuroraKeystrokes/tree/1.16/src/main/java/me/lambdaurora/keystrokes))
