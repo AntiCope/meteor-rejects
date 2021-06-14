@@ -6,10 +6,10 @@
 package cloudburst.rejects.gui.themes.rounded;
 
 import cloudburst.rejects.utils.gui.GuiUtils;
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
-import minegame159.meteorclient.gui.utils.BaseWidget;
-import minegame159.meteorclient.gui.widgets.WWidget;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.utils.BaseWidget;
+import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public interface MeteorWidget extends BaseWidget {
     default MeteorRoundedGuiTheme theme() {

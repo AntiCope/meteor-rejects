@@ -10,7 +10,7 @@ import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.client.render.GameRenderer;
 
 import cloudburst.rejects.modules.Rendering;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {

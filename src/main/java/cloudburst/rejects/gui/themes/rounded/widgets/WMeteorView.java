@@ -5,9 +5,9 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.containers.WView;
+import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 
 public class WMeteorView extends WView implements MeteorWidget {
     @Override

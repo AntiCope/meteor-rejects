@@ -7,9 +7,9 @@ package cloudburst.rejects.gui.themes.rounded.widgets;
 
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.utils.gui.GuiUtils;
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.containers.WWindow;
+import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
 
 public class WMeteorWindow extends WWindow implements MeteorWidget {
     public WMeteorWindow(String title) {

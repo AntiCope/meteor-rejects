@@ -1,7 +1,7 @@
 package cloudburst.rejects.utils.gui;
 
-import minegame159.meteorclient.renderer.Renderer2D;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.renderer.Renderer2D;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class RoundedRenderer2D {
 

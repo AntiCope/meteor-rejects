@@ -1,10 +1,10 @@
 package cloudburst.rejects.utils.gui;
 
 import cloudburst.rejects.mixin.meteor.GuiRendererAccessor;
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
-import minegame159.meteorclient.gui.widgets.WWidget;
-import minegame159.meteorclient.renderer.Renderer2D;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.renderer.Renderer2D;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class GuiUtils {
     public static void quadRounded(GuiRenderer renderer, double x, double y, double width, double height, Color color, int round, boolean roundTop) {

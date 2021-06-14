@@ -2,12 +2,12 @@ package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.entity.EntityUtils;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.BoolSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.entity.EntityUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 

@@ -5,10 +5,10 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WMultiLabel;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.widgets.WMultiLabel;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorMultiLabel extends WMultiLabel implements MeteorWidget {
     public WMeteorMultiLabel(String text, boolean title, double maxWidth) {

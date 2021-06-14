@@ -8,12 +8,12 @@ import net.minecraft.util.Language;
 import net.minecraft.util.math.Box;
 
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.MeteorClient;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.gui.GuiTheme;
-import minegame159.meteorclient.gui.GuiThemes;
-import minegame159.meteorclient.gui.WindowScreen;
-import minegame159.meteorclient.gui.widgets.containers.WSection;
+import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.GuiThemes;
+import meteordevelopment.meteorclient.gui.WindowScreen;
+import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
 
 public class StatsScreen extends WindowScreen {
     public final Entity entity;

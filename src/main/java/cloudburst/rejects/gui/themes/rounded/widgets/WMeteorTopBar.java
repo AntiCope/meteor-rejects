@@ -6,8 +6,8 @@
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WTopBar;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.widgets.WTopBar;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorTopBar extends WTopBar implements MeteorWidget {
     @Override

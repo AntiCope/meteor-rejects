@@ -1,7 +1,7 @@
 package cloudburst.rejects.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import minegame159.meteorclient.systems.commands.Command;
+import meteordevelopment.meteorclient.systems.commands.Command;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandSource;

@@ -12,16 +12,16 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.render.Render3DEvent;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.EnumSetting;
-import minegame159.meteorclient.settings.IntSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.render.RenderUtils;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.events.render.Render3DEvent;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.BoolSetting;
+import meteordevelopment.meteorclient.settings.EnumSetting;
+import meteordevelopment.meteorclient.settings.IntSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.render.RenderUtils;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class Confuse extends Module {
 

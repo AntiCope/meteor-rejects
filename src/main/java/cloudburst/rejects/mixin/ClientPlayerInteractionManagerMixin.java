@@ -1,7 +1,7 @@
 package cloudburst.rejects.mixin;
 
 import cloudburst.rejects.modules.NoInteract;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;

@@ -5,12 +5,12 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets.input;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.utils.CharFilter;
-import minegame159.meteorclient.gui.widgets.input.WTextBox;
-import minegame159.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.gui.utils.CharFilter;
+import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
+import meteordevelopment.meteorclient.utils.Utils;
 
 public class WMeteorTextBox extends WTextBox implements MeteorWidget {
     private boolean cursorVisible;

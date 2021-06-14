@@ -1,7 +1,7 @@
 package cloudburst.rejects.mixin;
 
-import minegame159.meteorclient.systems.config.Config;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.systems.config.Config;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.util.math.MatrixStack;

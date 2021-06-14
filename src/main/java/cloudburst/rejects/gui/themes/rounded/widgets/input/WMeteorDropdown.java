@@ -5,11 +5,11 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets.input;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.input.WDropdown;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorDropdown<T> extends WDropdown<T> implements MeteorWidget {
     public WMeteorDropdown(T[] values, T value) {

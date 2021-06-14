@@ -5,10 +5,10 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WHorizontalSeparator;
+import meteordevelopment.meteorclient.gui.widgets.WHorizontalSeparator;
 
 public class WMeteorHorizontalSeparator extends WHorizontalSeparator implements MeteorWidget {
     public WMeteorHorizontalSeparator(String text) {

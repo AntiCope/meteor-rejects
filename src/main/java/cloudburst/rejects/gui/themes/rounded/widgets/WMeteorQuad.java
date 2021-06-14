@@ -7,9 +7,9 @@ package cloudburst.rejects.gui.themes.rounded.widgets;
 
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.utils.gui.GuiUtils;
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
-import minegame159.meteorclient.gui.widgets.WQuad;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.widgets.WQuad;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorQuad extends WQuad {
     public WMeteorQuad(Color color) {

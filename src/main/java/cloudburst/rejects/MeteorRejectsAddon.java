@@ -1,13 +1,13 @@
 package cloudburst.rejects;
 
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
-import minegame159.meteorclient.MeteorAddon;
-import minegame159.meteorclient.MeteorClient;
-import minegame159.meteorclient.gui.GuiThemes;
-import minegame159.meteorclient.systems.commands.Commands;
-import minegame159.meteorclient.systems.modules.Category;
-import minegame159.meteorclient.systems.modules.Modules;
-import minegame159.meteorclient.systems.modules.render.hud.HUD;
+import meteordevelopment.meteorclient.MeteorAddon;
+import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.gui.GuiThemes;
+import meteordevelopment.meteorclient.systems.commands.Commands;
+import meteordevelopment.meteorclient.systems.modules.Category;
+import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.render.hud.HUD;
 
 import net.minecraft.item.Items;
 import org.apache.logging.log4j.LogManager;

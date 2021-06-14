@@ -5,11 +5,11 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.WidgetScreen;
+import meteordevelopment.meteorclient.gui.WidgetScreen;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WAccount;
-import minegame159.meteorclient.systems.accounts.Account;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.widgets.WAccount;
+import meteordevelopment.meteorclient.systems.accounts.Account;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorAccount extends WAccount implements MeteorWidget {
     public WMeteorAccount(WidgetScreen screen, Account<?> account) {

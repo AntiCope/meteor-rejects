@@ -9,7 +9,7 @@ import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
 
 import cloudburst.rejects.modules.Rendering;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 
 @Mixin(ToastManager.class)
 public class ToastManagerMixin {

@@ -1,13 +1,13 @@
 package cloudburst.rejects.gui.hud;
 
-import minegame159.meteorclient.settings.DoubleSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.render.hud.HUD;
-import minegame159.meteorclient.systems.modules.render.hud.HudRenderer;
-import minegame159.meteorclient.systems.modules.render.hud.modules.HudElement;
-import minegame159.meteorclient.utils.player.InvUtils;
-import minegame159.meteorclient.utils.render.RenderUtils;
+import meteordevelopment.meteorclient.settings.DoubleSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.render.hud.HUD;
+import meteordevelopment.meteorclient.systems.modules.render.hud.HudRenderer;
+import meteordevelopment.meteorclient.systems.modules.render.hud.modules.HudElement;
+import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.utils.render.RenderUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 

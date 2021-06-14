@@ -5,11 +5,11 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets.pressable;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
-import minegame159.meteorclient.gui.renderer.packer.GuiTexture;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.pressable.WButton;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 
 public class WMeteorButton extends WButton implements MeteorWidget {
     public WMeteorButton(String text, GuiTexture texture) {

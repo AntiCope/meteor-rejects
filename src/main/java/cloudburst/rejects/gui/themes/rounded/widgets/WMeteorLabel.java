@@ -5,9 +5,9 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WLabel;
+import meteordevelopment.meteorclient.gui.widgets.WLabel;
 
 public class WMeteorLabel extends WLabel implements MeteorWidget {
     public WMeteorLabel(String text, boolean title) {

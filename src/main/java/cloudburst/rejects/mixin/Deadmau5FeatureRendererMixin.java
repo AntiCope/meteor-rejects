@@ -1,7 +1,7 @@
 package cloudburst.rejects.mixin;
 
 import cloudburst.rejects.modules.Rendering;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.render.entity.feature.Deadmau5FeatureRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

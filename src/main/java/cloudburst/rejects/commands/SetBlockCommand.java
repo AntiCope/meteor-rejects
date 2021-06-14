@@ -2,7 +2,7 @@ package cloudburst.rejects.commands;
 
 import cloudburst.rejects.arguments.ClientPosArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import minegame159.meteorclient.systems.commands.Command;
+import meteordevelopment.meteorclient.systems.commands.Command;
 import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.BlockStateArgument;

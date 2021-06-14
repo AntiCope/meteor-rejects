@@ -1,32 +1,32 @@
 package cloudburst.rejects.gui.themes.rounded;
 
-import minegame159.meteorclient.gui.DefaultSettingsWidgetFactory;
-import minegame159.meteorclient.gui.GuiTheme;
-import minegame159.meteorclient.gui.WidgetScreen;
-import minegame159.meteorclient.gui.renderer.packer.GuiTexture;
+import meteordevelopment.meteorclient.gui.DefaultSettingsWidgetFactory;
+import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.WidgetScreen;
+import meteordevelopment.meteorclient.gui.renderer.packer.GuiTexture;
 import cloudburst.rejects.gui.themes.rounded.widgets.*;
 import cloudburst.rejects.gui.themes.rounded.widgets.input.WMeteorDropdown;
 import cloudburst.rejects.gui.themes.rounded.widgets.input.WMeteorSlider;
 import cloudburst.rejects.gui.themes.rounded.widgets.input.WMeteorTextBox;
 import cloudburst.rejects.gui.themes.rounded.widgets.pressable.*;
-import minegame159.meteorclient.gui.utils.AlignmentX;
-import minegame159.meteorclient.gui.utils.CharFilter;
-import minegame159.meteorclient.gui.widgets.*;
-import minegame159.meteorclient.gui.widgets.containers.WSection;
-import minegame159.meteorclient.gui.widgets.containers.WView;
-import minegame159.meteorclient.gui.widgets.containers.WWindow;
-import minegame159.meteorclient.gui.widgets.input.WDropdown;
-import minegame159.meteorclient.gui.widgets.input.WSlider;
-import minegame159.meteorclient.gui.widgets.input.WTextBox;
-import minegame159.meteorclient.gui.widgets.pressable.*;
-import minegame159.meteorclient.renderer.text.TextRenderer;
-import minegame159.meteorclient.settings.*;
-import minegame159.meteorclient.systems.accounts.Account;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.render.color.Color;
-import minegame159.meteorclient.utils.render.color.SettingColor;
+import meteordevelopment.meteorclient.gui.utils.AlignmentX;
+import meteordevelopment.meteorclient.gui.utils.CharFilter;
+import meteordevelopment.meteorclient.gui.widgets.*;
+import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
+import meteordevelopment.meteorclient.gui.widgets.containers.WView;
+import meteordevelopment.meteorclient.gui.widgets.containers.WWindow;
+import meteordevelopment.meteorclient.gui.widgets.input.WDropdown;
+import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
+import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
+import meteordevelopment.meteorclient.gui.widgets.pressable.*;
+import meteordevelopment.meteorclient.renderer.text.TextRenderer;
+import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.accounts.Account;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
-import static minegame159.meteorclient.utils.Utils.mc;
+import static meteordevelopment.meteorclient.utils.Utils.mc;
 
 public class MeteorRoundedGuiTheme extends GuiTheme {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

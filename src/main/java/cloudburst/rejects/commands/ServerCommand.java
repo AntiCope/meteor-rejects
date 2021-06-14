@@ -15,7 +15,7 @@ import net.minecraft.util.Formatting;
 
 import cloudburst.rejects.utils.portscanner.PScanRunner;
 import cloudburst.rejects.utils.portscanner.PortScannerManager;
-import minegame159.meteorclient.systems.commands.Command;
+import meteordevelopment.meteorclient.systems.commands.Command;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 

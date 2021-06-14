@@ -5,9 +5,9 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 
 import cloudburst.rejects.gui.screens.HeadScreen;
-import minegame159.meteorclient.MeteorClient;
-import minegame159.meteorclient.gui.GuiThemes;
-import minegame159.meteorclient.systems.commands.Command;
+import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.gui.GuiThemes;
+import meteordevelopment.meteorclient.systems.commands.Command;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 

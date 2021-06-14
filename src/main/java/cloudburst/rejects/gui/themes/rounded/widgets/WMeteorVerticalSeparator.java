@@ -5,11 +5,11 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WVerticalSeparator;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.gui.widgets.WVerticalSeparator;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorVerticalSeparator extends WVerticalSeparator implements MeteorWidget {
     @Override

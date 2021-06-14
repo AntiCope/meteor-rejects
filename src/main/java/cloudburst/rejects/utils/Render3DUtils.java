@@ -2,7 +2,7 @@ package cloudburst.rejects.utils;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import minegame159.meteorclient.utils.render.color.Color;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;

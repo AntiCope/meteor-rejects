@@ -5,11 +5,11 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WWidget;
-import minegame159.meteorclient.gui.widgets.containers.WSection;
-import minegame159.meteorclient.gui.widgets.pressable.WTriangle;
+import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WSection;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 
 public class WMeteorSection extends WSection {
     public WMeteorSection(String title, boolean expanded, WWidget headerWidget) {

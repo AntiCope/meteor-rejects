@@ -5,10 +5,10 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets.input;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.input.WSlider;
+import meteordevelopment.meteorclient.gui.widgets.input.WSlider;
 
 public class WMeteorSlider extends WSlider implements MeteorWidget {
     public WMeteorSlider(double value, double min, double max) {

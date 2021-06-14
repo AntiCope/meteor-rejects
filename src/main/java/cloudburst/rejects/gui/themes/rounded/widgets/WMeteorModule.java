@@ -5,15 +5,15 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.utils.AlignmentX;
-import minegame159.meteorclient.gui.widgets.pressable.WPressable;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.gui.utils.AlignmentX;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.Utils;
 
-import static minegame159.meteorclient.utils.Utils.mc;
+import static meteordevelopment.meteorclient.utils.Utils.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 

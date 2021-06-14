@@ -5,9 +5,9 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets.pressable;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.pressable.WTriangle;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WTriangle;
 
 public class WMeteorTriangle extends WTriangle implements MeteorWidget {
     @Override

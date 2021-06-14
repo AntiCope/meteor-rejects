@@ -9,11 +9,11 @@ package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.settings.*;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.player.*;
-import minegame159.meteorclient.utils.world.BlockUtils;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.*;
+import meteordevelopment.meteorclient.utils.world.BlockUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;

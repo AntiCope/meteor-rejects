@@ -1,12 +1,12 @@
 package cloudburst.rejects.modules;
 
-import minegame159.meteorclient.events.game.GameJoinedEvent;
+import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.packets.PacketEvent;
-import minegame159.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.events.packets.PacketEvent;
+import meteordevelopment.meteorclient.systems.modules.Module;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 
 public class ColorSigns extends Module {

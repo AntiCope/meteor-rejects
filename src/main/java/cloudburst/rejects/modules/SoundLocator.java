@@ -2,12 +2,12 @@ package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.world.PlaySoundEvent;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.settings.SoundEventListSetting;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.player.ChatUtils;
+import meteordevelopment.meteorclient.events.world.PlaySoundEvent;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.settings.SoundEventListSetting;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
 
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.WeightedSoundSet;

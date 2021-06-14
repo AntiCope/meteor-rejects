@@ -7,10 +7,10 @@ package cloudburst.rejects.gui.themes.rounded.widgets.pressable;
 
 import cloudburst.rejects.utils.gui.GuiUtils;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.pressable.WCheckbox;
-import minegame159.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
+import meteordevelopment.meteorclient.utils.Utils;
 
 public class WMeteorCheckbox extends WCheckbox implements MeteorWidget {
     private double animProgress;

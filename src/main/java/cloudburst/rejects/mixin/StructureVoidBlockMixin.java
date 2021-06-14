@@ -6,7 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.StructureVoidBlock;
 import net.minecraft.util.math.Direction;
 
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import cloudburst.rejects.modules.Rendering;
 
 import org.spongepowered.asm.mixin.Mixin;

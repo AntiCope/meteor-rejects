@@ -1,15 +1,15 @@
 package cloudburst.rejects.modules;
 
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.utils.player.FindItemResult;
-import minegame159.meteorclient.utils.player.InvUtils;
-import minegame159.meteorclient.utils.player.PlayerUtils;
-import minegame159.meteorclient.utils.world.BlockUtils;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.BoolSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.FindItemResult;
+import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;

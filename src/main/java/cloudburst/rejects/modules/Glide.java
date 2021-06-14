@@ -12,11 +12,11 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.settings.DoubleSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.DoubleSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.Module;
 
 public class Glide extends Module {
     

@@ -1,7 +1,7 @@
 package cloudburst.rejects.mixin;
 
 import cloudburst.rejects.modules.Rendering;
-import minegame159.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.LivingEntityRenderer;

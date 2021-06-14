@@ -9,7 +9,7 @@ import net.minecraft.nbt.*;
 
 import cloudburst.rejects.arguments.EnumStringArgumentType;
 import cloudburst.rejects.utils.GiveUtils;
-import minegame159.meteorclient.systems.commands.Command;
+import meteordevelopment.meteorclient.systems.commands.Command;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;

@@ -2,10 +2,10 @@ package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
-import minegame159.meteorclient.events.world.TickEvent;
-import minegame159.meteorclient.systems.modules.Module;
-import minegame159.meteorclient.systems.modules.Modules;
-import minegame159.meteorclient.systems.modules.player.AutoEat;
+import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.player.AutoEat;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;

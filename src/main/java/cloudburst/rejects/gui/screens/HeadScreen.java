@@ -7,19 +7,19 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.text.LiteralText;
 
 import cloudburst.rejects.utils.GiveUtils;
-import minegame159.meteorclient.gui.GuiTheme;
-import minegame159.meteorclient.gui.WindowScreen;
-import minegame159.meteorclient.gui.widgets.containers.WTable;
-import minegame159.meteorclient.gui.widgets.pressable.WButton;
-import minegame159.meteorclient.settings.EnumSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.settings.Settings;
-import minegame159.meteorclient.utils.network.HttpUtils;
-import minegame159.meteorclient.utils.network.MeteorExecutor;
-import minegame159.meteorclient.utils.player.ChatUtils;
+import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.WindowScreen;
+import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
+import meteordevelopment.meteorclient.settings.EnumSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.settings.Settings;
+import meteordevelopment.meteorclient.utils.network.HttpUtils;
+import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
 
-import static minegame159.meteorclient.utils.Utils.mc;
+import static meteordevelopment.meteorclient.utils.Utils.mc;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

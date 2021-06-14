@@ -6,11 +6,11 @@ import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.util.Identifier;
 
 import cloudburst.rejects.MeteorRejectsAddon;
-import minegame159.meteorclient.settings.EnumSetting;
-import minegame159.meteorclient.settings.BoolSetting;
-import minegame159.meteorclient.settings.Setting;
-import minegame159.meteorclient.settings.SettingGroup;
-import minegame159.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.settings.EnumSetting;
+import meteordevelopment.meteorclient.settings.BoolSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.Module;
 
 public class Rendering extends Module {
 

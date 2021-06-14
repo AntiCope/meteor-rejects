@@ -5,9 +5,9 @@
 
 package cloudburst.rejects.gui.themes.rounded.widgets;
 
-import minegame159.meteorclient.gui.renderer.GuiRenderer;
+import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import cloudburst.rejects.gui.themes.rounded.MeteorWidget;
-import minegame159.meteorclient.gui.widgets.WTooltip;
+import meteordevelopment.meteorclient.gui.widgets.WTooltip;
 
 public class WMeteorTooltip extends WTooltip implements MeteorWidget {
     public WMeteorTooltip(String text) {
