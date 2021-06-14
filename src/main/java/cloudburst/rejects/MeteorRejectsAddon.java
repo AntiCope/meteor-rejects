@@ -59,7 +59,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new SpawnProofer());
 
 		Commands commands = Commands.get();
-		commands.add(new AntiAntiXrayCommand());
+		commands.add(new GhostCommand());
 		commands.add(new GiveCommand());
 		commands.add(new HeadsCommand());
 		commands.add(new SaveSkinCommand());
