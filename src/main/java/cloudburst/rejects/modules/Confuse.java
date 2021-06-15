@@ -39,6 +39,7 @@ public class Confuse extends Module {
         .description("Mode")
         .build()
     );
+    
     private final Setting<Integer> delay  = sgGeneral.add(new IntSetting.Builder()
             .name("delay")
             .description("Delay")
@@ -47,6 +48,7 @@ public class Confuse extends Module {
             .sliderMax(20)
             .build()
     );
+    
     private final Setting<Integer> circleSpeed  = sgGeneral.add(new IntSetting.Builder()
             .name("circle-speed")
             .description("Circle mode speed")
@@ -55,16 +57,42 @@ public class Confuse extends Module {
             .sliderMax(180)
             .build()
     );
+    
+    private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
+            .name("radius")
+            .description("Range to confuse opponents")
+            .defaultValue(6)
+            .min(0).sliderMax(10)
+            .build()
+    );
+    
+    private final Setting<SortPriority> priority = sgGeneral.add(new EnumSetting.Builder<SortPriority>()
+            .name("priority")
+            .description("Targetting priority")
+            .defaultValue(SortPriority.LowestHealth)
+            .build()
+    );
+    
     private final Setting<Boolean> moveThroughBlocks = sgGeneral.add(new BoolSetting.Builder()
             .name("move-through-blocks")
             .defaultValue(false)
             .build()
     );
+    
     private final Setting<Boolean> budgetGraphics = sgGeneral.add(new BoolSetting.Builder()
             .name("budget-graphics")
             .defaultValue(false)
             .build()
     );
+    
+    private final Setting<SettingColor> circleColor = sgGeneral.add(new ColorSetting.Builder()
+            .name("circle-color")
+            .description("Color for circle rendering")
+            .defaultValue(new SettingColor(0, 255, 0))
+            .visible(budgetGraphics::get)
+            .build()
+    );
+    
     
     int delayWaited = 0;
     double circleProgress = 0;
@@ -85,41 +113,33 @@ public class Confuse extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
+        
+        // Delay
         delayWaited++;
         if (delayWaited < delay.get()) return;
         delayWaited = 0;
-        assert mc.player != null;
-        Vec3d sel1 = mc.player.getPos().add(-4, -4, -4);
-        Vec3d sel2 = sel1.add(8, 8, 8);
-        Box selector = new Box(sel1, sel2);
-        assert mc.world != null;
-        for (Entity e : mc.world.getEntities()) {
-            if (e.getUuid() == mc.player.getUuid()) continue;
-            if (!e.isAlive()
-                    || !e.isAttackable()) continue;
-            if (e.getBoundingBox().intersects(selector)) {
-                target = e;
-                break;
-            }
-        }
+        
+        // Targetting
+        target = TargetUtils.get(entity -> {
+            if (entity.getUuid() == mc.player.getUuid()) return false;
+            if (!entity.isAlive() || !entity.isAttackable()) return false;
+            return PlayerUtils.distanceTo(entity) <= range.get();
+        }, priority.get());
+    
         if (target == null) return;
-        if (!target.isAlive()) {
-            target = null;
-            return;
-        }
+        
+        
         Vec3d entityPos = target.getPos();
         Vec3d playerPos = mc.player.getPos();
-        if (playerPos.distanceTo(entityPos) > 6) {
-            target = null;
-            return;
-        }
         Random r = new Random();
         BlockHitResult hit;
+        int halfRange = range.get() / 2;
+        
         switch (mode.get()) {
             case RandomTP:
-                double x = r.nextDouble() * 6 - 3;
+                double x = r.nextDouble() * range.get() - halfRange;
                 double y = 0;
-                double z = r.nextDouble() * 6 - 3;
+                double z = r.nextDouble() * range.get() - halfRange;
                 Vec3d addend = new Vec3d(x, y, z);
                 Vec3d goal = entityPos.add(addend);
                 if (!mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock().is(Blocks.AIR)) {
@@ -140,7 +160,7 @@ public class Confuse extends Module {
                 break;
             case Switch:
                 Vec3d diff = entityPos.subtract(playerPos);
-                Vec3d diff1 = new Vec3d(clamp(diff.x, -3, 3), clamp(diff.y, -3, 3), clamp(diff.z, -3, 3));
+                Vec3d diff1 = new Vec3d(Utils.clamp(diff.x, -halfRange, halfRange), Utils.clamp(diff.y, -halfRange, halfRange), Utils.clamp(diff.z, -halfRange, halfRange));
                 Vec3d goal2 = entityPos.add(diff1);
                 hit = mc.world.raycast(new RaycastContext(
                     mc.player.getPos(), goal2, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player
@@ -174,32 +194,28 @@ public class Confuse extends Module {
         if (target == null) return;
 
         boolean flag = budgetGraphics.get();
-            Vec3d last = null;
-            addition += flag ? 0 : 1.0;
-            if (addition > 360) addition = 0;
-            for (int i = 0; i < 360; i += flag ? 7 : 1) {
-                Color c1;
-                if (flag) c1 = new Color(0, 255, 0);
-                else {
-                    double rot = (255.0 * 3) * (((((double) i) + addition) % 360) / 360.0);
-                    int seed = (int) Math.floor(rot / 255.0);
-                    double current = rot % 255;
-                    double red = seed == 0 ? current : (seed == 1 ? Math.abs(current - 255) : 0);
-                    double green = seed == 1 ? current : (seed == 2 ? Math.abs(current - 255) : 0);
-                    double blue = seed == 2 ? current : (seed == 0 ? Math.abs(current - 255) : 0);
-                    c1 = new Color((int) red, (int) green, (int) blue);
-                }
-                Vec3d tp = target.getPos();
-                double rad = Math.toRadians(i);
-                double sin = Math.sin(rad) * 3;
-                double cos = Math.cos(rad) * 3;
-                Vec3d c = new Vec3d(tp.x + sin, tp.y + target.getHeight() / 2, tp.z + cos);
-                if (last != null) RenderUtils.drawLine(last, c.x, c.y, c.z, c1, event);
-                last = c;
+        Vec3d last = null;
+        addition += flag ? 0 : 1.0;
+        if (addition > 360) addition = 0;
+        for (int i = 0; i < 360; i += flag ? 7 : 1) {
+            Color c1;
+            if (flag) c1 = circleColor.get();
+            else {
+                double rot = (255.0 * 3) * (((((double) i) + addition) % 360) / 360.0);
+                int seed = (int) Math.floor(rot / 255.0);
+                double current = rot % 255;
+                double red = seed == 0 ? current : (seed == 1 ? Math.abs(current - 255) : 0);
+                double green = seed == 1 ? current : (seed == 2 ? Math.abs(current - 255) : 0);
+                double blue = seed == 2 ? current : (seed == 0 ? Math.abs(current - 255) : 0);
+                c1 = new Color((int) red, (int) green, (int) blue);
             }
-    }
-
-    public static double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
+            Vec3d tp = target.getPos();
+            double rad = Math.toRadians(i);
+            double sin = Math.sin(rad) * 3;
+            double cos = Math.cos(rad) * 3;
+            Vec3d c = new Vec3d(tp.x + sin, tp.y + target.getHeight() / 2, tp.z + cos);
+            if (last != null) RenderUtils.drawLine(last, c.x, c.y, c.z, c1, event);
+            last = c;
+        }
     }
 }
