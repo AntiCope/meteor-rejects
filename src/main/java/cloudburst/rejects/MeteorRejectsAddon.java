@@ -44,6 +44,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new BoatPhase());
 		modules.add(new ColorSigns());
 		modules.add(new Confuse());
+		modules.add(new CoordLogger());
 		modules.add(new Gravity());
 		modules.add(new InteractionMenu());
 		modules.add(new Glide());
