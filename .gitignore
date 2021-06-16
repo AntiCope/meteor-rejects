@@ -31,6 +31,3 @@ bin/
 # fabric
 
 run/
-
-#lazy fix for now
-!build/loom-cache/meteor-client-*.jar
