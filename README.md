@@ -9,6 +9,8 @@ Also includes unmerged PRs.
 - Download the latest release of this mod from the releases tab.
   - [Download 1.17](https://github.com/C10udburst/meteor-rejects/releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar)
   - [Download 1.16](https://github.com/C10udburst/meteor-rejects/releases/download/latest-1.16/meteor-rejects-addon-0.0.4.jar)
+    
+    Note: 1.16 releases will be discontinued when Meteor releases 1.17
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 - It will then add itself to the Meteor GUI and you can use it as normal.
 
@@ -27,7 +29,7 @@ Also includes unmerged PRs.
 - BoatGlitch & BoatPhase (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/814))
 - ColorSigns
 - Confuse
-- Coord Logger
+- Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/impl/misc/CoordFinder.java))
 - Gravity (Half ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/MoonGravity.java), half writen by me)
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Glide
@@ -37,7 +39,7 @@ Also includes unmerged PRs.
 - PacketFly (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/813))
 - Painter
 - Rendering
-- SkeletonESP
+- SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/impl/render/Skeletons.java))
 - SoundLocator
 - SpawnProofer
 
