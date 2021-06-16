@@ -14,6 +14,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
+import net.minecraft.text.BaseText;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -90,7 +93,7 @@ public class CoordLogger extends Module {
                     Vec3d packetPosition = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
                     Vec3d playerPosition = entity.getPos();
                     if (playerPosition.distanceTo(packetPosition) >= minDistance.get()) {
-                        ChatUtils.info("Player '" + entity.getEntityName() + "' has teleported to " + vecToCoords(packetPosition));
+                        info(formatMessage("Player '" + entity.getEntityName() + "' has teleported to ", packetPosition));
                         return;
                     }
                 }
@@ -100,7 +103,7 @@ public class CoordLogger extends Module {
                     Vec3d wolfPosition = entity.getPos();
                     UUID ownerUuid = ((TameableEntity) entity).getOwnerUuid();
                     if (ownerUuid != null && wolfPosition.distanceTo(packetPosition) >= minDistance.get()) {
-                        ChatUtils.info("Wolf has teleported to " + vecToCoords(packetPosition));
+                        info(formatMessage("Wolf has teleported to ", packetPosition));
                         return;
                     }
                 }
@@ -111,27 +114,30 @@ public class CoordLogger extends Module {
                 System.out.println(worldEventS2CPacket.getEventId());
                 switch (worldEventS2CPacket.getEventId()) {
                     case 1023:
-                        if (withers.get()) ChatUtils.info("Wither spawned at " +vecToCoords(worldEventS2CPacket.getPos()));
+                        if (withers.get()) info(formatMessage("Wither spawned at ", worldEventS2CPacket.getPos()));
                         break;
                     case 1038:
-                        if (endPortals.get()) ChatUtils.info("End portal opened at " +vecToCoords(worldEventS2CPacket.getPos()));
+                        if (endPortals.get()) info(formatMessage("End portal opened at ", worldEventS2CPacket.getPos()));
                         break;
                     case 1028:
-                        if (enderDragons.get()) ChatUtils.info("Ender dragon killed at " +vecToCoords(worldEventS2CPacket.getPos()));
+                        if (enderDragons.get()) info(formatMessage("Ender dragon killed at ", worldEventS2CPacket.getPos()));
                         break;
                     default:
-                        if (otherEvents.get()) ChatUtils.info("Unknown global event at " +vecToCoords(worldEventS2CPacket.getPos()));
+                        if (otherEvents.get()) info(formatMessage("Unknown global event at ", worldEventS2CPacket.getPos()));
                 }
             }
         }
         
     }
     
-    public String vecToCoords(Vec3d vec) {
-        return "(" + Math.floor(vec.x * 100)/100 + ", " + Math.floor(vec.y * 100)/100 + ", " + Math.floor(vec.z * 100)/100 + ")";
+    public BaseText formatMessage(String message, Vec3d coords) {
+        BaseText text = new LiteralText(message);
+        text.append(ChatUtils.formatCoords(coords));
+        text.append(Formatting.GRAY.toString()+".");
+        return text;
     }
-    
-    public String vecToCoords(BlockPos pos) {
-        return "(" + Math.floor(pos.getX() * 100)/100 + ", " + Math.floor(pos.getY() * 100)/100 + ", " + Math.floor(pos.getZ() * 100)/100 + ")";
+
+    public BaseText formatMessage(String message, BlockPos coords) {
+        return formatMessage(message, new Vec3d(coords.getX(), coords.getY(), coords.getZ()));
     }
 }
