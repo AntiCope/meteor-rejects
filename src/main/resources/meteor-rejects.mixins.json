@@ -5,7 +5,6 @@
   "mixins": [
   ],
   "client": [
-    "ClientPlayerInteractionManagerMixin",
     "Deadmau5FeatureRendererMixin",
     "StructureVoidBlockMixin",
     "TitleScreenMixin",
