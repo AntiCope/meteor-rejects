@@ -20,7 +20,7 @@ public class HeadsCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.executes(ctx -> {
-            MeteorClient.INSTANCE.screenToOpen = new HeadScreen(GuiThemes.get());
+            MeteorClient.screenToOpen = new HeadScreen(GuiThemes.get());
             return SINGLE_SUCCESS;
         });
         
