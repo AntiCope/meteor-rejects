@@ -57,6 +57,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new ObsidianFarm());
 		modules.add(new PacketFly());
 		modules.add(new Painter());
+		modules.add(new Phase());
 		modules.add(new Rendering());
 		modules.add(new SkeletonESP());
 		modules.add(new SoundLocator());
