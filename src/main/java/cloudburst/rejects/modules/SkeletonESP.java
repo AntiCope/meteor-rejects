@@ -1,7 +1,6 @@
 package cloudburst.rejects.modules;
 
 import cloudburst.rejects.MeteorRejectsAddon;
-import cloudburst.rejects.utils.Render3DUtils;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.settings.*;
@@ -12,6 +11,9 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.render.*;
@@ -45,7 +47,13 @@ public class SkeletonESP extends Module {
     private void onRender(Render3DEvent event) {
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
-        Render3DUtils.setup3DRender(true);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.disableTexture();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
+        RenderSystem.depthMask(MinecraftClient.isFabulousGraphicsOrBetter());
+        RenderSystem.enableCull();
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;
             if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && (Entity)mc.player == entity) return;
@@ -53,7 +61,7 @@ public class SkeletonESP extends Module {
             Color skeletonColor = PlayerUtils.getPlayerColor((PlayerEntity)entity, skeletonColorSetting.get());
             PlayerEntity playerEntity = (PlayerEntity) entity;
 
-            Vec3d footPos = Render3DUtils.getEntityRenderPosition(playerEntity, g);
+            Vec3d footPos = getEntityRenderPosition(playerEntity, g);
             PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer)(LivingEntityRenderer) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
             PlayerEntityModel playerEntityModel = (PlayerEntityModel)livingEntityRenderer.getModel();
 
@@ -78,7 +86,7 @@ public class SkeletonESP extends Module {
             matrixStack.translate(footPos.x, footPos.y, footPos.z);
             matrixStack.multiply(new Quaternion(new Vec3f(0, -1, 0), playerEntity.bodyYaw + 180, true));
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-            bufferBuilder.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
+            bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 
             Matrix4f matrix4f = matrixStack.peek().getModel();
             bufferBuilder.vertex(matrix4f, 0, sneaking ? 0.6f : 0.7f, sneaking ? 0.23f : 0).color(skeletonColor.r, skeletonColor.g, skeletonColor.b, skeletonColor.a).next();
@@ -136,7 +144,11 @@ public class SkeletonESP extends Module {
             matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), playerEntity.bodyYaw + 180, true));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
         });
-        Render3DUtils.end3DRender();
+        RenderSystem.enableTexture();
+        RenderSystem.disableCull();
+        RenderSystem.disableBlend();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
     }
 
     private void rotate(MatrixStack matrix, ModelPart modelPart) {
@@ -151,5 +163,12 @@ public class SkeletonESP extends Module {
         if (modelPart.pitch != 0.0F) {
             matrix.multiply(Vec3f.NEGATIVE_X.getRadialQuaternion(modelPart.pitch));
         }
+    }
+
+    private Vec3d getEntityRenderPosition(Entity entity, double partial) {
+        double x = entity.prevX + ((entity.getX() - entity.prevX) * partial) - mc.getEntityRenderDispatcher().camera.getPos().x;
+        double y = entity.prevY + ((entity.getY() - entity.prevY) * partial) - mc.getEntityRenderDispatcher().camera.getPos().y;
+        double z = entity.prevZ + ((entity.getZ() - entity.prevZ) * partial) - mc.getEntityRenderDispatcher().camera.getPos().z;
+        return new Vec3d(x, y, z);
     }
 }
