@@ -30,7 +30,7 @@ Also includes unmerged PRs.
 - ColorSigns
 - Confuse
 - Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/impl/misc/CoordFinder.java))
-- Gravity (Half ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/MoonGravity.java), half writen by me)
+- Gravity (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/MoonGravity.java)
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Glide
 - Lavacast
