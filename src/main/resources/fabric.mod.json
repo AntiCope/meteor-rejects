@@ -14,7 +14,7 @@
   },
 
   "license": "GPL-3.0",
-  "icon": "assets/meteor/icon.png",
+  "icon": "assets/rejects/icon.png",
 
   "environment": "client",
   "entrypoints": {
