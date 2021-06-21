@@ -41,7 +41,6 @@ Also includes unmerged PRs.
 - Rendering
 - SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/impl/render/Skeletons.java))
 - SoundLocator
-- SpawnProofer (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1071))
 
 ## Commands
 - `.ghost` (Ported from [AntiGhost](https://github.com/gbl/AntiGhost/blob/fabric_1_16/src/main/java/de/guntram/mcmod/antighost/AntiGhost.java))

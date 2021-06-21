@@ -1,6 +1,14 @@
 package cloudburst.rejects;
 
+import cloudburst.rejects.commands.*;
+import cloudburst.rejects.gui.hud.AppleHud;
+import cloudburst.rejects.gui.hud.CpsHud;
+import cloudburst.rejects.gui.hud.CrystalHud;
+import cloudburst.rejects.gui.hud.ExpHud;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
+import cloudburst.rejects.modules.*;
+import cloudburst.rejects.utils.GiveUtils;
+import cloudburst.rejects.utils.Utils;
 import meteordevelopment.meteorclient.MeteorAddon;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.GuiThemes;
@@ -8,17 +16,11 @@ import meteordevelopment.meteorclient.systems.commands.Commands;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.hud.HUD;
-
 import net.minecraft.item.Items;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.lang.invoke.MethodHandles;
 
-import cloudburst.rejects.commands.*;
-import cloudburst.rejects.gui.hud.*;
-import cloudburst.rejects.modules.*;
-import cloudburst.rejects.utils.GiveUtils;
-import cloudburst.rejects.utils.Utils;
+import java.lang.invoke.MethodHandles;
 
 public class MeteorRejectsAddon extends MeteorAddon {
 	public static final Logger LOG = LogManager.getLogger();
@@ -61,7 +63,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new Rendering());
 		modules.add(new SkeletonESP());
 		modules.add(new SoundLocator());
-		modules.add(new SpawnProofer());
 
 		Commands commands = Commands.get();
 		commands.add(new GhostCommand());
