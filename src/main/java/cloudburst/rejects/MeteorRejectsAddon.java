@@ -20,7 +20,7 @@ import cloudburst.rejects.utils.Utils;
 
 public class MeteorRejectsAddon extends MeteorAddon {
 	public static final Logger LOG = LogManager.getLogger();
-	public static final Category CATEGORY = new Category("Rejects", Items.PODZOL.getDefaultStack());
+	public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultStack());
 
 	@Override
 	public void onInitialize() {

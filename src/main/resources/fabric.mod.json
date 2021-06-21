@@ -10,11 +10,12 @@
     "StormyBytes"
   ],
   "contact": {
-
+    "issues": "https://github.com/C10udburst/meteor-rejects/issues",
+    "sources": "https://github.com/C10udburst/meteor-rejects"
   },
 
   "license": "GPL-3.0",
-  "icon": "assets/meteor/icon.png",
+  "icon": "assets/rejects/icon.png",
 
   "environment": "client",
   "entrypoints": {
