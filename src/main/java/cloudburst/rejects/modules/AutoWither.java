@@ -1,94 +1,286 @@
 package cloudburst.rejects.modules;
 
-import meteordevelopment.orbit.EventHandler;
+import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
-import meteordevelopment.meteorclient.settings.BoolSetting;
-import meteordevelopment.meteorclient.settings.Setting;
-import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.renderer.ShapeMode;
+import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+import meteordevelopment.meteorclient.utils.player.Rotations;
+import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
+import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import cloudburst.rejects.MeteorRejectsAddon;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AutoWither extends Module {
+    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgRender = settings.createGroup("Render");
     
-    private SettingGroup sgGeneral = settings.getDefaultGroup();
+    // General
     
-    private Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
+    private final Setting<Integer> horizontalRadius = sgGeneral.add(new IntSetting.Builder()
+            .name("horizontal-radius")
+            .description("Horizontal radius for placement")
+            .defaultValue(4)
+            .min(0)
+            .sliderMax(6)
+            .build()
+    );
+    
+    private final Setting<Integer> verticalRadius = sgGeneral.add(new IntSetting.Builder()
+            .name("vertical-radius")
+            .description("Vertical radius for placement")
+            .defaultValue(3)
+            .min(0)
+            .sliderMax(6)
+            .build()
+    );
+    
+    private final Setting<Priority> priority = sgGeneral.add(new EnumSetting.Builder<Priority>()
+            .name("priority")
+            .description("Priority")
+            .defaultValue(Priority.Random)
+            .build()
+    );
+    
+    private final Setting<Integer> witherDelay = sgGeneral.add(new IntSetting.Builder()
+            .name("wither-delay")
+            .description("Delay in ticks between wither placements")
+            .defaultValue(1)
+            .min(1)
+            .sliderMax(10)
+            .build()
+    );
+    
+    private final Setting<Integer> blockDelay = sgGeneral.add(new IntSetting.Builder()
+            .name("block-delay")
+            .description("Delay in ticks between block placements")
+            .defaultValue(1)
+            .min(0)
+            .sliderMax(10)
+            .build()
+    );
+    
+    private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
             .name("rotate")
             .description("Whether or not to rotate while building")
             .defaultValue(true)
             .build()
     );
     
-    // Part 1 : Build wither directly infront of player (complete)
-    // Part 2 : Build wither based on where the player is looking
+    private final Setting<Boolean> turnOff = sgGeneral.add(new BoolSetting.Builder()
+            .name("turn-off")
+            .description("Turns off automatically after building a single wither.")
+            .defaultValue(true)
+            .build()
+    );
+    
+    // Render
+    
+    private final Setting<ShapeMode> shapeMode = sgRender.add(new EnumSetting.Builder<ShapeMode>()
+            .name("shape-mode")
+            .description("How the shapes are rendered.")
+            .defaultValue(ShapeMode.Both)
+            .build()
+    );
+    
+    private final Setting<SettingColor> sideColor = sgRender.add(new ColorSetting.Builder()
+            .name("side-color")
+            .description("The side color of the target block rendering.")
+            .defaultValue(new SettingColor(197, 137, 232, 10))
+            .build()
+    );
+    private final Setting<SettingColor> lineColor = sgRender.add(new ColorSetting.Builder()
+            .name("line-color")
+            .description("The line color of the target block rendering.")
+            .defaultValue(new SettingColor(197, 137, 232))
+            .build()
+    );
+    
+    private final Pool<Wither> witherPool = new Pool<>(Wither::new);
+    private final ArrayList<Wither> withers = new ArrayList<>();
+    private Wither wither;
+    
+    private int witherTicksWaited, blockTicksWaited;
+    
     public AutoWither() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-wither", "Automatically builds withers.");
+        super(Categories.World, "auto-wither", "Automatically builds withers.");
+    }
+    
+    @Override
+    public void onDeactivate() {
+        wither = null;
     }
     
     @EventHandler
-    private void onTick(TickEvent.Post event) {
+    private void onTick(TickEvent.Pre event) {
+        if (wither == null) {
+            // Delay
+            if (witherTicksWaited < witherDelay.get() - 1) {
+                return;
+            }
+            
+            // Clear pool and list
+            for (Wither wither : withers) witherPool.free(wither);
+            withers.clear();
+            
+            // Register
+            BlockIterator.register(horizontalRadius.get(), verticalRadius.get(), (blockPos, blockState) -> {
+                Direction dir = Direction.fromRotation(Rotations.getYaw(blockPos)).getOpposite();
+                if (isValidSpawn(blockPos, dir)) withers.add(witherPool.get().set(blockPos, dir));
+            });
+        }
+    }
+    
+    @EventHandler
+    private void onPostTick(TickEvent.Post event) {
+        if (wither == null) {
+            // Delay
+            if (witherTicksWaited < witherDelay.get() - 1) {
+                witherTicksWaited++;
+                return;
+            }
+            
+            
+            if (withers.isEmpty()) return;
+            
+            // Sorting
+            switch (priority.get()) {
+                case Closest:
+                    withers.sort(Comparator.comparingDouble(w -> PlayerUtils.distanceTo(w.foot)));
+                case Furthest:
+                    withers.sort((w1, w2) -> {
+                        int sort = Double.compare(PlayerUtils.distanceTo(w1.foot), PlayerUtils.distanceTo(w2.foot));
+                        if (sort == 0) return 0;
+                        return sort > 0 ? -1 : 1;
+                    });
+                case Random:
+                    Collections.shuffle(withers);
+            }
+            
+            wither = withers.get(0);
+        }
         
-        // Check for soulsand and skull in hotbar
-        if (!hasEnoughMaterials()) {
-            error("(default)Not enough resources in hotbar");
+        // Soul sand/soil and skull slot
+        FindItemResult findSoulSand = InvUtils.findInHotbar(Items.SOUL_SAND);
+        if (!findSoulSand.found()) InvUtils.findInHotbar(Items.SOUL_SOIL);
+        FindItemResult findWitherSkull = InvUtils.findInHotbar(Items.WITHER_SKELETON_SKULL);
+        
+        // Check for enough resources
+        if (!findSoulSand.found() || !findWitherSkull.found()) {
+            error("Not enough resources in hotbar");
             toggle();
             return;
         }
         
-        // Find direction of player
-        // North, South, East, West
-        Direction dir = getDirection(mc.gameRenderer.getCamera().getYaw() % 360);
         
-        
-        // Aligns player to center of block to avoid obstructing soulsand placement
-        PlayerUtils.centerPlayer();
-        
-        
-        // Check if we can place a wither
-        BlockPos blockPos = mc.player.getBlockPos();
-        blockPos = blockPos.offset(dir);
-        
-        if (!isValidSpawn(blockPos, dir)) {
-            error("(default)Unable to spawn wither, obstructed by non air blocks");
-            toggle();
-            return;
+        // Build
+        if (blockDelay.get() == 0) {
+            // All in 1 tick
+            
+            // Body
+            BlockUtils.place(wither.foot, findSoulSand, rotate.get(), -50);
+            BlockUtils.place(wither.foot.up(), findSoulSand, rotate.get(), -50);
+            BlockUtils.place(wither.foot.up().offset(wither.axis, -1), findSoulSand, rotate.get(), -50);
+            BlockUtils.place(wither.foot.up().offset(wither.axis, 1), findSoulSand, rotate.get(), -50);
+            
+            // Head
+            BlockUtils.place(wither.foot.up().up(), findWitherSkull, rotate.get(), -50);
+            BlockUtils.place(wither.foot.up().up().offset(wither.axis, -1), findWitherSkull, rotate.get(), -50);
+            BlockUtils.place(wither.foot.up().up().offset(wither.axis, 1), findWitherSkull, rotate.get(), -50);
+            
+            
+            // Auto turnoff
+            if (turnOff.get()) {
+                wither = null;
+                toggle();
+            }
+            
+        } else {
+            // Delay
+            if (blockTicksWaited < blockDelay.get() - 1) {
+                blockTicksWaited++;
+                return;
+            }
+            
+            switch (wither.stage) {
+                case 0:
+                    if (BlockUtils.place(wither.foot, findSoulSand, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 1:
+                    if (BlockUtils.place(wither.foot.up(), findSoulSand, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 2:
+                    if (BlockUtils.place(wither.foot.up().offset(wither.axis, -1), findSoulSand, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 3:
+                    if (BlockUtils.place(wither.foot.up().offset(wither.axis, 1), findSoulSand, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 4:
+                    if (BlockUtils.place(wither.foot.up().up(), findWitherSkull, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 5:
+                    if (BlockUtils.place(wither.foot.up().up().offset(wither.axis, -1), findWitherSkull, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 6:
+                    if (BlockUtils.place(wither.foot.up().up().offset(wither.axis, 1), findWitherSkull, rotate.get(), -50)) wither.stage++;
+                    break;
+                case 7:
+                    // Auto turnoff
+                    if (turnOff.get()) {
+                        wither = null;
+                        toggle();
+                    }
+                    break;
+            }
         }
         
         
-        // Build the wither
-        info("(default)Spawning wither");
-        spawnWither(blockPos, dir);
-        toggle();
+        witherTicksWaited = 0;
     }
     
-    private boolean hasEnoughMaterials() {
-        if ((InvUtils.find(Items.SOUL_SAND).getCount() < 4 && InvUtils.find(Items.SOUL_SOIL).getCount() < 4) ||
-                InvUtils.find(Items.WITHER_SKELETON_SKULL).getCount() < 3)
-            return false;
+    @EventHandler
+    private void onRender(Render3DEvent event) {
+        if (wither == null) return;
         
-        return true;
-    }
-    
-    private Direction getDirection(float yaw) {
-        if (yaw < 0) yaw += 360;
+        // Body
+        event.renderer.box(wither.foot, sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        event.renderer.box(wither.foot.up(), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        event.renderer.box(wither.foot.up().offset(wither.axis, -1), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        event.renderer.box(wither.foot.up().offset(wither.axis, 1), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
         
-        if (yaw >= 315 || yaw < 45) return Direction.SOUTH;
-        else if (yaw < 135) return Direction.WEST;
-        else if (yaw < 225) return Direction.NORTH;
-        else return Direction.EAST;
+        // Head
+        BlockPos midHead = wither.foot.up().up();
+        BlockPos leftHead = wither.foot.up().up().offset(wither.axis, -1);
+        BlockPos rightHead = wither.foot.up().up().offset(wither.axis, 1);
+        
+        event.renderer.box((double) midHead.getX() + 0.2, (double) midHead.getX(), (double) midHead.getX() + 0.2,
+                (double) midHead.getX() + 0.8, (double) midHead.getX() + 0.7, (double) midHead.getX() + 0.8,
+                sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        
+        event.renderer.box((double) leftHead.getX() + 0.2, (double) leftHead.getX(), (double) leftHead.getX() + 0.2,
+                (double) leftHead.getX() + 0.8, (double) leftHead.getX() + 0.7, (double) leftHead.getX() + 0.8,
+                sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        
+        event.renderer.box((double) rightHead.getX() + 0.2, (double) rightHead.getX(), (double) rightHead.getX() + 0.2,
+                (double) rightHead.getX() + 0.8, (double) rightHead.getX() + 0.7, (double) rightHead.getX() + 0.8,
+                sideColor.get(), lineColor.get(), shapeMode.get(), 0);
     }
     
     private boolean isValidSpawn(BlockPos blockPos, Direction direction) {
-        
         // Withers are 3x3x1
         
         // Check if y > (255 - 3)
@@ -103,46 +295,48 @@ public class AutoWither extends Module {
         if (direction == Direction.NORTH || direction == Direction.SOUTH) widthX = 1;
         
         
-        // Check for non air blocks
+        // Check for non air blocks and entities
+        BlockPos.Mutable bp = new BlockPos.Mutable();
         for (int x = blockPos.getX() - widthX; x <= blockPos.getX() + widthX; x++) {
             for (int z = blockPos.getZ() - widthZ; z <= blockPos.getZ(); z++) {
                 for (int y = blockPos.getY(); y <= blockPos.getY() + 2; y++) {
-                    if (mc.world.getBlockState(new BlockPos(x, y, z)).getBlock() != Blocks.AIR) return false;
+                    bp.set(x, y, z);
+                    if (!mc.world.getBlockState(bp).getMaterial().isReplaceable()) return false;
+                    if (!mc.world.canPlace(Blocks.STONE.getDefaultState(), bp, ShapeContext.absent())) return false;
                 }
             }
         }
         
-        // Otherwise return true
         return true;
     }
     
-    private void spawnWither(BlockPos blockPos, Direction direction) {
+    public enum Priority {
+        Closest,
+        Furthest,
+        Random
+    }
+    
+    private static class Wither {
+        public int stage;
+        // 0 = foot
+        // 1 = mid body
+        // 2 = left arm
+        // 3 = right arm
+        // 4 = mid head
+        // 5 = left head
+        // 6 = right head
+        // 7 = end
+        public BlockPos.Mutable foot = new BlockPos.Mutable();
+        public Direction facing;
+        public Direction.Axis axis;
         
-        // Soul sand/soil slot
-        FindItemResult findSoulSand = InvUtils.findInHotbar(Items.SOUL_SAND);
-        if (!findSoulSand.found()) InvUtils.findInHotbar(Items.SOUL_SOIL);
-        
-        // Skull slot
-        FindItemResult findWitherSkull = InvUtils.findInHotbar(Items.WITHER_SKELETON_SKULL);
-        
-        BlockUtils.place(blockPos, findSoulSand, rotate.get(), -50, true);
-        BlockUtils.place(blockPos.up(), findSoulSand, rotate.get(), -50, true);
-        
-        if (direction == Direction.EAST || direction == Direction.WEST) {
-            BlockUtils.place(blockPos.up().north(), findSoulSand, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().south(), findSoulSand, rotate.get(), -50, true);
+        public Wither set(BlockPos pos, Direction dir) {
+            this.stage = 0;
+            this.foot.set(pos);
+            this.facing = dir;
+            this.axis = dir.getAxis();
             
-            BlockUtils.place(blockPos.up().up(), findWitherSkull, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().north(), findWitherSkull, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().south(), findWitherSkull, rotate.get(), -50, true);
-        }
-        else if (direction == Direction.NORTH || direction == Direction.SOUTH) {
-            BlockUtils.place(blockPos.up().east(), findSoulSand, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().west(), findSoulSand, rotate.get(), -50, true);
-            
-            BlockUtils.place(blockPos.up().up(), findWitherSkull, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().east(), findWitherSkull, rotate.get(), -50, true);
-            BlockUtils.place(blockPos.up().up().west(), findWitherSkull, rotate.get(), -50, true);
+            return this;
         }
     }
 }
