@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.systems.commands.Command;
 import meteordevelopment.meteorclient.systems.commands.arguments.PlayerArgumentType;
-import meteordevelopment.meteorclient.utils.network.HttpUtils;
+import meteordevelopment.meteorclient.utils.network.Http;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -59,7 +59,7 @@ public class SaveSkinCommand extends Command {
             //request their minecraft profile, all so we can get a base64 encoded string that contains ANOTHER json that then has the skin URL
             String PROFILE_REQUEST_URL = "https://sessionserver.mojang.com/session/minecraft/profile/%s";
 
-            JsonObject object = HttpUtils.get(String.format(PROFILE_REQUEST_URL, uuid),JsonObject.class);
+            JsonObject object = Http.get(String.format(PROFILE_REQUEST_URL, uuid)).sendJson(JsonObject.class);
             //Get the properties array which has what we need
             JsonArray array = object.getAsJsonArray("properties");
             JsonObject property = array.get(0).getAsJsonObject();

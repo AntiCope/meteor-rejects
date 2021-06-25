@@ -15,21 +15,16 @@ import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.settings.Settings;
-import meteordevelopment.meteorclient.utils.network.HttpUtils;
+import meteordevelopment.meteorclient.utils.network.Http;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 
 import static meteordevelopment.meteorclient.utils.Utils.mc;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.lang.reflect.Type;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 public class HeadScreen extends WindowScreen {
@@ -59,9 +54,6 @@ public class HeadScreen extends WindowScreen {
         .build()
     );
 
-    private static final Gson gson = new GsonBuilder()
-        .create();
-
     public HeadScreen(GuiTheme theme) {
         super(theme, "Heads");
         loadHeads();
@@ -80,8 +72,7 @@ public class HeadScreen extends WindowScreen {
 
     private void loadHeads() {
         MeteorExecutor.execute(() -> {
-            InputStream in = HttpUtils.get("https://minecraft-heads.com/scripts/api.php?cat="+getCat());
-            List<Map<String, String>> res = gson.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), gsonType);
+            List<Map<String, String>> res = Http.get("https://minecraft-heads.com/scripts/api.php?cat="+getCat()).sendJson(gsonType);
             List<ItemStack> heads = new ArrayList<>();
             res.forEach(a -> {
                 try {
