@@ -41,7 +41,7 @@ public class PacketFly extends Module {
             .description("Vertical speed in blocks per second.")
             .defaultValue(1.24)
             .min(0.0)
-            .max(5.0)
+            .max(20.0)
             .sliderMin(0.0)
             .sliderMax(20.0)
             .build()
@@ -78,13 +78,6 @@ public class PacketFly extends Module {
     private final Setting<Boolean> setID = sgClient.add(new BoolSetting.Builder()
             .name("Set ID")
             .description("Updates teleport id when a position packet is received.")
-            .defaultValue(false)
-            .build()
-    );
-
-    private final Setting<Boolean> noClip = sgClient.add(new BoolSetting.Builder()
-            .name("NoClip")
-            .description("Makes the client ignore walls.")
             .defaultValue(false)
             .build()
     );
@@ -150,9 +143,6 @@ public class PacketFly extends Module {
     public void onMove (PlayerMoveEvent event) {
         if (setMove.get() && flightCounter != 0) {
             event.movement = new Vec3d(mc.player.getVelocity().x, mc.player.getVelocity().y, mc.player.getVelocity().z);
-            if (noClip.get() && checkHitBoxes()) {
-                mc.player.noClip = true;
-            }
         }
     }
 
