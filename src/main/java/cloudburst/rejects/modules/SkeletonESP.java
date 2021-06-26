@@ -48,8 +48,9 @@ public class SkeletonESP extends Module {
         Render3DUtils.setup3DRender(true);
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;
-            if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && (Entity)mc.player == entity) return;
-            
+            if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && mc.player == entity) return;
+            int rotationHoldTicks = Config.get().rotationHoldTicks;
+
             Color skeletonColor = PlayerUtils.getPlayerColor((PlayerEntity)entity, skeletonColorSetting.get());
             PlayerEntity playerEntity = (PlayerEntity) entity;
 
@@ -58,13 +59,16 @@ public class SkeletonESP extends Module {
             PlayerEntityModel playerEntityModel = (PlayerEntityModel)livingEntityRenderer.getModel();
 
             float h = MathHelper.lerpAngleDegrees(g, playerEntity.prevBodyYaw, playerEntity.bodyYaw);
+            if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) h = Rotations.serverYaw;
             float j = MathHelper.lerpAngleDegrees(g, playerEntity.prevHeadYaw, playerEntity.headYaw);
+            if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) j = Rotations.serverYaw;
 
             float q = playerEntity.limbAngle - playerEntity.limbDistance * (1.0F - g);
             float p = MathHelper.lerp(g, playerEntity.lastLimbDistance, playerEntity.limbDistance);
             float o = (float)playerEntity.age + g;
             float k = j - h;
             float m = MathHelper.lerp(g, playerEntity.prevPitch, playerEntity.pitch);
+            if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) m = Rotations.serverPitch;
 
             playerEntityModel.setAngles(playerEntity, q, p, o, k, m);
             boolean sneaking = playerEntity.isSneaking();
@@ -76,7 +80,7 @@ public class SkeletonESP extends Module {
             ModelPart rightLeg = playerEntityModel.rightLeg;
 
             matrixStack.translate(footPos.x, footPos.y, footPos.z);
-            matrixStack.multiply(new Quaternion(new Vector3f(0, -1, 0), playerEntity.bodyYaw + 180, true));
+            matrixStack.multiply(new Quaternion(new Vector3f(0, -1, 0), h + 180, true));
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
             bufferBuilder.begin(1, VertexFormats.POSITION_COLOR);
 
@@ -133,7 +137,7 @@ public class SkeletonESP extends Module {
             bufferBuilder.end();
             BufferRenderer.draw(bufferBuilder);
 
-            matrixStack.multiply(new Quaternion(new Vector3f(0, 1, 0), playerEntity.bodyYaw + 180, true));
+            matrixStack.multiply(new Quaternion(new Vector3f(0, 1, 0), h + 180, true));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
         });
         Render3DUtils.end3DRender();
