@@ -29,7 +29,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		Utils.init();
 		GiveUtils.init();
 
-		Modules modules = Modules.get();
+		meteordevelopment.meteorclient.systems.modules.Modules modules = Modules.get();
 		modules.add(new AntiBot());
 		modules.add(new AntiSpawnpoint());
 		modules.add(new AntiVanish());
@@ -42,6 +42,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AutoWither());
 		modules.add(new BoatGlitch());
 		modules.add(new BoatPhase());
+		modules.add(new Boost());
 		modules.add(new ColorSigns());
 		modules.add(new Confuse());
 		modules.add(new CoordLogger());
