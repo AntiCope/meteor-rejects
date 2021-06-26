@@ -48,6 +48,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new AutoWither());
 		modules.add(new BoatGlitch());
 		modules.add(new BoatPhase());
+		modules.add(new Boost());
 		modules.add(new ColorSigns());
 		modules.add(new Confuse());
 		modules.add(new CoordLogger());
