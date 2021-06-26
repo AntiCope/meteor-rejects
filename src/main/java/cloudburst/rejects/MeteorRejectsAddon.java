@@ -29,7 +29,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		Utils.init();
 		GiveUtils.init();
 
-		meteordevelopment.meteorclient.systems.modules.Modules modules = Modules.get();
+		Modules modules = Modules.get();
 		modules.add(new AntiBot());
 		modules.add(new AntiSpawnpoint());
 		modules.add(new AntiVanish());
