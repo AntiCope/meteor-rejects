@@ -18,7 +18,6 @@ Also includes unmerged PRs.
     
     Note: 1.16 releases will be discontinued when Meteor releases 1.17
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
-- It will then add itself to the Meteor GUI and you can use it as normal.
 
 # Features
 ### Modules
