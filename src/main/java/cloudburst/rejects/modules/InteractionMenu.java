@@ -13,18 +13,19 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
+import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class InteractionMenu extends Module {
     
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgStyle = settings.createGroup("Style");
     
     private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
@@ -37,6 +38,38 @@ public class InteractionMenu extends Module {
             .name("keybind")
             .description("The keybind to open.")
             .action(this::onKey)
+            .build()
+    );
+
+    // Style
+    public final Setting<SettingColor> selectedDotColor = sgStyle.add(new ColorSetting.Builder()
+            .name("selected-dot-color")
+            .description("Color of the dot when selected.")
+            .defaultValue(new SettingColor(76, 255, 0))
+            .build()
+    );
+    public final Setting<SettingColor> dotColor = sgStyle.add(new ColorSetting.Builder()
+            .name("dot-color")
+            .description("Color of the dot when.")
+            .defaultValue(new SettingColor(0, 148, 255))
+            .build()
+    );
+    public final Setting<SettingColor> backgroundColor = sgStyle.add(new ColorSetting.Builder()
+            .name("background-color")
+            .description("Color of the background.")
+            .defaultValue(new SettingColor(128, 128, 128, 128))
+            .build()
+    );
+    public final Setting<SettingColor> borderColor = sgStyle.add(new ColorSetting.Builder()
+            .name("border-color")
+            .description("Color of the border.")
+            .defaultValue(new SettingColor(0,0,0))
+            .build()
+    );
+    public final Setting<SettingColor> textColor = sgStyle.add(new ColorSetting.Builder()
+            .name("text-color")
+            .description("Color of the text.")
+            .defaultValue(new SettingColor(255,255,255))
             .build()
     );
     
@@ -53,8 +86,7 @@ public class InteractionMenu extends Module {
         if (lookingAt.isPresent()) {
             Entity e = lookingAt.get();
             if (entities.get().getBoolean(e.getType())) {
-                //isOpen = true;
-                mc.openScreen(new InteractionScreen(e));
+                mc.openScreen(new InteractionScreen(e, this));
             }
         }
     }

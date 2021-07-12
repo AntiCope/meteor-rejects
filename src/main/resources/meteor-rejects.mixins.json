@@ -6,6 +6,7 @@
   ],
   "client": [
     "Deadmau5FeatureRendererMixin",
+    "EntityAccessor",
     "StructureVoidBlockMixin",
     "TitleScreenMixin",
     "LivingEntityRendererMixin",

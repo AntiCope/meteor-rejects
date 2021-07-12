@@ -1,19 +1,23 @@
 package cloudburst.rejects.gui.screens;
 
+import cloudburst.rejects.mixin.EntityAccessor;
 import cloudburst.rejects.modules.InteractionMenu;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.events.meteor.KeyEvent;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.render.PeekScreen;
+import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Saddleable;
+import net.minecraft.entity.*;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,14 +48,32 @@ public class InteractionScreen extends Screen {
     private final HashMap<String, Consumer<Entity>> functions;
     private final HashMap<String, String> msgs;
 
-    public InteractionScreen(Entity entity) {
+    private final StaticListener shiftListener = new StaticListener();
+
+    // Style
+    private final int selectedDotColor;
+    private final int dotColor;
+    private final int backgroundColor;
+    private final int borderColor;
+    private final int textColor;
+
+    public InteractionScreen(Entity e) {
+        this(e, Modules.get().get(InteractionMenu.class));
+    }
+
+    public InteractionScreen(Entity entity, InteractionMenu module) {
         super(new LiteralText("Menu Screen"));
+
+        selectedDotColor = module.selectedDotColor.get().getPacked();
+        dotColor = module.dotColor.get().getPacked();
+        backgroundColor = module.backgroundColor.get().getPacked();
+        borderColor = module.borderColor.get().getPacked();
+        textColor = module.textColor.get().getPacked();
+
         this.entity = entity;
-        //MeteorClient.EVENT_BUS.subscribe(this);
         functions = new HashMap<>();
         functions.put("Stats", (Entity e) -> {
             closeScreen();
-            //Modules.get().get(InteractionMenu.class).isOpen = true;
             client.openScreen(new StatsScreen(e));
         });
         if (entity instanceof PlayerEntity) {
@@ -88,17 +110,21 @@ public class InteractionScreen extends Screen {
 
         functions.put("Spectate", (Entity e) -> {
             MinecraftClient.getInstance().setCameraEntity(e);
+            client.player.sendMessage(new LiteralText("Sneak to un-spectate."), true);
+            MeteorClient.EVENT_BUS.subscribe(shiftListener);
             closeScreen();
         });
 
         if (entity.isGlowing()) {
-            functions.put("Remove highlight", (Entity e) -> {
-                entity.setGlowing(false);
+            functions.put("Remove glow", (Entity e) -> {
+                e.setGlowing(false);
+                ((EntityAccessor)e).invokeSetFlag(6, false);
                 closeScreen();
             });
         } else {
-            functions.put("Highlight", (Entity e) -> {
-                entity.setGlowing(true);
+            functions.put("Glow", (Entity e) -> {
+                e.setGlowing(true);
+                ((EntityAccessor)e).invokeSetFlag(6, true);
                 closeScreen();
             });
         }
@@ -115,19 +141,13 @@ public class InteractionScreen extends Screen {
         }
         msgs = Modules.get().get(InteractionMenu.class).messages;
         msgs.keySet().forEach((key) -> {
-            if (msgs.get(key).contains("{username}")) {
-                if (entity instanceof PlayerEntity) {
-                    functions.put(key, (Entity e) -> {
-                        closeScreen();
-                        client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
-                    });
-                }
-            } else {
-                functions.put(key, (Entity e) -> {
-                    closeScreen();
-                    client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
-                });
-            }
+            if (msgs.get(key).contains("{username}") && !(entity instanceof PlayerEntity)) return;
+            if (msgs.get(key).contains("{health}") && !(entity instanceof LivingEntity)) return;
+
+            functions.put(key, (Entity e) -> {
+                closeScreen();
+                client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
+            });
             
         });
         functions.put("Cancel", (Entity e) -> {closeScreen();});
@@ -185,9 +205,7 @@ public class InteractionScreen extends Screen {
     }
 
     private void closeScreen() {
-        //MeteorClient.EVENT_BUS.unsubscribe(this);
         client.openScreen((Screen) null);
-        //Modules.get().get(InteractionMenu.class).isOpen = false;
     }
 
     public void onClose() {
@@ -205,12 +223,9 @@ public class InteractionScreen extends Screen {
 
     public void render(MatrixStack matrix, int mouseX, int mouseY, float delta) {
         // Fake crosshair stuff
-        /*
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
-         */
-        client.getTextureManager().bindTexture(GUI_ICONS_TEXTURE);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
                 GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
@@ -275,11 +290,11 @@ public class InteractionScreen extends Screen {
         for (int j = 0; j < functions.size(); j++) {
             Point point = pointList.get(j);
             if (pointList.get(focusedDot) == point) {
-                drawDot(matrix, point.x - 4, point.y - 4, 0xFF4CFF00);
+                drawDot(matrix, point.x - 4, point.y - 4, selectedDotColor);
                 this.focusedString = cache[focusedDot];
             }
             else
-                drawDot(matrix, point.x - 4, point.y - 4, 0xFF0094FF);
+                drawDot(matrix, point.x - 4, point.y - 4, dotColor);
         }
     }
 
@@ -293,25 +308,25 @@ public class InteractionScreen extends Screen {
 
     private void drawTextField(MatrixStack matrix, int x, int y, String key) {
         if (x >= width / 2) {
-            drawRect(matrix, x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, 0x80808080, 0xFF000000);
-            drawStringWithShadow(matrix, textRenderer, key, x + 12, y - 4, 0xFFFFFFFF);
+            drawRect(matrix, x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
+            drawStringWithShadow(matrix, textRenderer, key, x + 12, y - 4, textColor);
         } else {
-            drawRect(matrix, x - 14 - textRenderer.getWidth(key), y - 8, textRenderer.getWidth(key) + 3, 15, 0x80808080, 0xFF000000);
-            drawStringWithShadow(matrix, textRenderer, key, x - 12 - textRenderer.getWidth(key), y - 4, 0xFFFFFFFF);
+            drawRect(matrix, x - 14 - textRenderer.getWidth(key), y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
+            drawStringWithShadow(matrix, textRenderer, key, x - 12 - textRenderer.getWidth(key), y - 4, textColor);
         }
     }
 
     // Literally drawing it in code
     private void drawDot(MatrixStack matrix, int startX, int startY, int colorInner) {
         // Draw dot itself
-        drawHorizontalLine(matrix, startX + 2, startX + 5, startY, 0xFF000000);
-        drawHorizontalLine(matrix, startX + 1, startX + 6, startY + 1, 0xFF000000);
+        drawHorizontalLine(matrix, startX + 2, startX + 5, startY, borderColor);
+        drawHorizontalLine(matrix, startX + 1, startX + 6, startY + 1, borderColor);
         drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 1, colorInner);
-        fill(matrix, startX, startY + 2, startX + 8, startY + 6, 0xFF000000);
+        fill(matrix, startX, startY + 2, startX + 8, startY + 6, borderColor);
         fill(matrix, startX + 1, startY + 2, startX + 7, startY + 6, colorInner);
-        drawHorizontalLine(matrix, startX + 1, startX + 6, startY + 6, 0xFF000000);
+        drawHorizontalLine(matrix, startX + 1, startX + 6, startY + 6, borderColor);
         drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 6, colorInner);
-        drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 7, 0xFF000000);
+        drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 7, borderColor);
 
         // Draw light overlay
         drawHorizontalLine(matrix, startX + 2, startX + 3, startY + 1, 0x80FFFFFF);
@@ -325,7 +340,21 @@ public class InteractionScreen extends Screen {
         if (e instanceof PlayerEntity) {
             in = in.replace("{username}", ((PlayerEntity)e).getGameProfile().getName());
         }
+        if (e instanceof LivingEntity) {
+            in = in.replace("{health}", String.format("%.2f", ((LivingEntity)e).getHealth()));
+        }
         return in;
+    }
+
+    private class StaticListener {
+        @EventHandler
+        private void onKey(KeyEvent event) {
+            if (client.options.keySneak.matchesKey(event.key, 0) || client.options.keySneak.matchesMouse(event.key)) {
+                client.setCameraEntity(client.player);
+                event.cancel();
+                MeteorClient.EVENT_BUS.unsubscribe(this);
+            }
+        }
     }
 }
 
