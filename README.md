@@ -27,6 +27,7 @@ Also includes unmerged PRs.
 - Auto32K (Removed from Meteor in [67f93](https://github.com/MeteorDevelopment/meteor-client/commit/67f93de1e5e287ea62ddef041441306f01249c3d#diff-95d3e3b18ffadf76eef2358f30d424843d57acf8bde5ebd49a3f6befa6ff0529))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoExtinguish
+- AutoEz <font color="#555">(very toxic)</font>
 - AutoHighway (Taken from [Meteor AutoHighway Addon](https://github.com/VoidCyborg/meteor-auto-highway-addon))
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
 - AutoTNT
