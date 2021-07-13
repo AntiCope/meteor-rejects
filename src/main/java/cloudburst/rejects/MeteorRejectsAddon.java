@@ -53,9 +53,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
 		modules.add(new ColorSigns());
 		modules.add(new Confuse());
 		modules.add(new CoordLogger());
-		modules.add(new Gravity());
 		modules.add(new InteractionMenu());
-		modules.add(new Glide());
 		modules.add(new Lavacast());
 		modules.add(new NewChunks());
 		modules.add(new ObsidianFarm());
