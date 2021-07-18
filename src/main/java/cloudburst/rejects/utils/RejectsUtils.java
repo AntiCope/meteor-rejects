@@ -3,7 +3,7 @@ package cloudburst.rejects.utils;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Utils {
+public class RejectsUtils {
     public static int CPS = 0;
 
     public static void init() {

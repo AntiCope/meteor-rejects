@@ -1,6 +1,6 @@
 package cloudburst.rejects.gui.hud;
 
-import cloudburst.rejects.utils.Utils;
+import cloudburst.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.systems.modules.render.hud.HUD;
 import meteordevelopment.meteorclient.systems.modules.render.hud.modules.DoubleTextHudElement;
 
@@ -11,6 +11,6 @@ public class CpsHud extends DoubleTextHudElement {
 
     @Override
     protected String getRight() {
-        return Integer.toString(Utils.CPS);
+        return Integer.toString(RejectsUtils.CPS);
     }
 }

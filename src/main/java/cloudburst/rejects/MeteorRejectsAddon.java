@@ -8,7 +8,7 @@ import cloudburst.rejects.gui.hud.ExpHud;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.modules.*;
 import cloudburst.rejects.utils.GiveUtils;
-import cloudburst.rejects.utils.Utils;
+import cloudburst.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.MeteorAddon;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.GuiThemes;
@@ -32,7 +32,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         
         MeteorClient.EVENT_BUS.registerLambdaFactory("cloudburst.rejects", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
         
-        Utils.init();
+        RejectsUtils.init();
         GiveUtils.init();
         
         Modules modules = Modules.get();
