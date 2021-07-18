@@ -5,6 +5,7 @@
   "mixins": [
   ],
   "client": [
+    "CustomPayloadS2CPacketMixin",
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
     "StructureVoidBlockMixin",
