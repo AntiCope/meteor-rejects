@@ -92,15 +92,15 @@ public class AutoTNT extends Module {
     );
     
     private final List<BlockPos.Mutable> blocksToIgnite = new ArrayList<>();
-    private final List<BlockPos.Mutable> blocksToPlace = new ArrayList<>();
     private final Pool<BlockPos.Mutable> ignitePool = new Pool<>(BlockPos.Mutable::new);
-    private final Pool<BlockPos.Mutable> placePool = new Pool<>(BlockPos.Mutable::new);
+    private final List<TntPos> blocksToPlace = new ArrayList<>();
+    private final Pool<TntPos> placePool = new Pool<>(TntPos::new);
     private int igniteTick = 0;
     private int placeTick = 0;
     private int prevSlot;
     
     public AutoTNT() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-tnt", "Ignites TNT for you");
+        super(MeteorRejectsAddon.CATEGORY, "auto-tnt", "Places and/or ignites tnt automatically. Good for griefing.");
     }
     
     @Override
@@ -132,7 +132,7 @@ public class AutoTNT extends Module {
         
         if (place.get() && placeTick > placeDelay.get()) {
             // Clear blocks
-            for (BlockPos.Mutable blockPos : blocksToPlace) placePool.free(blockPos);
+            for (TntPos tntPos : blocksToPlace) placePool.free(tntPos);
             blocksToPlace.clear();
             
             // Item check
@@ -145,7 +145,7 @@ public class AutoTNT extends Module {
             
             // Register
             BlockIterator.register(horizontalRange.get(), verticalRange.get(), (blockPos, blockState) -> {
-                if (BlockUtils.canPlace(blockPos)) blocksToPlace.add(placePool.get().set(blockPos));
+                if (BlockUtils.canPlace(blockPos)) blocksToPlace.add(placePool.get().set(blockPos, TntDamage.calculate(blockPos)));
             });
         }
     }
@@ -170,14 +170,10 @@ public class AutoTNT extends Module {
         if (place.get() && blocksToPlace.size() > 0) {
             if (placeTick > placeDelay.get()) {
                 // Sort based on closest tnt
-                blocksToPlace.sort((o1, o2) -> {
-                    int s1 = TntDamage.calculate(o1);
-                    int s2 = TntDamage.calculate(o2);
-                    return Integer.compare(s1, s2);
-                });
+                blocksToPlace.sort(Comparator.comparingInt(o -> o.score));
         
                 // Placement
-                place(blocksToPlace.get(0), InvUtils.findInHotbar(item -> item.getItem() == Items.TNT));
+                place(blocksToPlace.get(0).blockPos, InvUtils.findInHotbar(item -> item.getItem() == Items.TNT));
         
                 // Reset ticks
                 placeTick = 0;
@@ -186,7 +182,6 @@ public class AutoTNT extends Module {
     }
     
     private void ignite(BlockPos pos, FindItemResult item) {
-        // Set slots
         prevSlot = mc.player.getInventory().selectedSlot;
         InvUtils.swap(item.getSlot());
 
@@ -197,5 +192,17 @@ public class AutoTNT extends Module {
     
     private void place(BlockPos pos, FindItemResult item) {
         BlockUtils.place(pos, item, rotate.get(), 10);
+    }
+    
+    private class TntPos {
+        public BlockPos.Mutable blockPos;
+        public int score;
+        
+        public TntPos set(BlockPos blockPos, int score) {
+            this.blockPos.set(blockPos);
+            this.score = score;
+            
+            return this;
+        }
     }
 }
