@@ -12,11 +12,7 @@ Also includes unmerged PRs.
 </div>
 
 # How to use
-- Download the latest release of this mod from the releases tab.
-  - [Download 1.17](https://github.com/C10udburst/meteor-rejects/releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar)
-  - [Download 1.16](https://github.com/C10udburst/meteor-rejects/releases/download/latest-1.16/meteor-rejects-addon-0.0.4.jar)
-    
-    Note: 1.16 releases will be discontinued when Meteor releases 1.17
+- Download the latest [release](https://github.com/C10udburst/meteor-rejects/releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar) of this mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
 # Features
