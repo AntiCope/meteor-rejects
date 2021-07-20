@@ -95,35 +95,33 @@ public class RoundedRenderer2D {
         int cirDepth = getCirDepth(r, angle);
         double cirPart = angle / cirDepth;
         int center = mb.triangles.vec2(x, y).color(color).next();
-        int prev = mb.triangles.vec2(x + Math.sin(startAngle) * r, y - Math.cos(startAngle) * r).color(color).next();
+        int prev = vecOnCircle(mb, x, y, r, startAngle, color);
         for (int i = 1; i < cirDepth + 1; i++) {
-            double xV = x + Math.sin(startAngle + cirPart * i) * r;
-            double yV = y - Math.cos(startAngle + cirPart * i) * r;
-            int next = mb.triangles.vec2(xV, yV).color(color).next();
+            int next = vecOnCircle(mb, x, y, r, startAngle + cirPart * i, color);
             mb.triangles.quad(prev, center, next, next);
             prev = next;
         }
     }
 
     public static void circlePartOutline(Renderer2D  mb, double x, double y, double r, double startAngle, double angle, Color color, double outlineWidth) {
+        if (outlineWidth >= r) {
+            circlePart(mb, x, y, r, startAngle, angle, color);
+            return;
+        }
         int cirDepth = getCirDepth(r, angle);
         double cirPart = angle / cirDepth;
-        for (int i = 0; i < cirDepth; i++) {
-            double xOC = x + Math.sin(startAngle + cirPart * i) * r;
-            double yOC = y - Math.cos(startAngle + cirPart * i) * r;
-            double xIC = x + Math.sin(startAngle + cirPart * i) * (r - outlineWidth);
-            double yIC = y - Math.cos(startAngle + cirPart * i) * (r - outlineWidth);
-            double xON = x + Math.sin(startAngle + cirPart * (i + 1)) * r;
-            double yON = y - Math.cos(startAngle + cirPart * (i + 1)) * r;
-            double xIN = x + Math.sin(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
-            double yIN = y - Math.cos(startAngle + cirPart * (i + 1)) * (r - outlineWidth);
-
-            mb.triangles.quad(
-                    mb.triangles.vec2(xOC, yOC).color(color).next(),
-                    mb.triangles.vec2(xON, yON).color(color).next(),
-                    mb.triangles.vec2(xIC, yIC).color(color).next(),
-                    mb.triangles.vec2(xIN, yIN).color(color).next()
-            );
+        int innerPrev = vecOnCircle(mb, x, y, r - outlineWidth, startAngle, color);
+        int outerPrev = vecOnCircle(mb, x, y, r, startAngle, color);
+        for (int i = 1; i < cirDepth + 1; i++) {
+            int inner = vecOnCircle(mb, x, y, r - outlineWidth, startAngle + cirPart * i, color);
+            int outer = vecOnCircle(mb, x, y, r, startAngle + cirPart * i, color);
+            mb.triangles.quad(inner, innerPrev, outerPrev, outer);
+            innerPrev = inner;
+            outerPrev = outer;
         }
+    }
+
+    private static int vecOnCircle(Renderer2D  mb, double x, double y, double r, double angle, Color color) {
+        return mb.triangles.vec2(x + Math.sin(angle) * r, y - Math.cos(angle) * r).color(color).next();
     }
 }
