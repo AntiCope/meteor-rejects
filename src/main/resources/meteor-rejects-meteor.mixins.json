@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_16",
   "mixins": [ ],
   "client": [
-    "GuiRendererAccessor"
+    "ConfigTabMixin",
+    "GuiRendererAccessor",
+    "HttpMixin"
   ]
 }
