@@ -183,11 +183,11 @@ public class AutoTNT extends Module {
     
     private void ignite(BlockPos pos, FindItemResult item) {
         prevSlot = mc.player.getInventory().selectedSlot;
-        InvUtils.swap(item.getSlot());
+        InvUtils.swap(item.getSlot(), false);
 
         mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
     
-        InvUtils.swap(prevSlot);
+        InvUtils.swap(prevSlot, false);
     }
     
     private void place(BlockPos pos, FindItemResult item) {
