@@ -4,7 +4,6 @@ import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.*;
-import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
@@ -20,6 +19,8 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+
+import cloudburst.rejects.MeteorRejectsAddon;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,7 +118,7 @@ public class AutoWither extends Module {
     private int witherTicksWaited, blockTicksWaited;
     
     public AutoWither() {
-        super(Categories.World, "auto-wither", "Automatically builds withers.");
+        super(MeteorRejectsAddon.CATEGORY, "auto-wither", "Automatically builds withers.");
     }
     
     @Override
