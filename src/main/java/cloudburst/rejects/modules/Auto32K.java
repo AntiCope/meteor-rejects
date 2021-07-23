@@ -15,8 +15,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.*;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.client.gui.screen.ingame.Generic3x3ContainerScreen;
 import net.minecraft.client.gui.screen.ingame.HopperScreen;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -103,7 +102,7 @@ public class Auto32K extends Module {
     private void onTick(TickEvent.Post event) {
         if (phase <= 7) {
             if (mode.get() == Mode.Hopper) {
-                FindItemResult findShulker = InvUtils.findInHotbar(Items.SHULKER_BOX);
+                FindItemResult findShulker = InvUtils.findInHotbar(this::isShulkerBox);
                 FindItemResult findHopper = InvUtils.findInHotbar(Items.HOPPER);
                 if (isValidSlot(findShulker) || isValidSlot(findHopper)) return;
                 List<BlockPos> sortedBlocks = findValidBlocksHopper();
@@ -129,7 +128,7 @@ public class Auto32K extends Module {
                     phase = 8;
                 }
             } else if (mode.get() == Mode.Dispenser) {
-                FindItemResult shulkerSlot = InvUtils.find(Items.SHULKER_BOX);
+                FindItemResult shulkerSlot = InvUtils.find(this::isShulkerBox);
                 FindItemResult hopperSlot = InvUtils.find(Items.HOPPER);
                 FindItemResult dispenserSlot = InvUtils.find(Items.DISPENSER);
                 FindItemResult redstoneSlot = InvUtils.find(Items.REDSTONE_BLOCK);
@@ -280,6 +279,13 @@ public class Auto32K extends Module {
             }
         }
         return null;
+    }
+
+    private boolean isShulkerBox(ItemStack stack) {
+        Item item = stack.getItem();
+        if (!(item instanceof BlockItem)) return false;
+        Block block = ((BlockItem)item).getBlock();
+        return block instanceof ShulkerBoxBlock;
     }
 
     private List<BlockPos> getRange(BlockPos player, double range){
