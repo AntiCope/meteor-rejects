@@ -8,7 +8,7 @@ Also includes unmerged PRs.
 </p>
 <div align="center">
   <img src="https://img.shields.io/badge/spaghetti%20code-yes-success" alt="Spagetti code: yes">
-  <img stc="https://img.shields.io/github/last-commit/C10udburst/meteor-rejects" alt="Last commit">
+  <img src="https://img.shields.io/github/last-commit/C10udburst/meteor-rejects" alt="Last commit">
 </div>
 
 # How to use
@@ -21,7 +21,7 @@ Also includes unmerged PRs.
 - AntiSpawnpoint
 - AntiVanish
 - Auto32K (Removed from Meteor in [67f93](https://github.com/MeteorDevelopment/meteor-client/commit/67f93de1e5e287ea62ddef041441306f01249c3d#diff-95d3e3b18ffadf76eef2358f30d424843d57acf8bde5ebd49a3f6befa6ff0529))
-- AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
+- AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoExtinguish
 - AutoEz <font color="#555">(very toxic)</font>
 - AutoHighway (Taken from [Meteor AutoHighway Addon](https://github.com/VoidCyborg/meteor-auto-highway-addon))
@@ -33,7 +33,7 @@ Also includes unmerged PRs.
 - Boost (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/Boost.java))
 - ColorSigns
 - Confuse
-- Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/impl/misc/CoordFinder.java))
+- Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/misc/CoordFinder.java))
 - Custom Packets
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Lavacast
@@ -43,12 +43,12 @@ Also includes unmerged PRs.
 - Painter
 - Phase
 - Rendering
-- SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/impl/render/Skeletons.java))
+- SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/render/Skeletons.java))
 - SoundLocator
 
 ## Commands
 - `.ghost` (Ported from [AntiGhost](https://github.com/gbl/AntiGhost/blob/fabric_1_16/src/main/java/de/guntram/mcmod/antighost/AntiGhost.java))
-- `.give` (Some preset were taken from [BleackHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdGive.java))
+- `.give` (Some preset were taken from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdGive.java))
 - `.save-skin`
 - `.heads`
 - `.server` (Port scanning ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
