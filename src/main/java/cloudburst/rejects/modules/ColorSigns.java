@@ -1,6 +1,5 @@
 package cloudburst.rejects.modules;
 
-import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 
 import cloudburst.rejects.MeteorRejectsAddon;
