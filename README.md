@@ -4,7 +4,6 @@
 <h1 align="center">Meteor Rejects</h1>
 <p align="center">
 An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly. 
-Also includes unmerged PRs.
 </p>
 <div align="center">
   <img src="https://img.shields.io/badge/spaghetti%20code-yes-success" alt="Spagetti code: yes">
