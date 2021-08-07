@@ -2,7 +2,9 @@
   "required": true,
   "package": "cloudburst.rejects.mixin.meteor",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [ ],
+  "mixins": [
+    "modules.NoRenderAccessor"
+  ],
   "client": [
     "ConfigTabMixin",
     "GuiRendererAccessor",

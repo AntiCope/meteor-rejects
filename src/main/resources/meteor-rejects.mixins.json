@@ -3,16 +3,17 @@
   "package": "cloudburst.rejects.mixin",
   "compatibilityLevel": "JAVA_16",
   "mixins": [
+    "CommandSuggestorMixin"
   ],
   "client": [
     "CustomPayloadS2CPacketMixin",
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
-    "StructureVoidBlockMixin",
-    "TitleScreenMixin",
+    "GameRendererMixin",
     "LivingEntityRendererMixin",
     "MinecraftClientMixin",
-    "GameRendererMixin",
+    "StructureVoidBlockMixin",
+    "TitleScreenMixin",
     "ToastManagerMixin"
   ],
   "injectors": {
