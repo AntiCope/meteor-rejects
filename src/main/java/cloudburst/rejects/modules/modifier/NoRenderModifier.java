@@ -8,16 +8,21 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 
 public class NoRenderModifier {
-    static SettingGroup sgOverlay = ((NoRenderAccessor) Modules.get().get(NoRender.class)).getSgOverlay();
+    static SettingGroup sgOverlay;
     
-    public static final Setting<Boolean> noCommandSuggestions = sgOverlay.add(new BoolSetting.Builder()
-            .name("command-suggestions")
-            .description("Disables command suggestions in chat.")
-            .defaultValue(false)
-            .build()
-    );
+    public static Setting<Boolean> noCommandSuggestions;
     
     public static boolean noCommandSuggestions() {
         return Modules.get().get(NoRender.class).isActive() && noCommandSuggestions.get();
+    }
+    
+    public static void init() {
+        sgOverlay = ((NoRenderAccessor) Modules.get().get(NoRender.class)).getSgOverlay();
+        noCommandSuggestions = sgOverlay.add(new BoolSetting.Builder()
+                .name("command-suggestions")
+                .description("Disables command suggestions in chat.")
+                .defaultValue(false)
+                .build()
+        );
     }
 }

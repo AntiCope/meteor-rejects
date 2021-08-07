@@ -7,6 +7,7 @@ import cloudburst.rejects.gui.hud.CrystalHud;
 import cloudburst.rejects.gui.hud.ExpHud;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.modules.*;
+import cloudburst.rejects.modules.modifier.NoRenderModifier;
 import cloudburst.rejects.utils.GiveUtils;
 import cloudburst.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.MeteorAddon;
@@ -35,6 +36,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         RejectsUtils.init();
         GiveUtils.init();
         
+        // Modules
         Modules modules = Modules.get();
         modules.add(new AntiBot());
         modules.add(new AntiSpawnpoint());
@@ -66,6 +68,10 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
         
+        // Module modifications
+        NoRenderModifier.init();
+        
+        // Commands
         Commands commands = Commands.get();
         commands.add(new GhostCommand());
         commands.add(new GiveCommand());
@@ -76,12 +82,14 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new TeleportCommand());
         commands.add(new TerrainExport());
         
+        // HUD
         HUD hud = modules.get(HUD.class);
         hud.elements.add(new AppleHud(hud));
         hud.elements.add(new CrystalHud(hud));
         hud.elements.add(new ExpHud(hud));
         hud.elements.add(new CpsHud(hud));
         
+        // Themes
         GuiThemes.add(new MeteorRoundedGuiTheme());
     }
     
