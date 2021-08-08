@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_16",
   "client": [
     "modules.NoRenderAccessor",
+    "CommandsMixin",
     "ConfigTabMixin",
     "GuiRendererAccessor",
     "HttpMixin"

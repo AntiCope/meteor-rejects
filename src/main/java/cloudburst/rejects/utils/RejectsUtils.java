@@ -5,12 +5,15 @@ import meteordevelopment.meteorclient.MeteorClient;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cloudburst.rejects.utils.seeds.Seeds;
+
 public class RejectsUtils {
     public static int CPS = 0;
 
     public static void init() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             RejectsConfig.get().save(MeteorClient.FOLDER);
+            Seeds.get().save(MeteorClient.FOLDER);
         }));
 
         new Timer().scheduleAtFixedRate(newTimerTaskFromLambda(() -> CPS = 0), 0, 1000);

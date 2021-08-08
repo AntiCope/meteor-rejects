@@ -76,7 +76,9 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new GhostCommand());
         commands.add(new GiveCommand());
         commands.add(new SaveSkinCommand());
+        commands.add(new SeedCommand());
         commands.add(new HeadsCommand());
+        // commands.add(new LocateCommand());   I wish it was that simple -_-
         commands.add(new ServerCommand());
         commands.add(new SetBlockCommand());
         commands.add(new TeleportCommand());

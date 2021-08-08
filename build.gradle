@@ -30,6 +30,10 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 
 	modImplementation "com.github.MeteorDevelopment:meteor-client:master-SNAPSHOT"
+
+	// Seed .locate features
+	modImplementation 'com.github.hube12:SEED:master-SNAPSHOT'
+	include 'com.github.hube12:SEED:master-SNAPSHOT'
 }
 
 processResources {
