@@ -61,7 +61,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 
 **Modifications**
 - `.server`
-  - `port` (ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
+  - `ports` (ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
 - `.locate`
   - rewrite (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
 
