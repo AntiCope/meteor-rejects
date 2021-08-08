@@ -54,12 +54,16 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - `.give` (Some preset were taken from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdGive.java))
 - `.save-skin`
 - `.heads`
-- `.server` (Port scanning ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
 - `.seed` (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
-- rewritten `.locate` (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
 - `.setblock`
 - `.teleport`
 - `.terrain-export` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdTerrain.java))
+
+**Modifications**
+- `.server`
+  - `port` (ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
+- `.locate`
+  - rewrite (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
 
 ## Themes
 - "Meteor Rounded" theme (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/619))
