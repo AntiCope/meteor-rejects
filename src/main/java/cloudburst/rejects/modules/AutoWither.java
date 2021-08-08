@@ -177,7 +177,7 @@ public class AutoWither extends Module {
         
         // Soul sand/soil and skull slot
         FindItemResult findSoulSand = InvUtils.findInHotbar(Items.SOUL_SAND);
-        if (!findSoulSand.found()) InvUtils.findInHotbar(Items.SOUL_SOIL);
+        if (!findSoulSand.found()) findSoulSand = InvUtils.findInHotbar(Items.SOUL_SOIL);
         FindItemResult findWitherSkull = InvUtils.findInHotbar(Items.WITHER_SKELETON_SKULL);
         
         // Check for enough resources
