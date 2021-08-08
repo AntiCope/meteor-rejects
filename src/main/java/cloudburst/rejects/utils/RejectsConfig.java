@@ -5,7 +5,7 @@ import meteordevelopment.meteorclient.MeteorClient;
 import net.minecraft.nbt.NbtCompound;
 
 public class RejectsConfig extends System<RejectsConfig> {
-    private static final RejectsConfig rejectsConfig = new RejectsConfig();
+    private static final RejectsConfig INSTANCE = new RejectsConfig();
 
     public enum HttpAllowed {
         Everything,
@@ -23,7 +23,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     }
 
     public static RejectsConfig get() {
-        return rejectsConfig;
+        return INSTANCE;
     }
 
     @Override

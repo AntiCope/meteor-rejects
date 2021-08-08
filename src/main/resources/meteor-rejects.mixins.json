@@ -2,10 +2,8 @@
   "required": true,
   "package": "cloudburst.rejects.mixin",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [
-    "CommandSuggestorMixin"
-  ],
   "client": [
+    "CommandSuggestorMixin",
     "CustomPayloadS2CPacketMixin",
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
