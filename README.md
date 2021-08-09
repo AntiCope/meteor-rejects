@@ -22,7 +22,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - Auto32K (Removed from Meteor in [67f93](https://github.com/MeteorDevelopment/meteor-client/commit/67f93de1e5e287ea62ddef041441306f01249c3d#diff-95d3e3b18ffadf76eef2358f30d424843d57acf8bde5ebd49a3f6befa6ff0529))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoExtinguish
-- AutoEz <font color="#555">(very toxic)</font>
+- AutoEz
 - AutoHighway (Taken from [Meteor AutoHighway Addon](https://github.com/VoidCyborg/meteor-auto-highway-addon))
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
 - AutoTNT
@@ -51,23 +51,24 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 
 ## Commands
 - `.ghost` (Ported from [AntiGhost](https://github.com/gbl/AntiGhost/blob/fabric_1_16/src/main/java/de/guntram/mcmod/antighost/AntiGhost.java))
-- `.give` (Some preset were taken from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdGive.java))
 - `.save-skin`
 - `.heads`
-- `.seed` (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
+- `.seed` (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
 - `.setblock`
 - `.teleport`
 - `.terrain-export` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdTerrain.java))
 
 **Modifications**
 - `.server`
-  - `ports` (ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
+  - `ports` (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
 - `.locate`
-  - rewrite (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
+  - rewrite (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1300))
+- `.give`
+  - presets (Some presets were taken from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdGive.java))
 
 ## Themes
-- "Meteor Rounded" theme (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/619))
+- "Meteor Rounded" theme (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/619))
 
 ## HUD
-- Apple, Exp & Crystal HUD (taken from an [unmerged pr](https://github.com/MeteorDevelopment/meteor-client/pull/757))
+- Apple, Exp & Crystal HUD (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/757))
 - CPS HUD (Ported from [AuroraKeystrokes](https://github.com/LambdAurora/AuroraKeystrokes/tree/1.16/src/main/java/me/lambdaurora/keystrokes))
