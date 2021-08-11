@@ -10,7 +10,7 @@ public class RoundedRenderer2D {
     private static final double circleHalf = circleQuarter * 2;
     private static final double circleThreeQuarter = circleQuarter * 3;
 
-    public static void quadRoundedOutline(Renderer2D  mb, double x, double y, double width, double height, Color color, int r, double s) {
+    public static void quadRoundedOutline(Renderer2D  mb, double x, double y, double width, double height, Color color, double r, double s) {
         r = getR(r, width, height);
         if (r == 0) {
             mb.quad(x, y, width, s, color);
@@ -33,7 +33,7 @@ public class RoundedRenderer2D {
         }
     }
 
-    public static void quadRounded(Renderer2D  mb, double x, double y, double width, double height, Color color, int r, boolean roundTop) {
+    public static void quadRounded(Renderer2D  mb, double x, double y, double width, double height, Color color, double r, boolean roundTop) {
         r = getR(r, width, height);
         if (r == 0)
             mb.quad(x, y, width, height, color);
@@ -57,7 +57,7 @@ public class RoundedRenderer2D {
         }
     }
 
-    public static void quadRoundedSide(Renderer2D  mb, double x, double y, double width, double height, Color color, int r, boolean right) {
+    public static void quadRoundedSide(Renderer2D  mb, double x, double y, double width, double height, Color color, double r, boolean right) {
         r = getR(r, width, height);
         if (r == 0)
             mb.quad(x, y, width, height, color);
@@ -77,12 +77,12 @@ public class RoundedRenderer2D {
         }
     }
 
-    private static int getR(int r, double w, double h) {
+    private static double getR(double r, double w, double h) {
         if (r * 2 > h) {
-            r = (int)h / 2;
+            r = h / 2;
         }
         if (r * 2 > w) {
-            r = (int)w / 2;
+            r = w / 2;
         }
         return r;
     }

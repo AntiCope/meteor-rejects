@@ -21,7 +21,7 @@ public interface MeteorWidget extends BaseWidget {
         int r = theme.roundAmount();
         double s = theme.scale(2);
         Color outlineColor = theme.outlineColor.get(pressed, mouseOver);
-        GuiUtils.quadRounded(renderer, widget.x + s, widget.y + s, widget.width - s * 2, widget.height - s * 2, theme.backgroundColor.get(pressed, mouseOver), r);
+        GuiUtils.quadRounded(renderer, widget.x + s, widget.y + s, widget.width - s * 2, widget.height - s * 2, theme.backgroundColor.get(pressed, mouseOver), r - s);
         GuiUtils.quadOutlineRounded(renderer, widget, outlineColor, r, s);
     }
 }
