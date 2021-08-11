@@ -56,7 +56,14 @@ public class WorldGenUtils {
         ));
         put(Feature.village, Arrays.asList(
             Blocks.BELL,
-            Blocks.BREWING_STAND
+            Blocks.BREWING_STAND,
+            Blocks.SMOKER,
+            Blocks.BLAST_FURNACE,
+            Blocks.FLETCHING_TABLE,
+            Blocks.STONECUTTER,
+            Blocks.LOOM,
+            Blocks.GRINDSTONE,
+            Blocks.LECTERN
         ));
         put(Feature.mineshaft, Collections.singletonList(
             Blocks.RAIL
