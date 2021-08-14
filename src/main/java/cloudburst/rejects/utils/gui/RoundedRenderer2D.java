@@ -12,7 +12,7 @@ public class RoundedRenderer2D {
 
     public static void quadRoundedOutline(Renderer2D  mb, double x, double y, double width, double height, Color color, double r, double s) {
         r = getR(r, width, height);
-        if (r == 0) {
+        if (r <= 0) {
             mb.quad(x, y, width, s, color);
             mb.quad(x, y + height - s, width, s, color);
             mb.quad(x, y + s, s, height - s * 2, color);
@@ -35,7 +35,7 @@ public class RoundedRenderer2D {
 
     public static void quadRounded(Renderer2D  mb, double x, double y, double width, double height, Color color, double r, boolean roundTop) {
         r = getR(r, width, height);
-        if (r == 0)
+        if (r <= 0)
             mb.quad(x, y, width, height, color);
         else {
             if (roundTop) {
@@ -59,7 +59,7 @@ public class RoundedRenderer2D {
 
     public static void quadRoundedSide(Renderer2D  mb, double x, double y, double width, double height, Color color, double r, boolean right) {
         r = getR(r, width, height);
-        if (r == 0)
+        if (r <= 0)
             mb.quad(x, y, width, height, color);
         else {
             if (right) {

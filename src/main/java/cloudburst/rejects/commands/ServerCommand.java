@@ -37,7 +37,7 @@ public class ServerCommand extends Command {
     private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(new LiteralText("Couldn't obtain server address"));
     private final static SimpleCommandExceptionType INVALID_RANGE = new SimpleCommandExceptionType(new LiteralText("Invalid range"));
 
-    private final static HashMap<Integer, String> ports = new HashMap();
+    private final static HashMap<Integer, String> ports = new HashMap<Integer, String>();
 
     public ServerCommand() {
         super("server", "Prints server information");
