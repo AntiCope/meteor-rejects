@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/C10udburst/meteor-rejects/blob/master/src/main/resources/assets/rejects/icon.png" alt="logo" width="20%"/>
+  <img src="/src/main/resources/assets/rejects/icon.png" alt="logo" width="20%"/>
 </p>
 <h1 align="center">Meteor Rejects</h1>
 <p align="center">
@@ -7,11 +7,11 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 </p>
 <div align="center">
   <img src="https://img.shields.io/badge/spaghetti%20code-yes-success" alt="Spagetti code: yes">
-  <img src="https://img.shields.io/github/last-commit/C10udburst/meteor-rejects" alt="Last commit">
+  <img src="https://img.shields.io/github/last-commit/AntiCope/meteor-rejects" alt="Last commit">
 </div>
 
 # How to use
-- Download the latest [release](https://github.com/C10udburst/meteor-rejects/releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar) of this mod from the releases tab.
+- Download the latest [release](/../../releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar) of this mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
 # Features
