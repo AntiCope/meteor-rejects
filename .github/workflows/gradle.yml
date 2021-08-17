@@ -3,6 +3,10 @@
 
 name: Java CI with Gradle
 
+concurrency: 
+  group: "build-1.17"
+  cancel-in-progress: true
+
 on:
   push:
     branches: [ master ]
