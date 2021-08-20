@@ -10,6 +10,9 @@ concurrency:
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '*.md'
+      
 
 jobs:
   build:
