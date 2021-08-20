@@ -3,20 +3,32 @@ package cloudburst.rejects.modules;
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.BlockListSetting;
 import meteordevelopment.meteorclient.settings.BoolSetting;
+import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.lwjgl.system.CallbackI.B;
+import org.lwjgl.system.CallbackI.P;
+
 import net.minecraft.block.BedBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Items;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 
 public class AutoBedTrap extends Module {
 
@@ -37,50 +49,63 @@ public class AutoBedTrap extends Module {
             .defaultValue(true)
             .build()
     );
-    
-    BlockPos bed1;
-    Direction bed2direction;
-    BlockPos bed2;
+
+    private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
+            .name("range")
+            .description("The break range.")
+            .defaultValue(4)
+            .min(0)
+            .build()
+    );
+
+    private final Setting<List<Block>> blockTypes = sgGeneral.add(new BlockListSetting.Builder()
+        .name("blocks")
+        .description("The blocks you bedtrap with.")
+        .defaultValue(Arrays.asList(Blocks.OBSIDIAN))
+        .build()
+    );
+
+    private final Pool<BlockPos.Mutable> blockPosPool = new Pool<>(BlockPos.Mutable::new);
+    private final List<BlockPos.Mutable> blocks = new ArrayList<>();
+
     int cap = 0;
-    boolean bed;
 
     public AutoBedTrap() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-bed-trap", "Automatically places obsidian around bed");
+        super(MeteorRejectsAddon.CATEGORY, "auto-bed-trap", "Automatically places obsidian around beds");
     }
 
     @Override
-    public void onActivate() {
-        cap = 0;
-        bed1 = null;
-        if (mc.crosshairTarget == null) {
-            error("Not looking at a bed. Disabling.");
-            toggle();
-        }
-        bed1 = mc.crosshairTarget.getType() == HitResult.Type.BLOCK ? ((BlockHitResult) mc.crosshairTarget).getBlockPos() : null;
-        if (bed1 == null || !(mc.world.getBlockState(bed1).getBlock() instanceof BedBlock)) {
-            error("Not looking at a bed. Disabling.");
-            toggle();
-        }
+    public void onDeactivate() {
+        for (BlockPos.Mutable blockPos : blocks) blockPosPool.free(blockPos);
+        blocks.clear();
     }
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        bed2direction = BedBlock.getOppositePartDirection(mc.world.getBlockState(bed1));
-        if (bed2direction == Direction.EAST) {
-            bed2 = bed1.east(1);
-        } else if (bed2direction == Direction.NORTH) {
-            bed2 = bed1.north(1);
-        } else if (bed2direction == Direction.SOUTH) {
-            bed2 = bed1.south(1);
-        } else if (bed2direction == Direction.WEST) {
-            bed2 = bed1.west(1);
-        }
 
-        placeTickAround(bed1);
-        placeTickAround(bed2);
+        BlockIterator.register((int) Math.ceil(range.get()), (int) Math.ceil(range.get()), (blockPos, blockState) -> {
+            if (!BlockUtils.canBreak(blockPos, blockState)) return;
+
+            if (!(blockState.getBlock() instanceof BedBlock)) return;
+
+            blocks.add(blockPosPool.get().set(blockPos));
+        });
+
     }
 
-    public void placeTickAround(BlockPos block) {
+    @EventHandler
+    private void onTickPost(TickEvent.Post event) {
+        boolean noBlocks = false;
+        for (BlockPos blockPos : blocks) {
+            if (!placeTickAround(blockPos)) {
+                noBlocks = true;
+                break;
+            }
+        }
+        if (noBlocks && isActive()) toggle(); 
+    }
+
+    public boolean placeTickAround(BlockPos block) {
         for (BlockPos b : new BlockPos[]{
                 block.up(), block.west(),
                 block.north(), block.south(),
@@ -88,23 +113,30 @@ public class AutoBedTrap extends Module {
 
             if (cap >= bpt.get()) {
                 cap = 0;
-                return;
+                return true;
             }
 
-            FindItemResult findBlock = InvUtils.findInHotbar(Items.OBSIDIAN);
+            if (blockTypes.get().contains(mc.world.getBlockState(b).getBlock())) return true;
+
+            FindItemResult findBlock = InvUtils.findInHotbar((item) -> {
+                if (!(item.getItem() instanceof BlockItem)) return false;
+                BlockItem bitem = (BlockItem)item.getItem();
+                return blockTypes.get().contains(bitem.getBlock());
+            });
             if (!findBlock.found()) {
                 error("No specified blocks found. Disabling.");
-                toggle();
+                return false;
             }
 
 
             if (BlockUtils.place(b, findBlock, rotate.get(), 10, false)) {
                 cap++;
                 if (cap >= bpt.get()) {
-                    return;
+                    return true;
                 }
             };
         }
         cap = 0;
+        return true;
     }
 }

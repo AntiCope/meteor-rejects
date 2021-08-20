@@ -6,8 +6,10 @@
 An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly. 
 </p>
 <div align="center">
-  <img src="https://img.shields.io/badge/spaghetti%20code-yes-success" alt="Spagetti code: yes">
-  <img src="https://img.shields.io/github/last-commit/AntiCope/meteor-rejects" alt="Last commit">
+  <img src="https://img.shields.io/badge/spaghetti%20code-yes-success?logo=java" alt="Spagetti code: yes">
+  <img src="https://img.shields.io/github/last-commit/AntiCope/meteor-rejects?logo=git" alt="Last commit">
+  <img src="https://img.shields.io/github/workflow/status/AntiCope/meteor-rejects/Java%20CI%20with%20Gradle?logo=github" alt="build status">
+
 </div>
 
 # How to use
