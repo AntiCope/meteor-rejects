@@ -65,23 +65,27 @@ public class SkeletonESP extends Module {
             PlayerEntity playerEntity = (PlayerEntity) entity;
 
             Vec3d footPos = getEntityRenderPosition(playerEntity, g);
-            PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer)(LivingEntityRenderer) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
-            PlayerEntityModel playerEntityModel = (PlayerEntityModel)livingEntityRenderer.getModel();
+            PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer)(LivingEntityRenderer<?, ?>) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
+            PlayerEntityModel<PlayerEntity> playerEntityModel = (PlayerEntityModel)livingEntityRenderer.getModel();
 
             float h = MathHelper.lerpAngleDegrees(g, playerEntity.prevBodyYaw, playerEntity.bodyYaw);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) h = Rotations.serverYaw;
-            float j = MathHelper.lerpAngleDegrees(g, playerEntity.prevHeadYaw, playerEntity.headYaw);
+            float j = MathHelper.lerpAngleDegrees(g, playerEntity.prevHeadYaw, playerEntity.headYaw); 
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) j = Rotations.serverYaw;
 
             float q = playerEntity.limbAngle - playerEntity.limbDistance * (1.0F - g);
             float p = MathHelper.lerp(g, playerEntity.lastLimbDistance, playerEntity.limbDistance);
             float o = (float)playerEntity.age + g;
             float k = j - h;
-            float m = MathHelper.lerp(g, playerEntity.prevPitch, playerEntity.getPitch());
+            float m = playerEntity.getPitch(g);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) m = Rotations.serverPitch;
 
+            playerEntityModel.animateModel(playerEntity, q, p, g);
             playerEntityModel.setAngles(playerEntity, q, p, o, k, m);
+            
+            boolean swimming = playerEntity.isInSwimmingPose();
             boolean sneaking = playerEntity.isSneaking();
+            boolean flying = playerEntity.isFallFlying();
 
             ModelPart head = playerEntityModel.head;
             ModelPart leftArm = playerEntityModel.leftArm;
@@ -90,7 +94,18 @@ public class SkeletonESP extends Module {
             ModelPart rightLeg = playerEntityModel.rightLeg;
 
             matrixStack.translate(footPos.x, footPos.y, footPos.z);
+            if (swimming) {
+                matrixStack.translate(0, 0.35f, 0);
+            }
+
             matrixStack.multiply(new Quaternion(new Vec3f(0, -1, 0), h + 180, true));
+            if (swimming || flying) {
+                matrixStack.multiply(new Quaternion(new Vec3f(-1, 0, 0), 90 + m, true));
+            }
+            if (swimming) {
+                matrixStack.translate(0, -0.95f, 0);
+            }
+
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
             bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 
@@ -146,6 +161,12 @@ public class SkeletonESP extends Module {
 
             bufferBuilder.end();
             BufferRenderer.draw(bufferBuilder);
+
+            if (swimming || flying) {
+                matrixStack.translate(0, 0.95f, 0);
+                matrixStack.multiply(new Quaternion(new Vec3f(1, 0, 0), 90 + m, true));
+                matrixStack.translate(0, -0.35f, 0);
+            }
 
             matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), h + 180, true));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
