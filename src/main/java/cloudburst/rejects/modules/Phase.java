@@ -61,6 +61,7 @@ public class Phase extends Module {
     private void onCollisionShape(CollisionShapeEvent event) {
         if (mc.world == null || mc.player == null) return;
         if (mode.get() != Mode.CollisionShape) return;
+        if (event == null || event.pos == null) return;
         if (event.type != CollisionShapeEvent.CollisionType.BLOCK) return;
         if (event.pos.getY() < mc.player.getY()) {
             if (mc.player.isSneaking()) {
