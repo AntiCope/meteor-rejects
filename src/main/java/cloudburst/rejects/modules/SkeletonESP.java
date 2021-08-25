@@ -94,17 +94,14 @@ public class SkeletonESP extends Module {
             ModelPart rightLeg = playerEntityModel.rightLeg;
 
             matrixStack.translate(footPos.x, footPos.y, footPos.z);
-            if (swimming) {
+            if (swimming)
                 matrixStack.translate(0, 0.35f, 0);
-            }
 
             matrixStack.multiply(new Quaternion(new Vec3f(0, -1, 0), h + 180, true));
-            if (swimming || flying) {
+            if (swimming || flying)
                 matrixStack.multiply(new Quaternion(new Vec3f(-1, 0, 0), 90 + m, true));
-            }
-            if (swimming) {
+            if (swimming)
                 matrixStack.translate(0, -0.95f, 0);
-            }
 
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
             bufferBuilder.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
@@ -162,11 +159,12 @@ public class SkeletonESP extends Module {
             bufferBuilder.end();
             BufferRenderer.draw(bufferBuilder);
 
-            if (swimming || flying) {
+            if (swimming)
                 matrixStack.translate(0, 0.95f, 0);
+            if (swimming || flying)
                 matrixStack.multiply(new Quaternion(new Vec3f(1, 0, 0), 90 + m, true));
+            if (swimming)
                 matrixStack.translate(0, -0.35f, 0);
-            }
 
             matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), h + 180, true));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
