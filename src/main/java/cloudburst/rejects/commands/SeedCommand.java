@@ -1,6 +1,7 @@
 package cloudburst.rejects.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import net.minecraft.command.CommandSource;
@@ -15,8 +16,6 @@ import cloudburst.rejects.utils.seeds.Seeds;
 import meteordevelopment.meteorclient.utils.Utils;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-
-import com.mojang.brigadier.arguments.LongArgumentType;
 
 public class SeedCommand extends Command {
     private final static SimpleCommandExceptionType NO_SEED = new SimpleCommandExceptionType(new LiteralText("No seed for current world saved."));
@@ -54,13 +53,13 @@ public class SeedCommand extends Command {
             return SINGLE_SUCCESS;
         }));
 
-        builder.then(argument("seed", LongArgumentType.longArg()).executes(ctx -> {
-            Seeds.get().setSeed(LongArgumentType.getLong(ctx, "seed"));
+        builder.then(argument("seed", StringArgumentType.string()).executes(ctx -> {
+            Seeds.get().setSeed(StringArgumentType.getString(ctx, "seed"));
             return SINGLE_SUCCESS;
         }));
 
-        builder.then(argument("seed", LongArgumentType.longArg()).then(argument("version", EnumArgumentType.enumArgument(MCVersion.latest())).executes(ctx -> {
-            Seeds.get().setSeed(LongArgumentType.getLong(ctx, "seed"), EnumArgumentType.getEnum(ctx, "version", MCVersion.latest()));
+        builder.then(argument("seed", StringArgumentType.string()).then(argument("version", EnumArgumentType.enumArgument(MCVersion.latest())).executes(ctx -> {
+            Seeds.get().setSeed(StringArgumentType.getString(ctx, "seed"), EnumArgumentType.getEnum(ctx, "version", MCVersion.latest()));
             return SINGLE_SUCCESS;
         })));
     }
