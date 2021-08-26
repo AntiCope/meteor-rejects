@@ -204,7 +204,6 @@ public class WorldGenUtils {
         return locateStructure(seed, feature, center);
     }
 
-    // TODO: Fix LinkageError in SpiralIterator
     private static BlockPos locateSlimeChunk(Seed seed, BlockPos center) {
         Dimension dimension = getDimension(Feature.slime_chunk);
         MCVersion mcVersion = seed.version;
@@ -240,7 +239,6 @@ public class WorldGenUtils {
         return toBlockPos(structurePos);
     }
 
-    // TODO: Fix LinkageError in SpiralIterator
     private static BPos locateStructure(Structure<?, ?> structure, BPos center, int radius, ChunkRand chunkRand, BiomeSource source, TerrainGenerator terrainGenerator) {
         if (structure instanceof RegionStructure<?, ?> regionStructure) {
             int chunkInRegion = regionStructure.getSpacing();
