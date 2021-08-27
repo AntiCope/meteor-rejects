@@ -43,6 +43,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AntiVanish());
         modules.add(new Auto32K());
         modules.add(new AutoBedTrap());
+        modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
         modules.add(new AutoEz());
         modules.add(new AutoHighway());

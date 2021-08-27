@@ -20,14 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.lwjgl.system.CallbackI.B;
-import org.lwjgl.system.CallbackI.P;
-
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 
 public class AutoBedTrap extends Module {

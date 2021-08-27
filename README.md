@@ -29,6 +29,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - AntiVanish
 - Auto32K (Removed from Meteor in [67f93](https://github.com/MeteorDevelopment/meteor-client/commit/67f93de1e5e287ea62ddef041441306f01249c3d#diff-95d3e3b18ffadf76eef2358f30d424843d57acf8bde5ebd49a3f6befa6ff0529))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
+- AutoCraft (More generalized version of [AutoBedCraft](https://github.com/GhostTypes/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoExtinguish
 - AutoEz
 - AutoHighway (Taken from [Meteor AutoHighway Addon](https://github.com/VoidCyborg/meteor-auto-highway-addon))
