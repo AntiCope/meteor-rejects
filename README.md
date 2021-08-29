@@ -32,7 +32,6 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/GhostTypes/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoExtinguish
 - AutoEz
-- AutoHighway (Taken from [Meteor AutoHighway Addon](https://github.com/VoidCyborg/meteor-auto-highway-addon))
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
 - AutoTNT
 - AutoWither (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1070))
