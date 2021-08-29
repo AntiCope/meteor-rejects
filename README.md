@@ -50,6 +50,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - PacketFly (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/813))
 - Painter
 - Phase
+- Prone (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1423))
 - Rendering
 - SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/render/Skeletons.java))
 - SoundLocator
