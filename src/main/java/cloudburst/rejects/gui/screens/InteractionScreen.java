@@ -74,12 +74,12 @@ public class InteractionScreen extends Screen {
         functions = new HashMap<>();
         functions.put("Stats", (Entity e) -> {
             closeScreen();
-            client.openScreen(new StatsScreen(e));
+            client.setScreen(new StatsScreen(e));
         });
         if (entity instanceof PlayerEntity) {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
-                client.openScreen(new InventoryScreen((PlayerEntity) e));
+                client.setScreen(new InventoryScreen((PlayerEntity) e));
             });
         }
         
@@ -104,7 +104,7 @@ public class InteractionScreen extends Screen {
                 closeScreen();
                 ItemStack container = new ItemStack(Items.CHEST);
                 container.setCustomName(e.getName());
-                client.openScreen(new PeekScreen(container, getInventory(e)));
+                client.setScreen(new PeekScreen(container, getInventory(e)));
             });
         }
 
@@ -146,7 +146,7 @@ public class InteractionScreen extends Screen {
 
             functions.put(key, (Entity e) -> {
                 closeScreen();
-                client.openScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
+                client.setScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
             });
             
         });
@@ -205,7 +205,7 @@ public class InteractionScreen extends Screen {
     }
 
     private void closeScreen() {
-        client.openScreen((Screen) null);
+        client.setScreen((Screen) null);
     }
 
     public void onClose() {
@@ -214,7 +214,7 @@ public class InteractionScreen extends Screen {
         if (focusedString != null) {
             functions.get(focusedString).accept(this.entity);
         } else
-            client.openScreen((Screen) null);
+            client.setScreen((Screen) null);
     }
 
     public boolean isPauseScreen() {

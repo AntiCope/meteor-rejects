@@ -117,7 +117,7 @@ public class HeadScreen extends WindowScreen {
         properties.put("textures", textures);
         skullOwner.put("Properties", properties);
         tag.put("SkullOwner", skullOwner);
-        head.setTag(tag);
+        head.setNbt(tag);
         head.setCustomName(new LiteralText(name));
         return head;
     }

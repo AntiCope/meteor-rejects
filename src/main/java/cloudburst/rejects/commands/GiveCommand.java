@@ -36,25 +36,25 @@ public class GiveCommand extends Command {
                 ct.putString("id", "minecraft:falling_block");
                 ct.put("BlockState", new NbtCompound());
                 ct.getCompound("BlockState").putString("Name", Registry.ITEM.getId(inHand.getItem()).toString());
-                if (inHand.hasTag() && inHand.getTag().contains("BlockEntityTag")) {
-                    ct.put("TileEntityData", inHand.getTag().getCompound("BlockEntityTag"));
+                if (inHand.hasNbt() && inHand.getNbt().contains("BlockEntityTag")) {
+                    ct.put("TileEntityData", inHand.getNbt().getCompound("BlockEntityTag"));
                 }
                 NbtCompound t = new NbtCompound();
                 t.put("EntityTag", ct);
-                item.setTag(t);
+                item.setNbt(t);
             } else {
                 ct.putString("id", "minecraft:item");
                 NbtCompound it = new NbtCompound();
                 it.putString("id", Registry.ITEM.getId(inHand.getItem()).toString());
                 it.putInt("Count",inHand.getCount());
-                if (inHand.hasTag()) {
-                    it.put("tag", inHand.getTag());
+                if (inHand.hasNbt()) {
+                    it.put("tag", inHand.getNbt());
                 }
                 ct.put("Item",it);
             }
             NbtCompound t = new NbtCompound();
             t.put("EntityTag", ct);
-            item.setTag(t);
+            item.setNbt(t);
             item.setCustomName(inHand.getName());
             GiveUtils.giveItem(item);
             return SINGLE_SUCCESS;
@@ -76,7 +76,7 @@ public class GiveCommand extends Command {
             tag.putBoolean("CustomNameVisible", true);
             tag.putString("CustomName", Text.Serializer.toJson(new LiteralText(message)));
             tag.put("Pos", NbtList);
-            stack.putSubTag("EntityTag", tag);
+            stack.setSubNbt("EntityTag", tag);
             GiveUtils.giveItem(stack);
             return SINGLE_SUCCESS;
         })));
@@ -86,7 +86,7 @@ public class GiveCommand extends Command {
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
             NbtCompound tag = new NbtCompound();
             tag.putString("SkullOwner", playerName);
-            itemStack.setTag(tag);
+            itemStack.setNbt(tag);
             GiveUtils.giveItem(itemStack);
             return SINGLE_SUCCESS;
         })));

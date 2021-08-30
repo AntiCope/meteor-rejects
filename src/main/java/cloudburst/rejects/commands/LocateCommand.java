@@ -57,7 +57,7 @@ public class LocateCommand extends Command {
                 error("You need to hold a lodestone compass");
                 return SINGLE_SUCCESS;
             }
-            NbtCompound tag = stack.getTag();
+            NbtCompound tag = stack.getNbt();
             if (tag == null) {
                 error("Couldn't get the NBT data. Are you holding a (highlight)lodestone(default) compass?");
                 return SINGLE_SUCCESS;

@@ -86,7 +86,7 @@ public class InteractionMenu extends Module {
         if (lookingAt.isPresent()) {
             Entity e = lookingAt.get();
             if (entities.get().getBoolean(e.getType())) {
-                mc.openScreen(new InteractionScreen(e, this));
+                mc.setScreen(new InteractionScreen(e, this));
             }
         }
     }

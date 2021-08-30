@@ -70,7 +70,7 @@ public class GiveUtils {
                 if (preview) preset.getMiddle().getDefaultStack();
                 ItemStack item = preset.getMiddle().getDefaultStack();
                 try {
-                    item.setTag(StringNbtReader.parse(preset.getRight()));
+                    item.setNbt(StringNbtReader.parse(preset.getRight()));
                 } catch (CommandSyntaxException e) { }
                 item.setCustomName(new LiteralText(toName(preset.getLeft())));
                 return item;
@@ -82,7 +82,7 @@ public class GiveUtils {
             ItemStack item = Items.SPIDER_SPAWN_EGG.getDefaultStack();
             String nick = mc.player.getName().asString();
             try {
-                item.setTag(StringNbtReader.parse("{EntityTag:{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}}"));
+                item.setNbt(StringNbtReader.parse("{EntityTag:{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}}"));
             } catch (CommandSyntaxException e) { }
             item.setCustomName(new LiteralText("Force OP"));
             return item;
@@ -102,7 +102,7 @@ public class GiveUtils {
             }
             NbtCompound nbt = new NbtCompound();
             nbt.put("CustomPotionEffects", effects);
-            stack.setTag(nbt);
+            stack.setNbt(nbt);
             stack.setCustomName(new LiteralText("Lingering Potion of Trolling"));
             return stack;
         });
@@ -121,7 +121,7 @@ public class GiveUtils {
             addEnchant(enchants, "minecraft:vanishing_curse", (short)1);
             NbtCompound nbt = new NbtCompound();
             nbt.put("Enchantments", enchants);
-            stack.setTag(nbt);
+            stack.setNbt(nbt);
             stack.setCustomName(new LiteralText("Bonk"));
             return stack;
         });
@@ -134,7 +134,7 @@ public class GiveUtils {
             for(int i = 0; i < 40000; i++)
                 nbtList.add(new NbtList());
             nbtCompound.put("nothingsuspicioushere", nbtList);
-            stack.setTag(nbtCompound);
+            stack.setNbt(nbtCompound);
             stack.setCustomName(new LiteralText("Copy Me"));
             return stack;
         });
@@ -159,7 +159,7 @@ public class GiveUtils {
             tagCompound.putInt("Flight", 0);
             tagCompound.put("Explosions", explosionList);
             baseCompound.put("Fireworks", tagCompound);
-            firework.setTag(baseCompound);
+            firework.setNbt(baseCompound);
             return firework;
         });
     
@@ -171,7 +171,7 @@ public class GiveUtils {
                 NbtCompound entityTag = new NbtCompound();
                 entityTag.putString("id", id.toString());
                 tag.put("EntityTag", entityTag);
-                egg.setTag(tag);
+                egg.setNbt(tag);
                 egg.setCustomName(new LiteralText(String.format("%s", toName(id.getPath()))));
                 return egg;
             });
