@@ -8,6 +8,7 @@
     "CommandsMixin",
     "ConfigTabMixin",
     "GuiRendererAccessor",
-    "HttpMixin"
+    "HttpMixin",
+    "ModulesMixin"
   ]
 }

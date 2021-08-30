@@ -23,7 +23,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
 # Features
-### Modules
+## Modules
 - AntiBot (Removed from Meteor in [166fc](https://github.com/MeteorDevelopment/meteor-client/commit/166fccc73e53de6cfdbe41ea58dc593a2f5011f6#diff-05896d5a7f735a14ee8da5d12fbd24585862ca68efdf32b9401b3f4329d17c73))
 - AntiSpawnpoint
 - AntiVanish
@@ -55,7 +55,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/render/Skeletons.java))
 - SoundLocator
 
-**Modifications**
+### Modifications
 - NoRender
   - `noCommandSuggestions` (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1347))
 - Flight
@@ -70,7 +70,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - `.teleport`
 - `.terrain-export` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdTerrain.java))
 
-**Modifications**
+### Modifications
 - `.server`
   - `ports` (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java))
 - `.locate`
@@ -84,3 +84,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 ## HUD
 - Apple, Exp & Crystal HUD (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/757))
 - CPS HUD (Ported from [AuroraKeystrokes](https://github.com/LambdAurora/AuroraKeystrokes/tree/1.16/src/main/java/me/lambdaurora/keystrokes))
+
+## Config
+- `Http Allowed` - modify what http requests can be made with Meteor's http api
+- `Hidden Modules` - hide modules from module gui. **requires restart when unhiding** 
