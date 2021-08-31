@@ -3,7 +3,7 @@
   "id": "meteor-rejects",
   "version": "${version}",
 
-  "name": "Meteor Rejects Addon",
+  "name": "Meteor Rejects",
   "description": "An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly.",
   "authors": [
     "Cloudburst",
@@ -27,10 +27,12 @@
     "meteor-rejects.mixins.json",
     "meteor-rejects-meteor.mixins.json"
   ],
-
+  "custom": {
+    "meteor-client:color": "227,0,0"
+  },
   "depends": {
     "java": "16",
-    "minecraft": ">=1.17",
+    "minecraft": ">=@mc_version@",
     "meteor-client": ">0.4.3"
   }
 }
