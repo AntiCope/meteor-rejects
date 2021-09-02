@@ -1,5 +1,5 @@
 name: Bug
-about: Report a bug or an issue with Rejects.
+description: Report a bug or an issue with Rejects.
 title: '[Bug] '
 labels: bug
 body:
