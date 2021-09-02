@@ -23,6 +23,16 @@ body:
       render: bash
     validations:
       required: true
+  - type: dropdown
+    id: operating-systems
+    attributes:
+      label: Operating System
+      options:
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
   - type: input
     id: meteor-version
     attributes:
@@ -35,13 +45,16 @@ body:
       label: Minecraft Version
     validations:
       required: true
-  - type: dropdown
-    id: operating-systems
+  - type: textarea
+    id: mods
     attributes:
-      label: Operating System
-      options:
-        - macOS
-        - Windows
-        - Linux
+      label: Other mods
+      description: What other mods you may be using?
+      value: |
+        1.
+        2.
+        3.
+        ...
+      render: bash
     validations:
-      required: true
+      required: false
