@@ -1,9 +1,7 @@
----
-name: Bug Report
-about: Report a bug or an issue with Meteor Rejects
-title: "[Bug] "
+name: Bug
+about: Report a bug or an issue with Rejects.
+title: '[Bug] '
 labels: bug
-assignees: ''
 body:
   - type: textarea
     id: description
