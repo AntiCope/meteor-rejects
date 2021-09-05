@@ -122,18 +122,9 @@ public class Confuse extends Module {
         
         
         // Targetting
-        target = TargetUtils.get(entity -> {
-            if (entity.getUuid() == mc.player.getUuid()) return false;
-            if (!entity.isAlive() || !entity.isAttackable()) return false;
-            return PlayerUtils.distanceTo(entity) <= range.get();
-        }, priority.get());
+        target = TargetUtils.getPlayerTarget(range.get(), priority.get());
         
         if (target == null) return;
-        if (!target.isAlive()) {
-            target = null;
-            return;
-        }
-        
         
         Vec3d entityPos = target.getPos();
         Vec3d playerPos = mc.player.getPos();
