@@ -1,12 +1,8 @@
 package cloudburst.rejects.gui.screens;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.text.LiteralText;
-
 import cloudburst.rejects.utils.GiveUtils;
+import com.google.common.reflect.TypeToken;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.WindowScreen;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
@@ -18,14 +14,19 @@ import meteordevelopment.meteorclient.settings.Settings;
 import meteordevelopment.meteorclient.utils.network.Http;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.text.LiteralText;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import static meteordevelopment.meteorclient.utils.Utils.mc;
-
-import java.util.*;
-import java.lang.reflect.Type;
-
-import com.google.common.reflect.TypeToken;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 public class HeadScreen extends WindowScreen {
 
@@ -121,5 +122,7 @@ public class HeadScreen extends WindowScreen {
         head.setCustomName(new LiteralText(name));
         return head;
     }
-
+    
+    @Override
+    public void initWidgets() {}
 }

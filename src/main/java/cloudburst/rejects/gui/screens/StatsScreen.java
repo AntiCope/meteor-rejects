@@ -89,4 +89,7 @@ public class StatsScreen extends WindowScreen {
     private void onTick(TickEvent.Post event) {
         updateData();
     }
+    
+    @Override
+    public void initWidgets() {}
 }
