@@ -1,14 +1,5 @@
 package cloudburst.rejects.modules;
 
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
-import net.minecraft.item.Item;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.screen.CraftingScreenHandler;
-import net.minecraft.screen.slot.SlotActionType;
-
 import cloudburst.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
@@ -17,6 +8,14 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
+import net.minecraft.item.Item;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.screen.CraftingScreenHandler;
+import net.minecraft.screen.slot.SlotActionType;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class AutoCraft extends Module {
 
@@ -32,6 +31,13 @@ public class AutoCraft extends Module {
     private final Setting<Boolean> antiDesync = sgGeneral.add(new BoolSetting.Builder()
             .name("anti-desync")
             .description("Try to prevent inventory desync.")
+            .defaultValue(false)
+            .build()
+    );
+    
+    private final Setting<Boolean> craftAll = sgGeneral.add(new BoolSetting.Builder()
+            .name("craft-all")
+            .description("Crafts maximum possible amount amount per craft (shift-clicking)")
             .defaultValue(false)
             .build()
     );
@@ -57,9 +63,9 @@ public class AutoCraft extends Module {
         List<Item> itemList = items.get();
         List<RecipeResultCollection> recipeResultCollectionList  = mc.player.getRecipeBook().getOrderedResults();
         for (RecipeResultCollection recipeResultCollection : recipeResultCollectionList) {
-            for (Recipe<?> recipe : recipeResultCollection.getRecipes(true)) {
+            for (Recipe<?> recipe : recipeResultCollection.getRecipes(false)) {
                 if (!itemList.contains(recipe.getOutput().getItem())) continue;
-                mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe, false);
+                mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe, craftAll.get());
                 mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1, SlotActionType.QUICK_MOVE, mc.player);
             }
         }
