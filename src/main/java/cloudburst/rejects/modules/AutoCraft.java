@@ -41,6 +41,13 @@ public class AutoCraft extends Module {
             .defaultValue(false)
             .build()
     );
+    
+    private final Setting<Boolean> drop = sgGeneral.add(new BoolSetting.Builder()
+            .name("drop")
+            .description("Automatically drops crafted items (useful for when not enough inventory space)")
+            .defaultValue(false)
+            .build()
+    );
 
     public AutoCraft() {
         super(MeteorRejectsAddon.CATEGORY, "auto-craft", "Automatically crafts items.");
@@ -66,7 +73,8 @@ public class AutoCraft extends Module {
             for (Recipe<?> recipe : recipeResultCollection.getRecipes(false)) {
                 if (!itemList.contains(recipe.getOutput().getItem())) continue;
                 mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe, craftAll.get());
-                mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1, SlotActionType.QUICK_MOVE, mc.player);
+                mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1,
+                        drop.get() ? SlotActionType.THROW : SlotActionType.QUICK_MOVE, mc.player);
             }
         }
     }
