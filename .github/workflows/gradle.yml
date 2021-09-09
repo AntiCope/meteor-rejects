@@ -33,6 +33,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - uses: "marvinpinto/action-automatic-releases@latest"
+      if: ${{ matrix.Java == '16' }}
       with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest-1.17"
