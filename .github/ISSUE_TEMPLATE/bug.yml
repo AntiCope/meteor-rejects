@@ -20,7 +20,7 @@ body:
         2.
         3.
         ...
-      render: bash
+      render: plaintext
     validations:
       required: true
   - type: dropdown
@@ -33,6 +33,13 @@ body:
         - Linux
     validations:
       required: true
+  - type: input
+    id: rejects-version
+    attributes:
+      label: Rejects Version
+      description: You can put commit hash of the version of meteor rejects you are using.
+    validations:
+      required: false
   - type: input
     id: meteor-version
     attributes:
@@ -55,6 +62,6 @@ body:
         2.
         3.
         ...
-      render: bash
+      render: plaintext
     validations:
       required: false
