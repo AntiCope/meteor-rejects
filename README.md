@@ -17,6 +17,9 @@ An addon to Meteor Client that adds modules and commands that were too useless t
   <img src="https://img.shields.io/github/issues/AntiCope/meteor-rejects" alt="Issues">
   <img src="https://img.shields.io/github/stars/AntiCope/meteor-rejects" alt="Stars">
 </div>
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/18114966/132936934-80658aee-79a7-44cf-ba7b-45386a944c01.png" width="250"><sub><a href="#popbob">*</a></sub>
+</div>
 
 # How to use
 - Download the latest [release](/../../releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar) of this mod from the releases tab.
@@ -88,3 +91,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 ## Config
 - `Http Allowed` - modify what http requests can be made with Meteor's http api
 - `Hidden Modules` - hide modules from module gui. **requires restart when unhiding** 
+
+<sub>
+<a name="popbob" id="popbob" href="#popbob">*</a> this statement is not true at all, popbob never approved of this
+</sub>
