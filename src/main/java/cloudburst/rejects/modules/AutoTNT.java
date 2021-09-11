@@ -15,9 +15,8 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.FlintAndSteelItem;
-import net.minecraft.item.Items;
+import net.minecraft.block.TntBlock;
+import net.minecraft.item.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -81,6 +80,15 @@ public class AutoTNT extends Module {
             .name("anti-break")
             .description("Whether to save flint and steel from breaking.")
             .defaultValue(true)
+            .visible(ignite::get)
+            .build()
+    );
+
+    private final Setting<Boolean> fireCharge = sgGeneral.add(new BoolSetting.Builder()
+            .name("fire-charge")
+            .description("Whether to also use fire charges.")
+            .defaultValue(true)
+            .visible(ignite::get)
             .build()
     );
     
@@ -97,7 +105,6 @@ public class AutoTNT extends Module {
     private final Pool<TntPos> placePool = new Pool<>(TntPos::new);
     private int igniteTick = 0;
     private int placeTick = 0;
-    private int prevSlot;
     
     public AutoTNT() {
         super(MeteorRejectsAddon.CATEGORY, "auto-tnt", "Places and/or ignites tnt automatically. Good for griefing.");
@@ -115,18 +122,10 @@ public class AutoTNT extends Module {
             // Clear blocks
             for (BlockPos.Mutable blockPos : blocksToIgnite) ignitePool.free(blockPos);
             blocksToIgnite.clear();
-            
-            // Item check
-            FindItemResult findSlot = InvUtils.findInHotbar(item -> item.getItem() instanceof FlintAndSteelItem && (antiBreak.get() && (item.getMaxDamage() - item.getDamage()) > 10));
-            if (!findSlot.found()) {
-                error("No flint and steel in hotbar");
-                toggle();
-                return;
-            }
     
             // Register
             BlockIterator.register(horizontalRange.get(), verticalRange.get(), (blockPos, blockState) -> {
-                if (blockState.getBlock() == Blocks.TNT) blocksToIgnite.add(ignitePool.get().set(blockPos));
+                if (blockState.getBlock() instanceof TntBlock) blocksToIgnite.add(ignitePool.get().set(blockPos));
             });
         }
         
@@ -134,14 +133,6 @@ public class AutoTNT extends Module {
             // Clear blocks
             for (TntPos tntPos : blocksToPlace) placePool.free(tntPos);
             blocksToPlace.clear();
-            
-            // Item check
-            FindItemResult findSlot = InvUtils.findInHotbar(item -> item.getItem() == Items.TNT);
-            if (!findSlot.found()) {
-                error("No tnt in hotbar");
-                toggle();
-                return;
-            }
             
             // Register
             BlockIterator.register(horizontalRange.get(), verticalRange.get(), (blockPos, blockState) -> {
@@ -159,26 +150,48 @@ public class AutoTNT extends Module {
                 blocksToIgnite.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
         
                 // Ignition
-                ignite(blocksToIgnite.get(0), InvUtils.findInHotbar(item -> item.getItem() instanceof FlintAndSteelItem && (antiBreak.get() && (item.getMaxDamage() - item.getDamage()) > 10)));
+                FindItemResult itemResult = InvUtils.findInHotbar(item -> {
+                    if (item.getItem() instanceof FlintAndSteelItem) {
+                        return (antiBreak.get() && (item.getMaxDamage() - item.getDamage()) > 10);
+                    }
+                    else if (item.getItem() instanceof FireChargeItem) {
+                        return fireCharge.get();
+                    }
+                    return false;
+                });
+                if (!itemResult.found()) {
+                    error("No flint and steel in hotbar");
+                    toggle();
+                    return;
+                }
+                ignite(blocksToIgnite.get(0), itemResult);
         
                 // Reset ticks
                 igniteTick = 0;
-            } else igniteTick++;
+            }
         }
+        igniteTick++;
         
         // Placement
         if (place.get() && blocksToPlace.size() > 0) {
             if (placeTick > placeDelay.get()) {
                 // Sort based on closest tnt
                 blocksToPlace.sort(Comparator.comparingInt(o -> o.score));
-        
+
                 // Placement
-                place(blocksToPlace.get(0).blockPos, InvUtils.findInHotbar(item -> item.getItem() == Items.TNT));
-        
+                FindItemResult itemResult = InvUtils.findInHotbar(item -> item.getItem() == Items.TNT);
+                if (!itemResult.found()) {
+                    error("No tnt in hotbar");
+                    toggle();
+                    return;
+                }
+                place(blocksToPlace.get(0).blockPos, itemResult);
+
                 // Reset ticks
                 placeTick = 0;
-            } else placeTick++;
+            }
         }
+        placeTick++;
     }
     
     private void ignite(BlockPos pos, FindItemResult item) {
@@ -198,7 +211,9 @@ public class AutoTNT extends Module {
         public int score;
         
         public TntPos set(BlockPos blockPos, int score) {
-            this.blockPos.set(blockPos);
+            if (this.blockPos != null)
+                this.blockPos.set(blockPos);
+
             this.score = score;
             
             return this;
