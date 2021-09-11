@@ -36,7 +36,13 @@ public class FlightMixin {
 
     @Inject(method = "onDeactivate", at=@At("TAIL"), remap = false)
     private void onDeactivate(CallbackInfo ci) {
-        if (stopMomentum == null || !stopMomentum.get()) return;
+        if (mc.player == null || stopMomentum == null || !stopMomentum.get()) return;
+
+        mc.options.keyForward.setPressed(false);
+        mc.options.keyLeft.setPressed(false);
+        mc.options.keyBack.setPressed(false);
+        mc.options.keyRight.setPressed(false);
+
         mc.player.setVelocity(Vec3d.ZERO);
     }
 }
