@@ -72,6 +72,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - `.setblock`
 - `.teleport`
 - `.terrain-export` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/command/commands/CmdTerrain.java))
+- `.kick` (Ported from [LiquidBounce](https://github.com/CCBlueX/LiquidBounce/blob/nextgen/src/main/kotlin/net/ccbluex/liquidbounce/features/module/modules/exploit/ModuleKick.kt))
 
 ### Modifications
 - `.server`
@@ -85,6 +86,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - "Meteor Rounded" theme (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/619))
 
 ## HUD
+- Baritone process HUD
 - Apple, Exp & Crystal HUD (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/757))
 - CPS HUD (Ported from [AuroraKeystrokes](https://github.com/LambdAurora/AuroraKeystrokes/tree/1.16/src/main/java/me/lambdaurora/keystrokes))
 
