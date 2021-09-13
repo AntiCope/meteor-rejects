@@ -1,10 +1,7 @@
 package cloudburst.rejects;
 
 import cloudburst.rejects.commands.*;
-import cloudburst.rejects.gui.hud.AppleHud;
-import cloudburst.rejects.gui.hud.CpsHud;
-import cloudburst.rejects.gui.hud.CrystalHud;
-import cloudburst.rejects.gui.hud.ExpHud;
+import cloudburst.rejects.gui.hud.*;
 import cloudburst.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import cloudburst.rejects.modules.*;
 import cloudburst.rejects.modules.modifier.NoRenderModifier;
@@ -80,6 +77,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new SaveSkinCommand());
         commands.add(new SeedCommand());
         commands.add(new HeadsCommand());
+        commands.add(new KickCommand());
         // commands.add(new LocateCommand());   I wish it was that simple -_-
         commands.add(new ServerCommand());
         commands.add(new SetBlockCommand());
@@ -89,6 +87,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         // HUD
         HUD hud = modules.get(HUD.class);
         hud.elements.add(new AppleHud(hud));
+        hud.elements.add(new BaritoneHud(hud));
         hud.elements.add(new CrystalHud(hud));
         hud.elements.add(new ExpHud(hud));
         hud.elements.add(new CpsHud(hud));
