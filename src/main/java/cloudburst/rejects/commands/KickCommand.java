@@ -14,7 +14,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 public class KickCommand extends Command {
 
     public KickCommand() {
-        super("kick", "Kick or disconnect yourself from the server", "disconnect");
+        super("kick", "Kick or disconnect yourself from the server", "disconnect", "quit);
     }
 
     @Override
