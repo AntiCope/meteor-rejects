@@ -19,6 +19,7 @@ jobs:
 
     runs-on: ubuntu-latest
     strategy:
+       fail-fast: false
        matrix:
          java: [ '16', '16.0.1' ]
     steps:
