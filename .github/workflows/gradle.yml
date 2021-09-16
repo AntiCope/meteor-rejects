@@ -33,6 +33,8 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    - name: Remove *-dev.jar
+      run: rm ./build/libs/*-dev.jar
     - uses: "marvinpinto/action-automatic-releases@latest"
       if: ${{ matrix.Java == '16' }}
       with:
