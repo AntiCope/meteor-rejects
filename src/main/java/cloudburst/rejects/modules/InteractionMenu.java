@@ -145,6 +145,7 @@ public class InteractionMenu extends Module {
     @Override
     public Module fromTag(NbtCompound tag) {
         
+        messages.clear();
         if (tag.contains("messages")) {
             NbtCompound msgs = tag.getCompound("messages");
             msgs.getKeys().forEach((key) -> {

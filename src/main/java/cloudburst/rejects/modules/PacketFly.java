@@ -21,12 +21,12 @@ import java.util.Set;
 
 public class PacketFly extends Module {
     private final Set<PlayerMoveC2SPacket> packets = new ConcurrentSet();
-    private final SettingGroup sgMovement = settings.createGroup("Movement");
-    private final SettingGroup sgClient = settings.createGroup("Client");
-    private final SettingGroup sgBypass = settings.createGroup("Bypass");
+    private final SettingGroup sgMovement = settings.createGroup("movement");
+    private final SettingGroup sgClient = settings.createGroup("client");
+    private final SettingGroup sgBypass = settings.createGroup("bypass");
 
     private final Setting<Double> horizontalSpeed = sgMovement.add(new DoubleSetting.Builder()
-            .name("Horizontal Speed")
+            .name("horizontal-speed")
             .description("Horizontal speed in blocks per second.")
             .defaultValue(5.2)
             .min(0.0)
@@ -37,7 +37,7 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Double> verticalSpeed = sgMovement.add(new DoubleSetting.Builder()
-            .name("Vertical Speed")
+            .name("vertical-speed")
             .description("Vertical speed in blocks per second.")
             .defaultValue(1.24)
             .min(0.0)
@@ -48,49 +48,49 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Boolean> sendTeleport = sgMovement.add(new BoolSetting.Builder()
-            .name("Teleport")
+            .name("teleport")
             .description("Sends teleport packets.")
             .defaultValue(true)
             .build()
     );
 
     private final Setting<Boolean> setYaw = sgClient.add(new BoolSetting.Builder()
-            .name("Set Yaw")
+            .name("set-yaw")
             .description("Sets yaw client side.")
             .defaultValue(true)
             .build()
     );
 
     private final Setting<Boolean> setMove = sgClient.add(new BoolSetting.Builder()
-            .name("Set Move")
+            .name("set-move")
             .description("Sets movement client side.")
             .defaultValue(false)
             .build()
     );
 
     private final Setting<Boolean> setPos = sgClient.add(new BoolSetting.Builder()
-            .name("Set Pos")
+            .name("set-pos")
             .description("Sets position client side.")
             .defaultValue(false)
             .build()
     );
 
     private final Setting<Boolean> setID = sgClient.add(new BoolSetting.Builder()
-            .name("Set ID")
+            .name("set-id")
             .description("Updates teleport id when a position packet is received.")
             .defaultValue(false)
             .build()
     );
 
     private final Setting<Boolean> antiKick = sgBypass.add(new BoolSetting.Builder()
-            .name("Anti Kick")
+            .name("anti-kick")
             .description("Moves down occasionally to prevent kicks.")
             .defaultValue(true)
             .build()
     );
 
     private final Setting<Integer> downDelay = sgBypass.add(new IntSetting.Builder()
-            .name("Down Delay")
+            .name("down-delay")
             .description("How often you move down when not flying upwards. (ticks)")
             .defaultValue(4)
             .sliderMin(1)
@@ -101,7 +101,7 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Integer> downDelayFlying = sgBypass.add(new IntSetting.Builder()
-            .name("Down Delay (Flying)")
+            .name("flying-down-delay")
             .description("How often you move down when flying upwards. (ticks)")
             .defaultValue(10)
             .sliderMin(1)
@@ -112,7 +112,7 @@ public class PacketFly extends Module {
     );
 
     private final Setting<Boolean> invalidPacket = sgBypass.add(new BoolSetting.Builder()
-            .name("Invalid Packet")
+            .name("invalid-packet")
             .description("Sends invalid movement packets.")
             .defaultValue(false)
             .build()
