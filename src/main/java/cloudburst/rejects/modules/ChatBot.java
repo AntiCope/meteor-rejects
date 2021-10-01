@@ -60,7 +60,7 @@ public class ChatBot extends Module {
 
     @EventHandler
     private void onMessageRecieve(ReceiveMessageEvent event) {
-        String msg = event.message.getString();
+        String msg = event.getMessage().getString();
         if (help.get() && msg.endsWith(prefix.get()+"help")) {
             mc.getNetworkHandler().sendPacket(new ChatMessageC2SPacket("Avaliable commands: " + String.join(", ", commands.keySet())));
             return;
