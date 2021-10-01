@@ -14,6 +14,8 @@ repositories {
 	maven {
         name = "jitpack"
         url = "https://jitpack.io"
+		name = "meteor-maven"
+        url = "https://maven.meteordev.org/snapshots"
     }
 }
 
@@ -29,7 +31,7 @@ dependencies {
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
 
-	modImplementation "com.github.MeteorDevelopment:meteor-client:master-SNAPSHOT"
+	modImplementation "meteordevelopment:meteor-client:SNAPSHOT"
 
 	// Seed .locate features
 	modImplementation 'com.github.hube12:SEED:master-SNAPSHOT'
