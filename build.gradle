@@ -14,6 +14,8 @@ repositories {
 	maven {
         name = "jitpack"
         url = "https://jitpack.io"
+	}
+	maven {
 		name = "meteor-maven"
         url = "https://maven.meteordev.org/snapshots"
     }
