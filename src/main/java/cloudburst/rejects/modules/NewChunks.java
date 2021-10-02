@@ -64,7 +64,7 @@ public class NewChunks extends Module {
 
     @EventHandler
     private void onRender(Render3DEvent event) {
-        if (newChunksColor.get().a>3) {
+        if (newChunksColor.get().a > 5) {
             synchronized (newChunks) {
                 for (ChunkPos c : newChunks) {
                     if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
@@ -74,7 +74,7 @@ public class NewChunks extends Module {
             }
         }
 
-        if (oldChunksColor.get().a>3){
+        if (oldChunksColor.get().a > 5){
             synchronized (oldChunks) {
                 for (ChunkPos c : oldChunks) {
                     if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
@@ -141,7 +141,7 @@ public class NewChunks extends Module {
                 
 
                 for (int x = 0; x < 16; x++) {
-                    for (int y = 0; y < mc.world.getHeight(); y++) {
+                    for (int y = mc.world.getBottomY(); y < mc.world.getTopY(); y++) {
                         for (int z = 0; z < 16; z++) {
                             FluidState fluid = chunk.getFluidState(x, y, z);
 
