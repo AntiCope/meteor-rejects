@@ -33,6 +33,6 @@
   "depends": {
     "java": "16",
     "minecraft": ">=@mc_version@",
-    "meteor-client": ">0.4.3"
+    "meteor-client": "*"
   }
 }
