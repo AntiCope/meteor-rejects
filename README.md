@@ -38,7 +38,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
 - AutoTNT
 - AutoWither (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1070))
-- BedrockWalk
+- BedrockWalk (Taken from [tanuki](https://gitlab.com/Walaryne/tanuki))
 - BlockIn
 - BoatGlitch & BoatPhase (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/814))
 - Boost (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/Boost.java))
