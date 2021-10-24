@@ -13,7 +13,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
@@ -71,6 +73,13 @@ public class CoordLogger extends Module {
             .defaultValue(false)
             .build()
     );
+    
+    private final Setting<Boolean> thunder = sgWorldEvents.add(new BoolSetting.Builder()
+            .name("thunder")
+            .description("Logs thunder sounds.")
+            .defaultValue(false)
+            .build()
+    );
 
     private final Setting<Boolean> otherEvents = sgWorldEvents.add(new BoolSetting.Builder()
             .name("other-global-events")
@@ -80,7 +89,7 @@ public class CoordLogger extends Module {
     );
 
     public CoordLogger() {
-        super(MeteorRejectsAddon.CATEGORY,"coord-logger", "Logs coordinates of various events. Doesn't work on Spigot/Paper servers.");
+        super(MeteorRejectsAddon.CATEGORY,"coord-logger", "Logs coordinates of various events. Might not work on Spigot/Paper servers.");
     }
 
     @EventHandler
@@ -126,8 +135,14 @@ public class CoordLogger extends Module {
                         if (otherEvents.get()) info(formatMessage("Unknown global event at ", worldEventS2CPacket.getPos()));
                 }
             }
+        } else if (thunder.get() && event.packet instanceof PlaySoundS2CPacket) {
+            PlaySoundS2CPacket playSoundS2CPacket = (PlaySoundS2CPacket) event.packet;
+            
+            // Check for thunder sound
+            if (playSoundS2CPacket.getSound() != SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT) return;
+            
+            info("Thunder noise at %d %d %d", playSoundS2CPacket.getX(), playSoundS2CPacket.getY(), playSoundS2CPacket.getZ());
         }
-
     }
 
     public BaseText formatMessage(String message, Vec3d coords) {
