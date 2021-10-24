@@ -29,7 +29,10 @@ public class CoordLogger extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgTeleports = settings.createGroup("Teleports");
     private final SettingGroup sgWorldEvents = settings.createGroup("World Events");
+    private final SettingGroup sgSounds = settings.createGroup("Sounds");
 
+    // General
+    
     private final Setting<Double> minDistance = sgGeneral.add(new DoubleSetting.Builder()
             .name("minimum-distance")
             .description("Minimum distance to log event.")
@@ -40,6 +43,8 @@ public class CoordLogger extends Module {
             .defaultValue(10)
             .build()
     );
+    
+    // Teleports
     
     private final Setting<Boolean> players = sgTeleports.add(new BoolSetting.Builder()
             .name("players")
@@ -55,7 +60,8 @@ public class CoordLogger extends Module {
             .build()
     );
 
-
+    // World events
+    
     private final Setting<Boolean> enderDragons = sgWorldEvents.add(new BoolSetting.Builder()
             .name("ender-dragons")
             .description("Logs killed ender dragons.")
@@ -77,16 +83,19 @@ public class CoordLogger extends Module {
             .build()
     );
     
-    private final Setting<Boolean> thunder = sgWorldEvents.add(new BoolSetting.Builder()
-            .name("thunder")
-            .description("Logs thunder sounds.")
-            .defaultValue(false)
-            .build()
-    );
 
     private final Setting<Boolean> otherEvents = sgWorldEvents.add(new BoolSetting.Builder()
             .name("other-global-events")
             .description("Logs other global events.")
+            .defaultValue(false)
+            .build()
+    );
+    
+    // Sounds
+    
+    private final Setting<Boolean> thunder = sgSounds.add(new BoolSetting.Builder()
+            .name("thunder")
+            .description("Logs thunder sounds.")
             .defaultValue(false)
             .build()
     );
@@ -97,34 +106,44 @@ public class CoordLogger extends Module {
 
     @EventHandler
     private void onPacketReceive(PacketEvent.Receive event) {
+        // Teleports
         if (event.packet instanceof EntityPositionS2CPacket) {
             EntityPositionS2CPacket packet = (EntityPositionS2CPacket) event.packet;
+            
             try {
                 Entity entity = mc.world.getEntityById(packet.getId());
+                
+                // Player teleport
                 if (entity.getType().equals(EntityType.PLAYER) && players.get()) {
                     Vec3d packetPosition = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
                     Vec3d playerPosition = entity.getPos();
+                    
                     if (playerPosition.distanceTo(packetPosition) >= minDistance.get()) {
                         info(formatMessage("Player '" + entity.getEntityName() + "' has teleported to ", packetPosition));
-                        return;
                     }
                 }
 
-                if (entity.getType().equals(EntityType.WOLF) && wolves.get()) {
+                // World teleport
+                else if (entity.getType().equals(EntityType.WOLF) && wolves.get()) {
                     Vec3d packetPosition = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
                     Vec3d wolfPosition = entity.getPos();
+                    
                     UUID ownerUuid = ((TameableEntity) entity).getOwnerUuid();
+                    
                     if (ownerUuid != null && wolfPosition.distanceTo(packetPosition) >= minDistance.get()) {
                         info(formatMessage("Wolf has teleported to ", packetPosition));
-                        return;
                     }
                 }
-            } catch(NullPointerException e) {}
+            } catch(NullPointerException ignored) {}
+            
+        // World events
         } else if (event.packet instanceof WorldEventS2CPacket) {
             WorldEventS2CPacket worldEventS2CPacket = (WorldEventS2CPacket) event.packet;
+            
             if (worldEventS2CPacket.isGlobal()) {
-                System.out.println(worldEventS2CPacket.getEventId());
+                // Min distance
                 if (PlayerUtils.distanceTo(worldEventS2CPacket.getPos()) <= minDistance.get()) return;
+                
                 switch (worldEventS2CPacket.getEventId()) {
                     case 1023:
                         if (withers.get()) info(formatMessage("Wither spawned at ", worldEventS2CPacket.getPos()));
@@ -139,6 +158,8 @@ public class CoordLogger extends Module {
                         if (otherEvents.get()) info(formatMessage("Unknown global event at ", worldEventS2CPacket.getPos()));
                 }
             }
+            
+        // Sounds
         } else if (thunder.get() && event.packet instanceof PlaySoundS2CPacket playSoundS2CPacket) {
             // Check for thunder sound
             if (playSoundS2CPacket.getSound() != SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT) return;
