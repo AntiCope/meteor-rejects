@@ -20,7 +20,7 @@
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "cloudburst.rejects.MeteorRejectsAddon"
+      "anticope.rejects.MeteorRejectsAddon"
     ]
   },
   "mixins": [

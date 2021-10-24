@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "cloudburst.rejects.mixin.meteor",
+  "package": "anticope.rejects.mixin.meteor",
   "compatibilityLevel": "JAVA_16",
   "client": [
     "modules.NoRenderAccessor",
