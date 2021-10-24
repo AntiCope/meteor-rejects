@@ -28,7 +28,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
     public void onInitialize() {
         LOG.info("Initializing Meteor Rejects Addon");
         
-        MeteorClient.EVENT_BUS.registerLambdaFactory("cloudburst.rejects", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
+        MeteorClient.EVENT_BUS.registerLambdaFactory("anticope.rejects", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
         
         RejectsUtils.init();
         GiveUtils.init();
