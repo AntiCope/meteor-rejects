@@ -8,6 +8,7 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
+import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -25,9 +26,21 @@ import net.minecraft.util.math.Vec3d;
 import java.util.UUID;
 
 public class CoordLogger extends Module {
+    private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgTeleports = settings.createGroup("Teleports");
     private final SettingGroup sgWorldEvents = settings.createGroup("World Events");
 
+    private final Setting<Double> minDistance = sgGeneral.add(new DoubleSetting.Builder()
+            .name("minimum-distance")
+            .description("Minimum distance to log event.")
+            .min(5)
+            .max(100)
+            .sliderMin(5)
+            .sliderMax(100)
+            .defaultValue(10)
+            .build()
+    );
+    
     private final Setting<Boolean> players = sgTeleports.add(new BoolSetting.Builder()
             .name("players")
             .description("Logs player teleports.")
@@ -42,16 +55,6 @@ public class CoordLogger extends Module {
             .build()
     );
 
-    private final Setting<Double> minDistance = sgTeleports.add(new DoubleSetting.Builder()
-            .name("minimum-distance")
-            .description("Minimum movement distance to log as teleport.")
-            .min(5)
-            .max(100)
-            .sliderMin(5)
-            .sliderMax(100)
-            .defaultValue(10)
-            .build()
-    );
 
     private final Setting<Boolean> enderDragons = sgWorldEvents.add(new BoolSetting.Builder()
             .name("ender-dragons")
@@ -121,6 +124,7 @@ public class CoordLogger extends Module {
             WorldEventS2CPacket worldEventS2CPacket = (WorldEventS2CPacket) event.packet;
             if (worldEventS2CPacket.isGlobal()) {
                 System.out.println(worldEventS2CPacket.getEventId());
+                if (PlayerUtils.distanceTo(worldEventS2CPacket.getPos()) <= minDistance.get()) return;
                 switch (worldEventS2CPacket.getEventId()) {
                     case 1023:
                         if (withers.get()) info(formatMessage("Wither spawned at ", worldEventS2CPacket.getPos()));
@@ -135,11 +139,12 @@ public class CoordLogger extends Module {
                         if (otherEvents.get()) info(formatMessage("Unknown global event at ", worldEventS2CPacket.getPos()));
                 }
             }
-        } else if (thunder.get() && event.packet instanceof PlaySoundS2CPacket) {
-            PlaySoundS2CPacket playSoundS2CPacket = (PlaySoundS2CPacket) event.packet;
-            
+        } else if (thunder.get() && event.packet instanceof PlaySoundS2CPacket playSoundS2CPacket) {
             // Check for thunder sound
             if (playSoundS2CPacket.getSound() != SoundEvents.ENTITY_LIGHTNING_BOLT_IMPACT) return;
+            
+            // Min distance
+            if (PlayerUtils.distanceTo(playSoundS2CPacket.getX(), playSoundS2CPacket.getY(), playSoundS2CPacket.getZ()) <= minDistance.get()) return;
             
             info("Thunder noise at %d %d %d", playSoundS2CPacket.getX(), playSoundS2CPacket.getY(), playSoundS2CPacket.getZ());
         }
