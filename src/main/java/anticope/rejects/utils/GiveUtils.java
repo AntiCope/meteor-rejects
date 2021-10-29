@@ -22,7 +22,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Triple;
 
-import static meteordevelopment.meteorclient.utils.Utils.mc;
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class GiveUtils {
 

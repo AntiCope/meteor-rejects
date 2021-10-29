@@ -1,5 +1,6 @@
 package anticope.rejects.utils;
 
+import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.fluid.FluidState;
@@ -16,8 +17,8 @@ public class TntDamage {
             for(int k = -5; k <= 5; ++k) {
                 for(int l = -5; l <= 5; ++l) {
                     BlockPos blockPos = new BlockPos(j, k, l);
-                    BlockState blockState = Utils.mc.world.getBlockState(blockPos);
-                    FluidState fluidState = Utils.mc.world.getFluidState(blockPos);
+                    BlockState blockState = MeteorClient.mc.world.getBlockState(blockPos);
+                    FluidState fluidState = MeteorClient.mc.world.getFluidState(blockPos);
                     
                     float h = 2.8F;
                     Optional<Float> optional = blockState.isAir() && fluidState.isEmpty() ? Optional.empty() : Optional.of(Math.max(blockState.getBlock().getBlastResistance(), fluidState.getBlastResistance()));;

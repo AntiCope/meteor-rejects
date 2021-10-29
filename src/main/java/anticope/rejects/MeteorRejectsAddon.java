@@ -7,7 +7,7 @@ import anticope.rejects.modules.*;
 import anticope.rejects.modules.modifier.NoRenderModifier;
 import anticope.rejects.utils.GiveUtils;
 import anticope.rejects.utils.RejectsUtils;
-import meteordevelopment.meteorclient.MeteorAddon;
+import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.systems.commands.Commands;
