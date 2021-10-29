@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">Meteor Rejects</h1>
 <p align="center">
-An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly. 
+An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly.
 </p>
 <div align="center">
   <a href="https://anticope.ml/pages/MeteorAddons.html"><img src="https://img.shields.io/badge/Verified%20Addon-Yes-blueviolet" alt="Verified Addon"></a>
@@ -24,6 +24,8 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 # How to use
 - Download the latest [release](/../../releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar) of this mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
+
+*Note: It is recommended to use the [latest dev build](https://meteorclient.com/download?devBuild=latest) of meteor while using rejects*
 
 # Features
 ## Modules
@@ -92,7 +94,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 
 ## Config
 - `Http Allowed` - modify what http requests can be made with Meteor's http api
-- `Hidden Modules` - hide modules from module gui. **requires restart when unhiding** 
+- `Hidden Modules` - hide modules from module gui. **requires restart when unhiding**
 
 <sub>
 <a name="popbob" id="popbob" href="#popbob">*</a> this statement is not true at all, popbob never approved of this
