@@ -1,12 +1,6 @@
 package anticope.rejects.modules;
 
-import java.util.HashMap;
-
 import anticope.rejects.MeteorRejectsAddon;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-
 import meteordevelopment.meteorclient.events.game.ReceiveMessageEvent;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
@@ -25,13 +19,17 @@ import meteordevelopment.starscript.Script;
 import meteordevelopment.starscript.compiler.Compiler;
 import meteordevelopment.starscript.compiler.Parser;
 import meteordevelopment.starscript.utils.StarscriptError;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
+
+import java.util.HashMap;
 
 public class ChatBot extends Module {
 
     public final HashMap<String, String> commands = new HashMap<>() {{
         put("ping", "Pong!");
         put("tps", "Current TPS: {server.tps}");
-        put("time", "It's currently {server.time}");
         put("time", "It's currently {server.time}");
         put("pos", "I am @ {player.pos}");
     }};
@@ -52,6 +50,13 @@ public class ChatBot extends Module {
             .build()
     );
 
+    private final Setting<Boolean> greentext = sgGeneral.add(new BoolSetting.Builder()
+            .name("greentext")
+            .description("Add '>' as a prefix to bot messages.")
+            .defaultValue(true)
+            .build()
+    );
+
     public ChatBot() {
         super(MeteorRejectsAddon.CATEGORY, "chat-bot", "Bot which automatically responds to chat messages.");
     }
@@ -62,15 +67,16 @@ public class ChatBot extends Module {
     private void onMessageRecieve(ReceiveMessageEvent event) {
         String msg = event.getMessage().getString();
         if (help.get() && msg.endsWith(prefix.get()+"help")) {
-            mc.getNetworkHandler().sendPacket(new ChatMessageC2SPacket("Avaliable commands: " + String.join(", ", commands.keySet())));
+            mc.getNetworkHandler().sendPacket(new ChatMessageC2SPacket("Avaliable commands: " + String.join(", ", commands.keySet()) + ", help"));
             return;
         }
         for (String cmd : commands.keySet()) {
             if (msg.endsWith(prefix.get()+cmd)) {
                 Script script = compile(commands.get(cmd));
                 if (script == null) mc.player.sendChatMessage("An error occurred");
+                String scriptResult = MeteorStarscript.ss.run(script);
                 try {
-                    mc.player.sendChatMessage(MeteorStarscript.ss.run(script));
+                    mc.player.sendChatMessage(greentext.get() ? ">" + scriptResult : scriptResult);
                 } catch (StarscriptError e) {
                     MeteorStarscript.printChatError(e);
                     mc.player.sendChatMessage("An error occurred");
