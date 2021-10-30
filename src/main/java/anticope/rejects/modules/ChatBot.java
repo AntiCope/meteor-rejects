@@ -74,8 +74,8 @@ public class ChatBot extends Module {
             if (msg.endsWith(prefix.get()+cmd)) {
                 Script script = compile(commands.get(cmd));
                 if (script == null) mc.player.sendChatMessage("An error occurred");
-                String scriptResult = MeteorStarscript.ss.run(script);
                 try {
+                    String scriptResult = MeteorStarscript.ss.run(script);
                     mc.player.sendChatMessage(greentext.get() ? ">" + scriptResult : scriptResult);
                 } catch (StarscriptError e) {
                     MeteorStarscript.printChatError(e);
