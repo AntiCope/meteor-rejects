@@ -7,7 +7,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 </p>
 <div align="center">
   <a href="https://anticope.ml/pages/MeteorAddons.html"><img src="https://img.shields.io/badge/Verified%20Addon-Yes-blueviolet" alt="Verified Addon"></a>
-  <a href="https://github.com/AntiCope/meteor-rejects/releases"><img src="https://img.shields.io/badge/Version-v0.0.4-orange" alt="Version"></a>
+  <a href="https://github.com/AntiCope/meteor-rejects/releases"><img src="https://img.shields.io/badge/Version-v0.1-orange" alt="Version"></a>
   <img src="https://img.shields.io/badge/spaghetti%20code-yes-success?logo=java" alt="Spagetti code: yes">
   <img src="https://img.shields.io/badge/Minecraft%20Version-1.17.1-blue" alt="Minecraft Version">
   <a href="https://github.com/AntiCope/meteor-rejects/commits/master"><img src="https://img.shields.io/github/last-commit/AntiCope/meteor-rejects?logo=git" alt="Last commit"></a>
@@ -22,7 +22,7 @@ An addon to Meteor Client that adds modules and commands that were too useless t
 </div>
 
 # How to use
-- Download the latest [release](/../../releases/download/latest-1.17/meteor-rejects-addon-0.0.4.jar) of this mod from the releases tab.
+- Download the latest [release](/../../releases/download/latest-1.17/meteor-rejects-addon-0.1.jar) of this mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
 *Note: It is recommended to use the [latest dev build](https://meteorclient.com/download?devBuild=latest) of meteor while using rejects*
