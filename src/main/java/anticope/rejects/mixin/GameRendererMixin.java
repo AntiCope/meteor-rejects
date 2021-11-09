@@ -11,20 +11,19 @@ import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.client.render.GameRenderer;
 
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Shadow @Final private MinecraftClient client;
 
-    @Redirect(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/GameRenderer;shader:Lnet/minecraft/client/gl/ShaderEffect;", ordinal = 0))
-	private ShaderEffect renderShader(GameRenderer renderer, float tickDelta) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;drawEntityOutlinesFramebuffer()V", ordinal = 0))
+	private void renderShader(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
         ShaderEffect shader = Modules.get().get(Rendering.class).getShaderEffect();
 
         if (shader != null) {
             shader.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
 			shader.render(tickDelta);
         }
-
-        return null;
     }
 }
