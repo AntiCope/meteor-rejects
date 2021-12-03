@@ -9,15 +9,12 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '16', '16.0.1' ]
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 16
+    - name: Set up JDK 17
       uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.Java }}
+        java-version: 17
         distribution: 'zulu'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew

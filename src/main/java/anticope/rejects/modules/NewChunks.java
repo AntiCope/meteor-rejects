@@ -132,9 +132,9 @@ public class NewChunks extends Module {
             ChunkPos pos = new ChunkPos(packet.getX(), packet.getZ());
 
             if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getX(), packet.getZ()) == null) {
-                WorldChunk chunk = new WorldChunk(mc.world, pos, null);
+                WorldChunk chunk = new WorldChunk(mc.world, pos);
                 try {
-                    chunk.loadFromPacket(null, packet.getReadBuffer(), new NbtCompound(), packet.getVerticalStripBitmask());
+                    chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new NbtCompound(), packet.getChunkData().getBlockEntities(packet.getX(), packet.getZ()));
                 } catch (ArrayIndexOutOfBoundsException e) {
                     return;
                 }
