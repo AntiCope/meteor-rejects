@@ -16,6 +16,10 @@ repositories {
 	}
 	maven {
 		name = "meteor-maven"
+		url = "https://maven.meteordev.org"
+	}
+    maven {
+        name = "meteor-maven-snapshots"
         url = "https://maven.meteordev.org/snapshots"
     }
 }
