@@ -21,7 +21,7 @@
 </div>
 
 # How to use
-- Download the latest [release](/../../releases/download/latest-1.17/meteor-rejects-addon-0.1.jar) of this mod from the releases tab.
+- Download the latest [release](/../../releases) of this mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
 *Note: It is recommended to use the [latest dev build](https://meteorclient.com/download?devBuild=latest) of meteor while using rejects*
