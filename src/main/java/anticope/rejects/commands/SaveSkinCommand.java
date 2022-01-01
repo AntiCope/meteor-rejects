@@ -47,8 +47,11 @@ public class SaveSkinCommand extends Command {
             PlayerEntity playerEntity = ctx.getArgument("player", PlayerEntity.class);
             String path = TinyFileDialogs.tinyfd_saveFileDialog("Save image", null, filters, null);
             if (path == null) IO_EXCEPTION.create();
-            if (!path.endsWith(".png")) path += ".png";
-            saveSkin(playerEntity.getUuidAsString(),path);
+            if (path != null) {
+                if (!path.endsWith(".png")) path += ".png";
+                saveSkin(playerEntity.getUuidAsString(),path);
+            }
+            
             return SINGLE_SUCCESS;
         }));
     }

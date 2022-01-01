@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import io.netty.util.internal.ConcurrentSet;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.entity.player.SendMovementPacketsEvent;
@@ -16,10 +15,10 @@ import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import java.util.Set;
+import java.util.HashSet;
 
 public class PacketFly extends Module {
-    private final Set<PlayerMoveC2SPacket> packets = new ConcurrentSet();
+    private final HashSet<PlayerMoveC2SPacket> packets = new HashSet<>();
     private final SettingGroup sgMovement = settings.createGroup("movement");
     private final SettingGroup sgClient = settings.createGroup("client");
     private final SettingGroup sgBypass = settings.createGroup("bypass");
@@ -168,7 +167,7 @@ public class PacketFly extends Module {
     }
 
     private boolean checkHitBoxes() {
-        return !mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().expand(-0.0625,-0.0625,-0.0625)).iterator().hasNext();
+        return !mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().stretch(-0.0625,-0.0625,-0.0625)).iterator().hasNext();
     }
 
     private boolean resetCounter(int counter) {
