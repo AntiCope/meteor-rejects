@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ConfigTab.class)
 public class ConfigTabMixin {
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private static Settings settings;
 

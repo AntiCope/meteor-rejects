@@ -19,7 +19,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 
 @Mixin(Modules.class)
 public class ModulesMixin {
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private Map<Category, List<Module>> groups;
 

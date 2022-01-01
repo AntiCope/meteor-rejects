@@ -20,16 +20,16 @@ import java.util.Map;
 
 @Mixin(Commands.class)
 public class CommandsMixin {
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private List<Command> commands;
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private Map<Class<? extends Command>, Command> commandInstances;
     
 
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private CommandDispatcher<CommandSource> DISPATCHER = new CommandDispatcher<>();
 

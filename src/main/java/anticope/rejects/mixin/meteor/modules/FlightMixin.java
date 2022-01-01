@@ -18,7 +18,7 @@ import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 @Mixin(Flight.class)
 public class FlightMixin {
-    @Shadow
+    @Shadow(remap = false)
     @Final
     private SettingGroup sgGeneral;
 
