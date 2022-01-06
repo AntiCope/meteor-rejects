@@ -2,8 +2,8 @@ package anticope.rejects.gui.hud;
 
 import baritone.api.BaritoneAPI;
 import baritone.api.process.IBaritoneProcess;
-import meteordevelopment.meteorclient.systems.modules.render.hud.HUD;
-import meteordevelopment.meteorclient.systems.modules.render.hud.modules.DoubleTextHudElement;
+import meteordevelopment.meteorclient.systems.hud.HUD;
+import meteordevelopment.meteorclient.systems.hud.modules.DoubleTextHudElement;
 
 public class BaritoneHud extends DoubleTextHudElement {
 	public BaritoneHud(HUD hud) {

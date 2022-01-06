@@ -59,7 +59,7 @@ public class SkeletonESP extends Module {
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;
             if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && mc.player == entity) return;
-            int rotationHoldTicks = Config.get().rotationHoldTicks;
+            int rotationHoldTicks = Config.get().rotationHoldTicks.get();
             
             Color skeletonColor = PlayerUtils.getPlayerColor((PlayerEntity)entity, skeletonColorSetting.get());
             PlayerEntity playerEntity = (PlayerEntity) entity;

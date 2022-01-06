@@ -3,12 +3,15 @@
   "package": "anticope.rejects.mixin.meteor",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "modules.NoRenderAccessor",
-    "modules.FlightMixin",
     "CommandsMixin",
-    "ConfigTabMixin",
+    "ConfigMixin",
     "GuiRendererAccessor",
     "HttpMixin",
-    "ModulesMixin"
+    "ModulesMixin",
+    "modules.FlightMixin",
+    "modules.NoRenderAccessor"
+  ],
+  "mixins": [
+    "ConfigTabMixin"
   ]
 }
