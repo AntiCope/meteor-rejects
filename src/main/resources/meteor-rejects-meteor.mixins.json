@@ -4,14 +4,12 @@
   "compatibilityLevel": "JAVA_16",
   "client": [
     "CommandsMixin",
-    "ConfigMixin",
+    "ConfigTabMixin",
     "GuiRendererAccessor",
     "HttpMixin",
     "ModulesMixin",
     "modules.FlightMixin",
-    "modules.NoRenderAccessor"
-  ],
-  "mixins": [
-    "ConfigTabMixin"
+    "modules.NoRenderAccessor",
+    "SystemsMixin"
   ]
 }
