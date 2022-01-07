@@ -27,11 +27,6 @@ jobs:
         distribution: 'zulu'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: curl
-      run: |
-        # TODO: this is fucking stupid
-        mkdir -p "/home/runner/work/meteor-rejects/meteor-rejects/.gradle/loom-cache/v3.4.0/"
-        curl "https://maven.meteordev.org/releases/club/minnced/java-discord-rpc/2.0.2/java-discord-rpc-2.0.2.jar" -o "/home/runner/work/meteor-rejects/meteor-rejects/.gradle/loom-cache/v3.4.0/discord-rpc-release.jar"
     - name: Build with Gradle
       run: ./gradlew build
     - name: Remove *-dev.jar
