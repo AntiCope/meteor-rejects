@@ -74,6 +74,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         // Commands
         Commands commands = Commands.get();
         commands.add(new CenterCommand());
+        commands.add(new ClearChatCommand());
         commands.add(new GhostCommand());
         commands.add(new GiveCommand());
         commands.add(new SaveSkinCommand());
@@ -82,6 +83,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new KickCommand());
         // commands.add(new LocateCommand());   I wish it was that simple -_-
         commands.add(new ServerCommand());
+        commands.add(new PanicCommand());
         commands.add(new SetBlockCommand());
         commands.add(new SetVelocityCommand());
         commands.add(new TeleportCommand());
