@@ -42,8 +42,8 @@ public class CrystalHud extends HudElement {
 
         if (isInEditor()) {
             RenderUtils.drawItem(Items.END_CRYSTAL.getDefaultStack(), (int) x, (int) y, scale.get(), true);
-        } else if (InvUtils.find(Items.END_CRYSTAL).getCount() > 0) {
-            RenderUtils.drawItem(new ItemStack(Items.END_CRYSTAL, InvUtils.find(Items.END_CRYSTAL).getCount()), (int) x, (int) y, scale.get(), true);
+        } else if (InvUtils.find(Items.END_CRYSTAL).count() > 0) {
+            RenderUtils.drawItem(new ItemStack(Items.END_CRYSTAL, InvUtils.find(Items.END_CRYSTAL).count()), (int) x, (int) y, scale.get(), true);
         }
     }
 } 
