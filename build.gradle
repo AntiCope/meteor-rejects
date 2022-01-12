@@ -1,6 +1,5 @@
 plugins {
 	id 'fabric-loom' version '0.10-SNAPSHOT'
-	id 'maven-publish'
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
@@ -10,19 +9,19 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	jcenter()
 	maven {
-        name = "jitpack"
-        url = "https://jitpack.io"
+		name = "jitpack"
+		url = "https://jitpack.io"
 	}
 	maven {
 		name = "meteor-maven"
 		url = "https://maven.meteordev.org/releases"
 	}
     maven {
-        name = "meteor-maven-snapshots"
-        url = "https://maven.meteordev.org/snapshots"
+		name = "meteor-maven-snapshots"
+		url = "https://maven.meteordev.org/snapshots"
     }
+	jcenter()
 }
 
 dependencies {
@@ -37,11 +36,15 @@ dependencies {
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-disable transitiveness on them.
 
-	modImplementation "meteordevelopment:meteor-client:SNAPSHOT"
+	modImplementation("meteordevelopment:meteor-client:SNAPSHOT")
 
 	// Seed .locate features
 	modImplementation 'com.github.hube12:SEED:master-SNAPSHOT'
 	include 'com.github.hube12:SEED:master-SNAPSHOT'
+}
+
+configurations.modImplementation {
+	exclude group: 'club.minnced' // fuck you
 }
 
 processResources {
