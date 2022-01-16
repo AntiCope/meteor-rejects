@@ -57,6 +57,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new Confuse());
         modules.add(new CoordLogger());
         modules.add(new CustomPackets());
+        modules.add(new GhostMode());
         modules.add(new InteractionMenu());
         modules.add(new Lavacast());
         modules.add(new NewChunks());
