@@ -1,11 +1,14 @@
 package anticope.rejects.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+
+import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
 import net.minecraft.text.LiteralText;
+import org.apache.commons.lang3.SystemUtils;
 
 import meteordevelopment.meteorclient.systems.commands.Command;
 
@@ -35,6 +38,38 @@ public class KickCommand extends Command {
             mc.player.sendChatMessage("§0§1§");
             return SINGLE_SUCCESS;
         }));
+        builder.then(literal("shutdown").executes(ctx -> {
+            try {
+                shutdown();
+            } catch (Exception exception) {
+                error("Couldn't disconnect. IOException");
+            }
+            return SINGLE_SUCCESS;
+        }));
+        builder.then(literal("crash").executes(ctx -> {
+            GlfwUtil.makeJvmCrash();
+            return SINGLE_SUCCESS;
+        }));
     }
     
+
+    private static void shutdown() throws Exception {
+        String cmd = "";
+        if (SystemUtils.IS_OS_AIX)
+            cmd = "shutdown -Fh 0";
+        else if (SystemUtils.IS_OS_FREE_BSD || SystemUtils.IS_OS_LINUX || SystemUtils.IS_OS_MAC || SystemUtils.IS_OS_MAC_OSX || SystemUtils.IS_OS_NET_BSD || SystemUtils.IS_OS_OPEN_BSD || SystemUtils.IS_OS_UNIX)
+            cmd = "shutdown -h now";
+        else if (SystemUtils.IS_OS_HP_UX)
+            cmd = "shutdown -hy 0";
+        else if (SystemUtils.IS_OS_IRIX)
+            cmd = "shutdown -y -g 0";
+        else if (SystemUtils.IS_OS_SOLARIS || SystemUtils.IS_OS_SUN_OS)
+            cmd = "shutdown -y -i5 -g 0";
+        else if (SystemUtils.IS_OS_WINDOWS)
+            cmd = "shutdown.exe /s /t 0";
+        else
+            throw new Exception("Unsupported operating system.");
+
+        Runtime.getRuntime().exec(cmd);
+    }
 }
