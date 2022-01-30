@@ -296,7 +296,7 @@ public class WorldGenUtils {
         }
     }
 
-    public static Structure<?, ?> getStructure(Feature feature, MCVersion version) {
+    private static Structure<?, ?> getStructure(Feature feature, MCVersion version) {
         switch (feature) {
             case buried_treasure -> { return new BuriedTreasure(version); }
             case mansion -> { return new Mansion(version); }
