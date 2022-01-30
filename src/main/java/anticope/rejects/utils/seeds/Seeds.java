@@ -2,6 +2,7 @@ package anticope.rejects.utils.seeds;
 
 import java.util.HashMap;
 
+import anticope.rejects.events.SeedChangedEvent;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.BaseText;
@@ -48,7 +49,9 @@ public class Seeds extends System<Seeds> {
     public void setSeed(String seed, MCVersion version) {
         if (mc.isIntegratedServerRunning()) return;
 
-        seeds.put(Utils.getWorldName(), new Seed(toSeed(seed), version));
+        long numSeed = toSeed(seed);
+        seeds.put(Utils.getWorldName(), new Seed(numSeed, version));
+        MeteorClient.EVENT_BUS.post(SeedChangedEvent.get(numSeed));
     }
 
     public void setSeed(String seed) {
