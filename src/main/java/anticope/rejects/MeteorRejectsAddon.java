@@ -69,7 +69,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new Rendering());
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
-        modules.add(new StructureRegions());
         
         // Module modifications
         NoRenderModifier.init();
