@@ -62,6 +62,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new Lavacast());
         modules.add(new NewChunks());
         modules.add(new ObsidianFarm());
+        modules.add(new OreSim());
         modules.add(new PacketFly());
         modules.add(new Painter());
         modules.add(new Prone());
