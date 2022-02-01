@@ -1,5 +1,6 @@
-package anticope.rejects.modules;
+package anticope.rejects.utils;
 
+import anticope.rejects.modules.OreSim;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -183,7 +184,7 @@ public class Ore {
         for (Ore ore : ores) {
             if (ore.type == Type.EMERALD || ore.type == Type.GOLD_EXTRA) {
                 ore.index.keySet().forEach(key -> ore.index.put(key, ore.index.get(key) - 3));
-            } else if (ore.dimension.equals("overworld")) {
+            } else if (ore.dimension == DimensionType.OVERWORLD_ID) {
                 ore.index.keySet().forEach(key -> ore.index.put(key, ore.index.get(key) - 2));
             } else if (ore.type == Type.LDEBRIS) {
                 ore.minY = 16;
@@ -202,7 +203,7 @@ public class Ore {
         return ores;
     }
 
-    protected static List<Ore> getConfig(OreSim.Version version) {
+    public static List<Ore> getConfig(OreSim.Version version) {
         return switch (version) {
             case V1_18 -> V1_18();
             case V1_17_1 -> V1_17_1();
@@ -212,11 +213,11 @@ public class Ore {
         };
     }
 
-    protected enum Type {
+    public enum Type {
         DIAMOND, REDSTONE, GOLD, IRON, COAL, EMERALD, SDEBRIS, LDEBRIS, LAPIS, COPPER, QUARTZ, GOLD_NETHER, GOLD_EXTRA
     }
 
-    protected enum Generator {
+    public enum Generator {
         DEFAULT, EMERALD, NO_SURFACE
     }
 }
