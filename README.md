@@ -92,7 +92,6 @@
 
 ## HUD
 - Baritone process HUD
-- Apple, Exp & Crystal HUD (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/757))
 - CPS HUD (Ported from [AuroraKeystrokes](https://github.com/LambdAurora/AuroraKeystrokes/tree/1.16/src/main/java/me/lambdaurora/keystrokes))
 
 ## Config
