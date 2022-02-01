@@ -15,7 +15,6 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -58,8 +57,10 @@ public class OreSim extends Module {
     }
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final SettingGroup sgOres = settings.createGroup("Ores");
+
     private final Setting<Integer> horizontalRadius = sgGeneral.add(new IntSetting.Builder()
-            .name("chunk range")
+            .name("chunk-range")
             .description("taxi cap distance of chunks being shown")
             .defaultValue(5)
             .min(1)
@@ -68,14 +69,14 @@ public class OreSim extends Module {
     );
 
     private final Setting<AirCheck> airCheck = sgGeneral.add(new EnumSetting.Builder<AirCheck>()
-            .name("Air check mode")
+            .name("air-check-mode")
             .description("checks if there is air at a calculated ore pos")
             .defaultValue(AirCheck.RECHECK)
             .build()
     );
 
     private final Setting<Version> version = sgGeneral.add(new EnumSetting.Builder<Version>()
-            .name("Air check mode")
+            .name("version")
             .description("checks if there is air at a calculated ore pos")
             .defaultValue(Version.V1_18)
             .onChanged(v -> versionChanged())
@@ -83,9 +84,9 @@ public class OreSim extends Module {
     );
 
     public OreSim() {
-        super(MeteorRejectsAddon.CATEGORY, "OreSim", "xray on crack");
+        super(MeteorRejectsAddon.CATEGORY, "ore-sim", "Xray on crack.");
         oreConfig = Ore.getConfig(version.get());
-        Ore.oreSettings.forEach(sgGeneral::add);
+        Ore.oreSettings.forEach(sgOres::add);
     }
 
     @EventHandler
@@ -136,7 +137,7 @@ public class OreSim extends Module {
             long chunkX = mc.player.getChunkPos().x;
             long chunkZ = mc.player.getChunkPos().z;
             ClientWorld world = mc.world;
-            int renderdistance = MinecraftClient.getInstance().options.viewDistance;
+            int renderdistance = mc.options.viewDistance;
 
             //maybe another config option? But its already crowded
             int chunkCounter = 5;
@@ -167,7 +168,7 @@ public class OreSim extends Module {
     @Override
     public void onActivate() {
         if (Seeds.get().getSeed() == null) {
-            error("no seed found. To set a seed do .seed <seed>");
+            error("No seed found. To set a seed do .seed <seed>");
             this.toggle();
         }
         reload();
@@ -189,7 +190,7 @@ public class OreSim extends Module {
     }
 
     private void loadVisibleChunks() {
-        int renderdistance = MinecraftClient.getInstance().options.viewDistance;
+        int renderdistance = mc.options.viewDistance;
 
         if (mc.player == null) {
             return;
@@ -209,7 +210,7 @@ public class OreSim extends Module {
         if (seed == null) return;
         worldSeed = seed.seed;
         chunkRenderers.clear();
-        if (MinecraftClient.getInstance().world != null && worldSeed != null) {
+        if (mc.world != null && worldSeed != null) {
             loadVisibleChunks();
         }
     }
@@ -249,7 +250,7 @@ public class OreSim extends Module {
         Identifier id = world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiomeAccess().getBiomeForNoiseGen(new BlockPos(chunkX, 0, chunkZ)));
         if (id == null) {
             error("Something went wrong, you may have some mods that mess with world generation");
-            this.toggle();
+            toggle();
             return;
         }
         String biomeName = id.getPath();
