@@ -2,26 +2,20 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.events.ChunkPosDataEvent;
+import anticope.rejects.events.PlayerRespawnEvent;
 import anticope.rejects.events.SeedChangedEvent;
+import anticope.rejects.utils.Ore;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
-import meteordevelopment.meteorclient.events.world.ChunkDataEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.systems.modules.Modules;
-import meteordevelopment.meteorclient.systems.modules.movement.Scaffold;
-import meteordevelopment.meteorclient.systems.modules.world.Nuker;
-import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -32,12 +26,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.random.ChunkRandom;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,8 +38,8 @@ import java.util.Random;
 public class OreSim extends Module {
 
     private final HashMap<Long, HashMap<Ore, HashSet<Vec3d>>> chunkRenderers = new HashMap<>();
-    Long worldSeed = null;
-    List<Ore> oreConfig;
+    private Long worldSeed = null;
+    private List<Ore> oreConfig;
     private ChunkPos prevOffset = new ChunkPos(0, 0);
 
     public enum Version {
@@ -136,7 +128,7 @@ public class OreSim extends Module {
     }
 
     @EventHandler
-    public void onTick(TickEvent.Pre event) {
+    private void onTick(TickEvent.Pre event) {
         if (airCheck.get() == AirCheck.RECHECK) {
             if (mc.player == null || mc.world == null) {
                 return;
@@ -175,7 +167,7 @@ public class OreSim extends Module {
     @Override
     public void onActivate() {
         if (Seeds.get().getSeed() == null) {
-            error("input a world seed into the seed field in the oresim config");
+            error("no seed found. To set a seed do .seed <seed>");
             this.toggle();
         }
         reload();
@@ -183,6 +175,11 @@ public class OreSim extends Module {
 
     @EventHandler
     private void onSeedChanged(SeedChangedEvent event) {
+        reload();
+    }
+
+    @EventHandler
+    private void onPlayerRespawn(PlayerRespawnEvent event) {
         reload();
     }
 
@@ -207,7 +204,7 @@ public class OreSim extends Module {
         }
     }
 
-    public void reload() {
+    private void reload() {
         Seed seed = Seeds.get().getSeed();
         if (seed == null) return;
         worldSeed = seed.seed;
@@ -222,7 +219,7 @@ public class OreSim extends Module {
         doMathOnChunk(event.chunkX, event.chunkZ);
     }
 
-    public void doMathOnChunk(int chunkX, int chunkZ) {
+    private void doMathOnChunk(int chunkX, int chunkZ) {
         long chunkKey = (long) chunkX + ((long) chunkZ << 32);
 
         ClientWorld world = mc.world;
@@ -251,7 +248,7 @@ public class OreSim extends Module {
 
         Identifier id = world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiomeAccess().getBiomeForNoiseGen(new BlockPos(chunkX, 0, chunkZ)));
         if (id == null) {
-            System.out.println("Something went wrong, you may have some mods that mess with world generation");
+            error("Something went wrong, you may have some mods that mess with world generation");
             this.toggle();
             return;
         }
@@ -260,7 +257,7 @@ public class OreSim extends Module {
 
         for (Ore ore : oreConfig) {
 
-            if (dimensionName != ore.dimension) {
+            if (!dimensionName.getPath().equals(ore.dimension.getPath())) {
                 continue;
             }
 
