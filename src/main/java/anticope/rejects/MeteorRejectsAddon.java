@@ -47,7 +47,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AutoPot());
         modules.add(new AutoTNT());
         modules.add(new AutoWither());
-        modules.add(new BedrockWalk());
         modules.add(new BoatGlitch());
         modules.add(new BlockIn());
         modules.add(new BoatPhase());
