@@ -9,7 +9,6 @@
     "HttpMixin",
     "ModulesMixin",
     "modules.FlightMixin",
-    "modules.NoRenderAccessor",
-    "SystemsMixin"
+    "modules.NoRenderAccessor"
   ]
 }

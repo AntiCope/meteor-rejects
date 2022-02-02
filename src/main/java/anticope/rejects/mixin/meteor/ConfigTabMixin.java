@@ -13,6 +13,6 @@ public class ConfigTabMixin {
 	// No idea why CallbackInfoReturnable, but fabric crashes otherwise lol
 	@Inject(method = "createScreen", at=@At("HEAD"), remap = false)
 	private void onCreateScreen(CallbackInfoReturnable<?> cir) {
-		ConfigModifier.INSTANCE.hiddenModules.set(RejectsConfig.get().getHiddenModules());
+		ConfigModifier.get().hiddenModules.set(RejectsConfig.get().getHiddenModules());
 	}
 }

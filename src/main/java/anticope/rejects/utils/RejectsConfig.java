@@ -4,6 +4,7 @@ import meteordevelopment.meteorclient.systems.System;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.MeteorClient;
+import meteordevelopment.meteorclient.utils.render.prompts.OkPrompt;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,6 +41,14 @@ public class RejectsConfig extends System<RejectsConfig> {
     }
 
     public void setHiddenModules(List<Module> newList) {
+        if (newList.size() < hiddenModules.size()) {
+            OkPrompt.create()
+                .title("Hidden Modules")
+                .message("In order to see the modules you have removed from the list you need to restart Minecraft.")
+                .id("hidden-modules-unhide")
+                .show();
+        }
+        hiddenModules.clear();
         for (Module module : newList) {
             if (module.isActive()) module.toggle();
             hiddenModules.add(module.name);

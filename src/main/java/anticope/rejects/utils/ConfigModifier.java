@@ -12,11 +12,7 @@ import java.util.List;
 
 public class ConfigModifier {
 
-    public static ConfigModifier INSTANCE;
-
-    public ConfigModifier() {
-        INSTANCE = this;
-    }
+    private static ConfigModifier INSTANCE;
 
     public final SettingGroup sgRejects = Config.get().settings.createGroup("Rejects");
 
@@ -36,4 +32,9 @@ public class ConfigModifier {
             .onChanged(v -> RejectsConfig.get().setHiddenModules(v))
             .build()
     );
+
+    public static ConfigModifier get() {
+        if (INSTANCE == null) INSTANCE = new ConfigModifier();
+        return INSTANCE;
+    }
 }
