@@ -3,15 +3,15 @@ package anticope.rejects.utils;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
 import baritone.api.BaritoneAPI;
-import kaptainwutax.biomeutils.source.BiomeSource;
-import kaptainwutax.featureutils.misc.SlimeChunk;
-import kaptainwutax.featureutils.structure.*;
-import kaptainwutax.mcutils.rand.ChunkRand;
-import kaptainwutax.mcutils.state.Dimension;
-import kaptainwutax.mcutils.util.data.SpiralIterator;
-import kaptainwutax.mcutils.util.pos.*;
-import kaptainwutax.mcutils.version.MCVersion;
-import kaptainwutax.terrainutils.TerrainGenerator;
+import com.seedfinding.mcbiome.source.BiomeSource;
+import com.seedfinding.mcfeature.misc.SlimeChunk;
+import com.seedfinding.mcfeature.structure.*;
+import com.seedfinding.mccore.rand.ChunkRand;
+import com.seedfinding.mccore.state.Dimension;
+import com.seedfinding.mccore.util.data.SpiralIterator;
+import com.seedfinding.mccore.util.pos.*;
+import com.seedfinding.mccore.version.MCVersion;
+import com.seedfinding.mcterrain.TerrainGenerator;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -270,7 +270,7 @@ public class WorldGenUtils {
 
                 return StreamSupport.stream(spiralIterator.spliterator(), false)
                     .filter(cPos -> {
-                        kaptainwutax.featureutils.Feature.Data<Mineshaft> data = mineshaft.at(cPos.getX(), cPos.getZ());
+                        com.seedfinding.mcfeature.Feature.Data<Mineshaft> data = mineshaft.at(cPos.getX(), cPos.getZ());
                         return data.testStart(source.getWorldSeed(), chunkRand) && data.testBiome(source) && data.testGenerate(terrainGenerator);
                     })
                     .findAny().map(cPos -> cPos.toBlockPos().add(9, 0, 9)).orElse(null);

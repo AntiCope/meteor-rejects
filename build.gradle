@@ -9,18 +9,16 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	maven {
-		name = "jitpack"
-		url = "https://jitpack.io"
-	}
-	maven {
-		name = "meteor-maven"
-		url = "https://maven.meteordev.org/releases"
-	}
-	maven {
-		name = "meteor-maven-snapshots"
-		url = "https://maven.meteordev.org/snapshots"
-	}
+	mavenCentral()
+	maven { url "https://maven.meteordev.org/releases"}
+	maven { url "https://maven.meteordev.org/snapshots" }
+	maven { url "https://maven.seedfinding.com/" }
+	maven { url "https://maven-snapshots.seedfinding.com/" }
+}
+
+configurations {
+	// configuration that holds jars to include in the jar
+	extraLibs
 }
 
 dependencies {
@@ -29,17 +27,17 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	// modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-	// You may need to force-disable transitiveness on them.
-
 	modImplementation("meteordevelopment:meteor-client:SNAPSHOT")
 
-	// Seed .locate features
-	modImplementation 'com.github.hube12:SEED:master-SNAPSHOT'
-	include 'com.github.hube12:SEED:master-SNAPSHOT'
+	extraLibs('com.seedfinding:mc_math:0eb505174da8a92550f8ec6efe254e0fa936cc0d') {transitive = false}
+	extraLibs('com.seedfinding:mc_seed:5518e3ba3ee567fb0b51c15958967f70a6a19e02') {transitive = false}
+	extraLibs('com.seedfinding:mc_core:88b246597e0147e37b38d1b33e9526e6c3eb1469') {transitive = false}
+	extraLibs('com.seedfinding:mc_noise:a6ab8e6c688491829f8d2adf845392da22ef8e9c') {transitive = false}
+	extraLibs('com.seedfinding:mc_biome:b2271807a047bb43ac60c8c20ad47e315f19b9a6') {transitive = false}
+	extraLibs('com.seedfinding:mc_terrain:9e937ddb838e28e79423c287fa18b1ce66f061d7') {transitive = false}
+	extraLibs('com.seedfinding:mc_feature:ef939c0dd7d66ab1bd290d6aab1e42a12cb3dbf1') {transitive = false}
+
+	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
 
 processResources {
@@ -50,6 +48,18 @@ processResources {
 
 		filter { line -> line.replace("@mc_version@", project.minecraft_version) }
 	}
+}
+
+jar {
+	from("LICENSE") {
+		rename { "${it}_${project.archivesBaseName}"}
+	}
+	from {
+		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
+tasks.withType(Jar) {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.withType(JavaCompile).configureEach {

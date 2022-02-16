@@ -1,6 +1,6 @@
 package anticope.rejects.utils.seeds;
 
-import kaptainwutax.mcutils.version.MCVersion;
+import com.seedfinding.mccore.version.MCVersion;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtLong;

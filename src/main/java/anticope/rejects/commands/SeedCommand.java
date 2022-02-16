@@ -9,7 +9,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.BaseText;
 import net.minecraft.text.LiteralText;
 
-import kaptainwutax.mcutils.version.MCVersion;
+import com.seedfinding.mccore.version.MCVersion;
 import meteordevelopment.meteorclient.systems.commands.Command;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
