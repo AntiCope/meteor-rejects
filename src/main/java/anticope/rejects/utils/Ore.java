@@ -1,9 +1,9 @@
 package anticope.rejects.utils;
 
-import anticope.rejects.modules.OreSim;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.utils.render.color.Color;
+import com.seedfinding.mccore.version.MCVersion;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.intprovider.IntProvider;
@@ -203,13 +203,14 @@ public class Ore {
         return ores;
     }
 
-    public static List<Ore> getConfig(OreSim.Version version) {
+    public static List<Ore> getConfig(MCVersion version) {
         return switch (version) {
-            case V1_18 -> V1_18();
-            case V1_17_1 -> V1_17_1();
-            case V1_17_0 -> V1_17();
-            case V1_16 -> V1_16();
-            case V1_15, V1_14 -> V1_15();
+            case v1_18_1, v1_18 -> V1_18();
+            case v1_17_1 -> V1_17_1();
+            case v1_17 -> V1_17();
+            case v1_16_5, v1_16_4, v1_16_3, v1_16_2, v1_16_1, v1_16 -> V1_16();
+            case v1_15_2, v1_15_1, v1_15, v1_14_4, v1_14_3, v1_14_2, v1_14_1, v1_14 -> V1_15();
+            default -> null;
         };
     }
 

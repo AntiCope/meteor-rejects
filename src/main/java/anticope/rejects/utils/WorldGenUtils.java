@@ -280,36 +280,36 @@ public class WorldGenUtils {
     }
 
     private static Dimension getDimension(Feature feature) {
-        switch (feature) {
-            case buried_treasure -> { return Dimension.OVERWORLD; }
-            case mansion -> { return Dimension.OVERWORLD; }
-            case stronghold -> { return Dimension.OVERWORLD; }
-            case nether_fortress -> { return Dimension.NETHER; }
-            case ocean_monument -> { return Dimension.OVERWORLD; }
-            case bastion_remnant -> { return Dimension.NETHER; }
-            case slime_chunk -> { return Dimension.OVERWORLD; }
-            case village -> { return Dimension.OVERWORLD; }
-            case mineshaft -> { return Dimension.OVERWORLD; }
-            case end_city -> { return Dimension.END; }
-            case desert_pyramid -> { return Dimension.OVERWORLD; }
-            default -> { return Dimension.OVERWORLD; }
-        }
+        return switch (feature) {
+            case buried_treasure -> Dimension.OVERWORLD;
+            case mansion -> Dimension.OVERWORLD;
+            case stronghold -> Dimension.OVERWORLD;
+            case nether_fortress -> Dimension.NETHER;
+            case ocean_monument -> Dimension.OVERWORLD;
+            case bastion_remnant -> Dimension.NETHER;
+            case slime_chunk -> Dimension.OVERWORLD;
+            case village -> Dimension.OVERWORLD;
+            case mineshaft -> Dimension.OVERWORLD;
+            case end_city -> Dimension.END;
+            case desert_pyramid -> Dimension.OVERWORLD;
+            default -> Dimension.OVERWORLD;
+        };
     }
 
     private static Structure<?, ?> getStructure(Feature feature, MCVersion version) {
-        switch (feature) {
-            case buried_treasure -> { return new BuriedTreasure(version); }
-            case mansion -> { return new Mansion(version); }
-            case stronghold -> { return new Stronghold(version); }
-            case nether_fortress -> { return new Fortress(version); }
-            case ocean_monument -> { return new Monument(version); }
-            case bastion_remnant -> { return new BastionRemnant(version); }
-            case end_city -> { return new EndCity(version); }
-            case village -> { return new Village(version); }
-            case mineshaft -> { return new Mineshaft(version); }
-            case desert_pyramid -> { return new DesertPyramid(version); }
-            default -> { return null;}
-        }
+        return switch (feature) {
+            case buried_treasure -> new BuriedTreasure(version);
+            case mansion -> new Mansion(version);
+            case stronghold -> new Stronghold(version);
+            case nether_fortress -> new Fortress(version);
+            case ocean_monument -> new Monument(version);
+            case bastion_remnant -> new BastionRemnant(version);
+            case end_city -> new EndCity(version);
+            case village -> new Village(version);
+            case mineshaft -> new Mineshaft(version);
+            case desert_pyramid -> new DesertPyramid(version);
+            default -> null;
+        };
     }
 
     private static BlockPos toBlockPos(BPos pos) {

@@ -26,6 +26,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.random.ChunkRandom;
+import com.seedfinding.mccore.version.MCVersion;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -37,18 +38,9 @@ import java.util.Random;
 public class OreSim extends Module {
 
     private final HashMap<Long, HashMap<Ore, HashSet<Vec3d>>> chunkRenderers = new HashMap<>();
-    private Long worldSeed = null;
+    private Seed worldSeed = null;
     private List<Ore> oreConfig;
     private ChunkPos prevOffset = new ChunkPos(0, 0);
-
-    public enum Version {
-        V1_14,
-        V1_15,
-        V1_16,
-        V1_17_0,
-        V1_17_1,
-        V1_18
-    }
 
     public enum AirCheck {
         ON_LOAD,
@@ -75,23 +67,15 @@ public class OreSim extends Module {
             .build()
     );
 
-    private final Setting<Version> version = sgGeneral.add(new EnumSetting.Builder<Version>()
-            .name("version")
-            .description("checks if there is air at a calculated ore pos")
-            .defaultValue(Version.V1_18)
-            .onChanged(v -> versionChanged())
-            .build()
-    );
 
     public OreSim() {
         super(MeteorRejectsAddon.CATEGORY, "ore-sim", "Xray on crack.");
-        oreConfig = Ore.getConfig(version.get());
         Ore.oreSettings.forEach(sgOres::add);
     }
 
     @EventHandler
     private void onRender(Render3DEvent event) {
-        if (mc.player == null) {
+        if (mc.player == null || oreConfig == null) {
             return;
         }
         if (Seeds.get().getSeed() != null) {
@@ -131,7 +115,7 @@ public class OreSim extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (airCheck.get() == AirCheck.RECHECK) {
-            if (mc.player == null || mc.world == null) {
+            if (mc.player == null || mc.world == null || oreConfig == null) {
                 return;
             }
             long chunkX = mc.player.getChunkPos().x;
@@ -184,11 +168,6 @@ public class OreSim extends Module {
         reload();
     }
 
-    private void versionChanged() {
-        this.oreConfig = Ore.getConfig(version.get());
-        reload();
-    }
-
     private void loadVisibleChunks() {
         int renderdistance = mc.options.viewDistance;
 
@@ -208,7 +187,8 @@ public class OreSim extends Module {
     private void reload() {
         Seed seed = Seeds.get().getSeed();
         if (seed == null) return;
-        worldSeed = seed.seed;
+        worldSeed = seed;
+        oreConfig = Ore.getConfig(Seeds.get().getSeed().version);
         chunkRenderers.clear();
         if (mc.world != null && worldSeed != null) {
             loadVisibleChunks();
@@ -239,13 +219,13 @@ public class OreSim extends Module {
 
         ChunkRandom random = new ChunkRandom(ChunkRandom.RandomProvider.LEGACY.create(0));
 
-        if (version.get().ordinal() >= 5) { //1.18 and above
+        if (worldSeed.version.isNewerOrEqualTo(MCVersion.v1_18)) { //1.18 and above
             random = new ChunkRandom(ChunkRandom.RandomProvider.XOROSHIRO.create(0));
         }
 
         HashMap<Ore, HashSet<Vec3d>> h = new HashMap<>();
 
-        long populationSeed = random.setPopulationSeed(worldSeed, chunkX, chunkZ);
+        long populationSeed = random.setPopulationSeed(worldSeed.seed, chunkX, chunkZ);
 
         Identifier id = world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiomeAccess().getBiomeForNoiseGen(new BlockPos(chunkX, 0, chunkZ)));
         if (id == null) {
@@ -287,7 +267,7 @@ public class OreSim extends Module {
                 int x = random.nextInt(16) + chunkX;
                 int z;
                 int y;
-                if (version.get() == Version.V1_14) {
+                if (worldSeed.version.isBetween(MCVersion.v1_14, MCVersion.v1_14_4)) {
                     y = ore.depthAverage ? random.nextInt(ore.maxY) + random.nextInt(ore.maxY) - ore.maxY : random.nextInt(ore.maxY - ore.minY);
                     z = random.nextInt(16) + chunkZ;
                 } else {
