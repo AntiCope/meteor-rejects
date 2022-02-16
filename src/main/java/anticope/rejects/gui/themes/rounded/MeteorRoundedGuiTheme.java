@@ -95,6 +95,7 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
     public final Setting<SettingColor> checkboxColor = color("checkbox", "Color of checkbox.", new SettingColor(135, 0, 255));
     public final Setting<SettingColor> plusColor = color("plus", "Color of plus button.", new SettingColor(255, 255, 255));
     public final Setting<SettingColor> minusColor = color("minus", "Color of minus button.", new SettingColor(255, 255, 255));
+    public final Setting<SettingColor> favoriteColor = color("favorite", "Color of checked favorite button.", new SettingColor(255, 255, 0));
 
     // Text
 
@@ -175,8 +176,8 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
     // Widgets
 
     @Override
-    public WWindow window(String title) {
-        return w(new WMeteorWindow(title));
+    public WWindow window(WWidget icon, String title) {
+        return w(new WMeteorWindow(icon, title));
     }
 
     @Override
@@ -268,6 +269,11 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
     @Override
     public WTopBar topBar() {
         return w(new WMeteorTopBar());
+    }
+
+    @Override
+    public WFavorite favorite(boolean checked) {
+        return w(new WMeteorFavorite(checked));
     }
 
     // Colors
