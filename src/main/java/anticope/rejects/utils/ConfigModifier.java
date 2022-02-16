@@ -1,5 +1,6 @@
 package anticope.rejects.utils;
 
+import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.ModuleListSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -30,6 +31,14 @@ public class ConfigModifier {
             .defaultValue(Arrays.asList())
             .defaultValue(RejectsConfig.get().getHiddenModules())
             .onChanged(v -> RejectsConfig.get().setHiddenModules(v))
+            .build()
+    );
+
+    public final Setting<Boolean> checkForUpdates = sgRejects.add(new BoolSetting.Builder()
+            .name("check-for-updates")
+            .description("Show toast on title screen when new update is available.")
+            .defaultValue(RejectsConfig.get().checkForUpdates)
+            .onChanged(v -> RejectsConfig.get().checkForUpdates = v)
             .build()
     );
 

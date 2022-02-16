@@ -93,7 +93,7 @@ public class Seeds extends System<Seeds> {
         try {
             return Long.parseLong(inSeed);
         } catch (NumberFormatException e) {
-            return inSeed.hashCode();
+            return inSeed.strip().hashCode();
         }
     }
 

@@ -12,7 +12,8 @@
     "LivingEntityRendererMixin",
     "MinecraftClientMixin",
     "StructureVoidBlockMixin",
-    "ToastManagerMixin"
+    "ToastManagerMixin",
+    "TitleScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

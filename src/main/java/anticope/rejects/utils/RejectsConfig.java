@@ -28,6 +28,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     }
 
     public HttpAllowed httpAllowed = HttpAllowed.Everything;
+    public boolean checkForUpdates = true;
     public Set<String> hiddenModules = new HashSet<String>();
 
     public RejectsConfig() {
@@ -65,6 +66,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     public NbtCompound toTag() {
         NbtCompound tag = new NbtCompound();
         tag.putString("httpAllowed", httpAllowed.toString());
+        tag.putBoolean("checkForUpdates", checkForUpdates);
 
         NbtList modulesTag = new NbtList();
         for (String module : hiddenModules) modulesTag.add(NbtString.of(module));
@@ -76,6 +78,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     @Override
     public RejectsConfig fromTag(NbtCompound tag) {
         httpAllowed = HttpAllowed.valueOf(tag.getString("httpAllowed"));
+        checkForUpdates = !tag.contains("checkForUpdates") || tag.getBoolean("checkForUpdates");
 
         NbtList valueTag = tag.getList("hiddenModules", 8);
         for (NbtElement tagI : valueTag) {

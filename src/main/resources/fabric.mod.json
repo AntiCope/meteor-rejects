@@ -28,7 +28,8 @@
     "meteor-rejects-meteor.mixins.json"
   ],
   "custom": {
-    "meteor-client:color": "227,0,0"
+    "meteor-client:color": "227,0,0",
+    "updater:sha": "@gh_hash@"
   },
   "depends": {
     "java": ">=16",
