@@ -28,7 +28,7 @@ public class UpdateUtil {
             .getAsString().trim();
 
         JsonObject tag = Http.get("https://api.github.com/repos/AntiCope/meteor-rejects/git/ref/tags/"+TAGNAME).sendJson(JsonObject.class);
-        if (tag.get("object").getAsJsonObject().get("sha").getAsString().trim() == gitHash) return;
+        if (tag.get("object").getAsJsonObject().get("sha").getAsString().trim().equals(gitHash)) return;
 
         mc.getToastManager().add(new MeteorToast(Items.BARRIER, "New Rejects update.", "Download it from Github", 8000));
     }
