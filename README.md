@@ -2,7 +2,7 @@
   <!-- Logo and Title -->
   <img src="/src/main/resources/assets/rejects/icon.png" alt="logo" width="20%"/>
   <h1>Meteor Rejects</h1>
-  <p>An addon to Meteor Client that adds modules and commands that were too useless to be added to Meteor directly.</p>
+  <p>An addon to Meteor Client that features that won't be added to Meteor. Because they were either rejected or are ports from other clients.</p>
 
   <!-- Fancy badges -->
   <a href="https://anticope.ml/pages/MeteorAddons.html"><img src="https://img.shields.io/badge/Verified%20Addon-Yes-blueviolet" alt="Verified Addon"></a>
@@ -15,9 +15,6 @@
   <img src="https://img.shields.io/github/repo-size/AntiCope/meteor-rejects" alt="Repo Size">
   <img src="https://img.shields.io/github/issues/AntiCope/meteor-rejects" alt="Issues">
   <img src="https://img.shields.io/github/stars/AntiCope/meteor-rejects" alt="Stars">
-
-  <!-- Popbobob -->
-  <img src="https://user-images.githubusercontent.com/18114966/132936934-80658aee-79a7-44cf-ba7b-45386a944c01.png" width="250"><sub><a href="#popbob">*</a></sub>
 </div>
 
 # How to use
@@ -97,7 +94,3 @@
 ## Config
 - `Http Allowed` - modify what http requests can be made with Meteor's http api
 - `Hidden Modules` - hide modules from module gui. **requires restart when unhiding**
-
-<sub>
-<a name="popbob" id="popbob" href="#popbob">*</a> this statement is not true at all, popbob never approved of this
-</sub>
