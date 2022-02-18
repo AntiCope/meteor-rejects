@@ -7,8 +7,10 @@ import anticope.rejects.events.SeedChangedEvent;
 import anticope.rejects.utils.Ore;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
+import baritone.api.BaritoneAPI;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -40,6 +42,7 @@ public class OreSim extends Module {
     private final HashMap<Long, HashMap<Ore, HashSet<Vec3d>>> chunkRenderers = new HashMap<>();
     private Seed worldSeed = null;
     private List<Ore> oreConfig;
+    public ArrayList<BlockPos> oreGoals = new ArrayList<>();
     private ChunkPos prevOffset = new ChunkPos(0, 0);
 
     public enum AirCheck {
@@ -53,7 +56,7 @@ public class OreSim extends Module {
 
     private final Setting<Integer> horizontalRadius = sgGeneral.add(new IntSetting.Builder()
             .name("chunk-range")
-            .description("taxi cap distance of chunks being shown")
+            .description("Taxi cap distance of chunks being shown.")
             .defaultValue(5)
             .min(1)
             .sliderMax(10)
@@ -62,8 +65,15 @@ public class OreSim extends Module {
 
     private final Setting<AirCheck> airCheck = sgGeneral.add(new EnumSetting.Builder<AirCheck>()
             .name("air-check-mode")
-            .description("checks if there is air at a calculated ore pos")
+            .description("Checks if there is air at a calculated ore pos.")
             .defaultValue(AirCheck.RECHECK)
+            .build()
+    );
+
+    public final Setting<Boolean> baritone = sgGeneral.add(new BoolSetting.Builder()
+            .name("baritone")
+            .description("Set baritone ore positions to the simulated ones.")
+            .defaultValue(false)
             .build()
     );
 
@@ -114,10 +124,9 @@ public class OreSim extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
+        if (mc.player == null || mc.world == null || oreConfig == null) return;
+
         if (airCheck.get() == AirCheck.RECHECK) {
-            if (mc.player == null || mc.world == null || oreConfig == null) {
-                return;
-            }
             long chunkX = mc.player.getChunkPos().x;
             long chunkZ = mc.player.getChunkPos().z;
             ClientWorld world = mc.world;
@@ -147,6 +156,39 @@ public class OreSim extends Module {
             }
         }
 
+        if (baritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getMineProcess().isActive()) {
+            oreGoals.clear();
+            var chunkPos = mc.player.getChunkPos();
+            int rangeVal = 4;
+            for(int range = 0; range <= rangeVal; ++range) {
+                for(int x = -range + chunkPos.x; x <= range + chunkPos.x; ++x) {
+                    oreGoals.addAll(addToBaritone(x, chunkPos.z + range - rangeVal));
+                }
+                for(int x = -range + 1 + chunkPos.x; x < range + chunkPos.x; ++x) {
+                    oreGoals.addAll(this.addToBaritone(x, chunkPos.z - range + rangeVal + 1));
+                }
+            }
+        }
+    }
+
+    private ArrayList<BlockPos> addToBaritone(int chunkX, int chunkZ) {
+        ArrayList<BlockPos> baritoneGoals = new ArrayList();
+        long chunkKey = (long)chunkX + ((long)chunkZ << 32);
+        if (!this.chunkRenderers.containsKey(chunkKey)) {
+            return baritoneGoals;
+        } else {
+            this.oreConfig.stream().filter((config) -> {
+                return (Boolean)config.enabled.get();
+            }).forEach((ore) -> {
+               chunkRenderers
+                .get(chunkKey)
+                .getOrDefault(ore, new HashSet<>())
+                .stream()
+                .map((vec3d) -> new BlockPos(vec3d))
+                .forEach(baritoneGoals::add);
+            });
+            return baritoneGoals;
+        }
     }
 
     @Override

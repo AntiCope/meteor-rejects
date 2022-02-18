@@ -13,7 +13,8 @@
     "MinecraftClientMixin",
     "StructureVoidBlockMixin",
     "ToastManagerMixin",
-    "TitleScreenMixin"
+    "TitleScreenMixin",
+    "baritone.MineProcessMixin"
   ],
   "injectors": {
     "defaultRequire": 1
