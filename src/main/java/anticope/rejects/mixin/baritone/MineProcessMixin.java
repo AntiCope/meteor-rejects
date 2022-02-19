@@ -17,11 +17,12 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 
 @Mixin(MineProcess.class)
 public class MineProcessMixin {
-    @Shadow
-    private List<BlockPos> a;
+    private static final String RESCAN_METHOD = "Lbaritone/process/MineProcess;a(Ljava/util/List;Lbaritone/pathing/movement/CalculationContext;)V";
 
-    //rescan
-    @Inject(method = "Lbaritone/process/MineProcess;b(Ljava/util/List;Lbaritone/pathing/movement/CalculationContext;)V", at=@At("HEAD"), cancellable = true, remap = false)
+    @Shadow
+    private List<BlockPos> a; //knownOreLocations
+
+    @Inject(method = RESCAN_METHOD, at=@At("HEAD"), cancellable = true, remap = false)
     private void onRescan(List<BlockPos> already, CalculationContext context, CallbackInfo ci) {
         OreSim oreSim = Modules.get().get(OreSim.class);
         if (oreSim == null || !oreSim.baritone.get()) return;
