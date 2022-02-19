@@ -231,6 +231,12 @@ public class OreSim extends Module {
         if (seed == null) return;
         worldSeed = seed;
         oreConfig = Ore.getConfig(Seeds.get().getSeed().version);
+        if (oreConfig == null) {
+            error("Ore Sim only works with seeds from version 1.14 or higher. (Current seed is from version " + Seeds.get().getSeed().version.toString() + ")");
+            this.toggle();
+            return;
+        }
+
         chunkRenderers.clear();
         if (mc.world != null && worldSeed != null) {
             loadVisibleChunks();
