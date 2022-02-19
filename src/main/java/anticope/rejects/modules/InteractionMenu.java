@@ -13,10 +13,15 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
+import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import meteordevelopment.starscript.value.Value;
+import meteordevelopment.starscript.value.ValueMap;
+
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 
@@ -78,6 +83,7 @@ public class InteractionMenu extends Module {
     
     public InteractionMenu() {
         super(MeteorRejectsAddon.CATEGORY,"interaction-menu","An interaction screen when looking at an entity.");
+        MeteorStarscript.ss.set("entity", () -> wrap(InteractionScreen.interactionMenuEntity));
     }
 
     public void onKey() {
@@ -154,5 +160,23 @@ public class InteractionMenu extends Module {
         }
 
         return super.fromTag(tag);
+    }
+
+    private static Value wrap(Entity entity) {
+        return Value.map(new ValueMap()
+            .set("_toString", Value.string(entity.getName().getString()))
+            .set("health", Value.number(entity instanceof LivingEntity e ? e.getHealth() : 0))
+            .set("pos", Value.map(new ValueMap()
+                .set("_toString", posString(entity.getX(), entity.getY(), entity.getZ()))
+                .set("x", Value.number(entity.getX()))
+                .set("y", Value.number(entity.getY()))
+                .set("z", Value.number(entity.getZ()))
+            ))
+            .set("uuid", Value.string(entity.getUuidAsString()))
+        );
+    }
+
+    private static Value posString(double x, double y, double z) {
+        return Value.string(String.format("X: %.0f Y: %.0f Z: %.0f", x, y, z));
     }
 }

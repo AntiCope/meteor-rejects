@@ -7,8 +7,14 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.KeyEvent;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.PeekScreen;
 import meteordevelopment.orbit.EventHandler;
+import meteordevelopment.starscript.compiler.Compiler;
+import meteordevelopment.starscript.compiler.Parser;
+import meteordevelopment.starscript.utils.Error;
+import meteordevelopment.starscript.utils.StarscriptError;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,6 +46,8 @@ import java.util.function.Consumer;
     Ported from: https://github.com/BleachDrinker420/BleachHack/pull/211
 */
 public class InteractionScreen extends Screen {
+
+    public static Entity interactionMenuEntity;
 
     private final Entity entity;
     private String focusedString = null;
@@ -141,12 +149,22 @@ public class InteractionScreen extends Screen {
         }
         msgs = Modules.get().get(InteractionMenu.class).messages;
         msgs.keySet().forEach((key) -> {
-            if (msgs.get(key).contains("{username}") && !(entity instanceof PlayerEntity)) return;
-            if (msgs.get(key).contains("{health}") && !(entity instanceof LivingEntity)) return;
-
             functions.put(key, (Entity e) -> {
                 closeScreen();
-                client.setScreen(new ChatScreen(replacePlaceholders(msgs.get(key), e)));
+                interactionMenuEntity = e;
+                var result = Parser.parse(msgs.get(key));
+                if (result.hasErrors()) {
+                    for (Error error : result.errors) MeteorStarscript.printChatError(error);
+                    return;
+                }
+                var script = Compiler.compile(result);
+                try {
+                    client.setScreen(new ChatScreen(MeteorStarscript.ss.run(script)));
+                } catch (StarscriptError err) {
+                    MeteorStarscript.printChatError(err);
+                    return;
+                }
+                
             });
             
         });
@@ -331,19 +349,6 @@ public class InteractionScreen extends Screen {
         // Draw light overlay
         drawHorizontalLine(matrix, startX + 2, startX + 3, startY + 1, 0x80FFFFFF);
         drawHorizontalLine(matrix, startX + 1, startX + 1, startY + 2, 0x80FFFFFF);
-    }
-
-    private String replacePlaceholders(String in, Entity e) {
-        in = in.replace("{uuid}", e.getUuidAsString());
-        in = in.replace("{name}", e.getName().getString());
-        in = in.replace("{pos}", String.format("%.2f %.2f %.2f", e.getX(), e.getY(), e.getZ()));
-        if (e instanceof PlayerEntity) {
-            in = in.replace("{username}", ((PlayerEntity)e).getGameProfile().getName());
-        }
-        if (e instanceof LivingEntity) {
-            in = in.replace("{health}", String.format("%.2f", ((LivingEntity)e).getHealth()));
-        }
-        return in;
     }
 
     private class StaticListener {
