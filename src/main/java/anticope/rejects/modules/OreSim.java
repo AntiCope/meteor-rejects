@@ -172,7 +172,7 @@ public class OreSim extends Module {
     }
 
     private ArrayList<BlockPos> addToBaritone(int chunkX, int chunkZ) {
-        ArrayList<BlockPos> baritoneGoals = new ArrayList();
+        ArrayList<BlockPos> baritoneGoals = new ArrayList<>();
         long chunkKey = (long)chunkX + ((long)chunkZ << 32);
         if (!this.chunkRenderers.containsKey(chunkKey)) {
             return baritoneGoals;

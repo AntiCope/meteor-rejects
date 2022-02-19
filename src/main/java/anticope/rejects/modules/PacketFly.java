@@ -12,7 +12,6 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.HashSet;
@@ -154,7 +153,6 @@ public class PacketFly extends Module {
     @EventHandler
     public void onPacketReceive(PacketEvent.Receive event) {
         if (event.packet instanceof PlayerPositionLookS2CPacket && !(mc.player == null || mc.world == null)) {
-            BlockPos pos = new BlockPos(mc.player.getPos().x, mc.player.getPos().y, mc.player.getPos().z);
             PlayerPositionLookS2CPacket packet = (PlayerPositionLookS2CPacket) event.packet;
             if (setYaw.get()) {
                 ((PlayerPositionLookS2CPacketAccessor) event.packet).setPitch(mc.player.getPitch());

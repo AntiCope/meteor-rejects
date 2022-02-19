@@ -32,7 +32,6 @@ public class ChatBot extends Module {
         put("ping", "Pong!");
         put("tps", "Current TPS: {server.tps}");
         put("time", "It's currently {server.time}");
-        put("time", "It's currently {server.time}");
         put("pos", "I am @ {player.pos}");
     }};
 

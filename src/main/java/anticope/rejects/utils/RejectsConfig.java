@@ -51,6 +51,7 @@ public class RejectsConfig extends System<RejectsConfig> {
         }
         hiddenModules.clear();
         for (Module module : newList) {
+            if (module == null) continue;
             if (module.isActive()) module.toggle();
             hiddenModules.add(module.name);
         }

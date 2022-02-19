@@ -1,8 +1,3 @@
-/*
- * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client/).
- * Copyright (c) 2021 Meteor Development.
- */
-
 package anticope.rejects.modules;
 
 //Created by squidoodly 13/07/2020

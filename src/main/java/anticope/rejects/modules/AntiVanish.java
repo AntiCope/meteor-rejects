@@ -2,21 +2,17 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.game.GameLeftEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.network.Http;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-import org.apache.commons.io.IOUtils;
 
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -103,7 +99,7 @@ public class AntiVanish extends Module {
 
         @Override
         public void run() {
-            this.name = this.lookUpName();
+            name = this.lookUpName();
         }
 
         public String lookUpName() {
@@ -112,17 +108,12 @@ public class AntiVanish extends Module {
                 player = mc.world.getPlayerByUuid(uuid);
             }
             if (player == null) {
-                final String url = "https://api.mojang.com/user/profiles/" + this.uuidstr.replace("-", "") + "/names";
+                final String url = "https://api.mojang.com/user/profiles/" + uuidstr.replace("-", "") + "/names";
                 try {
-                    final JsonParser parser = new JsonParser();
-                    final String nameJson = IOUtils.toString(new URL(url), StandardCharsets.UTF_8);
-                    final JsonElement nameElement = parser.parse(nameJson);
-                    final JsonArray nameArray = nameElement.getAsJsonArray();
-                    final String playerSlot = nameArray.get(nameArray.size() - 1).toString();
-                    final JsonObject nameObject = parser.parse(playerSlot).getAsJsonObject();
-                    return nameObject.get("name").toString();
+                    JsonArray res = Http.get(url).sendJson(JsonArray.class);
+                    return res.get(0).getAsJsonObject().get("name").getAsString();
                 } catch (Exception e) {
-                    return null;
+                    return uuidstr;
                 }
             }
             return player.getName().asString();

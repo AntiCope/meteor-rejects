@@ -80,10 +80,6 @@ public class CustomPackets extends Module {
         return text;
     }
 
-    private BaseText format(String type, String message) {
-        return format(type, new LiteralText(message));
-    }
-
     private String readString(PacketByteBuf data) {
         return data.readCharSequence(
                 data.readableBytes(),

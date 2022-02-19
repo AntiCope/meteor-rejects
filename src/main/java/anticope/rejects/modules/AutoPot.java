@@ -2,6 +2,7 @@ package anticope.rejects.modules;
 
 //import baritone.api.BaritoneAPI;
 import anticope.rejects.MeteorRejectsAddon;
+import baritone.api.BaritoneAPI;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -81,6 +82,7 @@ public class AutoPot extends Module {
     private boolean drinking, splashing;
     private final List<Class<? extends Module>> wasAura = new ArrayList<>();
     private boolean wasBaritone;
+    
     public AutoPot() {
         super(MeteorRejectsAddon.CATEGORY, "auto-pot", "Automatically Drinks Potions");
     }
@@ -216,10 +218,10 @@ public class AutoPot extends Module {
         }
         // Pause baritone
         wasBaritone = false;
-        //if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
-        //    wasBaritone = true;
-        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
-        //}
+        if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
+           wasBaritone = true;
+           BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
+        }
     }
     private void startSplashing() {
         prevSlot = mc.player.getInventory().selectedSlot;
@@ -240,11 +242,11 @@ public class AutoPot extends Module {
             }
         }
         // Pause baritone
-        //wasBaritone = false;
-        //if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
-        //    wasBaritone = true;
-        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
-        //}
+        wasBaritone = false;
+        if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
+           wasBaritone = true;
+           BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
+        }
     }
     private void drink() {
         changeSlot(slot);
@@ -274,9 +276,9 @@ public class AutoPot extends Module {
             }
         }
         // Resume baritone
-        //if (pauseBaritone.get() && wasBaritone) {
-        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
-        //}
+        if (pauseBaritone.get() && wasBaritone) {
+           BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
+        }
     }
     private void stopSplashing() {
         changeSlot(prevSlot);
@@ -295,9 +297,9 @@ public class AutoPot extends Module {
             }
         }
         // Resume baritone
-        //if (pauseBaritone.get() && wasBaritone) {
-        //    BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
-        //}
+        if (pauseBaritone.get() && wasBaritone) {
+           BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("resume");
+        }
     }
     private double truehealth() {
         assert mc.player != null;
