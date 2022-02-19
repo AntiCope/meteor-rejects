@@ -53,6 +53,7 @@ public class ServerCommand extends Command {
         ports.put(8123, "DynMap");
         ports.put(25566, "Minequery");
         ports.put(3306, "MySQL");
+        ports.put(3389, "RDP");
     }
 
     @Override
@@ -122,7 +123,7 @@ public class ServerCommand extends Command {
         BaseText text = new LiteralText(String.format("- %s%d%s ", Formatting.GREEN, port, Formatting.GRAY));
         if (ports.containsKey(port)) {
             text.append(ports.get(port));
-            if (ports.get(port).startsWith("HTTP")) {
+            if (ports.get(port).startsWith("HTTP") || ports.get(port).startsWith("FTP")) {
                 text.setStyle(text.getStyle()
                     .withClickEvent(new ClickEvent(
                         Action.OPEN_URL,
@@ -133,8 +134,7 @@ public class ServerCommand extends Command {
                         new LiteralText("Open in browser")
                     ))
                 );
-            }
-            else if (ports.get(port) == "DynMap") {
+            } else if (ports.get(port) == "DynMap") {
                 text.setStyle(text.getStyle()
                     .withClickEvent(new ClickEvent(
                         ClickEvent.Action.OPEN_URL,
@@ -145,7 +145,29 @@ public class ServerCommand extends Command {
                         new LiteralText("Open in browser")
                     ))
                 );
+            } else {
+                text.setStyle(text.getStyle()
+                    .withClickEvent(new ClickEvent(
+                        ClickEvent.Action.COPY_TO_CLIPBOARD,
+                        String.format("%s:%d", address.getHostAddress(), port)
+                    ))
+                    .withHoverEvent(new HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        new LiteralText("Copy")
+                    ))
+                );
             }
+        } else {
+            text.setStyle(text.getStyle()
+                .withClickEvent(new ClickEvent(
+                    ClickEvent.Action.COPY_TO_CLIPBOARD,
+                    String.format("%s:%d", address.getHostAddress(), port)
+                ))
+                .withHoverEvent(new HoverEvent(
+                    HoverEvent.Action.SHOW_TEXT,
+                    new LiteralText("Copy")
+                ))
+            );
         }
 
         return text;

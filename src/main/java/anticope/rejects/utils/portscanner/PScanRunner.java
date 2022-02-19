@@ -24,7 +24,7 @@ public class PScanRunner {
                 futures.add(isPortOpen(es, address.getHostAddress(), port, timeoutMS, threadDelay));
             });
             try {
-                boolean _1 = es.awaitTermination(200L, TimeUnit.MILLISECONDS);
+                es.awaitTermination(200L, TimeUnit.MILLISECONDS);
             } catch (InterruptedException ignored) {
             }
             List<PortScannerManager.ScanResult> results = new ArrayList<>();
@@ -52,7 +52,6 @@ public class PScanRunner {
             Thread.sleep(delay);
             portsScanned++;
             try {
-                //System.out.println(ip + ":" + port);
                 Socket socket = new Socket();
                 socket.connect(new InetSocketAddress(ip, port), timeout);
                 socket.close();
