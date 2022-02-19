@@ -27,7 +27,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("meteordevelopment:meteor-client:SNAPSHOT")
+	modImplementation("meteordevelopment:meteor-client:0.4.7")
 
 	extraLibs('com.seedfinding:mc_math:0eb505174da8a92550f8ec6efe254e0fa936cc0d') {transitive = false}
 	extraLibs('com.seedfinding:mc_seed:5518e3ba3ee567fb0b51c15958967f70a6a19e02') {transitive = false}
