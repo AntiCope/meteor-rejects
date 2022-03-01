@@ -120,7 +120,7 @@ public class BoatGlitch extends Module {
     }
     @EventHandler
     private void onKey(KeyEvent event) {
-        if (event.key == mc.options.keySneak.getDefaultKey().getCode() && event.action == KeyAction.Press) {
+        if (event.key == mc.options.sneakKey.getDefaultKey().getCode() && event.action == KeyAction.Press) {
             if (mc.player.getVehicle() != null && mc.player.getVehicle().getType().equals(EntityType.BOAT)) {
                 dontPhase = false;
                 boat = null;

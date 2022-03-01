@@ -9,8 +9,6 @@ import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.world.dimension.DimensionType;
-
-import java.util.List;
 import java.util.*;
 
 public class Ore {

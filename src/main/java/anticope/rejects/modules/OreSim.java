@@ -25,6 +25,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.random.ChunkRandom;
@@ -275,7 +276,8 @@ public class OreSim extends Module {
 
         long populationSeed = random.setPopulationSeed(worldSeed.seed, chunkX, chunkZ);
 
-        Identifier id = world.getRegistryManager().get(Registry.BIOME_KEY).getId(world.getBiomeAccess().getBiomeForNoiseGen(new BlockPos(chunkX, 0, chunkZ)));
+        var optional = world.getBiomeAccess().getBiomeForNoiseGen(new BlockPos(chunkX, 0, chunkZ)).getKeyOrValue();
+        Identifier id = (optional.right().isPresent()) ? world.getRegistryManager().get(Registry.BIOME_KEY).getId(optional.right().get()) : optional.left().get().getValue();
         if (id == null) {
             error("Something went wrong, you may have some mods that mess with world generation");
             toggle();

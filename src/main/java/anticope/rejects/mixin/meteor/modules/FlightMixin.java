@@ -38,10 +38,10 @@ public class FlightMixin {
     private void onDeactivate(CallbackInfo ci) {
         if (mc.player == null || stopMomentum == null || !stopMomentum.get()) return;
 
-        mc.options.keyForward.setPressed(false);
-        mc.options.keyLeft.setPressed(false);
-        mc.options.keyBack.setPressed(false);
-        mc.options.keyRight.setPressed(false);
+        mc.options.forwardKey.setPressed(false);
+        mc.options.leftKey.setPressed(false);
+        mc.options.backKey.setPressed(false);
+        mc.options.rightKey.setPressed(false);
 
         mc.player.setVelocity(Vec3d.ZERO);
     }

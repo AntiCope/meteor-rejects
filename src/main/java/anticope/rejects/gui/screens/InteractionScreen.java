@@ -10,8 +10,10 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.PeekScreen;
 import meteordevelopment.orbit.EventHandler;
+import meteordevelopment.starscript.Script;
 import meteordevelopment.starscript.compiler.Compiler;
 import meteordevelopment.starscript.compiler.Parser;
+import meteordevelopment.starscript.compiler.Parser.Result;
 import meteordevelopment.starscript.utils.Error;
 import meteordevelopment.starscript.utils.StarscriptError;
 
@@ -219,14 +221,14 @@ public class InteractionScreen extends Screen {
 
     public void tick() {
         if (Modules.get().get(InteractionMenu.class).keybind.get().isPressed())
-            onClose();
+            close();
     }
 
     private void closeScreen() {
         client.setScreen((Screen) null);
     }
 
-    public void onClose() {
+    public void close() {
         cursorMode(GLFW.GLFW_CURSOR_NORMAL);
         // This makes the magic
         if (focusedString != null) {
@@ -354,7 +356,7 @@ public class InteractionScreen extends Screen {
     private class StaticListener {
         @EventHandler
         private void onKey(KeyEvent event) {
-            if (client.options.keySneak.matchesKey(event.key, 0) || client.options.keySneak.matchesMouse(event.key)) {
+            if (client.options.sneakKey.matchesKey(event.key, 0) || client.options.sneakKey.matchesMouse(event.key)) {
                 client.setCameraEntity(client.player);
                 event.cancel();
                 MeteorClient.EVENT_BUS.unsubscribe(this);

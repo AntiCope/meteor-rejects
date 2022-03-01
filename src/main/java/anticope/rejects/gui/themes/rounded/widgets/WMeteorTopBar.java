@@ -35,11 +35,11 @@ public class WMeteorTopBar extends WTopBar implements MeteorWidget {
     @Override
     public void init() {
         for (Tab tab : Tabs.get()) {
-            add(new WTopBarButton(tab));
+            add(new anticope.rejects.gui.themes.rounded.widgets.WMeteorTopBar.WTopBarButton(tab));
         }
     }
 
-    protected int getState(WTopBarButton btn) {
+    protected int getState(anticope.rejects.gui.themes.rounded.widgets.WMeteorTopBar.WTopBarButton btn) {
         int a = 0;
         if (btn.equals(cells.get(0).widget()))
             a |= 1;

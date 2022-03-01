@@ -126,8 +126,8 @@ public class BoatPhase extends Module {
             double velZ = vel.z;
 
             if (verticalControl.get()) {
-                if (mc.options.keyJump.isPressed()) velY += verticalSpeed.get() / 20;
-                if (mc.options.keySprint.isPressed()) velY -= verticalSpeed.get() / 20;
+                if (mc.options.jumpKey.isPressed()) velY += verticalSpeed.get() / 20;
+                if (mc.options.sprintKey.isPressed()) velY -= verticalSpeed.get() / 20;
                 else if (fall.get()) velY -= fallSpeed.get() / 20;
             } else if (fall.get()) velY -= fallSpeed.get() / 20;
 
