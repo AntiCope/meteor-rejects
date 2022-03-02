@@ -10,7 +10,6 @@
     "EntityAccessor",
     "GameRendererMixin",
     "LivingEntityRendererMixin",
-    "MinecraftClientMixin",
     "StructureVoidBlockMixin",
     "ToastManagerMixin",
     "TitleScreenMixin",

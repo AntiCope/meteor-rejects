@@ -31,7 +31,7 @@ public class CommandsMixin {
 
     @Shadow(remap = false)
     @Final
-    private CommandDispatcher<CommandSource> DISPATCHER = new CommandDispatcher<>();
+    private CommandDispatcher<CommandSource> DISPATCHER;
 
     @Inject(method = "add", at=@At("HEAD"), remap = false, cancellable = true)
     private void onAdd(Command cmd, CallbackInfo ci) {

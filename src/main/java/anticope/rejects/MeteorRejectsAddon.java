@@ -16,13 +16,13 @@ import meteordevelopment.meteorclient.systems.hud.HUD;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.item.Items;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
 public class MeteorRejectsAddon extends MeteorAddon {
-    public static final Logger LOG = LogManager.getLogger();
+    public static final Logger LOG = LoggerFactory.getLogger("Rejects");
     public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultStack());
     
     @Override
@@ -93,7 +93,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         // HUD
         HUD hud = Systems.get(HUD.class);
         hud.elements.add(new BaritoneHud(hud));
-        hud.elements.add(new CpsHud(hud));
         
         // Themes
         GuiThemes.add(new MeteorRoundedGuiTheme());

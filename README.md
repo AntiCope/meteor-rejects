@@ -89,7 +89,6 @@
 
 ## HUD
 - Baritone process HUD
-- CPS HUD (Ported from [AuroraKeystrokes](https://github.com/LambdAurora/AuroraKeystrokes/tree/1.16/src/main/java/me/lambdaurora/keystrokes))
 
 ## Config
 - `Http Allowed` - modify what http requests can be made with Meteor's http api
