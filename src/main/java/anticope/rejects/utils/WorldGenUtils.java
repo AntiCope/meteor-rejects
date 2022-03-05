@@ -13,6 +13,8 @@ import com.seedfinding.mccore.util.pos.*;
 import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcterrain.TerrainGenerator;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
+import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -127,6 +129,9 @@ public class WorldGenUtils {
     public static BlockPos locateFeature(Feature feature, BlockPos center) {
         Seed seed = Seeds.get().getSeed();
         BlockPos pos = null;
+        if (!checkIfInDimension(getDimension(feature))) {
+            return null;
+        }
         if (seed != null) {
             try {
                 pos = locateFeature(seed, feature, center);
@@ -228,6 +233,7 @@ public class WorldGenUtils {
 
     private static BlockPos locateStructure(Seed seed, Feature feature, BlockPos center) {
         Dimension dimension = getDimension(feature);
+        if (dimension == Dimension.OVERWORLD && seed.version.isNewerThan(MCVersion.v1_18)) return null; // TODO: enable 1.18 support when mc_biome updates
         MCVersion mcVersion = seed.version;
         Structure<?, ?> structure = getStructure(feature, mcVersion);
         if (structure == null) return null;
@@ -293,6 +299,14 @@ public class WorldGenUtils {
             case end_city -> Dimension.END;
             case desert_pyramid -> Dimension.OVERWORLD;
             default -> Dimension.OVERWORLD;
+        };
+    }
+
+    private static boolean checkIfInDimension(Dimension dimension) {
+        return switch (dimension) {
+            case OVERWORLD -> (PlayerUtils.getDimension() == meteordevelopment.meteorclient.utils.world.Dimension.Overworld);
+            case NETHER -> (PlayerUtils.getDimension() == meteordevelopment.meteorclient.utils.world.Dimension.Nether);
+            case END -> (PlayerUtils.getDimension() == meteordevelopment.meteorclient.utils.world.Dimension.End);
         };
     }
 
