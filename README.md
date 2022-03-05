@@ -17,6 +17,14 @@
   <img src="https://img.shields.io/github/stars/AntiCope/meteor-rejects" alt="Stars">
 </div>
 
+<hr />
+
+<div align="center">
+   
+  <img src="https://user-images.githubusercontent.com/18114966/156883971-ef020185-32ab-412a-9d1e-64e61668aa5e.png" width="24px"> Discord: [discord.gg/9mrRPGKYU3](https://discord.gg/9mrRPGKYU3)
+  
+</div>
+
 # How to use
 - Download the latest [release](/../../releases) of this mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
