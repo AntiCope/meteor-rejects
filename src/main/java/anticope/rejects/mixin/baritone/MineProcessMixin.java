@@ -20,12 +20,11 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 
 @Mixin(MineProcess.class)
 public class MineProcessMixin {
-    private static final String RESCAN_METHOD = "Lbaritone/process/MineProcess;a(Ljava/util/List;Lbaritone/pathing/movement/CalculationContext;)V";
-
-    @Shadow
+    
+    @Shadow(remap = false)
     private List<BlockPos> a; // knownOreLocations
 
-    @Inject(method = RESCAN_METHOD, at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "a(Ljava/util/List;Lbaritone/pathing/movement/CalculationContext;)V", at = @At("HEAD"), cancellable = true, remap = false)
     private void onRescan(List<BlockPos> already, CalculationContext context, CallbackInfo ci) {
         OreSim oreSim = Modules.get().get(OreSim.class);
         if (oreSim == null || !oreSim.baritone())
@@ -34,7 +33,8 @@ public class MineProcessMixin {
         ci.cancel();
     }
 
-    @Redirect(method = "a(Lbaritone/pathing/movement/CalculationContext;Lbaritone/api/utils/BlockOptionalMetaLookup;Ljava/util/List;Lnet/minecraft/util/math/BlockPos;)Z", at = @At(value = "INVOKE", target = "Lbaritone/api/utils/BlockOptionalMetaLookup;has(Lnet/minecraft/block/BlockState;)Z"), remap = false)
+    @Redirect(method = "a(Lbaritone/pathing/movement/CalculationContext;Lbaritone/api/utils/BlockOptionalMetaLookup;Ljava/util/List;Lnet/minecraft/util/math/BlockPos;)Z",
+            at= @At(value = "INVOKE", target = "Lbaritone/api/utils/BlockOptionalMetaLookup;has(Lnet/minecraft/block/BlockState;)Z"))
     private static boolean onPruneStream(BlockOptionalMetaLookup instance, BlockState blockState) {
         OreSim oreSim = Modules.get().get(OreSim.class);
         if (oreSim == null || !oreSim.baritone())
