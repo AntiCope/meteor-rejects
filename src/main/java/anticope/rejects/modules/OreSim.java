@@ -25,7 +25,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.random.ChunkRandom;
@@ -71,7 +70,7 @@ public class OreSim extends Module {
             .build()
     );
 
-    public final Setting<Boolean> baritone = sgGeneral.add(new BoolSetting.Builder()
+    private final Setting<Boolean> baritone = sgGeneral.add(new BoolSetting.Builder()
             .name("baritone")
             .description("Set baritone ore positions to the simulated ones.")
             .defaultValue(false)
@@ -82,6 +81,10 @@ public class OreSim extends Module {
     public OreSim() {
         super(MeteorRejectsAddon.CATEGORY, "ore-sim", "Xray on crack.");
         Ore.oreSettings.forEach(sgOres::add);
+    }
+
+    public boolean baritone() {
+        return isActive() && baritone.get();
     }
 
     @EventHandler
