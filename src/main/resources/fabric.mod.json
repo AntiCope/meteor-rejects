@@ -21,6 +21,9 @@
   "entrypoints": {
     "meteor": [
       "anticope.rejects.MeteorRejectsAddon"
+    ],
+    "seedcrackerx": [
+      "anticope.rejects.utils.SeedCrackerEP"
     ]
   },
   "mixins": [

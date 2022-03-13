@@ -14,6 +14,10 @@ repositories {
 	maven { url "https://maven.meteordev.org/snapshots" }
 	maven { url "https://maven.seedfinding.com/" }
 	maven { url "https://maven-snapshots.seedfinding.com/" }
+	// maven { url 'https://jitpack.io' }
+	flatDir {
+		dirs 'libs'
+	}
 }
 
 configurations {
@@ -36,6 +40,9 @@ dependencies {
 	extraLibs('com.seedfinding:mc_biome:533cdb5ed955ff1c3106f9901aea6aa5b08fd781') {transitive = false}
 	extraLibs('com.seedfinding:mc_terrain:9e937ddb838e28e79423c287fa18b1ce66f061d7') {transitive = false}
 	extraLibs('com.seedfinding:mc_feature:ef939c0dd7d66ab1bd290d6aab1e42a12cb3dbf1') {transitive = false}
+	// seedcracker api
+	implementation(fileTree(dir: 'libs', include: 'seedcrackerX-2.12-api.jar'))
+
 
 	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
