@@ -20,9 +20,7 @@
 <hr />
 
 <div align="center">
-   
-  <img src="https://user-images.githubusercontent.com/18114966/156883971-ef020185-32ab-412a-9d1e-64e61668aa5e.png" width="24px"> Discord: [discord.gg/9mrRPGKYU3](https://discord.gg/9mrRPGKYU3)
-  
+  <a href="https://discord.gg/9mrRPGKYU3"><img src="https://invidget.switchblade.xyz/9mrRPGKYU3"></a>
 </div>
 
 # How to use
