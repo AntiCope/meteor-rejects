@@ -15,6 +15,7 @@ import meteordevelopment.meteorclient.systems.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.HUD;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+
 import net.minecraft.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new BoatPhase());
         modules.add(new Boost());
         modules.add(new ChatBot());
+        modules.add(new ChorusExploit());
         modules.add(new ColorSigns());
         modules.add(new Confuse());
         modules.add(new CoordLogger());
