@@ -3,6 +3,7 @@
   "package": "anticope.rejects.mixin",
   "compatibilityLevel": "JAVA_16",
   "client": [
+    "ChestBlockEntityRendererMixin",
     "ClientPlayNetworkHandlerMixin",
     "CommandSuggestorMixin",
     "CustomPayloadS2CPacketMixin",

@@ -79,9 +79,9 @@ public class Rendering extends Module {
 			.build()
 	);
 
-    private final Setting<Boolean> disableToasts = sgFun.add(new BoolSetting.Builder()
-			.name("disable-toasts")
-			.description("Disable toasts (e.g. advancements)")
+    private final Setting<Boolean> christmas = sgFun.add(new BoolSetting.Builder()
+			.name("chrismas")
+			.description("Chistmas chest anytime")
 			.defaultValue(false)
 			.build()
 	);
@@ -89,7 +89,7 @@ public class Rendering extends Module {
     private ShaderEffect shader = null;
     
     public Rendering() {
-        super(MeteorRejectsAddon.CATEGORY, "Rendering", "Various Render Tweaks");
+        super(MeteorRejectsAddon.CATEGORY, "rendering", "Various Render Tweaks");
     }
 
     @Override
@@ -135,8 +135,8 @@ public class Rendering extends Module {
         return deadmau5Ears.get();
     }
 
-    public boolean disableToasts() {
+    public boolean chistmas() {
         if (!this.isActive()) return false;
-        return disableToasts.get();
+        return christmas.get();
     }
 }

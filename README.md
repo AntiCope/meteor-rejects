@@ -67,6 +67,7 @@
 ### Modifications
 - NoRender
   - `noCommandSuggestions` (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1347))
+  - `disableToasts`
 - Flight
   - `stopMomentum`
 

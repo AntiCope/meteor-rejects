@@ -11,9 +11,14 @@ public class NoRenderModifier {
     static SettingGroup sgOverlay;
     
     public static Setting<Boolean> noCommandSuggestions;
+    public static Setting<Boolean> disableToasts;
     
     public static boolean noCommandSuggestions() {
         return Modules.get().get(NoRender.class).isActive() && noCommandSuggestions.get();
+    }
+
+    public static boolean disableToasts() {
+        return Modules.get().get(NoRender.class).isActive() && disableToasts.get();
     }
     
     public static void init() {
@@ -24,5 +29,11 @@ public class NoRenderModifier {
                 .defaultValue(false)
                 .build()
         );
+        disableToasts = sgOverlay.add(new BoolSetting.Builder()
+			.name("disable-toasts")
+			.description("Disable toasts (e.g. advancements)")
+			.defaultValue(false)
+			.build()
+	);
     }
 }
