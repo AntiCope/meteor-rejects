@@ -61,8 +61,7 @@ public class GiveCommand extends Command {
         }));
 
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
-            String message = ctx.getArgument("message", String.class);
-            message = message.replace("&", "\247");
+            String message = ctx.getArgument("message", String.class).replace("&", "\247");
             ItemStack stack = new ItemStack(Items.ARMOR_STAND);
             NbtCompound tag = new NbtCompound();
             NbtList NbtList = new NbtList();
@@ -76,6 +75,21 @@ public class GiveCommand extends Command {
             tag.putBoolean("CustomNameVisible", true);
             tag.putString("CustomName", Text.Serializer.toJson(new LiteralText(message)));
             tag.put("Pos", NbtList);
+            stack.setSubNbt("EntityTag", tag);
+            GiveUtils.giveItem(stack);
+            return SINGLE_SUCCESS;
+        })));
+
+        builder.then(literal("bossbar").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
+            String message = ctx.getArgument("message", String.class).replace("&", "\247");
+            ItemStack stack = new ItemStack(Items.BAT_SPAWN_EGG);
+            NbtCompound tag = new NbtCompound();
+            tag.putString("CustomName", Text.Serializer.toJson(new LiteralText(message)));
+            tag.putBoolean("NoAI", true);
+            tag.putBoolean("Silent", true);
+            tag.putBoolean("PersistenceRequired", true);
+            tag.putBoolean("Invisible", true);
+            tag.put("id", NbtString.of("minecraft:wither"));
             stack.setSubNbt("EntityTag", tag);
             GiveUtils.giveItem(stack);
             return SINGLE_SUCCESS;

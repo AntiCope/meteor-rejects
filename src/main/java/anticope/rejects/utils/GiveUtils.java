@@ -40,7 +40,7 @@ public class GiveUtils {
         new Identifier("tnt_minecart"),
         new Identifier("lightning_bolt"));
 
-    // Ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/command/commands/CmdGive.java
+    // Some ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/command/commands/CmdGive.java
     private static final List<Triple<String, Item, String>> STRING_PRESETS = Arrays.asList(
         Triple.of("lag_spawner", Items.SPAWNER, "{BlockEntityTag:{MaxNearbyEntities:32767,RequiredPlayerRange:32767,SpawnCount:32767,MaxSpawnDelay:0,SpawnRange:32767,Delay:0,MinSpawnDelay:0}}"),
         Triple.of("tnt_spawner", Items.SPAWNER, "{BlockEntityTag:{MaxNearbyEntities:32767,RequiredPlayerRange:32767,SpawnCount:50,SpawnData:{Fuse:1,id:\"minecraft:tnt\"},MaxSpawnDelay:0,SpawnRange:10,Delay:0,MinSpawnDelay:0}}"),
@@ -51,7 +51,8 @@ public class GiveUtils {
         Triple.of("eg_curse_arrow", Items.ELDER_GUARDIAN_SPAWN_EGG, "{EntityTag:{SoundEvent:\"entity.elder_guardian.curse\",pickup:1b,id:\"minecraft:arrow\"}}"),
         Triple.of("big_slime", Items.SLIME_SPAWN_EGG, "{EntityTag:{Size:50,id:\"minecraft:slime\"}}"),
         Triple.of("particle_area_expand", Items.SKELETON_SPAWN_EGG, "{EntityTag:{Particle:\"angry_villager\",Radius:1.0f,RadiusOnUse:1.0f,Duration:10000,id:\"minecraft:area_effect_cloud\",RadiusPerTick:10.0f}}"),
-        Triple.of("armor_stand_spawner_minecart", Items.BAT_SPAWN_EGG, "{EntityTag:{SpawnData:{id:\"minecraft:armor_stand\"},id:\"minecraft:spawner_minecart\"}}")
+        Triple.of("armor_stand_spawner_minecart", Items.BAT_SPAWN_EGG, "{EntityTag:{SpawnData:{id:\"minecraft:armor_stand\"},id:\"minecraft:spawner_minecart\"}}"),
+        Triple.of("dud_tnt", Items.DROWNED_SPAWN_EGG, "{EntityTag:{Fuse:30000,Invulnerable:1b,id:\"minecraft:tnt\"}}")
     );
 
     private static final Random random = new Random();
