@@ -50,6 +50,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new BoatGlitch());
         modules.add(new BlockIn());
         modules.add(new BoatPhase());
+        modules.add(new BonemealAura());
         modules.add(new Boost());
         modules.add(new ChatBot());
         modules.add(new ChorusExploit());
