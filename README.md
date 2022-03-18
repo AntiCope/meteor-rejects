@@ -99,6 +99,7 @@
 
 ## HUD
 - Baritone process HUD
+- Radar HUD
 
 ## Config
 - `Http Allowed` - modify what http requests can be made with Meteor's http api
