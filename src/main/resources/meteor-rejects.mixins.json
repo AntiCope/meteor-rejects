@@ -13,7 +13,6 @@
     "LivingEntityRendererMixin",
     "StructureVoidBlockMixin",
     "ToastManagerMixin",
-    "TitleScreenMixin",
     "LivingEntityMixin",
     "baritone.MineProcessMixin"
   ],

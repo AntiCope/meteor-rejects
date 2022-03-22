@@ -52,7 +52,7 @@ processResources {
 		expand "version": project.version
 
 		filter { line -> line.replace("@mc_version@", project.minecraft_version) }
-		filter { line -> line.replace("@gh_hash@", System.getenv("GITHUB_SHA") ?: "unknown") }
+		filter { line -> line.replace("@gh_hash@", System.getenv("GITHUB_SHA") ?: "") }
 	}
 }
 

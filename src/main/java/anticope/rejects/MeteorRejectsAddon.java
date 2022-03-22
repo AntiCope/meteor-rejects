@@ -7,6 +7,7 @@ import anticope.rejects.modules.*;
 import anticope.rejects.modules.modifier.NoRenderModifier;
 import anticope.rejects.utils.GiveUtils;
 import anticope.rejects.utils.RejectsUtils;
+import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.GuiThemes;
@@ -15,6 +16,7 @@ import meteordevelopment.meteorclient.systems.commands.Commands;
 import meteordevelopment.meteorclient.systems.hud.HUD;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
+import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.item.Items;
 import org.slf4j.Logger;
@@ -105,5 +107,27 @@ public class MeteorRejectsAddon extends MeteorAddon {
     @Override
     public void onRegisterCategories() {
         Modules.registerCategory(CATEGORY);
+    }
+
+    @Override
+    public String getWebsite() {
+        return "https://github.com/AntiCope/meteor-rejects";
+    }
+
+    @Override
+    public GithubRepo getRepo() {
+        return new GithubRepo("AntiCope", "meteor-rejects");
+    }
+
+    @Override
+    public String getCommit() {
+        String commit = FabricLoader
+            .getInstance()
+            .getModContainer("meteor-rejects")
+            .get().getMetadata()
+            .getCustomValue("github:sha")
+            .getAsString();
+        return commit.isEmpty() ? null : commit;
+        
     }
 }
