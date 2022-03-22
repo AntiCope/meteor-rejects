@@ -127,7 +127,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
             .get().getMetadata()
             .getCustomValue("github:sha")
             .getAsString();
-        return commit.isEmpty() ? null : commit;
+        return commit.isEmpty() ? null : commit.trim();
         
     }
 }
