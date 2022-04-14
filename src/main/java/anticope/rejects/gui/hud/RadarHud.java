@@ -1,9 +1,12 @@
 package anticope.rejects.gui.hud;
 
+import java.util.Iterator;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.Vec3d;
 
+import anticope.rejects.MeteorRejectsAddon;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.settings.BoolSetting;
@@ -60,7 +63,16 @@ public class RadarHud extends HudElement {
         .description("The scale.")
         .defaultValue(1)
         .min(1)
-        .sliderRange(1, 5)
+        .sliderRange(0.01, 5)
+        .build()
+    );
+
+    private final Setting<Double> zoom = sgGeneral.add(new DoubleSetting.Builder()
+        .name("zoom")
+        .description("Radar zoom.")
+        .defaultValue(1)
+        .min(0.01)
+        .sliderRange(0.01, 3)
         .build()
     );
 
@@ -76,7 +88,6 @@ public class RadarHud extends HudElement {
     @Override
     public void render(HudRenderer renderer) {
         ESP esp = Modules.get().get(ESP.class);
-        Waypoints waypoints = Waypoints.get();
         if (esp == null) return;
         renderer.addPostTask(() -> {
             double x = box.getX();
@@ -87,27 +98,29 @@ public class RadarHud extends HudElement {
             Renderer2D.COLOR.render(null);
             if (mc.world != null) {
                 for (Entity entity : mc.world.getEntities()) {
-                    if (entity.getPos().distanceTo(mc.player.getPos()) > 100) continue;
                     if (!entities.get().getBoolean(entity.getType())) return;
-                    double xPos = ((entity.getX() - mc.player.getX()) * scale.get() + box.width) / 2 + x;
-                    double yPos = ((entity.getZ() - mc.player.getZ()) * scale.get() + box.height) / 2 + y;
+                    double xPos = ((entity.getX() - mc.player.getX()) * scale.get() * zoom.get() + box.width/2);
+                    double yPos = ((entity.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + box.height/2);
+                    if (xPos < 0 || yPos < 0 || xPos > box.width - scale.get() || yPos > box.height - scale.get()) continue;
                     String icon = "*";
                     if (letters.get()) 
                         icon = entity.getType().getUntranslatedName().substring(0,1).toUpperCase();
-                    renderer.text(icon, xPos, yPos, esp.getColor(entity));
+                    renderer.text(icon, xPos + x, yPos + y, esp.getColor(entity));
                 }
             }
             if (showWaypoints.get()) {
-                for (Waypoint waypoint : waypoints.waypoints) {
+                Iterator<Waypoint> waypoints = Waypoints.get().iterator();
+                while (waypoints.hasNext()) {
+                    Waypoint waypoint = waypoints.next();
                     Vec3 c = waypoint.getCoords();
                     Vec3d coords = new Vec3d(c.x, c.y, c.z);
-                    if (coords.distanceTo(mc.player.getPos()) > 100) continue;
-                    double xPos = ((coords.getX() - mc.player.getX()) * scale.get() + box.width) / 2 + x;
-                    double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() + box.height) / 2 + y;
+                    double xPos = ((coords.getX() - mc.player.getX()) * scale.get() * zoom.get() + box.width/2);
+                    double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + box.height/2);
+                    if (xPos < 0 || yPos < 0 || xPos > box.width - scale.get() || yPos > box.height - scale.get()) continue;
                     String icon = "*";
-                    if (letters.get() && waypoint.name.length() > 0 && waypoint.visible)
+                    if (letters.get() && waypoint.name.length() > 0)
                         icon = waypoint.name.substring(0, 1);
-                    renderer.text(icon, xPos, yPos, waypoint.color);
+                    renderer.text(icon, xPos + x, yPos + y, waypoint.color);
                 }
             }
             Renderer2D.COLOR.render(null);
