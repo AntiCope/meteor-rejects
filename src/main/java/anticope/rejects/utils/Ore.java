@@ -203,7 +203,7 @@ public class Ore {
 
     public static List<Ore> getConfig(MCVersion version) {
         return switch (version) {
-            case v1_18_1, v1_18 -> V1_18();
+            case v1_18_2, v1_18_1, v1_18 -> V1_18();
             case v1_17_1 -> V1_17_1();
             case v1_17 -> V1_17();
             case v1_16_5, v1_16_4, v1_16_3, v1_16_2, v1_16_1, v1_16 -> V1_16();
