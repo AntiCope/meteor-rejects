@@ -65,27 +65,23 @@ public class AntiBot extends Module {
 
     @EventHandler
     public void onTick(TickEvent.Post tickEvent) {
-        for (Entity entity : mc.world.getEntities())
-        {
+        for (Entity entity : mc.world.getEntities()) {
+            if (entity == null || !(entity instanceof PlayerEntity playerEntity)) continue;
             if (removeInvisible.get() && !entity.isInvisible()) continue;
 
-            if (isBot(entity)) entity.remove(Entity.RemovalReason.DISCARDED);
+            if (isBot(playerEntity)) entity.remove(Entity.RemovalReason.DISCARDED);
         }
     }
 
-    private boolean isBot(Entity entity) {
-        if (entity == null) return false;
-        if (!(entity instanceof PlayerEntity)) return false;
-
-        PlayerEntity player = (PlayerEntity)entity;
+    private boolean isBot(PlayerEntity entity) {
         try {
-            if (gameMode.get() && EntityUtils.getGameMode(player) == null) return true;
+            if (gameMode.get() && EntityUtils.getGameMode(entity) == null) return true;
             if (api.get() &&
-                    mc.getNetworkHandler().getPlayerListEntry(player.getUuid()) == null) return true;
+                    mc.getNetworkHandler().getPlayerListEntry(entity.getUuid()) == null) return true;
             if (profile.get() &&
-                    mc.getNetworkHandler().getPlayerListEntry(player.getUuid()).getProfile() == null) return true;
+                    mc.getNetworkHandler().getPlayerListEntry(entity.getUuid()).getProfile() == null) return true;
             if (latency.get() &&
-                    mc.getNetworkHandler().getPlayerListEntry(player.getUuid()).getLatency() > 1) return true;
+                    mc.getNetworkHandler().getPlayerListEntry(entity.getUuid()).getLatency() > 1) return true;
         } catch (NullPointerException e) {
             if (nullException.get()) return true;
         }
