@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.systems.commands.Command;
 
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import org.lwjgl.BufferUtils;
@@ -24,7 +24,7 @@ public class TerrainExport extends Command {
 
     private final PointerBuffer filters;
 
-    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("An IOException occurred"));
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An IOException occurred"));
 
     public TerrainExport() {
         super("terrain-export", "Export an area to the c++ terrain finder format (very popbob command).");

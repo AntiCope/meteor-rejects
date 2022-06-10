@@ -15,8 +15,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -149,14 +149,14 @@ public class CoordLogger extends Module {
         }
     }
 
-    public BaseText formatMessage(String message, Vec3d coords) {
-        BaseText text = new LiteralText(message);
+    public MutableText formatMessage(String message, Vec3d coords) {
+        MutableText text = Text.literal(message);
         text.append(ChatUtils.formatCoords(coords));
         text.append(Formatting.GRAY.toString()+".");
         return text;
     }
 
-    public BaseText formatMessage(String message, BlockPos coords) {
+    public MutableText formatMessage(String message, BlockPos coords) {
         return formatMessage(message, new Vec3d(coords.getX(), coords.getY(), coords.getZ()));
     }
 }

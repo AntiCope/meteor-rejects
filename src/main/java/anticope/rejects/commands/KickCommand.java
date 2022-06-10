@@ -7,7 +7,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import org.apache.commons.lang3.SystemUtils;
 
 import meteordevelopment.meteorclient.systems.commands.Command;
@@ -23,7 +23,7 @@ public class KickCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(literal("disconnect").executes(ctx -> {
-			mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(new LiteralText("Disconnected via .kick command")));
+			mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(Text.literal("Disconnected via .kick command")));
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("pos").executes(ctx -> {

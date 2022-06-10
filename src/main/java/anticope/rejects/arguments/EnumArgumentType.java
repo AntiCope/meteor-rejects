@@ -13,11 +13,11 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import java.lang.reflect.InvocationTargetException;
 
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
     private static final DynamicCommandExceptionType NO_SUCH_TYPE = new DynamicCommandExceptionType(o ->
-            new LiteralText(o + " is not a valid argument."));
+            Text.literal(o + " is not a valid argument."));
 
     private T[] values;
 

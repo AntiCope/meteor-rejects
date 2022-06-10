@@ -52,11 +52,11 @@ public class CustomPackets extends Module {
 
     private void onUnknownPacket(CustomPayloadEvent event) {
         if (!unknownPackets.get()) return;
-        BaseText text = new LiteralText(event.packet.getChannel().toString());
+        MutableText text = Text.literal(event.packet.getChannel().toString());
         text.setStyle(text.getStyle()
         .withHoverEvent(new HoverEvent(
                 HoverEvent.Action.SHOW_TEXT,
-                new LiteralText(readString(event.packet.getData()))
+                Text.literal(readString(event.packet.getData()))
         )));
         info(text);
     }
@@ -69,8 +69,8 @@ public class CustomPackets extends Module {
         event.cancel();
     }
 
-    private BaseText format(String type, BaseText message) {
-        BaseText text = new LiteralText(String.format("[%s%s%s]",
+    private MutableText format(String type, MutableText message) {
+        MutableText text = Text.literal(String.format("[%s%s%s]",
                 Formatting.AQUA,
                 type,
                 Formatting.GRAY
@@ -87,18 +87,18 @@ public class CustomPackets extends Module {
         ).toString();
     }
 
-    private BaseText formatMods(Map<String, BadlionMod> mods) {
-        BaseText text = new LiteralText("Disallowed mods: \n");
+    private MutableText formatMods(Map<String, BadlionMod> mods) {
+        MutableText text = Text.literal("Disallowed mods: \n");
 
         mods.forEach((name, data) -> {
-            BaseText modLine = new LiteralText(String.format("- %s%s%s ", Formatting.YELLOW, name, Formatting.GRAY));
+            MutableText modLine = Text.literal(String.format("- %s%s%s ", Formatting.YELLOW, name, Formatting.GRAY));
             modLine.append(data.disabled ? "disabled" : "enabled");
             modLine.append("\n");
             if (data.extra_data != null) {
                 modLine.setStyle(modLine.getStyle()
                         .withHoverEvent(new HoverEvent(
                                 HoverEvent.Action.SHOW_TEXT,
-                                new LiteralText(data.extra_data.toString())
+                                Text.literal(data.extra_data.toString())
                         )));
             }
             text.append(modLine);

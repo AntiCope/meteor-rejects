@@ -5,10 +5,10 @@ import java.util.HashMap;
 import anticope.rejects.events.SeedChangedEvent;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.BaseText;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import com.seedfinding.mccore.version.MCVersion;
@@ -60,10 +60,10 @@ public class Seeds extends System<Seeds> {
         ServerInfo server = mc.getCurrentServerEntry();
         MCVersion ver = null;
         if (server != null)
-            ver = MCVersion.fromString(server.version.asString());
+            ver = MCVersion.fromString(server.version.getString());
         if (ver == null) {
             String targetVer = "unknown";
-            if (server != null) targetVer = server.version.asString();
+            if (server != null) targetVer = server.version.getString();
             sendInvalidVersionWarning(seed, targetVer);
             ver = MCVersion.latest();
         }
@@ -98,13 +98,13 @@ public class Seeds extends System<Seeds> {
     }
 
     private static void sendInvalidVersionWarning(String seed, String targetVer) {
-        BaseText msg = new LiteralText(String.format("Couldn't resolve minecraft version \"%s\". Using %s instead. If you wish to change the version run: ", targetVer, MCVersion.latest().name));
+        MutableText msg = Text.literal(String.format("Couldn't resolve minecraft version \"%s\". Using %s instead. If you wish to change the version run: ", targetVer, MCVersion.latest().name));
         String cmd = String.format("%sseed %s ", Config.get().prefix, seed);
-        BaseText cmdText = new LiteralText(cmd+"<version>");
+        MutableText cmdText = Text.literal(cmd+"<version>");
         cmdText.setStyle(cmdText.getStyle()
             .withUnderline(true)
             .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, cmd))
-            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("run command")))
+            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("run command")))
         );
         msg.append(cmdText);
         msg.setStyle(msg.getStyle()

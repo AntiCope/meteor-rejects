@@ -34,7 +34,7 @@ public class ObsidianFarm extends Module {
         if (mc.player == null) return;
         if (mc.world == null) return;
         if (mc.interactionManager == null) return;
-        if (mc.world.getDimension().isRespawnAnchorWorking()) {
+        if (mc.world.getDimension().respawnAnchorWorks()) {
             allowBreakAgain = true;
             return;
         }

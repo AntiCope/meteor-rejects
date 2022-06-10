@@ -119,7 +119,7 @@ public class Auto32K extends Module {
                         return;
                     }
                     mc.player.setSneaking(false);
-                    mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing(), bestBlock.up(), false));
+                    mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing(), bestBlock.up(), false));
                     phase = 8;
                 }
             } else if (mode.get() == Mode.Dispenser) {
@@ -151,10 +151,10 @@ public class Auto32K extends Module {
                     }
                     phase += 1;
                 } else if (phase == 2) {
-                    mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), Direction.UP, bestBlock, false));
+                    mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), Direction.UP, bestBlock, false));
                     phase += 1;
                 } else if (phase == 3) {
-                    mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(), false));
+                    mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(), false));
                     phase += 1;
                 }else if (phase == 4 && mc.currentScreen instanceof Generic3x3ContainerScreen) {
                     InvUtils.move().from(shulkerSlot.slot()).toId(4);
@@ -165,11 +165,11 @@ public class Auto32K extends Module {
                 }else if (phase == 6) {
                     mc.player.getInventory().selectedSlot = redstoneSlot.slot();
                     mc.player.setSneaking(true);
-                    mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(2), false));
+                    mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.up(2), false));
                     mc.player.setSneaking(false);
                     phase += 1;
                 }else if (phase == 7){
-                    mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.add(x, 0, z), false));
+                    mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(mc.player.getPos(), mc.player.getHorizontalFacing().getOpposite(), bestBlock.add(x, 0, z), false));
                     phase += 1;
                 }
             }

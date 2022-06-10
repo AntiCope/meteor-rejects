@@ -6,19 +6,19 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
 
 import com.seedfinding.mccore.version.MCVersion;
 import meteordevelopment.meteorclient.systems.commands.Command;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
 import meteordevelopment.meteorclient.utils.Utils;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class SeedCommand extends Command {
-    private final static SimpleCommandExceptionType NO_SEED = new SimpleCommandExceptionType(new LiteralText("No seed for current world saved."));
+    private final static SimpleCommandExceptionType NO_SEED = new SimpleCommandExceptionType(Text.literal("No seed for current world saved."));
 
     public SeedCommand() {
         super("seed", "Get or set seed for the current world.");
@@ -35,7 +35,7 @@ public class SeedCommand extends Command {
 
         builder.then(literal("list").executes(ctx -> {
             Seeds.get().seeds.forEach((name, seed) -> {
-                BaseText text = new LiteralText(name + " ");
+                MutableText text = Text.literal(name + " ");
                 text.append(seed.toText());
                 info(text);
             });
@@ -45,7 +45,7 @@ public class SeedCommand extends Command {
         builder.then(literal("delete").executes(ctx -> {
             Seed seed = Seeds.get().getSeed();
             if (seed != null) {
-                BaseText text = new LiteralText("Deleted ");
+                MutableText text = Text.literal("Deleted ");
                 text.append(seed.toText());
                 info(text);
             }

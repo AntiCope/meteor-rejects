@@ -18,7 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ public class HeadScreen extends WindowScreen {
             WTable t = theme.table();
             for (ItemStack head : heads) {
                 t.add(theme.item(head));
-                t.add(theme.label(head.getName().asString()));
+                t.add(theme.label(head.getName().getString()));
                 WButton give = t.add(theme.button("Give")).widget();
                 give.action = () -> {
                     try {
@@ -119,7 +119,7 @@ public class HeadScreen extends WindowScreen {
         skullOwner.put("Properties", properties);
         tag.put("SkullOwner", skullOwner);
         head.setNbt(tag);
-        head.setCustomName(new LiteralText(name));
+        head.setCustomName(Text.literal(name));
         return head;
     }
     

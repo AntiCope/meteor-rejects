@@ -6,11 +6,11 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.BaseText;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.ClickEvent.Action;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import anticope.rejects.utils.portscanner.PScanRunner;
@@ -34,8 +34,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 */
 public class ServerCommand extends Command {
 
-    private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(new LiteralText("Couldn't obtain server address"));
-    private final static SimpleCommandExceptionType INVALID_RANGE = new SimpleCommandExceptionType(new LiteralText("Invalid range"));
+    private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(Text.literal("Couldn't obtain server address"));
+    private final static SimpleCommandExceptionType INVALID_RANGE = new SimpleCommandExceptionType(Text.literal("Invalid range"));
 
     private final static HashMap<Integer, String> ports = new HashMap<Integer, String>();
 
@@ -119,8 +119,8 @@ public class ServerCommand extends Command {
         scanPorts(address, port_list);
     }
 
-    private BaseText formatPort(int port, InetAddress address) {
-        BaseText text = new LiteralText(String.format("- %s%d%s ", Formatting.GREEN, port, Formatting.GRAY));
+    private MutableText formatPort(int port, InetAddress address) {
+        MutableText text = Text.literal(String.format("- %s%d%s ", Formatting.GREEN, port, Formatting.GRAY));
         if (ports.containsKey(port)) {
             text.append(ports.get(port));
             if (ports.get(port).startsWith("HTTP") || ports.get(port).startsWith("FTP")) {
@@ -131,7 +131,7 @@ public class ServerCommand extends Command {
                     ))
                     .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        new LiteralText("Open in browser")
+                        Text.literal("Open in browser")
                     ))
                 );
             } else if (ports.get(port) == "DynMap") {
@@ -142,7 +142,7 @@ public class ServerCommand extends Command {
                     ))
                     .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        new LiteralText("Open in browser")
+                        Text.literal("Open in browser")
                     ))
                 );
             } else {
@@ -153,7 +153,7 @@ public class ServerCommand extends Command {
                     ))
                     .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        new LiteralText("Copy")
+                        Text.literal("Copy")
                     ))
                 );
             }
@@ -165,7 +165,7 @@ public class ServerCommand extends Command {
                 ))
                 .withHoverEvent(new HoverEvent(
                     HoverEvent.Action.SHOW_TEXT,
-                    new LiteralText("Copy")
+                    Text.literal("Copy")
                 ))
             );
         }

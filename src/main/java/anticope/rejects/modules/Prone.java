@@ -121,10 +121,10 @@ public class Prone extends Module {
 
         Rotations.rotate(Rotations.getYaw(target), Rotations.getPitch(target), 10, true, () -> {
             if (bucket.isOffhand()) {
-                mc.interactionManager.interactItem(mc.player, mc.world, Hand.OFF_HAND);
+                mc.interactionManager.interactItem(mc.player, Hand.OFF_HAND);
             } else {
                 InvUtils.swap(bucket.slot(), true);
-                mc.interactionManager.interactItem(mc.player, mc.world, Hand.MAIN_HAND);
+                mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
                 InvUtils.swapBack();
             }
 
