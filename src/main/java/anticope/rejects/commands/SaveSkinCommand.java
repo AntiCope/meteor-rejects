@@ -9,7 +9,7 @@ import meteordevelopment.meteorclient.systems.commands.arguments.PlayerArgumentT
 import meteordevelopment.meteorclient.utils.network.Http;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import org.apache.commons.codec.binary.Base64;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
@@ -25,7 +25,7 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class SaveSkinCommand extends Command {
 
-    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(new LiteralText("An IOException occurred"));
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An IOException occurred"));
 
     private final PointerBuffer filters;
     private final Gson GSON = new Gson();

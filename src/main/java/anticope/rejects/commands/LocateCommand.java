@@ -21,8 +21,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.BaseText;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -32,12 +32,12 @@ public class LocateCommand extends Command {
 
     private final static DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType(o -> {
        if (o instanceof WorldGenUtils.Feature) {
-           return new LiteralText(String.format(
+           return Text.literal(String.format(
                "%s not found.",
                Utils.nameToTitle(o.toString().replaceAll("_", "-")))
            );
        }
-       return new LiteralText("Not found.");
+       return Text.literal("Not found.");
     });
 
     private Vec3d firstStart;
@@ -69,7 +69,7 @@ public class LocateCommand extends Command {
             }
 
             Vec3d coords = new Vec3d(nbt1.getDouble("X"),nbt1.getDouble("Y"),nbt1.getDouble("Z"));
-            BaseText text = new LiteralText("Lodestone located at ");
+            MutableText text = Text.literal("Lodestone located at ");
             text.append(ChatUtils.formatCoords(coords));
             text.append(".");
             info(text);
@@ -80,7 +80,7 @@ public class LocateCommand extends Command {
             WorldGenUtils.Feature feature = EnumArgumentType.getEnum(ctx, "feature", WorldGenUtils.Feature.stronghold);
             BlockPos pos = WorldGenUtils.locateFeature(feature, mc.player.getBlockPos());
             if (pos != null) {
-                BaseText text = new LiteralText(String.format(
+                MutableText text = Text.literal(String.format(
                     "%s located at ",
                     Utils.nameToTitle(feature.toString().replaceAll("_", "-"))
                 ));
@@ -172,7 +172,7 @@ public class LocateCommand extends Command {
         BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("stop");
         MeteorClient.EVENT_BUS.unsubscribe(this);
         Vec3d coords = new Vec3d(intersection[0],0,intersection[1]);
-        BaseText text = new LiteralText("Stronghold roughly located at ");
+        MutableText text = Text.literal("Stronghold roughly located at ");
         text.append(ChatUtils.formatCoords(coords));
         text.append(".");
         info(text);

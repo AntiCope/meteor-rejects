@@ -12,13 +12,13 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public class EnumStringArgumentType implements ArgumentType<String> {
 
     private  Collection<String> EXAMPLES;
     private static final DynamicCommandExceptionType INVALID_OPTION = new DynamicCommandExceptionType(name ->
-                new LiteralText(name+" is not a valid option."));
+            Text.literal(name + " is not a valid option."));
     public EnumStringArgumentType(Collection<String> examples) {
         this.EXAMPLES = examples;
     }

@@ -25,6 +25,7 @@ import meteordevelopment.starscript.Script;
 import meteordevelopment.starscript.compiler.Compiler;
 import meteordevelopment.starscript.compiler.Parser;
 import meteordevelopment.starscript.utils.StarscriptError;
+import net.minecraft.text.Text;
 
 public class ChatBot extends Module {
 
@@ -61,7 +62,8 @@ public class ChatBot extends Module {
     private void onMessageRecieve(ReceiveMessageEvent event) {
         String msg = event.getMessage().getString();
         if (help.get() && msg.endsWith(prefix.get()+"help")) {
-            mc.getNetworkHandler().sendPacket(new ChatMessageC2SPacket("Avaliable commands: " + String.join(", ", commands.keySet())));
+            mc.player.sendMessage(Text.of("Avaliable commands: " + String.join(", ", commands.keySet())), false);
+//            mc.getNetworkHandler().sendPacket(new ChatMessageC2SPacket("Avaliable commands: " + String.join(", ", commands.keySet())), );
             return;
         }
         for (String cmd : commands.keySet()) {

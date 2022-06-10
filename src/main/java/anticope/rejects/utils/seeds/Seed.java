@@ -34,7 +34,7 @@ public class Seed {
     }
 
     public Text toText() {
-        BaseText text = new LiteralText(String.format("[%s%s%s] (%s)",
+        MutableText text = Text.literal(String.format("[%s%s%s] (%s)",
             Formatting.GREEN,
             seed.toString(),
             Formatting.WHITE,
@@ -47,7 +47,7 @@ public class Seed {
             ))
             .withHoverEvent(new HoverEvent(
                 HoverEvent.Action.SHOW_TEXT,
-                new LiteralText("Copy to clipboard")
+                Text.literal("Copy to clipboard")
             ))
         );
         return text;

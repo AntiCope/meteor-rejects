@@ -27,14 +27,14 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.*;
 import net.minecraft.entity.mob.EndermanEntity;
-import net.minecraft.entity.passive.HorseBaseEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
@@ -72,7 +72,7 @@ public class InteractionScreen extends Screen {
     }
 
     public InteractionScreen(Entity entity, InteractionMenu module) {
-        super(new LiteralText("Menu Screen"));
+        super(Text.literal("Menu Screen"));
 
         selectedDotColor = module.selectedDotColor.get().getPacked();
         dotColor = module.dotColor.get().getPacked();
@@ -93,7 +93,7 @@ public class InteractionScreen extends Screen {
             });
         }
         
-        else if (entity instanceof HorseBaseEntity) {
+        else if (entity instanceof AbstractHorseEntity) {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 if (client.player.isRiding()) {
@@ -120,7 +120,7 @@ public class InteractionScreen extends Screen {
 
         functions.put("Spectate", (Entity e) -> {
             MinecraftClient.getInstance().setCameraEntity(e);
-            client.player.sendMessage(new LiteralText("Sneak to un-spectate."), true);
+            client.player.sendMessage(Text.literal("Sneak to un-spectate."), true);
             MeteorClient.EVENT_BUS.subscribe(shiftListener);
             closeScreen();
         });
@@ -256,7 +256,7 @@ public class InteractionScreen extends Screen {
         matrix.scale (2f, 2f, 1f);
         drawCenteredText(matrix, textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
 
-        int scale = client.options.guiScale;
+        int scale = client.options.getGuiScale().getValue();
         Vector2 mouse = new Vector2(mouseX, mouseY);
         Vector2 center = new Vector2(width / 2, height / 2);
         mouse.subtract(center);

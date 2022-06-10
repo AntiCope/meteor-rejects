@@ -207,7 +207,7 @@ public class Lavacast extends Module {
         }
         int prevSlot = mc.player.getInventory().selectedSlot;
         mc.player.getInventory().selectedSlot = findItemResult.slot();
-        mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
+        mc.interactionManager.interactItem(mc.player,Hand.MAIN_HAND);
         mc.player.getInventory().selectedSlot = prevSlot;
     }
 
@@ -220,7 +220,7 @@ public class Lavacast extends Module {
         }
         int prevSlot = mc.player.getInventory().selectedSlot;
         mc.player.getInventory().selectedSlot = findItemResult.slot();
-        mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
+        mc.interactionManager.interactItem(mc.player,Hand.MAIN_HAND);
         mc.player.getInventory().selectedSlot = prevSlot;
     }
 
@@ -233,7 +233,7 @@ public class Lavacast extends Module {
         }
         int prevSlot = mc.player.getInventory().selectedSlot;
         mc.player.getInventory().selectedSlot = findItemResult.slot();
-        mc.interactionManager.interactItem(mc.player,mc.world,Hand.MAIN_HAND);
+        mc.interactionManager.interactItem(mc.player,Hand.MAIN_HAND);
         mc.player.getInventory().selectedSlot = prevSlot;
     }
 

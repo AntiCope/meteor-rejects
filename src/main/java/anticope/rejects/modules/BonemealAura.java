@@ -47,7 +47,7 @@ public class BonemealAura extends Module {
         isBonemealing = true;
         Rotations.rotate(Rotations.getYaw(crop), Rotations.getPitch(crop), () -> {
             InvUtils.swap(bonemeal.slot(), false);
-            mc.interactionManager.interactBlock(mc.player, mc.world, Hand.MAIN_HAND, new BlockHitResult(
+            mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(
                 mc.player.getPos(), rayTraceCheck(crop), crop, true));
             mc.player.swingHand(Hand.MAIN_HAND);
         });

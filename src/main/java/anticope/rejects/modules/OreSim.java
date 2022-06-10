@@ -24,10 +24,12 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.ChunkRandom;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.gen.random.ChunkRandom;
+//import net.minecraft.world.chunk.world.random.ChunkRandom;
 import com.seedfinding.mccore.version.MCVersion;
 
 import java.util.ArrayList;
@@ -134,7 +136,7 @@ public class OreSim extends Module {
             long chunkX = mc.player.getChunkPos().x;
             long chunkZ = mc.player.getChunkPos().z;
             ClientWorld world = mc.world;
-            int renderdistance = mc.options.viewDistance;
+            int renderdistance = mc.options.getViewDistance().getValue();
 
             //maybe another config option? But its already crowded
             int chunkCounter = 5;
@@ -215,7 +217,7 @@ public class OreSim extends Module {
     }
 
     private void loadVisibleChunks() {
-        int renderdistance = mc.options.viewDistance;
+        int renderdistance = mc.options.getViewDistance().getValue();
 
         if (mc.player == null) {
             return;
@@ -287,7 +289,7 @@ public class OreSim extends Module {
             return;
         }
         String biomeName = id.getPath();
-        Identifier dimensionName = world.getDimension().getEffects();
+        Identifier dimensionName = world.getDimension().effects();
 
         for (Ore ore : oreConfig) {
 
@@ -351,7 +353,7 @@ public class OreSim extends Module {
     // Mojang code
     // ====================================
 
-    private ArrayList<Vec3d> generateNormal(ClientWorld world, Random random, BlockPos blockPos, int veinSize, float discardOnAir) {
+    private ArrayList<Vec3d> generateNormal(ClientWorld world, ChunkRandom random, BlockPos blockPos, int veinSize, float discardOnAir) {
         float f = random.nextFloat() * 3.1415927F;
         float g = (float) veinSize / 8.0F;
         int i = MathHelper.ceil(((float) veinSize / 16.0F * 2.0F + 1.0F) / 2.0F);
@@ -378,7 +380,7 @@ public class OreSim extends Module {
         return new ArrayList<>();
     }
 
-    private ArrayList<Vec3d> generateVeinPart(ClientWorld world, Random random, int veinSize, double startX, double endX, double startZ, double endZ, double startY, double endY, int x, int y, int z, int size, int i, float discardOnAir) {
+    private ArrayList<Vec3d> generateVeinPart(ClientWorld world, ChunkRandom random, int veinSize, double startX, double endX, double startZ, double endZ, double startY, double endY, int x, int y, int z, int size, int i, float discardOnAir) {
 
         BitSet bitSet = new BitSet(size * i * size);
         BlockPos.Mutable mutable = new BlockPos.Mutable();
@@ -468,7 +470,7 @@ public class OreSim extends Module {
         return poses;
     }
 
-    private boolean shouldPlace(ClientWorld world, BlockPos orePos, float discardOnAir, Random random) {
+    private boolean shouldPlace(ClientWorld world, BlockPos orePos, float discardOnAir, ChunkRandom random) {
         if (discardOnAir == 0F || (discardOnAir != 1F && random.nextFloat() >= discardOnAir)) {
             return true;
         }
@@ -481,7 +483,7 @@ public class OreSim extends Module {
         return true;
     }
 
-    private ArrayList<Vec3d> generateHidden(ClientWorld world, Random random, BlockPos blockPos, int size) {
+    private ArrayList<Vec3d> generateHidden(ClientWorld world, ChunkRandom random, BlockPos blockPos, int size) {
 
         ArrayList<Vec3d> poses = new ArrayList<>();
 
@@ -502,7 +504,7 @@ public class OreSim extends Module {
         return poses;
     }
 
-    private int randomCoord(Random random, int size) {
+    private int randomCoord(ChunkRandom random, int size) {
         return Math.round((random.nextFloat() - random.nextFloat()) * (float) size);
     }
 }

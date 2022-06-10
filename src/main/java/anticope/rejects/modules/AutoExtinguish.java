@@ -91,7 +91,7 @@ public class AutoExtinguish extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.world.getDimension().isRespawnAnchorWorking()) {
+        if (mc.world.getDimension().respawnAnchorWorks()) {
             if (doesWaterBucketWork) {
                 warning("Water Buckets don't work in this dimension!");
                 doesWaterBucketWork = false;
@@ -159,7 +159,7 @@ public class AutoExtinguish extends Module {
             float pitch = mc.gameRenderer.getCamera().getPitch() % 360;
 
             Rotations.rotate(yaw, 90);
-            mc.interactionManager.interactItem(mc.player, mc.player.world, Hand.MAIN_HAND);
+            mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
             mc.player.getInventory().selectedSlot = preSlot;
             Rotations.rotate(yaw, pitch);
 

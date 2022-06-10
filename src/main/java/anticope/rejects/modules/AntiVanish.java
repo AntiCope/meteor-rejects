@@ -116,7 +116,7 @@ public class AntiVanish extends Module {
                     return uuidstr;
                 }
             }
-            return player.getName().asString();
+            return player.getName().getString();
         }
 
         public String getName() {
