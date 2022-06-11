@@ -34,7 +34,6 @@
 - AntiBot (Removed from Meteor in [166fc](https://github.com/MeteorDevelopment/meteor-client/commit/166fccc73e53de6cfdbe41ea58dc593a2f5011f6#diff-05896d5a7f735a14ee8da5d12fbd24585862ca68efdf32b9401b3f4329d17c73))
 - AntiSpawnpoint
 - AntiVanish
-- Auto32K (Removed from Meteor in [67f93](https://github.com/MeteorDevelopment/meteor-client/commit/67f93de1e5e287ea62ddef041441306f01249c3d#diff-95d3e3b18ffadf76eef2358f30d424843d57acf8bde5ebd49a3f6befa6ff0529))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoExtinguish
@@ -59,7 +58,6 @@
 - Oresim (Ported from [Atomic](https://gitlab.com/0x151/atomic))
 - PacketFly (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/813))
 - Painter
-- Prone (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1423))
 - Rendering
 - SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/render/Skeletons.java))
 - SoundLocator

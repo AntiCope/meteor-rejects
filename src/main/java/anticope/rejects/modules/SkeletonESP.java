@@ -62,7 +62,7 @@ public class SkeletonESP extends Module {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(MinecraftClient.isFabulousGraphicsOrBetter());
+        RenderSystem.depthMask(MinecraftClient.isFancyGraphicsOrBetter());
         RenderSystem.enableCull();
 
         mc.world.getEntities().forEach(entity -> {
@@ -168,8 +168,8 @@ public class SkeletonESP extends Module {
             bufferBuilder.vertex(matrix4f, 0, -0.55f, 0).color(skeletonColor.r, skeletonColor.g, skeletonColor.b, skeletonColor.a).next();
             matrixStack.pop();
 
-//            bufferBuilder.end();
-//            BufferRenderer.draw(bufferBuilder); //TODO Skeleton ESP
+            bufferBuilder.clear();
+            BufferRenderer.drawWithShader(bufferBuilder.end());
 
             if (swimming) matrixStack.translate(0, 0.95f, 0);
             if (swimming || flying) matrixStack.multiply(new Quaternion(new Vec3f(1, 0, 0), 90 + m, true));
@@ -184,6 +184,7 @@ public class SkeletonESP extends Module {
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
     }
 
     private void rotate(MatrixStack matrix, ModelPart modelPart) {

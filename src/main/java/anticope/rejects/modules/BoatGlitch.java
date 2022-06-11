@@ -12,7 +12,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.util.Hand;
 
@@ -121,7 +121,7 @@ public class BoatGlitch extends Module {
     @EventHandler
     private void onKey(KeyEvent event) {
         if (event.key == mc.options.sneakKey.getDefaultKey().getCode() && event.action == KeyAction.Press) {
-            if (mc.player.getVehicle() != null && mc.player.getVehicle().getType().equals(EntityType.BOAT)) {
+            if (mc.player.getVehicle() != null && mc.player.getVehicle() instanceof BoatEntity) {
                 dontPhase = false;
                 boat = null;
             }
