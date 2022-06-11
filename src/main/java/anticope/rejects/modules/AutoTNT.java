@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import anticope.rejects.utils.TntDamage;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
@@ -13,7 +12,6 @@ import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
-import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.TntBlock;
 import net.minecraft.item.*;
@@ -35,13 +33,6 @@ public class AutoTNT extends Module {
     private final Setting<Boolean> ignite = sgGeneral.add(new BoolSetting.Builder()
             .name("ignite")
             .description("Whether to ignite tnt.")
-            .defaultValue(false)
-            .build()
-    );
-
-    private final Setting<Boolean> place = sgGeneral.add(new BoolSetting.Builder()
-            .name("place")
-            .description("Whether to place tnt. (VERY LAGGY)")
             .defaultValue(true)
             .build()
     );
@@ -54,24 +45,16 @@ public class AutoTNT extends Module {
             .build()
     );
 
-    private final Setting<Integer> placeDelay = sgGeneral.add(new IntSetting.Builder()
-            .name("place-delay")
-            .description("Delay in ticks between placement")
-            .defaultValue(1)
-            .visible(place::get)
-            .build()
-    );
-
     private final Setting<Integer> horizontalRange = sgGeneral.add(new IntSetting.Builder()
             .name("horizontal-range")
-            .description("Horizontal range of ignition and placement")
+            .description("Horizontal range of ignition")
             .defaultValue(4)
             .build()
     );
 
     private final Setting<Integer> verticalRange = sgGeneral.add(new IntSetting.Builder()
             .name("vertical-range")
-            .description("Vertical range of ignition and placement")
+            .description("Vertical range of ignition")
             .defaultValue(4)
             .build()
     );
@@ -101,19 +84,15 @@ public class AutoTNT extends Module {
 
     private final List<BlockPos.Mutable> blocksToIgnite = new ArrayList<>();
     private final Pool<BlockPos.Mutable> ignitePool = new Pool<>(BlockPos.Mutable::new);
-    private final List<TntPos> blocksToPlace = new ArrayList<>();
-    private final Pool<TntPos> placePool = new Pool<>(TntPos::new);
     private int igniteTick = 0;
-    private int placeTick = 0;
 
     public AutoTNT() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-tnt", "Places and/or ignites tnt automatically. Good for griefing.");
+        super(MeteorRejectsAddon.CATEGORY, "auto-tnt", "Ignites tnt automatically. Good for griefing.");
     }
 
     @Override
     public void onDeactivate() {
         igniteTick = 0;
-        placeTick = 0;
     }
 
     @EventHandler
@@ -126,17 +105,6 @@ public class AutoTNT extends Module {
             // Register
             BlockIterator.register(horizontalRange.get(), verticalRange.get(), (blockPos, blockState) -> {
                 if (blockState.getBlock() instanceof TntBlock) blocksToIgnite.add(ignitePool.get().set(blockPos));
-            });
-        }
-
-        if (place.get() && placeTick > placeDelay.get()) {
-            // Clear blocks
-            for (TntPos tntPos : blocksToPlace) placePool.free(tntPos);
-            blocksToPlace.clear();
-
-            // Register
-            BlockIterator.register(horizontalRange.get(), verticalRange.get(), (blockPos, blockState) -> {
-                if (BlockUtils.canPlace(blockPos)) blocksToPlace.add(placePool.get().set(blockPos, TntDamage.calculate(blockPos)));
             });
         }
     }
@@ -170,28 +138,7 @@ public class AutoTNT extends Module {
                 igniteTick = 0;
             }
         }
-        igniteTick++;
-
-        // Placement
-        if (place.get() && blocksToPlace.size() > 0) {
-            if (placeTick > placeDelay.get()) {
-                // Sort based on closest tnt
-                blocksToPlace.sort(Comparator.comparingInt(o -> o.score));
-
-                // Placement
-                FindItemResult itemResult = InvUtils.findInHotbar(item -> item.getItem() == Items.TNT);
-                if (!itemResult.found()) {
-                    error("No tnt in hotbar");
-                    toggle();
-                    return;
-                }
-                place(blocksToPlace.get(0).blockPos, itemResult);
-
-                // Reset ticks
-                placeTick = 0;
-            }
-        }
-        placeTick++;
+        igniteTick++;        
     }
 
     private void ignite(BlockPos pos, FindItemResult item) {
@@ -200,23 +147,5 @@ public class AutoTNT extends Module {
         mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
 
         InvUtils.swapBack();
-    }
-
-    private void place(BlockPos pos, FindItemResult item) {
-        BlockUtils.place(pos, item, rotate.get(), 10);
-    }
-
-    private class TntPos {
-        public BlockPos.Mutable blockPos;
-        public int score;
-
-        public TntPos set(BlockPos blockPos, int score) {
-            if (this.blockPos != null)
-                this.blockPos.set(blockPos);
-
-            this.score = score;
-
-            return this;
-        }
     }
 }

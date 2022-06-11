@@ -42,7 +42,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AntiBot());
         modules.add(new AntiSpawnpoint());
         modules.add(new AntiVanish());
-        modules.add(new Auto32K());
         modules.add(new AutoBedTrap());
         modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
@@ -68,7 +67,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new OreSim());
         modules.add(new PacketFly());
         modules.add(new Painter());
-        modules.add(new Prone());
         modules.add(new Rendering());
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());

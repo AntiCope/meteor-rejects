@@ -11,7 +11,6 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -95,7 +94,7 @@ public class BoatPhase extends Module {
 
     @EventHandler
     private void onBoatMove(BoatMoveEvent event) {
-        if (mc.player.getVehicle() != null && mc.player.getVehicle().getType().equals(EntityType.BOAT)) {
+        if (mc.player.getVehicle() != null && mc.player.getVehicle() instanceof BoatEntity) {
             if (boat != mc.player.getVehicle()) {
                 if (boat != null) {
                     boat.noClip = false;

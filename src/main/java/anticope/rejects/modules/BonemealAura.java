@@ -3,19 +3,18 @@ package anticope.rejects.modules;
 import net.minecraft.block.Block;
 import net.minecraft.block.CropBlock;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
@@ -47,8 +46,7 @@ public class BonemealAura extends Module {
         isBonemealing = true;
         Rotations.rotate(Rotations.getYaw(crop), Rotations.getPitch(crop), () -> {
             InvUtils.swap(bonemeal.slot(), false);
-            mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(
-                mc.player.getPos(), rayTraceCheck(crop), crop, true));
+            mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(crop), Direction.UP, crop, false), 0));
             mc.player.swingHand(Hand.MAIN_HAND);
         });
     }
@@ -68,22 +66,6 @@ public class BonemealAura extends Module {
             }
         }
         return null;
-    }
-    private Direction rayTraceCheck(BlockPos pos) {
-        Vec3d eyesPos = new Vec3d(mc.player.getX(), mc.player.getY() + mc.player.getEyeHeight(mc.player.getPose()), mc.player.getZ());
-        for (Direction direction : Direction.values()) {
-            RaycastContext raycastContext = new RaycastContext(eyesPos, new Vec3d(pos.getX() + 0.5 + direction.getVector().getX() * 0.5,
-                pos.getY() + 0.5 + direction.getVector().getY() * 0.5,
-                pos.getZ() + 0.5 + direction.getVector().getZ() * 0.5), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, mc.player);
-            BlockHitResult result = mc.world.raycast(raycastContext);
-            if (result != null && result.getType() == HitResult.Type.BLOCK && result.getBlockPos().equals(pos)) {
-                return direction;
-            }
-        }
-
-        if (pos.getY() > eyesPos.y) return Direction.DOWN;
-
-        return Direction.UP;
     }
 
     @EventHandler
