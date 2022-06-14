@@ -75,6 +75,10 @@ public class Ore {
         map.put("default", index);
         return map;
     }
+    
+    private static List<Ore> V1_19() {
+        return V1_18();
+    }
 
     private static List<Ore> V1_18() {
         List<Ore> ores = new ArrayList<>();
@@ -203,6 +207,7 @@ public class Ore {
 
     public static List<Ore> getConfig(MCVersion version) {
         return switch (version) {
+            case v1_19 -> V1_19();
             case v1_18_2, v1_18_1, v1_18 -> V1_18();
             case v1_17_1 -> V1_17_1();
             case v1_17 -> V1_17();
