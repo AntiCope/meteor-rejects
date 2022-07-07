@@ -73,6 +73,7 @@ public class InteractionScreen extends Screen {
 
     public InteractionScreen(Entity entity, InteractionMenu module) {
         super(Text.literal("Menu Screen"));
+        if (module == null) closeScreen();
 
         selectedDotColor = module.selectedDotColor.get().getPacked();
         dotColor = module.dotColor.get().getPacked();

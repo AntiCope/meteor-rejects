@@ -20,7 +20,9 @@ public class LivingEntityRendererMixin {
 
     @Inject(method = "setupTransforms", at = @At(value = "TAIL"))
     private void dinnerboneEntities(LivingEntity entity, MatrixStack matrices, float _animationProgress, float _bodyYaw, float _tickDelta, CallbackInfo _info) {
-        if ((!(entity instanceof PlayerEntity)) && Modules.get().get(Rendering.class).dinnerboneEnabled()) {
+        Rendering renderingModule = Modules.get().get(Rendering.class);
+        if (renderingModule == null) return;
+        if ((!(entity instanceof PlayerEntity)) && renderingModule.dinnerboneEnabled()) {
             matrices.translate(0.0D, entity.getHeight() + 0.1F, 0.0D);
             matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
         }
