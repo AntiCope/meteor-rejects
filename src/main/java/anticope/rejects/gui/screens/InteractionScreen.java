@@ -91,9 +91,7 @@ public class InteractionScreen extends Screen {
                 closeScreen();
                 client.setScreen(new InventoryScreen((PlayerEntity) e));
             });
-        }
-        
-        else if (entity instanceof AbstractHorseEntity) {
+        } else if (entity instanceof AbstractHorseEntity) {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 if (client.player.isRiding()) {
@@ -102,14 +100,12 @@ public class InteractionScreen extends Screen {
                 client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
                 client.player.setSneaking(false);
             });
-        }
-        else if (entity instanceof StorageMinecartEntity) {
+        } else if (entity instanceof StorageMinecartEntity) {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
             });
-        }
-        else {
+        } else {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 ItemStack container = new ItemStack(Items.CHEST);
@@ -128,13 +124,13 @@ public class InteractionScreen extends Screen {
         if (entity.isGlowing()) {
             functions.put("Remove glow", (Entity e) -> {
                 e.setGlowing(false);
-                ((EntityAccessor)e).invokeSetFlag(6, false);
+                ((EntityAccessor) e).invokeSetFlag(6, false);
                 closeScreen();
             });
         } else {
             functions.put("Glow", (Entity e) -> {
                 e.setGlowing(true);
-                ((EntityAccessor)e).invokeSetFlag(6, true);
+                ((EntityAccessor) e).invokeSetFlag(6, true);
                 closeScreen();
             });
         }
@@ -161,16 +157,17 @@ public class InteractionScreen extends Screen {
                 }
                 var script = Compiler.compile(result);
                 try {
-                    client.setScreen(new ChatScreen(MeteorStarscript.ss.run(script)));
+                    var section = MeteorStarscript.ss.run(script);
+                    client.setScreen(new ChatScreen(section.text));
                 } catch (StarscriptError err) {
                     MeteorStarscript.printChatError(err);
-                    return;
                 }
-                
             });
-            
+
         });
-        functions.put("Cancel", (Entity e) -> {closeScreen();});
+        functions.put("Cancel", (Entity e) -> {
+            closeScreen();
+        });
     }
 
     private ItemStack[] getInventory(Entity e) {
@@ -178,31 +175,31 @@ public class InteractionScreen extends Screen {
         final int[] index = {0};
         if (e instanceof EndermanEntity) {
             try {
-                stack[index[0]] = ((EndermanEntity)e).getCarriedBlock().getBlock().asItem().getDefaultStack();
+                stack[index[0]] = ((EndermanEntity) e).getCarriedBlock().getBlock().asItem().getDefaultStack();
                 index[0]++;
+            } catch (NullPointerException ex) {
             }
-            catch (NullPointerException ex) {}
         }
         if (Saddleable.class.isInstance(e)) {
-            if (((Saddleable)e).isSaddled()){
+            if (((Saddleable) e).isSaddled()) {
                 stack[index[0]] = Items.SADDLE.getDefaultStack();
                 index[0]++;
             }
         }
         e.getItemsHand().forEach(itemStack -> {
-            if (itemStack!=null) {
+            if (itemStack != null) {
                 stack[index[0]] = itemStack;
                 index[0]++;
             }
         });
         e.getArmorItems().forEach(itemStack -> {
-            if (itemStack!=null) {
+            if (itemStack != null) {
                 stack[index[0]] = itemStack;
                 index[0]++;
             }
         });
         for (int i = index[0]; i < 27; i++) stack[i] = Items.AIR.getDefaultStack();
-        return  stack;
+        return stack;
     }
 
     public void init() {
@@ -214,8 +211,8 @@ public class InteractionScreen extends Screen {
 
     private void cursorMode(int mode) {
         KeyBinding.unpressAll();
-        double x = (double)(this.client.getWindow().getWidth() / 2);
-        double y = (double)(this.client.getWindow().getHeight() / 2);
+        double x = (double) (this.client.getWindow().getWidth() / 2);
+        double y = (double) (this.client.getWindow().getHeight() / 2);
         InputUtil.setCursorParameters(this.client.getWindow().getHandle(), mode, x, y);
     }
 
@@ -253,7 +250,7 @@ public class InteractionScreen extends Screen {
         drawTexture(matrix, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
 
         drawDots(matrix, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
-        matrix.scale (2f, 2f, 1f);
+        matrix.scale(2f, 2f, 1f);
         drawCenteredText(matrix, textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
 
         int scale = client.options.getGuiScale().getValue();
@@ -275,11 +272,10 @@ public class InteractionScreen extends Screen {
         this.crosshairX = (int) mouse.x + width / 2;
         this.crosshairY = (int) mouse.y + height / 2;
 
-        client.player.setYaw( yaw + cross.x / 3);
+        client.player.setYaw(yaw + cross.x / 3);
         client.player.setPitch(MathHelper.clamp(pitch + cross.y / 3, -90f, 90f));
         super.render(matrix, mouseX, mouseY, delta);
     }
-
 
 
     private void drawDots(MatrixStack matrix, int radius, int mouseX, int mouseY) {
@@ -288,7 +284,7 @@ public class InteractionScreen extends Screen {
         double lowestDistance = Double.MAX_VALUE;
         int i = 0;
 
-        for (String string: functions.keySet()) {
+        for (String string : functions.keySet()) {
             // Just some fancy calculations to get the positions of the dots
             double s = (double) i / functions.size() * 2 * Math.PI;
             int x = (int) Math.round(radius * Math.cos(s) + width / 2);
@@ -312,13 +308,12 @@ public class InteractionScreen extends Screen {
             if (pointList.get(focusedDot) == point) {
                 drawDot(matrix, point.x - 4, point.y - 4, selectedDotColor);
                 this.focusedString = cache[focusedDot];
-            }
-            else
+            } else
                 drawDot(matrix, point.x - 4, point.y - 4, dotColor);
         }
     }
 
-    private void drawRect(MatrixStack matrix, int startX, int startY, int width, int height, int colorInner,int colorOuter) {
+    private void drawRect(MatrixStack matrix, int startX, int startY, int width, int height, int colorInner, int colorOuter) {
         drawHorizontalLine(matrix, startX, startX + width, startY, colorOuter);
         drawHorizontalLine(matrix, startX, startX + width, startY + height, colorOuter);
         drawVerticalLine(matrix, startX, startY, startY + height, colorOuter);
@@ -370,7 +365,7 @@ public class InteractionScreen extends Screen {
 class Vector2 {
     float x, y;
 
-    Vector2 (float x, float y) {
+    Vector2(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -381,7 +376,7 @@ class Vector2 {
             divide(mag);
     }
 
-    void subtract (Vector2 vec) {
+    void subtract(Vector2 vec) {
         this.x -= vec.x;
         this.y -= vec.y;
     }

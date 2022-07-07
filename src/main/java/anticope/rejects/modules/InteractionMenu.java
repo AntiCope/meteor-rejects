@@ -4,6 +4,8 @@ import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.gui.screens.InteractionScreen;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.utils.CharFilter;
+import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
@@ -120,7 +122,7 @@ public class InteractionMenu extends Module {
         textBoxK.action = () -> {
             currMsgK = textBoxK.get();
         };
-        WTextBox textBoxV = table.add(theme.textBox(currMsgV)).minWidth(100).expandX().widget();
+        WTextBox textBoxV = table.add(theme.textBox(currMsgV, (text1, c) -> true, StarscriptTextBoxRenderer.class)).minWidth(100).expandX().widget();
         textBoxV.action = () -> {
             currMsgV = textBoxV.get();
         };
@@ -163,6 +165,19 @@ public class InteractionMenu extends Module {
     }
 
     private static Value wrap(Entity entity) {
+        if (entity == null) {
+            return Value.map(new ValueMap()
+                    .set("_toString", Value.null_())
+                    .set("health", Value.null_())
+                    .set("pos", Value.map(new ValueMap()
+                            .set("_toString", Value.null_())
+                            .set("x", Value.null_())
+                            .set("y", Value.null_())
+                            .set("z", Value.null_())
+                    ))
+                    .set("uuid", Value.null_())
+            );
+        }
         return Value.map(new ValueMap()
             .set("_toString", Value.string(entity.getName().getString()))
             .set("health", Value.number(entity instanceof LivingEntity e ? e.getHealth() : 0))

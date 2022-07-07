@@ -3,6 +3,7 @@ package anticope.rejects.modules;
 import java.util.HashMap;
 
 import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
@@ -71,7 +72,8 @@ public class ChatBot extends Module {
                 Script script = compile(commands.get(cmd));
                 if (script == null) mc.player.sendChatMessage("An error occurred");
                 try {
-                    mc.player.sendChatMessage(MeteorStarscript.ss.run(script));
+                    var section = MeteorStarscript.ss.run(script);
+                    mc.player.sendChatMessage(section.text);
                 } catch (StarscriptError e) {
                     MeteorStarscript.printChatError(e);
                     mc.player.sendChatMessage("An error occurred");
@@ -104,7 +106,7 @@ public class ChatBot extends Module {
         textBoxK.action = () -> {
             currMsgK = textBoxK.get();
         };
-        WTextBox textBoxV = table.add(theme.textBox(currMsgV)).minWidth(100).expandX().widget();
+        WTextBox textBoxV = table.add(theme.textBox(currMsgV, (text1, c) -> true, StarscriptTextBoxRenderer.class)).minWidth(100).expandX().widget();
         textBoxV.action = () -> {
             currMsgV = textBoxV.get();
         };

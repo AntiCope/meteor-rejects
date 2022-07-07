@@ -8,9 +8,14 @@ package anticope.rejects.gui.themes.rounded.widgets.input;
 import meteordevelopment.meteorclient.gui.renderer.GuiRenderer;
 import anticope.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import anticope.rejects.gui.themes.rounded.MeteorWidget;
+import anticope.rejects.gui.themes.rounded.widgets.WMeteorLabel;
 import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
+import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
+import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 
 public class WMeteorTextBox extends WTextBox implements MeteorWidget {
     private boolean cursorVisible;
@@ -18,8 +23,8 @@ public class WMeteorTextBox extends WTextBox implements MeteorWidget {
 
     private double animProgress;
 
-    public WMeteorTextBox(String text, CharFilter filter) {
-        super(text, filter);
+    public WMeteorTextBox(String text, CharFilter filter, Class<? extends Renderer> renderer) {
+        super(text, filter, renderer);
     }
 
     @Override
@@ -33,13 +38,12 @@ public class WMeteorTextBox extends WTextBox implements MeteorWidget {
         if (cursorTimer >= 1) {
             cursorVisible = !cursorVisible;
             cursorTimer = 0;
-        }
-        else {
+        } else {
             cursorTimer += delta * 1.75;
         }
 
         renderBackground(renderer, this, false, false);
-        
+
         MeteorRoundedGuiTheme theme = theme();
         double pad = pad();
         double overflowWidth = getOverflowWidthForRender();
@@ -70,6 +74,68 @@ public class WMeteorTextBox extends WTextBox implements MeteorWidget {
         }
 
         renderer.scissorEnd();
+    }
+
+    @Override
+    protected WContainer createCompletionsRootWidget() {
+        return new WVerticalList() {
+            @Override
+            protected void onRender(GuiRenderer renderer1, double mouseX, double mouseY, double delta) {
+                MeteorRoundedGuiTheme theme1 = theme();
+                double s = theme1.scale(2);
+                Color c = theme1.outlineColor.get();
+
+                Color col = theme1.backgroundColor.get();
+                int preA = col.a;
+                col.a += col.a / 2;
+                col.validate();
+                renderer1.quad(this, col);
+                col.a = preA;
+
+                renderer1.quad(x, y + height - s, width, s, c);
+                renderer1.quad(x, y, s, height - s, c);
+                renderer1.quad(x + width - s, y, s, height - s, c);
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected <T extends WWidget & ICompletionItem> T createCompletionsValueWidth(String completion, boolean selected) {
+        return (T) new CompletionItem(completion, false, selected);
+    }
+
+    private static class CompletionItem extends WMeteorLabel implements ICompletionItem {
+        private static final Color SELECTED_COLOR = new Color(255, 255, 255, 15);
+
+        private boolean selected;
+
+        public CompletionItem(String text, boolean title, boolean selected) {
+            super(text, title);
+            this.selected = selected;
+        }
+
+        @Override
+        protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
+            super.onRender(renderer, mouseX, mouseY, delta);
+
+            if (selected) renderer.quad(this, SELECTED_COLOR);
+        }
+
+        @Override
+        public boolean isSelected() {
+            return selected;
+        }
+
+        @Override
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+
+        @Override
+        public String getCompletion() {
+            return text;
+        }
     }
 
 }

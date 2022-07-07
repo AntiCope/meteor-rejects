@@ -13,7 +13,8 @@ import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.systems.Systems;
 import meteordevelopment.meteorclient.systems.commands.Commands;
-import meteordevelopment.meteorclient.systems.hud.HUD;
+import meteordevelopment.meteorclient.systems.hud.Hud;
+import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,6 +28,7 @@ import java.lang.invoke.MethodHandles;
 public class MeteorRejectsAddon extends MeteorAddon {
     public static final Logger LOG = LoggerFactory.getLogger("Rejects");
     public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultStack());
+    public static final HudGroup HUD_GROUP = new HudGroup("Rejects");
     
     @Override
     public void onInitialize() {
@@ -94,9 +96,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new TerrainExport());
         
         // HUD
-        HUD hud = Systems.get(HUD.class);
-        hud.elements.add(new BaritoneHud(hud));
-        hud.elements.add(new RadarHud(hud));
+        Hud hud = Systems.get(Hud.class);
+        hud.register(RadarHud.INFO);
         
         // Themes
         GuiThemes.add(new MeteorRoundedGuiTheme());

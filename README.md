@@ -96,7 +96,6 @@
 - "Meteor Rounded" theme (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/619))
 
 ## HUD
-- Baritone process HUD
 - Radar HUD
 
 ## Config
