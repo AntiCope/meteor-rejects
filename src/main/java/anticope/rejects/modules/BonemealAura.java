@@ -61,6 +61,26 @@ public class BonemealAura extends Module {
                         int age = mc.world.getBlockState(blockPos).get(cropBlock.getAgeProperty());
                         if (age < cropBlock.getMaxAge())
                             return blockPos;
+                    if (block instanceof CocoaBlock) {
+                        int age = mc.world.getBlockState(blockPos).get(CocoaBlock.AGE);
+                        if (age < 2)
+                            return blockPos;
+                    }
+                    if (block instanceof StemBlock) {
+                        int age = mc.world.getBlockState(blockPos).get(StemBlock.AGE);
+                        if (age < StemBlock.MAX_AGE)
+                            return blockPos;
+                    }
+                    if (block instanceof MushroomPlantBlock) {
+                            return blockPos;
+                    }
+                    if (block instanceof SweetBerryBushBlock) {
+                        int age = mc.world.getBlockState(blockPos).get(SweetBerryBushBlock.AGE);
+                        if (age < 3)
+                            return blockPos;
+                    }
+                     if (block instanceof SaplingBlock || block instanceof AzaleaBlock){
+                            return blockPos;
                     }
                 }
             }
