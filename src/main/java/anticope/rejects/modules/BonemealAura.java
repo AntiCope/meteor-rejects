@@ -1,7 +1,13 @@
 package anticope.rejects.modules;
 
+import net.minecraft.block.AzaleaBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.CocoaBlock;
 import net.minecraft.block.CropBlock;
+import net.minecraft.block.MushroomPlantBlock;
+import net.minecraft.block.SaplingBlock;
+import net.minecraft.block.StemBlock;
+import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.Hand;
@@ -51,7 +57,7 @@ public class BonemealAura extends Module {
         });
     }
 
-    private BlockPos getCrop() {
+     private BlockPos getCrop() {
         for (int x = -4; x < 4; x++) {
             for (int y = -2; y < 2; y++) {
                 for (int z = -4; z < 4; z++) {
@@ -60,6 +66,27 @@ public class BonemealAura extends Module {
                     if (block instanceof CropBlock cropBlock) {
                         int age = mc.world.getBlockState(blockPos).get(cropBlock.getAgeProperty());
                         if (age < cropBlock.getMaxAge())
+                            return blockPos;
+                    }
+                    if (block instanceof CocoaBlock) {
+                        int age = mc.world.getBlockState(blockPos).get(CocoaBlock.AGE);
+                        if (age < 2)
+                            return blockPos;
+                    }
+                    if (block instanceof StemBlock) {
+                        int age = mc.world.getBlockState(blockPos).get(StemBlock.AGE);
+                        if (age < StemBlock.MAX_AGE)
+                            return blockPos;
+                    }
+                    if (block instanceof MushroomPlantBlock) {
+                            return blockPos;
+                    }
+                    if (block instanceof SweetBerryBushBlock) {
+                        int age = mc.world.getBlockState(blockPos).get(SweetBerryBushBlock.AGE);
+                        if (age < 3)
+                            return blockPos;
+                    }
+                     if (block instanceof SaplingBlock || block instanceof AzaleaBlock){
                             return blockPos;
                     }
                 }
