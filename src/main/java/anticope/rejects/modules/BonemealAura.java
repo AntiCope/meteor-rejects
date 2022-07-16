@@ -95,10 +95,6 @@ public class BonemealAura extends Module {
         return null;
     }
 
-    private boolean canPlaceSapling(BlockPos blockPos) {
-        return false;
-    }
-
     @EventHandler
     private void onRender(Render3DEvent event) {
         BlockPos crop = getCrop();
