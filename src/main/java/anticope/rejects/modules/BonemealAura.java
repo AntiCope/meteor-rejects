@@ -51,7 +51,7 @@ public class BonemealAura extends Module {
         });
     }
 
-    private BlockPos getCrop() {
+     private BlockPos getCrop() {
         for (int x = -4; x < 4; x++) {
             for (int y = -2; y < 2; y++) {
                 for (int z = -4; z < 4; z++) {
@@ -82,10 +82,15 @@ public class BonemealAura extends Module {
                     }
                      if (block instanceof SaplingBlock || block instanceof AzaleaBlock){
                             return blockPos;
+                    }
                 }
             }
         }
         return null;
+    }
+
+    private boolean canPlaceSapling(BlockPos blockPos) {
+        return false;
     }
 
     @EventHandler
