@@ -1,7 +1,13 @@
 package anticope.rejects.modules;
 
+import net.minecraft.block.AzaleaBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.CocoaBlock;
 import net.minecraft.block.CropBlock;
+import net.minecraft.block.MushroomPlantBlock;
+import net.minecraft.block.SaplingBlock;
+import net.minecraft.block.StemBlock;
+import net.minecraft.block.SweetBerryBushBlock;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
 import net.minecraft.util.Hand;
