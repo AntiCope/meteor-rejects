@@ -61,6 +61,7 @@ public class BonemealAura extends Module {
                         int age = mc.world.getBlockState(blockPos).get(cropBlock.getAgeProperty());
                         if (age < cropBlock.getMaxAge())
                             return blockPos;
+                    }
                     if (block instanceof CocoaBlock) {
                         int age = mc.world.getBlockState(blockPos).get(CocoaBlock.AGE);
                         if (age < 2)
@@ -81,7 +82,6 @@ public class BonemealAura extends Module {
                     }
                      if (block instanceof SaplingBlock || block instanceof AzaleaBlock){
                             return blockPos;
-                    }
                 }
             }
         }
