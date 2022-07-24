@@ -5,11 +5,8 @@ import anticope.rejects.gui.hud.*;
 import anticope.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import anticope.rejects.modules.*;
 import anticope.rejects.modules.modifier.NoRenderModifier;
-import anticope.rejects.utils.GiveUtils;
-import anticope.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
-import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.systems.Systems;
 import meteordevelopment.meteorclient.systems.commands.Commands;
@@ -20,10 +17,9 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.item.Items;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.invoke.MethodHandles;
 
 public class MeteorRejectsAddon extends MeteorAddon {
     public static final Logger LOG = LoggerFactory.getLogger("Rejects");
@@ -33,11 +29,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
     @Override
     public void onInitialize() {
         LOG.info("Initializing Meteor Rejects Addon");
-        
-        MeteorClient.EVENT_BUS.registerLambdaFactory("anticope.rejects", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
-        
-        RejectsUtils.init();
-        GiveUtils.init();
         
         // Modules
         Modules modules = Modules.get();
@@ -126,7 +117,11 @@ public class MeteorRejectsAddon extends MeteorAddon {
             .get().getMetadata()
             .getCustomValue("github:sha")
             .getAsString();
+        LOG.info(String.format("Rejects version: %s", commit.toString()));
         return commit.isEmpty() ? null : commit.trim();
-        
+    }
+
+    public String getPackage() {
+        return "anticope.rejects";
     }
 }

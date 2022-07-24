@@ -65,7 +65,7 @@ public class GiveUtils {
         }
     }
 
-    public static void init() {
+    static {
         STRING_PRESETS.forEach((preset) -> {
             PRESETS.put(preset.getLeft(), (preview) -> {
                 if (preview) preset.getMiddle().getDefaultStack();

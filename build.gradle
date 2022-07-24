@@ -29,7 +29,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("meteordevelopment:meteor-client:SNAPSHOT")
+	modImplementation("meteordevelopment:meteor-client:${project.meteor_version}-SNAPSHOT")
 
 	// seed .locate and ore sim
 	extraLibs('com.seedfinding:mc_math:0eb505174da8a92550f8ec6efe254e0fa936cc0d') { transitive = false }
@@ -50,11 +50,11 @@ dependencies {
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
 
-		filter { line -> line.replace("@mc_version@", project.minecraft_version) }
-		filter { line -> line.replace("@gh_hash@", System.getenv("GITHUB_SHA") ?: "") }
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version,
+				"mc_version": project.minecraft_version,
+				"gh_hash": (System.getenv("GITHUB_SHA") ?: "")
 	}
 }
 

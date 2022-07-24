@@ -32,11 +32,11 @@
   ],
   "custom": {
     "meteor-client:color": "227,0,0",
-    "github:sha": "@gh_hash@"
+    "github:sha": "${gh_hash}"
   },
   "depends": {
     "java": ">=16",
-    "minecraft": ">=@mc_version@",
+    "minecraft": "~${mc_version}",
     "meteor-client": "*"
   }
 }
