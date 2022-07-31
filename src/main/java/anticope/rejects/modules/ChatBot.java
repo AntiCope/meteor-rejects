@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
@@ -70,13 +71,13 @@ public class ChatBot extends Module {
         for (String cmd : commands.keySet()) {
             if (msg.endsWith(prefix.get()+cmd)) {
                 Script script = compile(commands.get(cmd));
-                if (script == null) mc.player.sendChatMessage("An error occurred");
+                if (script == null) ChatUtils.sendPlayerMsg("An error occurred");
                 try {
                     var section = MeteorStarscript.ss.run(script);
-                    mc.player.sendChatMessage(section.text);
+                    ChatUtils.sendPlayerMsg(section.text);
                 } catch (StarscriptError e) {
                     MeteorStarscript.printChatError(e);
-                    mc.player.sendChatMessage("An error occurred");
+                    ChatUtils.sendPlayerMsg("An error occurred");
                 }
                 return;
             }

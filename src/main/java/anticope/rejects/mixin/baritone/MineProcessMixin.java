@@ -23,7 +23,6 @@ public class MineProcessMixin {
     
     @Shadow(remap = false)
     private List<BlockPos> a; // knownOreLocations
-
     @Inject(method = "a(Ljava/util/List;Lbaritone/pathing/movement/CalculationContext;)V", at = @At("HEAD"), cancellable = true, remap = false)
     private void onRescan(List<BlockPos> already, CalculationContext context, CallbackInfo ci) {
         OreSim oreSim = Modules.get().get(OreSim.class);
