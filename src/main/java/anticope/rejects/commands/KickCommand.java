@@ -2,6 +2,7 @@ package anticope.rejects.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
@@ -35,7 +36,7 @@ public class KickCommand extends Command {
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("chat").executes(ctx -> {
-            mc.player.sendChatMessage("§0§1§");
+            ChatUtils.sendPlayerMsg("§0§1§");
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("shutdown").executes(ctx -> {

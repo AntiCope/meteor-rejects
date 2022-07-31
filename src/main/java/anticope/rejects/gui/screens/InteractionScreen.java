@@ -187,7 +187,7 @@ public class InteractionScreen extends Screen {
                 index[0]++;
             }
         }
-        e.getItemsHand().forEach(itemStack -> {
+        e.getHandItems().forEach(itemStack -> {
             if (itemStack != null) {
                 stack[index[0]] = itemStack;
                 index[0]++;
