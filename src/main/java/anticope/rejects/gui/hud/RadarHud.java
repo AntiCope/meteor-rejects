@@ -7,6 +7,7 @@ import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
@@ -15,8 +16,7 @@ import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.ColorSetting;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.EntityTypeListSetting;
-import meteordevelopment.meteorclient.settings.Setting;
-import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.hud.HudRenderer;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
 import meteordevelopment.meteorclient.systems.modules.Modules;
@@ -117,15 +117,16 @@ public class RadarHud extends HudElement {
                 Iterator<Waypoint> waypoints = Waypoints.get().iterator();
                 while (waypoints.hasNext()) {
                     Waypoint waypoint = waypoints.next();
-                    Vec3 c = waypoint.getCoords();
+                    BlockPos blockPos = waypoint.getPos();
+                    Vec3 c = new Vec3(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
                     Vec3d coords = new Vec3d(c.x, c.y, c.z);
                     double xPos = ((coords.getX() - mc.player.getX()) * scale.get() * zoom.get() + width/2);
                     double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + height/2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
                     String icon = "*";
-                    if (letters.get() && waypoint.name.length() > 0)
-                        icon = waypoint.name.substring(0, 1);
-                    renderer.text(icon, xPos + x, yPos + y, waypoint.color, false);
+                    if (letters.get() && waypoint.name.get().length() > 0)
+                        icon = waypoint.name.get().substring(0, 1);
+                    renderer.text(icon, xPos + x, yPos + y, waypoint.color.get(), false);
                 }
             }
             Renderer2D.COLOR.render(null);
