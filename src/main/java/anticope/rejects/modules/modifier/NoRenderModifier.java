@@ -14,10 +14,12 @@ public class NoRenderModifier {
     public static Setting<Boolean> disableToasts;
     
     public static boolean noCommandSuggestions() {
+        if (noCommandSuggestions == null || Modules.get() == null || Modules.get().get(NoRender.class) == null) return false;
         return Modules.get().get(NoRender.class).isActive() && noCommandSuggestions.get();
     }
 
     public static boolean disableToasts() {
+        if (disableToasts == null || Modules.get() == null || Modules.get().get(NoRender.class) == null) return false;
         return Modules.get().get(NoRender.class).isActive() && disableToasts.get();
     }
     

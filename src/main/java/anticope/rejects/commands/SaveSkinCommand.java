@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.systems.commands.Command;
-import meteordevelopment.meteorclient.systems.commands.arguments.PlayerArgumentType;
+import meteordevelopment.meteorclient.systems.commands.arguments.PlayerListEntryArgumentType;
 import meteordevelopment.meteorclient.utils.network.Http;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,12 +20,13 @@ import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 public class SaveSkinCommand extends Command {
 
-    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An IOException occurred"));
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An exception occurred"));
 
     private final PointerBuffer filters;
     private final Gson GSON = new Gson();
@@ -43,13 +44,13 @@ public class SaveSkinCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        builder.then(argument("player", PlayerArgumentType.create()).executes(ctx -> {
-            PlayerEntity playerEntity = ctx.getArgument("player", PlayerEntity.class);
+        builder.then(argument("player", PlayerListEntryArgumentType.create()).executes(ctx -> {
+            UUID id = PlayerListEntryArgumentType.get(ctx).getProfile().getId();
             String path = TinyFileDialogs.tinyfd_saveFileDialog("Save image", null, filters, null);
             if (path == null) IO_EXCEPTION.create();
             if (path != null) {
                 if (!path.endsWith(".png")) path += ".png";
-                saveSkin(playerEntity.getUuidAsString(),path);
+                saveSkin(id.toString(),path);
             }
             
             return SINGLE_SUCCESS;
@@ -90,7 +91,7 @@ public class SaveSkinCommand extends Command {
             FileOutputStream fos = new FileOutputStream(file.getPath());
             fos.write(response);
             fos.close();
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             throw IO_EXCEPTION.create();
         }
     }

@@ -111,7 +111,7 @@ public class AntiVanish extends Module {
                 final String url = "https://api.mojang.com/user/profiles/" + uuidstr.replace("-", "") + "/names";
                 try {
                     JsonArray res = Http.get(url).sendJson(JsonArray.class);
-                    return res.get(0).getAsJsonObject().get("name").getAsString();
+                    return res.get(res.size() - 1).getAsJsonObject().get("name").getAsString();
                 } catch (Exception e) {
                     return uuidstr;
                 }
