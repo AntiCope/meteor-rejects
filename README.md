@@ -2,7 +2,7 @@
   <!-- Logo and Title -->
   <img src="/src/main/resources/assets/rejects/icon.png" alt="logo" width="20%"/>
   <h1>Meteor Rejects</h1>
-  <p>An addon to Meteor Client that features that won't be added to Meteor. Because they were either rejected or are ports from other clients.</p>
+  <p>An addon to Meteor Client that has features that won't be added to Meteor because they were either rejected or are ports from other clients.</p>
 
   <!-- Fancy badges -->
   <a href="https://anticope.ml/pages/MeteorAddons.html"><img src="https://img.shields.io/badge/Verified%20Addon-Yes-blueviolet" alt="Verified Addon"></a>
@@ -24,7 +24,7 @@
 </div>
 
 # How to use
-- Download the latest [release](/../../releases) of this mod from the releases tab.
+- Download the latest [release](/../../releases) of the mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
 *Note: It is recommended to use the [latest dev build](https://meteorclient.com/download?devBuild=latest) of meteor while using rejects*
