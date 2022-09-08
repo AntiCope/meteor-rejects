@@ -54,6 +54,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new CustomPackets());
         modules.add(new GhostMode());
         modules.add(new Glide());
+        modules.add(new InstaMine());
         modules.add(new InteractionMenu());
         modules.add(new Lavacast());
         modules.add(new NewChunks());
