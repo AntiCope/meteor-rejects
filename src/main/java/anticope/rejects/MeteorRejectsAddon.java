@@ -47,6 +47,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new BonemealAura());
         modules.add(new Boost());
         modules.add(new ChatBot());
+        modules.add(new ChestAura());
         modules.add(new ChorusExploit());
         modules.add(new ColorSigns());
         modules.add(new Confuse());
