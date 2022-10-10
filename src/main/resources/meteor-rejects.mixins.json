@@ -14,7 +14,10 @@
     "StructureVoidBlockMixin",
     "ToastManagerMixin",
     "LivingEntityMixin",
-    "baritone.MineProcessMixin"
+    "baritone.MineProcessMixin",
+    "MultiplayerScreenAccessor",
+    "MultiplayerScreenMixin",
+    "ServerListAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

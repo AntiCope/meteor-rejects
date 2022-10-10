@@ -57,6 +57,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new GhostMode());
         modules.add(new Glide());
         modules.add(new InstaMine());
+        modules.add(new ItemGenerator());
         modules.add(new InteractionMenu());
         modules.add(new Lavacast());
         modules.add(new NewChunks());
@@ -121,7 +122,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
             .get().getMetadata()
             .getCustomValue("github:sha")
             .getAsString();
-        LOG.info(String.format("Rejects version: %s", commit.toString()));
+        LOG.info(String.format("Rejects version: %s", commit));
         return commit.isEmpty() ? null : commit.trim();
     }
 
