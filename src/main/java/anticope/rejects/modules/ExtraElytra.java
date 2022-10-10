@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -58,12 +57,6 @@ public class ExtraElytra extends Module {
     @Override
     public void onActivate() {
         jumpTimer = 0;
-        MeteorClient.EVENT_BUS.subscribe(this);
-    }
-
-    @Override
-    public void onDeactivate() {
-        MeteorClient.EVENT_BUS.unsubscribe(this);
     }
 
     public ExtraElytra() {
