@@ -19,8 +19,7 @@ public class ItemGenerator extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final Setting<Integer> speed = sgGeneral.add(new IntSetting.Builder()
             .name("speed")
-            .description("WARNING: High speeds will cause a ton\n"
-                    + "of lag and can easily crash the game!")
+            .description("WARNING: High speeds will cause a ton of lag and can easily crash the game!")
             .defaultValue(1)
             .min(1)
             .max(36)
@@ -30,8 +29,7 @@ public class ItemGenerator extends Module {
 
     private final Setting<Integer> stackSize = sgGeneral.add(new IntSetting.Builder()
             .name("stack-size")
-            .description("How many items to place in each stack.\n"
-                    + "Doesn't seem to affect performance.")
+            .description("How many items to place in each stack. Doesn't seem to affect performance.")
             .defaultValue(1)
             .min(1)
             .max(64)
@@ -42,7 +40,7 @@ public class ItemGenerator extends Module {
     private final Random random = Random.create();
 
     public ItemGenerator() {
-        super(MeteorRejectsAddon.CATEGORY, "item-generator", "Generates random items and drops them on the ground.\nCreative mode only.");
+        super(MeteorRejectsAddon.CATEGORY, "item-generator", "Generates random items and drops them on the ground. Creative mode only.");
     }
 
     @Override
