@@ -19,7 +19,7 @@ public class ItemGenerator extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final Setting<Integer> speed = sgGeneral.add(new IntSetting.Builder()
             .name("speed")
-            .description("\u00a74\u00a7lWARNING:\u00a7r High speeds will cause a ton\n"
+            .description("WARNING: High speeds will cause a ton\n"
                     + "of lag and can easily crash the game!")
             .defaultValue(1)
             .min(1)
@@ -42,7 +42,7 @@ public class ItemGenerator extends Module {
     private final Random random = Random.create();
 
     public ItemGenerator() {
-        super(MeteorRejectsAddon.CATEGORY, "item-generator", "Spawns a lot of unwanted items");
+        super(MeteorRejectsAddon.CATEGORY, "item-generator", "Generates random items and drops them on the ground.\nCreative mode only.");
     }
 
     @Override
