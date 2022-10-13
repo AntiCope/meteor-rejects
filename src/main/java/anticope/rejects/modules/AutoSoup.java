@@ -24,7 +24,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
 public class AutoSoup extends Module {
-    private static final String desc = "Automatically eats soup when your health is low.\nNote: This hack ignores hunger and assumes that eating soup directly refills your health. If the server you are playing on is not configured to do that, use AutoEat instead.";
+    private static final String desc = "Automatically eats soup when your health is low. Note: This hack ignores hunger and assumes that eating soup directly refills your health. If the server you are playing on is not configured to do that, use AutoEat instead.";
 
     public AutoSoup() {
         super(MeteorRejectsAddon.CATEGORY, "auto-soup", desc);
@@ -34,8 +34,7 @@ public class AutoSoup extends Module {
 
     public final Setting<Double> health = sgGeneral.add(new DoubleSetting.Builder()
             .name("health")
-            .description("Eats a soup when your health\n"
-                    + "reaches this value or falls below it.")
+            .description("Eats a soup when your health reaches this value or falls below it.")
             .defaultValue(6.5)
             .min(0.5)
             .sliderMin(0.5)
