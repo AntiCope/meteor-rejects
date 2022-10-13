@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.utils.WorldUtils;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.mixin.MinecraftClientAccessor;
 import meteordevelopment.meteorclient.settings.BoolSetting;
@@ -75,8 +76,7 @@ public class TillAura extends Module {
             return;
 
         // get valid blocks
-        ArrayList<BlockPos> validBlocks =
-                getValidBlocks(range.get(), this::isCorrectBlock);
+        ArrayList<BlockPos> validBlocks = getValidBlocks(range.get(), this::isCorrectBlock);
 
         if (multiTill.get()) {
             boolean shouldSwing = false;
@@ -96,23 +96,7 @@ public class TillAura extends Module {
                     break;
     }
 
-    public static ArrayList<BlockPos> getAllInBox(BlockPos from, BlockPos to) {
-        ArrayList<BlockPos> blocks = new ArrayList<>();
-
-        BlockPos min = new BlockPos(Math.min(from.getX(), to.getX()),
-                Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        BlockPos max = new BlockPos(Math.max(from.getX(), to.getX()),
-                Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
-
-        for (int x = min.getX(); x <= max.getX(); x++)
-            for (int y = min.getY(); y <= max.getY(); y++)
-                for (int z = min.getZ(); z <= max.getZ(); z++)
-                    blocks.add(new BlockPos(x, y, z));
-
-        return blocks;
-    }
-
-    public Vec3d getEyesPos() {
+    private Vec3d getEyesPos() {
         ClientPlayerEntity player = mc.player;
 
         return new Vec3d(player.getX(),
@@ -130,7 +114,7 @@ public class TillAura extends Module {
         BlockPos min = center.add(-rangeI, -rangeI, -rangeI);
         BlockPos max = center.add(rangeI, rangeI, rangeI);
 
-        return getAllInBox(min, max).stream()
+        return WorldUtils.getAllInBox(min, max).stream()
                 .filter(pos -> eyesVec.squaredDistanceTo(Vec3d.of(pos)) <= rangeSq)
                 .filter(validator)
                 .sorted(Comparator.comparingDouble(
