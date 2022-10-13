@@ -24,6 +24,23 @@ public class WorldUtils {
         return blocks;
     }
 
+    public static List<BlockPos> getAllInBox(BlockPos from, BlockPos to) {
+        blocks.clear();
+
+        BlockPos min = new BlockPos(Math.min(from.getX(), to.getX()),
+                Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
+        BlockPos max = new BlockPos(Math.max(from.getX(), to.getX()),
+                Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
+
+        for (int x = min.getX(); x <= max.getX(); x++)
+            for (int y = min.getY(); y <= max.getY(); y++)
+                for (int z = min.getZ(); z <= max.getZ(); z++)
+                    blocks.add(new BlockPos(x, y, z));
+
+        return blocks;
+    }
+
+
     public static double distanceBetween(BlockPos pos1, BlockPos pos2) {
         double d = pos1.getX() - pos2.getX();
         double e = pos1.getY() - pos2.getY();
