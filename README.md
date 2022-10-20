@@ -65,6 +65,7 @@
 - PacketFly (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/813))
 - Painter
 - Rendering
+- Silent Disconnect
 - SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/render/Skeletons.java))
 - SoundLocator
 - Server Finder (Ported from [MeteorAdditions](https://github.com/JFronny/MeteorAdditions))
