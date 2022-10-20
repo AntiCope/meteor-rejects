@@ -67,6 +67,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new PacketFly());
         modules.add(new Painter());
         modules.add(new Rendering());
+        modules.add(new SilentDisconnect());
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
         modules.add(new TillAura());
@@ -81,13 +82,14 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new ClearChatCommand());
         commands.add(new GhostCommand());
         commands.add(new GiveCommand());
-        commands.add(new SaveSkinCommand());
-        commands.add(new SeedCommand());
         commands.add(new HeadsCommand());
         commands.add(new KickCommand());
         // commands.add(new LocateCommand());   I wish it was that simple -_-
-        commands.add(new ServerCommand());
         commands.add(new PanicCommand());
+        commands.add(new ReconnectCommand());
+        commands.add(new ServerCommand());
+        commands.add(new SaveSkinCommand());
+        commands.add(new SeedCommand());
         commands.add(new SetBlockCommand());
         commands.add(new SetVelocityCommand());
         commands.add(new TeleportCommand());
