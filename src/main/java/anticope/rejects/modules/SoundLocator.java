@@ -13,6 +13,7 @@ import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3d;
 
@@ -46,7 +47,12 @@ public class SoundLocator extends Module {
 
     private void printSound(SoundInstance sound) {
         WeightedSoundSet soundSet = mc.getSoundManager().get(sound.getId());
-        MutableText text = soundSet.getSubtitle().copy();
+        MutableText text;
+        if (soundSet == null || soundSet.getSubtitle() == null) {
+            text = Text.literal(sound.getId().toString());
+        } else {
+            text = soundSet.getSubtitle().copy();
+        }
         text.append(String.format("%s at ", Formatting.RESET));
         Vec3d pos = new Vec3d(sound.getX(), sound.getY(), sound.getZ());
         text.append(ChatUtils.formatCoords(pos));
