@@ -78,6 +78,8 @@
   - `disableToasts`
 - Flight
   - `stopMomentum`
+- Module
+  - `Duplicate names`
 
 ## Commands
 - `.center`
@@ -108,5 +110,7 @@
 - Radar HUD
 
 ## Config
-- `Http Allowed` - modify what http requests can be made with Meteor's http api
-- `Hidden Modules` - hide modules from module gui. **requires restart when unhiding**
+- `Http Allowed` - Modify what http requests can be made with Meteor's http api
+- `Hidden Modules` - Hide modules from module gui. **requires restart when unhiding**
+- `Load system fonts` - Disabling this for faster launch. You can put font into meteor-client/fonts folder. **requires restart to take effect**
+- `Duplicate module names` - Allow duplicate module names. Best for addon compatibility.
