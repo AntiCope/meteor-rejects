@@ -1,9 +1,9 @@
 package anticope.rejects.mixin.meteor;
 
 import anticope.rejects.utils.RejectsConfig;
+import anticope.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.Utils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -21,20 +21,8 @@ public class ModuleMixin {
     @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     private void onInit(Category category, String name, String description, CallbackInfo info) {
         if (RejectsConfig.get().duplicateModuleNames) {
-            this.name = getModuleName(name);
+            this.name = RejectsUtils.getModuleName(name);
             this.title = Utils.nameToTitle(this.name);
         }
-    }
-
-    private static String getModuleName(String name) {
-        boolean dupe = false;
-        for (Module module : Modules.get().getAll()) {
-            if (module.name.equals(name)) {
-                dupe = true;
-                break;
-            }
-        }
-        if (dupe) name += "*";
-        return name;
     }
 }
