@@ -28,7 +28,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     public HttpAllowed httpAllowed = HttpAllowed.Everything;
     public Set<String> hiddenModules = new HashSet<>();
     public boolean loadSystemFonts = true;
-    public boolean duplicateModuleNames = true;
+    public boolean duplicateModuleNames = false;
 
     public RejectsConfig() {
         super("rejects-config");

@@ -41,7 +41,7 @@ public class ConfigModifier {
     public final Setting<Boolean> duplicateModuleNames = sgRejects.add(new BoolSetting.Builder()
             .name("duplicate-module-names")
             .description("Allow duplicate module names. Best for addon compatibility.")
-            .defaultValue(true)
+            .defaultValue(false)
             .defaultValue(RejectsConfig.get().duplicateModuleNames)
             .onChanged(v -> RejectsConfig.get().duplicateModuleNames = v)
             .build()
