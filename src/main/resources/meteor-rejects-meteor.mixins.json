@@ -7,7 +7,9 @@
     "ConfigTabMixin",
     "GuiRendererAccessor",
     "HttpMixin",
+    "ModuleMixin",
     "ModulesMixin",
+    "FontUtilsMixin",
     "modules.FlightMixin",
     "modules.NoRenderAccessor"
   ]
