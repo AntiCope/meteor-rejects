@@ -4,7 +4,6 @@ import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.gui.screens.InteractionScreen;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import meteordevelopment.meteorclient.gui.GuiTheme;
-import meteordevelopment.meteorclient.gui.utils.CharFilter;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
@@ -19,7 +18,6 @@ import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.starscript.value.Value;
 import meteordevelopment.starscript.value.ValueMap;
-
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -27,13 +25,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Optional;
 
 public class InteractionMenu extends Module {
-    
+
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgStyle = settings.createGroup("Style");
-    
+
     private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Entities")
@@ -45,6 +44,12 @@ public class InteractionMenu extends Module {
             .name("keybind")
             .description("The keybind to open.")
             .action(this::onKey)
+            .build()
+    );
+    public final Setting<Boolean> useCrosshairTarget = sgGeneral.add(new BoolSetting.Builder()
+            .name("use-crosshair-target")
+            .description("Use crosshair target.")
+            .defaultValue(false)
             .build()
     );
 
@@ -70,32 +75,39 @@ public class InteractionMenu extends Module {
     public final Setting<SettingColor> borderColor = sgStyle.add(new ColorSetting.Builder()
             .name("border-color")
             .description("Color of the border.")
-            .defaultValue(new SettingColor(0,0,0))
+            .defaultValue(new SettingColor(0, 0, 0))
             .build()
     );
     public final Setting<SettingColor> textColor = sgStyle.add(new ColorSetting.Builder()
             .name("text-color")
             .description("Color of the text.")
-            .defaultValue(new SettingColor(255,255,255))
+            .defaultValue(new SettingColor(255, 255, 255))
             .build()
     );
-    
-    public final HashMap<String,String> messages = new HashMap<>();
+
+    public final HashMap<String, String> messages = new HashMap<>();
     private String currMsgK = "", currMsgV = "";
-    
+
     public InteractionMenu() {
-        super(MeteorRejectsAddon.CATEGORY,"interaction-menu","An interaction screen when looking at an entity.");
+        super(MeteorRejectsAddon.CATEGORY, "interaction-menu", "An interaction screen when looking at an entity.");
         MeteorStarscript.ss.set("entity", () -> wrap(InteractionScreen.interactionMenuEntity));
     }
 
     public void onKey() {
-        if (mc.currentScreen != null) return;
-        Optional<Entity> lookingAt = DebugRenderer.getTargetedEntity(mc.player, 20);
-        if (lookingAt.isPresent()) {
-            Entity e = lookingAt.get();
-            if (entities.get().getBoolean(e.getType())) {
-                mc.setScreen(new InteractionScreen(e, this));
+        if (mc.player == null || mc.currentScreen != null) return;
+        Entity e = null;
+        if (useCrosshairTarget.get()) {
+            e = mc.targetedEntity;
+        } else {
+            Optional<Entity> lookingAt = DebugRenderer.getTargetedEntity(mc.player, 20);
+            if (lookingAt.isPresent()) {
+                e = lookingAt.get();
             }
+        }
+
+        if (e == null) return;
+        if (entities.get().getBoolean(e.getType())) {
+            mc.setScreen(new InteractionScreen(e, this));
         }
     }
 
@@ -114,24 +126,21 @@ public class InteractionMenu extends Module {
             WMinus delete = table.add(theme.minus()).widget();
             delete.action = () -> {
                 messages.remove(key);
-                fillTable(theme,table);
+                fillTable(theme, table);
             };
             table.row();
         });
         WTextBox textBoxK = table.add(theme.textBox(currMsgK)).minWidth(100).expandX().widget();
-        textBoxK.action = () -> {
-            currMsgK = textBoxK.get();
-        };
+        textBoxK.action = () -> currMsgK = textBoxK.get();
         WTextBox textBoxV = table.add(theme.textBox(currMsgV, (text1, c) -> true, StarscriptTextBoxRenderer.class)).minWidth(100).expandX().widget();
-        textBoxV.action = () -> {
-            currMsgV = textBoxV.get();
-        };
+        textBoxV.action = () -> currMsgV = textBoxV.get();
         WPlus add = table.add(theme.plus()).widget();
         add.action = () -> {
-            if (currMsgK != ""  && currMsgV != "") {
+            if (!currMsgK.equals("") && !currMsgV.equals("")) {
                 messages.put(currMsgK, currMsgV);
-                currMsgK = ""; currMsgV = "";
-                fillTable(theme,table);
+                currMsgK = "";
+                currMsgV = "";
+                fillTable(theme, table);
             }
         };
         table.row();
@@ -140,11 +149,9 @@ public class InteractionMenu extends Module {
     @Override
     public NbtCompound toTag() {
         NbtCompound tag = super.toTag();
-        
+
         NbtCompound messTag = new NbtCompound();
-        messages.keySet().forEach((key) -> {
-            messTag.put(key, NbtString.of(messages.get(key)));
-        });
+        messages.keySet().forEach((key) -> messTag.put(key, NbtString.of(messages.get(key))));
 
         tag.put("messages", messTag);
         return tag;
@@ -152,13 +159,11 @@ public class InteractionMenu extends Module {
 
     @Override
     public Module fromTag(NbtCompound tag) {
-        
+
         messages.clear();
         if (tag.contains("messages")) {
             NbtCompound msgs = tag.getCompound("messages");
-            msgs.getKeys().forEach((key) -> {
-                messages.put(key, msgs.getString(key));
-            });
+            msgs.getKeys().forEach((key) -> messages.put(key, msgs.getString(key)));
         }
 
         return super.fromTag(tag);
@@ -179,15 +184,15 @@ public class InteractionMenu extends Module {
             );
         }
         return Value.map(new ValueMap()
-            .set("_toString", Value.string(entity.getName().getString()))
-            .set("health", Value.number(entity instanceof LivingEntity e ? e.getHealth() : 0))
-            .set("pos", Value.map(new ValueMap()
-                .set("_toString", posString(entity.getX(), entity.getY(), entity.getZ()))
-                .set("x", Value.number(entity.getX()))
-                .set("y", Value.number(entity.getY()))
-                .set("z", Value.number(entity.getZ()))
-            ))
-            .set("uuid", Value.string(entity.getUuidAsString()))
+                .set("_toString", Value.string(entity.getName().getString()))
+                .set("health", Value.number(entity instanceof LivingEntity e ? e.getHealth() : 0))
+                .set("pos", Value.map(new ValueMap()
+                        .set("_toString", posString(entity.getX(), entity.getY(), entity.getZ()))
+                        .set("x", Value.number(entity.getX()))
+                        .set("y", Value.number(entity.getY()))
+                        .set("z", Value.number(entity.getZ()))
+                ))
+                .set("uuid", Value.string(entity.getUuidAsString()))
         );
     }
 
