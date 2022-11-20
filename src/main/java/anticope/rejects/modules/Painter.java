@@ -41,6 +41,14 @@ public class Painter extends Module {
             .defaultValue(0)
             .build()
     );
+
+    private final Setting<Integer> bpt = sgGeneral.add(new IntSetting.Builder()
+            .name("blocks-per-tick")
+            .description("Amount of blocks that can be placed in one tick")
+            .min(1)
+            .defaultValue(1)
+            .build()
+    );
     
     private final Setting<Boolean> rotate = sgGeneral.add(new BoolSetting.Builder()
             .name("rotate")
@@ -76,8 +84,7 @@ public class Painter extends Module {
             .defaultValue(true)
             .build()
     );
-    
-    private ArrayList<BlockPos> positions = new ArrayList<>();
+
     private int ticksWaited;
     
     public Painter() {
@@ -102,16 +109,15 @@ public class Painter extends Module {
         }
         
         // Find spots
+        int placed = 0;
         for (BlockPos blockPos : WorldUtils.getSphere(mc.player.getBlockPos(), range.get(), range.get())) {
-            if (shouldPlace(blockPos, block.get())) positions.add(blockPos);
-        }
-        
-        // Place
-        for (BlockPos blockPos : positions) {
-            BlockUtils.place(blockPos, findItemResult, rotate.get(), -100, false);
-    
-            // Delay 0
-            if (delay.get() != 0) break;
+            if (shouldPlace(blockPos, block.get())) {
+                BlockUtils.place(blockPos, findItemResult, rotate.get(), -100, false);
+                placed++;
+
+                // Delay 0
+                if (delay.get() != 0 && placed >= bpt.get()) break;
+            }
         }
     }
     
