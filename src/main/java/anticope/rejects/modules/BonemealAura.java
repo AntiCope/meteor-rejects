@@ -1,5 +1,6 @@
 package anticope.rejects.modules;
 
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.block.AzaleaBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.CocoaBlock;
@@ -15,7 +16,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
@@ -29,7 +29,7 @@ import meteordevelopment.orbit.EventHandler;
 
 public class BonemealAura extends Module {
     public BonemealAura() {
-        super(MeteorRejectsAddon.CATEGORY, "bonemeal-aura", "Automatically bonemeal crops around the player");
+        super(Categories.World, "bonemeal-aura", "Automatically bonemeal crops around the player");
     }
 
     public boolean isBonemealing;

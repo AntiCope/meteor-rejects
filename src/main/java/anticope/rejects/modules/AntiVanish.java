@@ -1,7 +1,7 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
 import com.google.gson.JsonArray;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.game.GameLeftEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
@@ -23,7 +23,7 @@ public class AntiVanish extends Module {
     private long lastTick = 0;
     
     public AntiVanish() {
-        super(MeteorRejectsAddon.CATEGORY, "anti-vanish", "Notifies user when a admin uses /vanish");
+        super(Categories.Misc, "anti-vanish", "Notifies user when a admin uses /vanish");
     }
     
     @Override

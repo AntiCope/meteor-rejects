@@ -1,10 +1,10 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
@@ -117,7 +117,7 @@ public class AutoWither extends Module {
     private int witherTicksWaited, blockTicksWaited;
     
     public AutoWither() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-wither", "Automatically builds withers.");
+        super(Categories.World, "auto-wither", "Automatically builds withers.");
     }
     
     @Override

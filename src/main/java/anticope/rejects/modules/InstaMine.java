@@ -1,6 +1,5 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.entity.player.StartBreakingBlockEvent;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -83,7 +82,7 @@ public class InstaMine extends Module {
     private Direction direction;
 
     public InstaMine() {
-        super(MeteorRejectsAddon.CATEGORY, "insta-mine", "Attempts to instantly mine blocks.");
+        super(Categories.World, "insta-mine", "Attempts to instantly mine blocks.");
     }
 
     @Override
