@@ -2,7 +2,7 @@ package anticope.rejects.modules;
 
 import java.io.IOException;
 
-import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.client.gl.ShaderEffect;
 import net.minecraft.util.Identifier;
 
@@ -89,7 +89,7 @@ public class Rendering extends Module {
     private ShaderEffect shader = null;
     
     public Rendering() {
-        super(MeteorRejectsAddon.CATEGORY, "rendering", "Various Render Tweaks");
+        super(Categories.Render, "rendering", "Various render tweaks");
     }
 
     @Override

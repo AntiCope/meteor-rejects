@@ -1,6 +1,6 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -21,7 +21,7 @@ public class ObsidianFarm extends Module {
     private boolean allowBreakAgain;
     
     public ObsidianFarm() {
-        super(MeteorRejectsAddon.CATEGORY, "obsidian-farm", "Auto obsidian farm(portals).");
+        super(Categories.World, "obsidian-farm", "Auto obsidian farm(portals).");
     }
 
     @Override

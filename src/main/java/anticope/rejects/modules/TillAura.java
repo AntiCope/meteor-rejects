@@ -1,6 +1,5 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.utils.WorldUtils;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.mixin.MinecraftClientAccessor;
@@ -8,6 +7,7 @@ import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.orbit.EventHandler;
@@ -61,7 +61,7 @@ public class TillAura extends Module {
             Blocks.DIRT_PATH, Blocks.DIRT, Blocks.COARSE_DIRT);
 
     public TillAura() {
-        super(MeteorRejectsAddon.CATEGORY, "till-aura", "Automatically turns dirt, grass, etc. into farmland.");
+        super(Categories.World, "till-aura", "Automatically turns dirt, grass, etc. into farmland.");
     }
 
     @EventHandler

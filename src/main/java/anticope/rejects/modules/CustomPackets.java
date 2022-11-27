@@ -1,10 +1,10 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.events.CustomPayloadEvent;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
@@ -39,7 +39,7 @@ public class CustomPackets extends Module {
     );
 
     public CustomPackets() {
-        super(MeteorRejectsAddon.CATEGORY, "custom-packets", "Handles different non-vanilla protocols.");
+        super(Categories.Misc, "custom-packets", "Handles different non-vanilla protocols.");
     }
 
     @EventHandler

@@ -2,6 +2,7 @@ package anticope.rejects.modules;
 
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
@@ -20,7 +21,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-import anticope.rejects.MeteorRejectsAddon;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class TreeAura extends Module {
 
 
     public TreeAura() { // CopeTypes
-        super(MeteorRejectsAddon.CATEGORY, "tree-aura", "Plants trees around you");
+        super(Categories.World, "tree-aura", "Plants trees around you");
     }
 
     @Override

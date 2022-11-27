@@ -1,6 +1,6 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -93,7 +93,7 @@ public class Lavacast extends Module {
     private Stage stage = Stage.None;
 
     public Lavacast() {
-        super(MeteorRejectsAddon.CATEGORY, "lavacast", "Automatically Lavacasts");
+        super(Categories.World, "lavacast", "Automatically Lavacasts");
     }
 
     @Override

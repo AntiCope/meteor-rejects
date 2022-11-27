@@ -1,6 +1,6 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import net.minecraft.util.math.Vec3d;
 
 import meteordevelopment.meteorclient.settings.DoubleSetting;
@@ -22,7 +22,7 @@ public class Boost extends Module {
     );
 
     public Boost() {
-        super(MeteorRejectsAddon.CATEGORY, "boost", "Works like a dash move.");
+        super(Categories.Movement, "boost", "Works like a dash move.");
     }
     
     @Override

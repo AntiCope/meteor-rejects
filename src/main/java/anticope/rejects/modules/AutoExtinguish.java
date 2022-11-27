@@ -1,6 +1,6 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
@@ -86,7 +86,7 @@ public class AutoExtinguish extends Module {
     private static final StatusEffect FIRE_RESISTANCE = Registry.STATUS_EFFECT.get(new Identifier("fire_resistance"));
     
     public AutoExtinguish() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");
+        super(Categories.World, "auto-extinguish", "Automatically extinguishes fire around you");
     }
 
     @EventHandler

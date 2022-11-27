@@ -1,6 +1,6 @@
 package anticope.rejects.modules;
 
-import anticope.rejects.MeteorRejectsAddon;
+import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.entity.player.SendMovementPacketsEvent;
@@ -119,7 +119,7 @@ public class PacketFly extends Module {
     private int teleportID = 0;
 
     public PacketFly() {
-        super(MeteorRejectsAddon.CATEGORY, "packet-fly", "Fly using packets.");
+        super(Categories.Movement, "packet-fly", "Fly using packets.");
     }
 
     @EventHandler
