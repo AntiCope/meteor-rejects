@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Module.class)
 public class ModuleMixin {
-    @Mutable @Shadow public String name;
+    @Mutable @Shadow(remap = false) public String name;
 
-    @Mutable @Shadow public String title;
+    @Mutable @Shadow(remap = false) public String title;
 
     @Inject(method = "<init>", at = @At("TAIL"), remap = false)
     private void onInit(Category category, String name, String description, CallbackInfo info) {

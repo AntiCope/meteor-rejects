@@ -10,6 +10,7 @@
     "ModuleMixin",
     "ModulesMixin",
     "FontUtilsMixin",
+    "DefaultSettingsWidgetFactoryMixin",
     "modules.FlightMixin",
     "modules.NoRenderAccessor"
   ]

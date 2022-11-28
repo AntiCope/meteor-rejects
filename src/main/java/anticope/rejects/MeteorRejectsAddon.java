@@ -38,6 +38,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AutoBedTrap());
         modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
+        modules.add(new AutoLogin());
         modules.add(new AutoPot());
         modules.add(new AutoSoup());
         modules.add(new AutoTNT());

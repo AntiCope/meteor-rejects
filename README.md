@@ -37,6 +37,7 @@
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoExtinguish
+- AutoLogin
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
 - AutoSoup (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - AutoTNT
