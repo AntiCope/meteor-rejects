@@ -96,7 +96,10 @@ public class StringMapSetting extends Setting<Map<String, String>> {
             WTextBox textBoxK = table.add(theme.textBox(key)).minWidth(150).expandX().widget();
             textBoxK.actionOnUnfocused = () -> {
                 String text = textBoxK.get();
-                if (map.containsKey(text)) return;
+                if (map.containsKey(text)) {
+                    textBoxK.set(key);
+                    return;
+                }
                 String value = map.remove(key);
                 key2.set(text);
                 map.put(text, value);
