@@ -40,7 +40,7 @@ public class ChatBot extends Module {
 
     private final Setting<Map<String, String>> commands = sgGeneral.add(new StringMapSetting.Builder()
             .name("commands")
-            .description("Server and commands. (* for universal)")
+            .description("Commands.")
             .renderer(StarscriptTextBoxRenderer.class)
             .defaultValue(new LinkedHashMap<>() {{
                 put("ping", "Pong!");
