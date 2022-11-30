@@ -93,24 +93,24 @@ public class StringMapSetting extends Setting<Map<String, String>> {
         for (String key : map.keySet()) {
             AtomicReference<String> key2 = new AtomicReference<>(key);
 
-            WTextBox textBoxK = table.add(theme.textBox(key)).minWidth(150).expandX().widget();
+            WTextBox textBoxK = table.add(theme.textBox(key2.get())).minWidth(150).expandX().widget();
             textBoxK.actionOnUnfocused = () -> {
                 String text = textBoxK.get();
                 if (map.containsKey(text)) {
-                    textBoxK.set(key);
+                    textBoxK.set(key2.get());
                     return;
                 }
-                String value = map.remove(key);
+                String value = map.remove(key2.get());
                 key2.set(text);
                 map.put(text, value);
             };
 
-            WTextBox textBoxV = table.add(theme.textBox(map.get(key), (text1, c) -> true, setting.renderer)).minWidth(150).expandX().widget();
+            WTextBox textBoxV = table.add(theme.textBox(map.get(key2.get()), (text1, c) -> true, setting.renderer)).minWidth(150).expandX().widget();
             textBoxV.actionOnUnfocused = () -> map.replace(key2.get(), textBoxV.get());
 
             WMinus delete = table.add(theme.minus()).widget();
             delete.action = () -> {
-                map.remove(key);
+                map.remove(key2.get());
                 fillTable(theme, table, setting);
             };
 
