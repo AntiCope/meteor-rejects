@@ -1,7 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import meteordevelopment.meteorclient.events.entity.player.StoppedUsingItemEvent;
+import anticope.rejects.events.StopUsingItemEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -39,7 +39,7 @@ public class ArrowDmg extends Module {
     }
 
     @EventHandler
-    private void onStoppedUsingItem(StoppedUsingItemEvent event) {
+    private void onStopUsingItem(StopUsingItemEvent event) {
         if (!isValidItem(event.itemStack.getItem()))
             return;
 
