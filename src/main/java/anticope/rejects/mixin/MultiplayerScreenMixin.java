@@ -19,8 +19,9 @@ public abstract class MultiplayerScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
-        addDrawableChild(new ButtonWidget(this.width - 75 - 3 - 75 - 2 - 75 - 2, 3, 75, 20, Text.literal("Servers"), button -> {
-            client.setScreen(new ServerManagerScreen(GuiThemes.get(), (MultiplayerScreen) (Object) this));
-        }));
+        addDrawableChild(new ButtonWidget.Builder(Text.literal("Servers"), button -> client.setScreen(new ServerManagerScreen(GuiThemes.get(), (MultiplayerScreen) (Object) this)))
+                .size(75, 20)
+                .position(this.width - 75 - 3 - 75 - 2 - 75 - 2, 3)
+                .build());
     }
 }

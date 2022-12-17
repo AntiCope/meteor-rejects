@@ -11,9 +11,9 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
 
 public class ItemGenerator extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -56,7 +56,7 @@ public class ItemGenerator extends Module {
         int stacks = speed.get();
         int size = stackSize.get();
         for(int i = 9; i < 9 + stacks; i++) {
-            mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(i, new ItemStack(Registry.ITEM.getRandom(random).map(RegistryEntry::value).orElse(Items.DIRT), size)));
+            mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(i, new ItemStack(Registries.ITEM.getRandom(random).map(RegistryEntry::value).orElse(Items.DIRT), size)));
         }
 
         for(int i = 9; i < 9 + stacks; i++) {

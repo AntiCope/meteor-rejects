@@ -18,6 +18,7 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -25,11 +26,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.ChunkRandom;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
-//import net.minecraft.world.chunk.world.random.ChunkRandom;
 import com.seedfinding.mccore.version.MCVersion;
 
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 public class OreSim extends Module {
 
@@ -282,7 +279,7 @@ public class OreSim extends Module {
         long populationSeed = random.setPopulationSeed(worldSeed.seed, chunkX, chunkZ);
 
         var optional = world.getBiomeAccess().getBiomeForNoiseGen(new BlockPos(chunkX, 0, chunkZ)).getKeyOrValue();
-        Identifier id = (optional.right().isPresent()) ? world.getRegistryManager().get(Registry.BIOME_KEY).getId(optional.right().get()) : optional.left().get().getValue();
+        Identifier id = (optional.right().isPresent()) ? world.getRegistryManager().get(RegistryKeys.BIOME).getId(optional.right().get()) : optional.left().get().getValue();
         if (id == null) {
             error("Something went wrong, you may have some mods that mess with world generation");
             toggle();

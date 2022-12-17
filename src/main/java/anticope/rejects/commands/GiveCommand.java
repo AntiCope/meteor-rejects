@@ -10,8 +10,8 @@ import net.minecraft.nbt.*;
 
 import anticope.rejects.utils.GiveUtils;
 import meteordevelopment.meteorclient.systems.commands.Command;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
@@ -34,7 +34,7 @@ public class GiveCommand extends Command {
                 ct.putInt("Time",1);
                 ct.putString("id", "minecraft:falling_block");
                 ct.put("BlockState", new NbtCompound());
-                ct.getCompound("BlockState").putString("Name", Registry.ITEM.getId(inHand.getItem()).toString());
+                ct.getCompound("BlockState").putString("Name", Registries.ITEM.getId(inHand.getItem()).toString());
                 if (inHand.hasNbt() && inHand.getNbt().contains("BlockEntityTag")) {
                     ct.put("TileEntityData", inHand.getNbt().getCompound("BlockEntityTag"));
                 }
@@ -44,7 +44,7 @@ public class GiveCommand extends Command {
             } else {
                 ct.putString("id", "minecraft:item");
                 NbtCompound it = new NbtCompound();
-                it.putString("id", Registry.ITEM.getId(inHand.getItem()).toString());
+                it.putString("id", Registries.ITEM.getId(inHand.getItem()).toString());
                 it.putInt("Count",inHand.getCount());
                 if (inHand.hasNbt()) {
                     it.put("tag", inHand.getNbt());

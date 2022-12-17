@@ -17,11 +17,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -83,7 +83,7 @@ public class AutoExtinguish extends Module {
     private BlockPos blockPos = null;
     private boolean doesWaterBucketWork = true;
     
-    private static final StatusEffect FIRE_RESISTANCE = Registry.STATUS_EFFECT.get(new Identifier("fire_resistance"));
+    private static final StatusEffect FIRE_RESISTANCE = Registries.STATUS_EFFECT.get(new Identifier("fire_resistance"));
     
     public AutoExtinguish() {
         super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");

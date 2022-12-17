@@ -3,7 +3,6 @@ package anticope.rejects.gui.hud;
 import java.util.Iterator;
 
 import anticope.rejects.MeteorRejectsAddon;
-import meteordevelopment.meteorclient.systems.hud.Hud;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -23,7 +22,6 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.render.ESP;
 import meteordevelopment.meteorclient.systems.waypoints.Waypoint;
 import meteordevelopment.meteorclient.systems.waypoints.Waypoints;
-import meteordevelopment.meteorclient.utils.misc.Vec3;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -118,8 +116,7 @@ public class RadarHud extends HudElement {
                 while (waypoints.hasNext()) {
                     Waypoint waypoint = waypoints.next();
                     BlockPos blockPos = waypoint.getPos();
-                    Vec3 c = new Vec3(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
-                    Vec3d coords = new Vec3d(c.x, c.y, c.z);
+                    Vec3d coords = new Vec3d(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
                     double xPos = ((coords.getX() - mc.player.getX()) * scale.get() * zoom.get() + width/2);
                     double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + height/2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;

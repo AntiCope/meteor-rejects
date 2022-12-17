@@ -3,7 +3,6 @@
   "package": "anticope.rejects.mixin.meteor",
   "compatibilityLevel": "JAVA_16",
   "client": [
-    "CommandsMixin",
     "ConfigTabMixin",
     "GuiRendererAccessor",
     "HttpMixin",
