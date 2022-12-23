@@ -40,6 +40,7 @@ import org.lwjgl.glfw.GLFW;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /*
@@ -53,8 +54,8 @@ public class InteractionScreen extends Screen {
     private String focusedString = null;
     private int crosshairX, crosshairY, focusedDot = -1;
     private float yaw, pitch;
-    private final HashMap<String, Consumer<Entity>> functions;
-    private final HashMap<String, String> msgs;
+    private final Map<String, Consumer<Entity>> functions;
+    private final Map<String, String> msgs;
 
     private final StaticListener shiftListener = new StaticListener();
 
@@ -144,7 +145,7 @@ public class InteractionScreen extends Screen {
                 closeScreen();
             });
         }
-        msgs = Modules.get().get(InteractionMenu.class).messages;
+        msgs = Modules.get().get(InteractionMenu.class).messages.get();
         msgs.keySet().forEach((key) -> {
             functions.put(key, (Entity e) -> {
                 closeScreen();

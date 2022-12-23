@@ -7,9 +7,14 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.settings.StringMapSetting;
+import anticope.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
+import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
+import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -19,6 +24,10 @@ import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 import java.util.*;
 
@@ -55,6 +64,19 @@ public class AutoLogin extends Module {
     public AutoLogin() {
         super(MeteorRejectsAddon.CATEGORY, "auto-login", "Runs command when joining specified server.");
         MeteorClient.EVENT_BUS.subscribe(new Listener());
+    }
+
+    @Override
+    public WWidget getWidget(GuiTheme theme) {
+        WHorizontalList l = theme.horizontalList();
+        WButton btn = l.add(theme.button("Random generate password")).widget();
+        btn.action = () -> {
+            String password = RejectsUtils.getRandomPassword(16);
+            MutableText text = Text.literal(Formatting.BOLD + "Click here to register securely.");
+            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/register %s %s", password, password))));
+            info(text);
+        };
+        return l;
     }
 
     private class Listener {
