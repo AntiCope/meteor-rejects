@@ -5,6 +5,7 @@
   "client": [
     "ChestBlockEntityRendererMixin",
     "ClientPlayNetworkHandlerMixin",
+    "ClientPlayerInteractionManagerMixin",
     "CommandSuggestorMixin",
     "CustomPayloadS2CPacketMixin",
     "Deadmau5FeatureRendererMixin",

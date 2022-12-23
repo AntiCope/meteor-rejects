@@ -26,23 +26,27 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 public class SkeletonESP extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<SettingColor> skeletonColorSetting = sgGeneral.add(new ColorSetting.Builder()
-        .name("players-color")
-        .description("The other player's color.")
-        .defaultValue(new SettingColor(255, 255, 255))
-        .build()
+            .name("players-color")
+            .description("The other player's color.")
+            .defaultValue(new SettingColor(255, 255, 255))
+            .build()
     );
 
     public final Setting<Boolean> distance = sgGeneral.add(new BoolSetting.Builder()
-        .name("distance-colors")
-        .description("Changes the color of skeletons depending on distance.")
-        .defaultValue(false)
-        .build()
+            .name("distance-colors")
+            .description("Changes the color of skeletons depending on distance.")
+            .defaultValue(false)
+            .build()
     );
 
     private final Freecam freecam;
@@ -57,7 +61,7 @@ public class SkeletonESP extends Module {
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
 
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
@@ -67,7 +71,8 @@ public class SkeletonESP extends Module {
 
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;
-            if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && mc.player == entity) return;
+            if (mc.options.getPerspective() == Perspective.FIRST_PERSON && !freecam.isActive() && mc.player == entity)
+                return;
             int rotationHoldTicks = Config.get().rotationHoldTicks.get();
 
             Color skeletonColor = PlayerUtils.getPlayerColor((PlayerEntity) entity, skeletonColorSetting.get());
@@ -75,8 +80,8 @@ public class SkeletonESP extends Module {
             PlayerEntity playerEntity = (PlayerEntity) entity;
 
             Vec3d footPos = getEntityRenderPosition(playerEntity, g);
-            PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer)(LivingEntityRenderer<?, ?>) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
-            PlayerEntityModel<PlayerEntity> playerEntityModel = (PlayerEntityModel)livingEntityRenderer.getModel();
+            PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer) (LivingEntityRenderer<?, ?>) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
+            PlayerEntityModel<PlayerEntity> playerEntityModel = (PlayerEntityModel) livingEntityRenderer.getModel();
 
             float h = MathHelper.lerpAngleDegrees(g, playerEntity.prevBodyYaw, playerEntity.bodyYaw);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) h = Rotations.serverYaw;
@@ -106,8 +111,9 @@ public class SkeletonESP extends Module {
             matrixStack.translate(footPos.x, footPos.y, footPos.z);
             if (swimming) matrixStack.translate(0, 0.35f, 0);
 
-            matrixStack.multiply(new Quaternion(new Vec3f(0, -1, 0), h + 180, true));
-            if (swimming || flying) matrixStack.multiply(new Quaternion(new Vec3f(-1, 0, 0), 90 + m, true));
+            matrixStack.multiply(new Quaternionf().setAngleAxis((h + 180) * Math.PI / 180F, 0, -1, 0));
+            if (swimming || flying)
+                matrixStack.multiply(new Quaternionf().setAngleAxis((90 + m) * Math.PI / 180F, -1, 0, 0));
             if (swimming) matrixStack.translate(0, -0.95f, 0);
 
             BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
@@ -169,13 +175,14 @@ public class SkeletonESP extends Module {
             matrixStack.pop();
 
             bufferBuilder.clear();
-            BufferRenderer.drawWithShader(bufferBuilder.end());
+            BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
             if (swimming) matrixStack.translate(0, 0.95f, 0);
-            if (swimming || flying) matrixStack.multiply(new Quaternion(new Vec3f(1, 0, 0), 90 + m, true));
+            if (swimming || flying)
+                matrixStack.multiply(new Quaternionf().setAngleAxis((90 + m) * Math.PI / 180F, 1, 0, 0));
             if (swimming) matrixStack.translate(0, -0.35f, 0);
 
-            matrixStack.multiply(new Quaternion(new Vec3f(0, 1, 0), h + 180, true));
+            matrixStack.multiply(new Quaternionf().setAngleAxis((h + 180) * Math.PI / 180F, 0, 1, 0));
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
         });
 
@@ -184,20 +191,20 @@ public class SkeletonESP extends Module {
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     }
 
     private void rotate(MatrixStack matrix, ModelPart modelPart) {
         if (modelPart.roll != 0.0F) {
-            matrix.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(modelPart.roll));
+            matrix.multiply(RotationAxis.POSITIVE_Z.rotation(modelPart.roll));
         }
 
         if (modelPart.yaw != 0.0F) {
-            matrix.multiply(Vec3f.NEGATIVE_Y.getRadialQuaternion(modelPart.yaw));
+            matrix.multiply(RotationAxis.NEGATIVE_Y.rotation(modelPart.yaw));
         }
 
         if (modelPart.pitch != 0.0F) {
-            matrix.multiply(Vec3f.NEGATIVE_X.getRadialQuaternion(modelPart.pitch));
+            matrix.multiply(RotationAxis.NEGATIVE_X.rotation(modelPart.pitch));
         }
     }
 
@@ -222,8 +229,7 @@ public class SkeletonESP extends Module {
         if (percent < 0.5) {
             r = 255;
             g = (int) (255 * percent / 0.5);
-        }
-        else {
+        } else {
             g = 255;
             r = 255 - (int) (255 * (percent - 0.5) / 0.5);
         }

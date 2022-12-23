@@ -35,9 +35,12 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AntiBot());
         modules.add(new AntiSpawnpoint());
         modules.add(new AntiVanish());
+        modules.add(new ArrowDmg());
         modules.add(new AutoBedTrap());
         modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
+        modules.add(new AutoGrind());
+        modules.add(new AutoLogin());
         modules.add(new AutoPot());
         modules.add(new AutoSoup());
         modules.add(new AutoTNT());
@@ -84,7 +87,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         commands.add(new GiveCommand());
         commands.add(new HeadsCommand());
         commands.add(new KickCommand());
-        // commands.add(new LocateCommand());   I wish it was that simple -_-
+        commands.add(new LocateCommand());
         commands.add(new PanicCommand());
         commands.add(new ReconnectCommand());
         commands.add(new ServerCommand());

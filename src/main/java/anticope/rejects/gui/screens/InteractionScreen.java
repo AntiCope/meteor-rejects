@@ -10,10 +10,8 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.PeekScreen;
 import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.starscript.Script;
 import meteordevelopment.starscript.compiler.Compiler;
 import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.compiler.Parser.Result;
 import meteordevelopment.starscript.utils.Error;
 import meteordevelopment.starscript.utils.StarscriptError;
 
@@ -42,6 +40,7 @@ import org.lwjgl.glfw.GLFW;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /*
@@ -55,8 +54,8 @@ public class InteractionScreen extends Screen {
     private String focusedString = null;
     private int crosshairX, crosshairY, focusedDot = -1;
     private float yaw, pitch;
-    private final HashMap<String, Consumer<Entity>> functions;
-    private final HashMap<String, String> msgs;
+    private final Map<String, Consumer<Entity>> functions;
+    private final Map<String, String> msgs;
 
     private final StaticListener shiftListener = new StaticListener();
 
@@ -146,7 +145,7 @@ public class InteractionScreen extends Screen {
                 closeScreen();
             });
         }
-        msgs = Modules.get().get(InteractionMenu.class).messages;
+        msgs = Modules.get().get(InteractionMenu.class).messages.get();
         msgs.keySet().forEach((key) -> {
             functions.put(key, (Entity e) -> {
                 closeScreen();
@@ -242,7 +241,7 @@ public class InteractionScreen extends Screen {
     public void render(MatrixStack matrix, int mouseX, int mouseY, float delta) {
         // Fake crosshair stuff
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,

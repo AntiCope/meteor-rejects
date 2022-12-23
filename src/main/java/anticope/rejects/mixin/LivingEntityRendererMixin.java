@@ -6,9 +6,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,7 +24,7 @@ public class LivingEntityRendererMixin {
         if (renderingModule == null) return;
         if ((!(entity instanceof PlayerEntity)) && renderingModule.dinnerboneEnabled()) {
             matrices.translate(0.0D, entity.getHeight() + 0.1F, 0.0D);
-            matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+            matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0F));
         }
     }
 

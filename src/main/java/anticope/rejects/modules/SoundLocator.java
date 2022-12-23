@@ -48,10 +48,8 @@ public class SoundLocator extends Module {
     private void printSound(SoundInstance sound) {
         WeightedSoundSet soundSet = mc.getSoundManager().get(sound.getId());
         MutableText text;
-        if (soundSet == null) {
+        if (soundSet == null || soundSet.getSubtitle() == null) {
             text = Text.literal(sound.getId().toString());
-        } else if (soundSet.getSubtitle() == null) {
-            text = Text.literal(soundSet.getId().toString());
         } else {
             text = soundSet.getSubtitle().copy();
         }

@@ -2,14 +2,9 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.gui.screens.InteractionScreen;
+import anticope.rejects.settings.StringMapSetting;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
-import meteordevelopment.meteorclient.gui.widgets.WWidget;
-import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
-import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
-import meteordevelopment.meteorclient.gui.widgets.pressable.WMinus;
-import meteordevelopment.meteorclient.gui.widgets.pressable.WPlus;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
@@ -22,10 +17,8 @@ import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtString;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class InteractionMenu extends Module {
@@ -85,8 +78,12 @@ public class InteractionMenu extends Module {
             .build()
     );
 
-    public final HashMap<String, String> messages = new HashMap<>();
-    private String currMsgK = "", currMsgV = "";
+    public final Setting<Map<String, String>> messages = sgGeneral.add(new StringMapSetting.Builder()
+            .name("messages")
+            .description("Messages.")
+            .renderer(StarscriptTextBoxRenderer.class)
+            .build()
+    );
 
     public InteractionMenu() {
         super(MeteorRejectsAddon.CATEGORY, "interaction-menu", "An interaction screen when looking at an entity.");
@@ -109,64 +106,6 @@ public class InteractionMenu extends Module {
         if (entities.get().getBoolean(e.getType())) {
             mc.setScreen(new InteractionScreen(e, this));
         }
-    }
-
-    @Override
-    public WWidget getWidget(GuiTheme theme) {
-        WTable table = theme.table();
-        fillTable(theme, table);
-        return table;
-    }
-
-    private void fillTable(GuiTheme theme, WTable table) {
-        table.clear();
-        messages.keySet().forEach((key) -> {
-            table.add(theme.label(key)).expandCellX();
-            table.add(theme.label(messages.get(key))).expandCellX();
-            WMinus delete = table.add(theme.minus()).widget();
-            delete.action = () -> {
-                messages.remove(key);
-                fillTable(theme, table);
-            };
-            table.row();
-        });
-        WTextBox textBoxK = table.add(theme.textBox(currMsgK)).minWidth(100).expandX().widget();
-        textBoxK.action = () -> currMsgK = textBoxK.get();
-        WTextBox textBoxV = table.add(theme.textBox(currMsgV, (text1, c) -> true, StarscriptTextBoxRenderer.class)).minWidth(100).expandX().widget();
-        textBoxV.action = () -> currMsgV = textBoxV.get();
-        WPlus add = table.add(theme.plus()).widget();
-        add.action = () -> {
-            if (!currMsgK.equals("") && !currMsgV.equals("")) {
-                messages.put(currMsgK, currMsgV);
-                currMsgK = "";
-                currMsgV = "";
-                fillTable(theme, table);
-            }
-        };
-        table.row();
-    }
-
-    @Override
-    public NbtCompound toTag() {
-        NbtCompound tag = super.toTag();
-
-        NbtCompound messTag = new NbtCompound();
-        messages.keySet().forEach((key) -> messTag.put(key, NbtString.of(messages.get(key))));
-
-        tag.put("messages", messTag);
-        return tag;
-    }
-
-    @Override
-    public Module fromTag(NbtCompound tag) {
-
-        messages.clear();
-        if (tag.contains("messages")) {
-            NbtCompound msgs = tag.getCompound("messages");
-            msgs.getKeys().forEach((key) -> messages.put(key, msgs.getString(key)));
-        }
-
-        return super.fromTag(tag);
     }
 
     private static Value wrap(Entity entity) {

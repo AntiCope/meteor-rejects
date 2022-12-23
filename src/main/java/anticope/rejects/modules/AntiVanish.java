@@ -37,14 +37,13 @@ public class AntiVanish extends Module {
 
     @EventHandler
     public void onPacket(PacketEvent.Receive event) {
-        if (event.packet instanceof PlayerListS2CPacket) {
-            PlayerListS2CPacket packet = (PlayerListS2CPacket) event.packet;
-            if (packet.getAction() == PlayerListS2CPacket.Action.UPDATE_LATENCY) {
+        if (event.packet instanceof PlayerListS2CPacket packet) {
+            if (packet.getActions().contains(PlayerListS2CPacket.Action.UPDATE_LATENCY)) {
                 try {
                     for (PlayerListS2CPacket.Entry entry : packet.getEntries()) {
-                        if (mc.getNetworkHandler().getPlayerListEntry(entry.getProfile().getId()) != null)
+                        if (mc.getNetworkHandler().getPlayerListEntry(entry.profileId()) != null)
                             continue;
-                        toLookup.add(entry.getProfile().getId());
+                        toLookup.add(entry.profileId());
                     }
                 } catch (Exception ignore) {}
             }
