@@ -83,9 +83,10 @@ public class AutoGrind extends Module {
 
         for (Enchantment enchantment : enchantments.keySet()) {
             availEnchs++;
-            if (enchantmentBlacklist.get().contains(enchantment) || enchantment.isCursed()) {
+            if (enchantment.isCursed())
                 availEnchs--;
-            }
+            if (enchantmentBlacklist.get().contains(enchantment))
+                return false;
         }
 
         return enchantments.size() > 0 && availEnchs > 0;
