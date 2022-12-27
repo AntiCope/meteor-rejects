@@ -1,17 +1,16 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-
-
-import meteordevelopment.meteorclient.events.render.Render3DEvent;
+import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.world.PlaySoundEvent;
+import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
+import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 
-import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundEvent;
