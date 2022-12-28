@@ -11,6 +11,7 @@
     "FontUtilsMixin",
     "DefaultSettingsWidgetFactoryMixin",
     "modules.FlightMixin",
-    "modules.NoRenderAccessor"
+    "modules.NoRenderAccessor",
+    "modules.AutoSignMixin"
   ]
 }

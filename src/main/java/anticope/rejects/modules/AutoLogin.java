@@ -82,6 +82,7 @@ public class AutoLogin extends Module {
     private class Listener {
         @EventHandler
         private void onGameJoined(GameJoinedEvent event) {
+            if (!isActive()) return;
             String command = commands.get().getOrDefault("*", commands.get().get(Utils.getWorldName()));
             if (command != null) {
                 timer.schedule(new TimerTask() {
