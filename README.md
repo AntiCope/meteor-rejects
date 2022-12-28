@@ -81,6 +81,8 @@
   - `disableToasts`
 - Flight
   - `stopMomentum`
+- AutoSign
+  - `Random characters` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack))
 - Module
   - `Duplicate names`
 
