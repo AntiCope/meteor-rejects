@@ -95,6 +95,7 @@ public class SoundLocator extends Module {
     @EventHandler
     private void onPlaySound(PlaySoundEvent event) {
         if(whitelist.get()) {
+            // Whitelist
             for (SoundEvent sound : sounds.get()) {
                 if (sound.getId().equals(event.sound.getId())) {
                     printSound(event.sound);
@@ -102,7 +103,13 @@ public class SoundLocator extends Module {
                 }
             }
         } else {
-            printSound(event.sound);
+            // Blacklist (needs to be tested)    
+            for (SoundEvent sound : sounds.get()) {
+                if (!sound.getId().equals(event.sound.getId())) {
+                    printSound(event.sound);
+                    break;
+                }
+            }
         }
     }
 
