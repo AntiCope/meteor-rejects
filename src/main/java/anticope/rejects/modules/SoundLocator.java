@@ -10,7 +10,12 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
+import meteordevelopment.meteorclient.settings.SoundEventListSetting;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.WeightedSoundSet;
 import net.minecraft.sound.SoundEvent;
@@ -36,20 +41,34 @@ public class SoundLocator extends Module {
 
     private final Setting<Boolean> whitelist = sgGeneral.add(new BoolSetting.Builder()
         .name("whitelist")
-        .description("Set sounds list to whitelist")
+        .description("Enable sounds filter whitelist.")
         .defaultValue(false)
         .build()
     );
     
+    private final Setting<Boolean> chatActive = sgGeneral.add(new BoolSetting.Builder()
+        .name("log-chat")
+        .description("Send the position of the sound in the chat.")
+        .defaultValue(false)
+        .build()
+    );
     
     private final Setting<Integer> timeS = sgGeneral.add(new IntSetting.Builder()
         .name("time")
-        .description("The time the render box will disappear")
+        .description("The time between the sounds verification.")
         .defaultValue(60)
         .build()
     );
     
     // Render
+    
+    private final Setting<Boolean> renderActive = sgRender.add(new BoolSetting.Builder()
+        .name("render-positions")
+        .description("Renders boxes where the sound was emitted.")
+        .defaultValue(true)
+        .build()
+    );
+    
     private final Setting<ShapeMode> shapeMode = sgRender.add(new EnumSetting.Builder<ShapeMode>()
         .name("shape-mode")
         .description("How the shapes are rendered.")
@@ -95,7 +114,7 @@ public class SoundLocator extends Module {
     @EventHandler
     private void onPlaySound(PlaySoundEvent event) {
         if(whitelist.get()) {
-            // Whitelist
+            // Whitelist ON
             for (SoundEvent sound : sounds.get()) {
                 if (sound.getId().equals(event.sound.getId())) {
                     printSound(event.sound);
@@ -103,13 +122,8 @@ public class SoundLocator extends Module {
                 }
             }
         } else {
-            // Blacklist (needs to be tested)    
-            for (SoundEvent sound : sounds.get()) {
-                if (!sound.getId().equals(event.sound.getId())) {
-                    printSound(event.sound);
-                    break;
-                }
-            }
+            // Whitelist OFF (Allow all sounds)
+            printSound(event.sound);
         }
     }
 
@@ -120,13 +134,31 @@ public class SoundLocator extends Module {
         if(!renderPos.contains(pos)) {
             renderPos.add(pos);
             delay.add(timeS.get());
+            
+            if(chatActive.get()) {
+                MutableText text;
+                if (soundSet == null || soundSet.getSubtitle() == null) {
+                    text = Text.literal(sound.getId().toString());
+                } else {
+                    text = soundSet.getSubtitle().copy();
+                }
+                
+                
+                text.append(String.format("%s at ", Formatting.RESET));
+                text.append(ChatUtils.formatCoords(pos));
+                text.append(String.format("%s.", Formatting.RESET));
+                info(text);
+            }
+            
         }
     }
 
     @EventHandler
     private void onRender(Render3DEvent event) {
-        renderPos.forEach(pos -> {
-            event.renderer.box(Box.from(pos), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
-        });
+        if(renderActive.get()) {
+            renderPos.forEach(pos -> {
+                event.renderer.box(Box.from(pos), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+            });
+        }
     }
 }
