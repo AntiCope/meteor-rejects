@@ -39,6 +39,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AutoBedTrap());
         modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
+        modules.add(new AutoFarm());
         modules.add(new AutoGrind());
         modules.add(new AutoLogin());
         modules.add(new AutoPot());
@@ -48,7 +49,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new BoatGlitch());
         modules.add(new BlockIn());
         modules.add(new BoatPhase());
-        modules.add(new BonemealAura());
         modules.add(new Boost());
         modules.add(new ChatBot());
         modules.add(new ChestAura());
@@ -64,6 +64,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new ItemGenerator());
         modules.add(new InteractionMenu());
         modules.add(new Lavacast());
+        modules.add(new MossBot());
         modules.add(new NewChunks());
         modules.add(new ObsidianFarm());
         modules.add(new OreSim());
@@ -73,7 +74,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new SilentDisconnect());
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
-        modules.add(new TillAura());
         modules.add(new TreeAura());
         
         // Module modifications
