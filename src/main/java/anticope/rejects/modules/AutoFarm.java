@@ -153,7 +153,7 @@ public class AutoFarm extends Module {
             for (BlockPos pos : blocks) {
                 BlockState state = mc.world.getBlockState(pos);
                 Block block = state.getBlock();
-                if (till(pos, block) || harvest(pos, block) || plant(pos, block) || bonemeal(pos, state, block))
+                if (till(pos, block) || harvest(pos, state, block) || plant(pos, block) || bonemeal(pos, state, block))
                     actions++;
                 if (actions >= bpt.get()) break;
             }
@@ -179,9 +179,10 @@ public class AutoFarm extends Module {
         return false;
     }
 
-    private boolean harvest(BlockPos pos, Block block) {
+    private boolean harvest(BlockPos pos, BlockState state, Block block) {
         if (!harvest.get()) return false;
         if (!harvestBlocks.get().contains(block)) return false;
+        if (!isMature(state, block)) return false;
         if (block instanceof SweetBerryBushBlock)
             mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
         else {
