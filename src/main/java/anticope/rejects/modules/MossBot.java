@@ -40,6 +40,7 @@ public class MossBot extends Module {
             .defaultValue(true)
             .build()
     );
+
     private final Map<BlockPos, Integer> mossMap = new HashMap<>();
 
     public MossBot() {
@@ -66,13 +67,9 @@ public class MossBot extends Module {
                 mc.interactionManager.updateBlockBreakingProgress(bestBlock.up(), Direction.UP);
             }
 
-            interact(bestBlock, findItemResult);
+            WorldUtils.interact(bestBlock, findItemResult, rotate.get());
             mossMap.put(bestBlock, 100);
         }
-    }
-
-    private void interact(BlockPos pos, FindItemResult findItemResult) {
-        WorldUtils.interact(pos, findItemResult, rotate.get());
     }
 
     private int getMossSpots(BlockPos pos) {

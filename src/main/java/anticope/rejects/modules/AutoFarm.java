@@ -34,11 +34,11 @@ public class AutoFarm extends Module {
 
     private final Map<BlockPos, Item> replantMap = new HashMap<>();
 
-    private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
+    private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
             .name("range")
             .description("Auto farm range.")
             .defaultValue(4)
-            .min(0)
+            .min(1)
             .build()
     );
 
@@ -115,13 +115,14 @@ public class AutoFarm extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         int actions = 0;
-        for (BlockPos pos : BlockPos.iterateOutwards(new BlockPos(mc.player.getEyePos()), range.get(), range.get(), range.get())) {
+        for (BlockPos pos : WorldUtils.getCube(range.get())) {
             BlockState state = mc.world.getBlockState(pos);
             Block block = state.getBlock();
+
             if (till.get() && shouldTill(pos)) {
                 FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
                 if (hoe.found()) {
-                    interact(pos, hoe);
+                    WorldUtils.interact(pos, hoe, rotate.get());
                     actions++;
                 }
             }
@@ -146,17 +147,13 @@ public class AutoFarm extends Module {
             } else if (shouldBonemeal(state, block)) {
                 FindItemResult bonemeal = InvUtils.findInHotbar(Items.BONE_MEAL);
                 if (bonemeal.found()) {
-                    interact(pos, bonemeal);
+                    WorldUtils.interact(pos, bonemeal, rotate.get());
                     actions++;
                 }
             }
 
             if (actions >= bpt.get()) break;
         }
-    }
-
-    private void interact(BlockPos pos, FindItemResult findItemResult) {
-        WorldUtils.interact(pos, findItemResult, rotate.get());
     }
 
     private boolean plant(BlockPos pos) {
