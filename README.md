@@ -38,6 +38,7 @@
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoExtinguish
+- AutoFarm
 - AutoGrind
 - AutoLogin
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
@@ -45,7 +46,6 @@
 - AutoTNT
 - AutoWither (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1070))
 - BlockIn
-- BonemealAura (Ported from [JexClient](https://github.com/DustinRepo/JexClient/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/world/BonemealAura.java))
 - BoatGlitch & BoatPhase (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/814))
 - Boost (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/Boost.java))
 - ChatBot
@@ -62,6 +62,7 @@
 - Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Lavacast
+- MossBot (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - NewChunks (Ported from [BleackHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/module/mods/NewChunks.java))
 - ObsidianFarm (Taken from [Meteor ObsidianFarm Addon](https://github.com/VoidCyborg/meteor-obsidian-farm))
 - Oresim (Ported from [Atomic](https://gitlab.com/0x151/atomic))
@@ -72,7 +73,6 @@
 - SkeletonESP (Ported from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/render/Skeletons.java))
 - SoundLocator
 - Server Finder (Ported from [MeteorAdditions](https://github.com/JFronny/MeteorAdditions))
-- TillAura (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - TreeAura (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/2138))
 
 ### Modifications
