@@ -45,7 +45,7 @@ public class AutoFarm extends Module {
 
     private final Setting<Integer> bpt = sgGeneral.add(new IntSetting.Builder()
             .name("blocks-per-tick")
-            .description("Amount of operations that can be applied in one tick. Higher than 1 may create ghost bocks.")
+            .description("Amount of operations that can be applied in one tick.")
             .min(1)
             .defaultValue(1)
             .build()
@@ -72,17 +72,31 @@ public class AutoFarm extends Module {
             .build()
     );
 
+    private final Setting<Boolean> harvest = sgHarvest.add(new BoolSetting.Builder()
+            .name("harvest")
+            .description("Harvest crops.")
+            .defaultValue(true)
+            .build()
+    );
+
     private final Setting<List<Block>> harvestBlocks = sgHarvest.add(new BlockListSetting.Builder()
             .name("harvest-blocks")
-            .description("Crops to use for harvesting.")
+            .description("Which crops to harvest.")
             .defaultValue()
             .filter(this::harvestFilter)
             .build()
     );
 
+    private final Setting<Boolean> plant = sgPlant.add(new BoolSetting.Builder()
+            .name("plant")
+            .description("Plant crops.")
+            .defaultValue(true)
+            .build()
+    );
+
     private final Setting<List<Item>> plantItems = sgPlant.add(new ItemListSetting.Builder()
             .name("plant-items")
-            .description("Crops to use for planting.")
+            .description("Which crops to plant.")
             .defaultValue()
             .filter(this::plantFilter)
             .build()
@@ -96,9 +110,16 @@ public class AutoFarm extends Module {
             .build()
     );
 
+    private final Setting<Boolean> bonemeal = sgBonemeal.add(new BoolSetting.Builder()
+            .name("bonemeal")
+            .description("Bonemeal crops.")
+            .defaultValue(true)
+            .build()
+    );
+
     private final Setting<List<Block>> bonemealBlocks = sgBonemeal.add(new BlockListSetting.Builder()
             .name("bonemeal-blocks")
-            .description("Crops to use for bonemealing.")
+            .description("Which crops to bonemeal.")
             .defaultValue()
             .filter(this::bonemealFilter)
             .build()
@@ -132,7 +153,7 @@ public class AutoFarm extends Module {
             for (BlockPos pos : blocks) {
                 BlockState state = mc.world.getBlockState(pos);
                 Block block = state.getBlock();
-                if (till(pos, block) || harvest(pos, state, block) || plant(pos, block) || bonemeal(pos, state, block))
+                if (till(pos, block) || harvest(pos, block) || plant(pos, block) || bonemeal(pos, state, block))
                     actions++;
                 if (actions >= bpt.get()) break;
             }
@@ -144,22 +165,23 @@ public class AutoFarm extends Module {
     }
 
     private boolean till(BlockPos pos, Block block) {
+        if (!till.get()) return false;
         boolean moist = !this.moist.get() || isWaterNearby(mc.world, pos);
         boolean tillable = block == Blocks.GRASS_BLOCK ||
                 block == Blocks.DIRT_PATH ||
                 block == Blocks.DIRT ||
                 block == Blocks.COARSE_DIRT ||
                 block == Blocks.ROOTED_DIRT;
-        if (till.get() && moist && tillable && mc.world.getBlockState(pos.up()).isAir()) {
+        if (moist && tillable && mc.world.getBlockState(pos.up()).isAir()) {
             FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
             return WorldUtils.interact(pos, hoe, rotate.get());
         }
         return false;
     }
 
-    private boolean harvest(BlockPos pos, BlockState state, Block block) {
+    private boolean harvest(BlockPos pos, Block block) {
+        if (!harvest.get()) return false;
         if (!harvestBlocks.get().contains(block)) return false;
-        if (!isMature(state, block)) return false;
         if (block instanceof SweetBerryBushBlock)
             mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
         else {
@@ -177,15 +199,8 @@ public class AutoFarm extends Module {
         return true;
     }
 
-    private boolean bonemeal(BlockPos pos, BlockState state, Block block) {
-        if (!bonemealBlocks.get().contains(block)) return false;
-        if (isMature(state, block)) return false;
-
-        FindItemResult bonemeal = InvUtils.findInHotbar(Items.BONE_MEAL);
-        return WorldUtils.interact(pos, bonemeal, rotate.get());
-    }
-
     private boolean plant(BlockPos pos, Block block) {
+        if (!plant.get()) return false;
         if (!mc.world.isAir(pos.up())) return false;
         FindItemResult findItemResult = null;
         if (onlyReplant.get()) {
@@ -212,6 +227,15 @@ public class AutoFarm extends Module {
             return true;
         }
         return false;
+    }
+
+    private boolean bonemeal(BlockPos pos, BlockState state, Block block) {
+        if (!bonemeal.get()) return false;
+        if (!bonemealBlocks.get().contains(block)) return false;
+        if (isMature(state, block)) return false;
+
+        FindItemResult bonemeal = InvUtils.findInHotbar(Items.BONE_MEAL);
+        return WorldUtils.interact(pos, bonemeal, rotate.get());
     }
 
     private boolean isWaterNearby(WorldView world, BlockPos pos) {
