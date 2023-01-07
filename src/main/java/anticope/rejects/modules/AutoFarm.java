@@ -6,8 +6,10 @@ import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
+import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.*;
@@ -19,11 +21,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldView;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AutoFarm extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -34,7 +35,7 @@ public class AutoFarm extends Module {
 
     private final Map<BlockPos, Item> replantMap = new HashMap<>();
 
-    private final Setting<Double> range = sgGeneral.add(new DoubleSetting.Builder()
+    private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
             .name("range")
             .description("Auto farm range.")
             .defaultValue(4)
@@ -44,7 +45,7 @@ public class AutoFarm extends Module {
 
     private final Setting<Integer> bpt = sgGeneral.add(new IntSetting.Builder()
             .name("blocks-per-tick")
-            .description("Amount of operations that can be applied in one tick.")
+            .description("Amount of operations that can be applied in one tick. Higher than 1 may create ghost bocks.")
             .min(1)
             .defaultValue(1)
             .build()
@@ -103,6 +104,11 @@ public class AutoFarm extends Module {
             .build()
     );
 
+    private final Pool<BlockPos.Mutable> blockPosPool = new Pool<>(BlockPos.Mutable::new);
+    private final List<BlockPos.Mutable> blocks = new ArrayList<>();
+
+    int actions = 0;
+
     public AutoFarm() {
         super(MeteorRejectsAddon.CATEGORY, "auto-farm", "All-in-one farm utility.");
     }
@@ -114,50 +120,72 @@ public class AutoFarm extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        int actions = 0;
-        for (BlockPos pos : WorldUtils.getCube(range.get())) {
-            BlockState state = mc.world.getBlockState(pos);
-            Block block = state.getBlock();
+        actions = 0;
+        BlockIterator.register(range.get(), range.get(), (pos, state) -> {
+            if (mc.player.getEyePos().distanceTo(Vec3d.ofCenter(pos)) <= range.get())
+                blocks.add(blockPosPool.get().set(pos));
+        });
 
-            if (till.get() && shouldTill(pos)) {
-                FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
-                if (hoe.found()) {
-                    WorldUtils.interact(pos, hoe, rotate.get());
+        BlockIterator.after(() -> {
+            blocks.sort(Comparator.comparingDouble(value -> mc.player.getEyePos().distanceTo(Vec3d.ofCenter(value))));
+
+            for (BlockPos pos : blocks) {
+                BlockState state = mc.world.getBlockState(pos);
+                Block block = state.getBlock();
+                if (till(pos, block) || harvest(pos, state, block) || plant(pos, block) || bonemeal(pos, state, block))
                     actions++;
-                }
-            }
-            if (shouldHarvest(state, block)) {
-                if (block instanceof SweetBerryBushBlock)
-                    mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
-                else {
-                    mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
-                    if (onlyReplant.get()) {
-                        Item item = null;
-                        if (block == Blocks.WHEAT) item = Items.WHEAT_SEEDS;
-                        else if (block == Blocks.CARROTS) item = Items.CARROT;
-                        else if (block == Blocks.POTATOES) item = Items.POTATO;
-                        else if (block == Blocks.BEETROOTS) item = Items.BEETROOT_SEEDS;
-                        else if (block == Blocks.NETHER_WART) item = Items.NETHER_WART;
-                        if (item != null) replantMap.put(pos, item);
-                    }
-                }
-                actions++;
-            } else if (plant(pos)) {
-                actions++;
-            } else if (shouldBonemeal(state, block)) {
-                FindItemResult bonemeal = InvUtils.findInHotbar(Items.BONE_MEAL);
-                if (bonemeal.found()) {
-                    WorldUtils.interact(pos, bonemeal, rotate.get());
-                    actions++;
-                }
+                if (actions >= bpt.get()) break;
             }
 
-            if (actions >= bpt.get()) break;
-        }
+            for (BlockPos.Mutable blockPos : blocks) blockPosPool.free(blockPos);
+            blocks.clear();
+
+        });
     }
 
-    private boolean plant(BlockPos pos) {
-        Block block = mc.world.getBlockState(pos).getBlock();
+    private boolean till(BlockPos pos, Block block) {
+        boolean moist = !this.moist.get() || isWaterNearby(mc.world, pos);
+        boolean tillable = block == Blocks.GRASS_BLOCK ||
+                block == Blocks.DIRT_PATH ||
+                block == Blocks.DIRT ||
+                block == Blocks.COARSE_DIRT ||
+                block == Blocks.ROOTED_DIRT;
+        if (till.get() && moist && tillable && mc.world.getBlockState(pos.up()).isAir()) {
+            FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
+            return WorldUtils.interact(pos, hoe, rotate.get());
+        }
+        return false;
+    }
+
+    private boolean harvest(BlockPos pos, BlockState state, Block block) {
+        if (!harvestBlocks.get().contains(block)) return false;
+        if (!isMature(state, block)) return false;
+        if (block instanceof SweetBerryBushBlock)
+            mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
+        else {
+            mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
+            if (onlyReplant.get()) {
+                Item item = null;
+                if (block == Blocks.WHEAT) item = Items.WHEAT_SEEDS;
+                else if (block == Blocks.CARROTS) item = Items.CARROT;
+                else if (block == Blocks.POTATOES) item = Items.POTATO;
+                else if (block == Blocks.BEETROOTS) item = Items.BEETROOT_SEEDS;
+                else if (block == Blocks.NETHER_WART) item = Items.NETHER_WART;
+                if (item != null) replantMap.put(pos, item);
+            }
+        }
+        return true;
+    }
+
+    private boolean bonemeal(BlockPos pos, BlockState state, Block block) {
+        if (!bonemealBlocks.get().contains(block)) return false;
+        if (isMature(state, block)) return false;
+
+        FindItemResult bonemeal = InvUtils.findInHotbar(Items.BONE_MEAL);
+        return WorldUtils.interact(pos, bonemeal, rotate.get());
+    }
+
+    private boolean plant(BlockPos pos, Block block) {
         if (!mc.world.isAir(pos.up())) return false;
         FindItemResult findItemResult = null;
         if (onlyReplant.get()) {
@@ -191,27 +219,6 @@ public class AutoFarm extends Module {
             if (world.getFluidState(blockPos).isIn(FluidTags.WATER)) return true;
         }
         return false;
-    }
-
-    private boolean shouldTill(BlockPos pos) {
-        Block block = mc.world.getBlockState(pos).getBlock();
-        boolean moist = !this.moist.get() || isWaterNearby(mc.world, pos);
-        boolean tillable = (block == Blocks.GRASS_BLOCK ||
-                block == Blocks.DIRT_PATH ||
-                block == Blocks.DIRT ||
-                block == Blocks.COARSE_DIRT ||
-                block == Blocks.ROOTED_DIRT);
-        return moist && tillable && mc.world.getBlockState(pos.up()).isAir();
-    }
-
-    private boolean shouldBonemeal(BlockState state, Block block) {
-        if (!bonemealBlocks.get().contains(block)) return false;
-        return !isMature(state, block);
-    }
-
-    private boolean shouldHarvest(BlockState state, Block block) {
-        if (!harvestBlocks.get().contains(block)) return false;
-        return isMature(state, block);
     }
 
     private boolean isMature(BlockState state, Block block) {

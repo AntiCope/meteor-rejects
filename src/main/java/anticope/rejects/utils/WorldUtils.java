@@ -11,9 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
@@ -40,37 +38,8 @@ public class WorldUtils {
         return MathHelper.sqrt((float) (d * d + e * e + f * f));
     }
 
-    public static ArrayList<BlockPos> getCube(double range) {
-        Vec3d eyesVec = mc.player.getEyePos();
-        int rangeI = (int) Math.ceil(range);
-
-        BlockPos center = new BlockPos(eyesVec);
-        BlockPos min = center.add(-rangeI, -rangeI, -rangeI);
-        BlockPos max = center.add(rangeI, rangeI, rangeI);
-
-        return getAllInBox(min, max).stream()
-                .filter(pos -> eyesVec.distanceTo(Vec3d.ofCenter(pos)) <= range)
-                .sorted(Comparator.comparingDouble(pos -> eyesVec.squaredDistanceTo(Vec3d.ofCenter(pos))))
-                .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public static List<BlockPos> getAllInBox(BlockPos from, BlockPos to) {
-        List<BlockPos> blocks = new ArrayList<>();
-
-        BlockPos min = new BlockPos(Math.min(from.getX(), to.getX()),
-                Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        BlockPos max = new BlockPos(Math.max(from.getX(), to.getX()),
-                Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
-
-        for (int x = min.getX(); x <= max.getX(); x++)
-            for (int y = min.getY(); y <= max.getY(); y++)
-                for (int z = min.getZ(); z <= max.getZ(); z++)
-                    blocks.add(new BlockPos(x, y, z));
-
-        return blocks;
-    }
-
-    public static void interact(BlockPos pos, FindItemResult findItemResult, boolean rotate) {
+    public static boolean interact(BlockPos pos, FindItemResult findItemResult, boolean rotate) {
+        if (!findItemResult.found()) return false;
         Runnable action = () -> {
             boolean wasSneaking = mc.player.input.sneaking;
             mc.player.input.sneaking = false;
@@ -82,5 +51,6 @@ public class WorldUtils {
         };
         if (rotate) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), -100, action);
         else action.run();
+        return true;
     }
 }
