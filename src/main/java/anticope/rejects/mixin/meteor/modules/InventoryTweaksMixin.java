@@ -1,22 +1,15 @@
 package anticope.rejects.mixin.meteor.modules;
 
 import anticope.rejects.mixininterface.IInventoryTweaks;
-import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.systems.modules.misc.InventoryTweaks;
 import net.minecraft.screen.ScreenHandler;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InventoryTweaks.class)
+@Mixin(value = InventoryTweaks.class, remap = false)
 public abstract class InventoryTweaksMixin implements IInventoryTweaks {
-    @Shadow
-    @Final
-    private Setting<Boolean> autoSteal;
-
     private Runnable callback;
 
     @Inject(method = "lambda$steal$3", at = @At("RETURN"))
@@ -27,13 +20,8 @@ public abstract class InventoryTweaksMixin implements IInventoryTweaks {
         }
     }
 
-    @Override
-    public void afterSteal(Runnable callback) {
-        this.callback = callback;
-    }
-
-    @Override
-    public boolean autoSteal() {
-        return autoSteal.get();
+    @Inject(method = "lambda$new$1", at = @At("HEAD"))
+    private void onStealChanged(Boolean b, CallbackInfo info) {
+        callback = null;
     }
 }
