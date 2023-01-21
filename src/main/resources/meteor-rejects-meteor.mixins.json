@@ -12,6 +12,7 @@
     "DefaultSettingsWidgetFactoryMixin",
     "modules.FlightMixin",
     "modules.NoRenderAccessor",
-    "modules.AutoSignMixin"
+    "modules.AutoSignMixin",
+    "modules.InventoryTweaksMixin"
   ]
 }
