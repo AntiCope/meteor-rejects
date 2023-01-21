@@ -19,14 +19,17 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.ChestType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ShulkerBoxScreenHandler;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +49,6 @@ public class ChestAura extends Module {
             .description("The interact range.")
             .defaultValue(4)
             .min(0)
-            .build()
-    );
-
-    private final Setting<List<BlockEntityType<?>>> blocks = sgGeneral.add(new StorageBlockListSetting.Builder()
-            .name("storage-blocks")
-            .description("The blocks you open.")
-            .defaultValue(BlockEntityType.CHEST)
             .build()
     );
 
@@ -82,6 +78,7 @@ public class ChestAura extends Module {
 
     private final Map<BlockPos, Integer> opened = new HashMap<>();
     private final CloseListener closeListener = new CloseListener();
+    private final List<BlockEntityType<?>> blocks = Arrays.asList(BlockEntityType.CHEST, BlockEntityType.TRAPPED_CHEST, BlockEntityType.SHULKER_BOX);
 
     private int timer = 0;
 
@@ -108,26 +105,25 @@ public class ChestAura extends Module {
         if (timer > 0 && mc.currentScreen != null) return;
 
         for (BlockEntity block : Utils.blockEntities()) {
-            if (!blocks.get().contains(block.getType())) continue;
+            if (!blocks.contains(block.getType())) continue;
             if (mc.player.getEyePos().distanceTo(Vec3d.ofCenter(block.getPos())) >= range.get()) continue;
 
             BlockPos pos = block.getPos();
             if (opened.containsKey(pos)) continue;
 
             Runnable click = () -> mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
-            if (rotate.get()) {
-                Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), click);
-            } else {
-                click.run();
-            }
+            if (rotate.get()) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), click);
+            else click.run();
 
             // Double chest compatibility
             BlockState state = block.getCachedState();
             ChestType chestType = state.contains(ChestBlock.CHEST_TYPE) ? state.get(ChestBlock.CHEST_TYPE) : ChestType.SINGLE;
-            Direction direction =  state.get(ChestBlock.FACING);
-            switch (chestType) {
-                case LEFT -> opened.put(pos.offset(direction.rotateYClockwise()), 0);
-                case RIGHT ->opened.put(pos.offset(direction.rotateYCounterclockwise()), 0);
+            if (chestType != ChestType.SINGLE) {
+                Direction direction = state.get(ChestBlock.FACING);
+                switch (chestType) {
+                    case LEFT -> opened.put(pos.offset(direction.rotateYClockwise()), 0);
+                    case RIGHT -> opened.put(pos.offset(direction.rotateYCounterclockwise()), 0);
+                }
             }
 
             opened.put(pos, 0);
@@ -143,15 +139,18 @@ public class ChestAura extends Module {
         private void onInventory(InventoryEvent event) {
             ScreenHandler handler = mc.player.currentScreenHandler;
             if (event.packet.getSyncId() == handler.syncId) {
-                if (handler instanceof GenericContainerScreenHandler handler1) {
+                if (handler instanceof GenericContainerScreenHandler || handler instanceof ShulkerBoxScreenHandler) {
                     switch (closeCondition.get()) {
                         case IfEmpty -> {
-                            if (!handler1.getInventory().containsAny(item -> !item.isEmpty()) &&
-                                    handler.getCursorStack().isEmpty()) mc.player.closeHandledScreen();
+                            if (handler.getStacks().stream().allMatch(ItemStack::isEmpty))
+                                mc.player.closeHandledScreen();
                         }
                         case Always -> mc.player.closeHandledScreen();
-                        case AfterSteal ->
-                                ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).afterSteal(() -> RenderSystem.recordRenderCall(() -> mc.player.closeHandledScreen()));
+                        case AfterSteal -> {
+                            IInventoryTweaks invTweaks = (IInventoryTweaks) Modules.get().get(InventoryTweaks.class);
+                            if (invTweaks.autoSteal())
+                                invTweaks.afterSteal(() -> RenderSystem.recordRenderCall(() -> mc.player.closeHandledScreen()));
+                        }
                     }
                 }
             }
