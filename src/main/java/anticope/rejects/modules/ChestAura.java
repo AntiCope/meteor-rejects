@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.misc.InventoryTweaks;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
+import meteordevelopment.meteorclient.utils.player.SlotUtils;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.EventPriority;
 import net.minecraft.block.BlockState;
@@ -20,7 +21,9 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -29,6 +32,7 @@ import net.minecraft.util.math.Vec3d;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class ChestAura extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -142,8 +146,9 @@ public class ChestAura extends Module {
             if (event.packet.getSyncId() == handler.syncId) {
                 switch (closeCondition.get()) {
                     case IfEmpty -> {
-                        if (handler.getStacks().stream().allMatch(ItemStack::isEmpty))
-                            mc.player.closeHandledScreen();
+                        DefaultedList<ItemStack> stacks = DefaultedList.of();
+                        IntStream.range(0, SlotUtils.indexToId(SlotUtils.MAIN_START)).mapToObj(handler.slots::get).map(Slot::getStack).forEach(stacks::add);
+                        if (stacks.stream().allMatch(ItemStack::isEmpty)) mc.player.closeHandledScreen();
                     }
                     case Always -> mc.player.closeHandledScreen();
                     case AfterSteal ->
