@@ -147,7 +147,7 @@ public class ChestAura extends Module {
                     }
                     case Always -> mc.player.closeHandledScreen();
                     case AfterSteal ->
-                            ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).afterSteal(() -> RenderSystem.recordRenderCall(() -> mc.player.closeHandledScreen()));
+                            ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).stealCallback(() -> RenderSystem.recordRenderCall(() -> mc.player.closeHandledScreen()));
                 }
             }
             MeteorClient.EVENT_BUS.unsubscribe(this);
