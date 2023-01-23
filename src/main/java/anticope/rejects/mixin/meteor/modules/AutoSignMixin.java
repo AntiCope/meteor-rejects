@@ -10,7 +10,6 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.world.AutoSign;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,7 +20,6 @@ import java.util.stream.IntStream;
 
 @Mixin(value = AutoSign.class, remap = false)
 public class AutoSignMixin extends Module {
-    @Unique
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     @Shadow
@@ -47,17 +45,15 @@ public class AutoSignMixin extends Module {
         super(category, name, description);
     }
 
-    @Inject(method = "onOpenScreen",at = @At(value = "INVOKE", target = "Lmeteordevelopment/meteorclient/mixin/AbstractSignEditScreenAccessor;getSign()Lnet/minecraft/block/entity/SignBlockEntity;", shift = At.Shift.BEFORE))
+    @Inject(method = "onOpenScreen",at = @At("HEAD"))
     private void beforeGetSign(OpenScreenEvent event, CallbackInfo info) {
         if (random.get()) {
-            text = new String[] {};
-            while (text.length < 4) {
+            text = new String[4];
+            IntStream.range(0, text.length).forEach(i -> {
                 IntStream chars = new Random().ints(0, 0x10FFFF);
                 int amount = length.get();
-                text = chars.limit(amount * 5L)
-                        .mapToObj(i -> String.valueOf((char) i)).collect(Collectors.joining())
-                        .split("(?<=\\G.{" + amount + "})");
-            }
+                text[i] = chars.limit(amount * 5L).mapToObj(i1 -> String.valueOf((char) i1)).collect(Collectors.joining());
+            });
         }
     }
 }
