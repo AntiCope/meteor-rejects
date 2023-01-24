@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import anticope.rejects.utils.NameLookup;
 import com.mojang.brigadier.suggestion.Suggestion;
 import meteordevelopment.meteorclient.events.game.ReceiveMessageEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
@@ -11,15 +10,11 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
 import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,8 +44,6 @@ public class AntiVanish extends Module {
             .build()
     );
 
-    private final Queue<UUID> toLookup = new ConcurrentLinkedQueue<>();
-
     private Map<UUID, String> playerCache = new HashMap<>();
     private final List<String> messageCache = new ArrayList<>();
 
@@ -67,7 +60,6 @@ public class AntiVanish extends Module {
     @Override
     public void onActivate() {
         timer = 0;
-        toLookup.clear();
         completionIDs.clear();
         messageCache.clear();
     }
@@ -75,7 +67,6 @@ public class AntiVanish extends Module {
     @Override
     public WWidget getWidget(GuiTheme theme) {
         WVerticalList l = theme.verticalList();
-        l.add(theme.label("MojangAPI: Detect player status. (for online servers)"));
         l.add(theme.label("LeaveMessage: If client didn't receive a quit game message (like essentials)."));
         l.add(theme.label("RealJoinMessage: Tell whether the player is really left."));
         return l;
@@ -91,9 +82,7 @@ public class AntiVanish extends Module {
                         .map(Suggestion::getText)
                         .toList();
 
-                if (lastUsernames.isEmpty()) {
-                    return;
-                }
+                if (lastUsernames.isEmpty()) return;
 
                 Predicate<String> joinedOrQuit = playerName -> lastUsernames.contains(playerName) != completionPlayerCache.contains(playerName);
 
@@ -114,13 +103,6 @@ public class AntiVanish extends Module {
                 completionIDs.remove(Integer.valueOf(packet.getCompletionId()));
                 event.cancel();
             }
-        } else if (mode.get() == Mode.MojangAPI && event.packet instanceof PlayerListS2CPacket packet) {
-            for (PlayerListS2CPacket.Entry entry : packet.getEntries()) {
-                UUID profID = entry.profileId();
-                PlayerListEntry playerListEntry = mc.getNetworkHandler().getPlayerListEntry(profID);
-                if (playerListEntry != null) continue;
-                toLookup.add(entry.profileId());
-            }
         }
     }
 
@@ -135,11 +117,6 @@ public class AntiVanish extends Module {
         if (timer < interval.get()) return;
 
         switch (mode.get()) {
-            case MojangAPI -> {
-                UUID uuid = toLookup.poll();
-                if (uuid != null)
-                    MeteorExecutor.execute(new NameLookup(uuid, mc, s -> warning(s + " has gone into vanish.")));
-            }
             case LeaveMessage -> {
                 Map<UUID, String> oldPlayers = Map.copyOf(playerCache);
                 playerCache = mc.getNetworkHandler().getPlayerList().stream().collect(Collectors.toMap(e -> e.getProfile().getId(), e -> e.getProfile().getName()));
@@ -164,7 +141,6 @@ public class AntiVanish extends Module {
 
     public enum Mode {
         LeaveMessage,
-        MojangAPI,
         RealJoinMessage//https://github.com/xtrm-en/meteor-antistaff/blob/main/src/main/java/me/xtrm/meteorclient/antistaff/modules/AntiStaff.java
     }
 }
