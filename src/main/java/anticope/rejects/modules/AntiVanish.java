@@ -1,16 +1,15 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import com.google.gson.JsonArray;
-import meteordevelopment.orbit.EventHandler;
+import anticope.rejects.utils.NameLookup;
 import meteordevelopment.meteorclient.events.game.GameLeftEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.IntSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.network.Http;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
 
 import java.util.Queue;
@@ -18,18 +17,29 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AntiVanish extends Module {
-    
-    private final Queue<UUID> toLookup = new ConcurrentLinkedQueue<UUID>();
+
+    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+    private final Setting<Integer> removeInvisible = sgGeneral.add(new IntSetting.Builder()
+            .name("remove-invisible")
+            .description("Removes bot only if they are invisible.")
+            .defaultValue(100)
+            .min(0)
+            .sliderMax(300)
+            .build()
+    );
+
+    private final Queue<UUID> toLookup = new ConcurrentLinkedQueue<>();
     private long lastTick = 0;
-    
+
     public AntiVanish() {
         super(MeteorRejectsAddon.CATEGORY, "anti-vanish", "Notifies user when a admin uses /vanish");
     }
-    
+
     @Override
     public void onDeactivate() {
         toLookup.clear();
     }
+
     @EventHandler
     public void onLeave(GameLeftEvent event) {
         toLookup.clear();
@@ -45,7 +55,8 @@ public class AntiVanish extends Module {
                             continue;
                         toLookup.add(entry.profileId());
                     }
-                } catch (Exception ignore) {}
+                } catch (Exception ignore) {
+                }
             }
         }
     }
@@ -59,9 +70,10 @@ public class AntiVanish extends Module {
             try {
                 String name = getPlayerNameFromUUID(lookup);
                 if (name != null) {
-                   warning(name + " has gone into vanish.");
+                    warning(name + " has gone into vanish.");
                 }
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
             lastTick = time;
         }
     }
@@ -78,49 +90,9 @@ public class AntiVanish extends Module {
         }
     }
 
-    public static class NameLookup implements Runnable {
-        private final String uuidstr;
-        private final UUID uuid;
-        private final MinecraftClient mc;
-        private volatile String name;
-
-        public NameLookup(final String input, MinecraftClient mc) {
-            this.uuidstr = input;
-            this.uuid = UUID.fromString(input);
-            this.mc = mc;
-        }
-
-        public NameLookup(final UUID input, MinecraftClient mc) {
-            this.uuid = input;
-            this.uuidstr = input.toString();
-            this.mc = mc;
-        }
-
-        @Override
-        public void run() {
-            name = this.lookUpName();
-        }
-
-        public String lookUpName() {
-            PlayerEntity player = null;
-            if (mc.world != null) {
-                player = mc.world.getPlayerByUuid(uuid);
-            }
-            if (player == null) {
-                final String url = "https://api.mojang.com/user/profiles/" + uuidstr.replace("-", "") + "/names";
-                try {
-                    JsonArray res = Http.get(url).sendJson(JsonArray.class);
-                    return res.get(res.size() - 1).getAsJsonObject().get("name").getAsString();
-                } catch (Exception e) {
-                    return uuidstr;
-                }
-            }
-            return player.getName().getString();
-        }
-
-        public String getName() {
-            return this.name;
-        }
+    public enum Mode {
+        MojangAPI,
+        LeaveMessage,
     }
 }
 
