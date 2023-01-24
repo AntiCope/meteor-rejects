@@ -34,8 +34,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
         Modules modules = Modules.get();
         modules.add(new AntiBot());
         modules.add(new AntiSpawnpoint());
-        modules.add(new ArrowDmg());
         modules.add(new AntiVanish());
+        modules.add(new ArrowDmg());
         modules.add(new AutoBedTrap());
         modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
