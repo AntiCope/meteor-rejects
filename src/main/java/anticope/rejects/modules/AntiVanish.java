@@ -1,127 +1,146 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import com.google.gson.JsonArray;
-import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.meteorclient.events.game.GameLeftEvent;
+import com.mojang.brigadier.suggestion.Suggestion;
+import meteordevelopment.meteorclient.events.game.ReceiveMessageEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.gui.GuiTheme;
+import meteordevelopment.meteorclient.gui.widgets.WWidget;
+import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
+import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.network.Http;
+import meteordevelopment.orbit.EventHandler;
+import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
+import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.s2c.play.PlayerListS2CPacket;
-
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class AntiVanish extends Module {
-    
-    private final Queue<UUID> toLookup = new ConcurrentLinkedQueue<UUID>();
-    private long lastTick = 0;
-    
+    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+
+    private final Setting<Integer> interval = sgGeneral.add(new IntSetting.Builder()
+            .name("interval")
+            .description("Vanish check interval.")
+            .defaultValue(100)
+            .min(0)
+            .sliderMax(300)
+            .build()
+    );
+
+    private final Setting<Mode> mode = sgGeneral.add(new EnumSetting.Builder<Mode>()
+            .name("mode")
+            .defaultValue(Mode.LeaveMessage)
+            .build()
+    );
+
+    private final Setting<String> command = sgGeneral.add(new StringSetting.Builder()
+            .name("command")
+            .description("The completion command.")
+            .defaultValue("minecraft:msg")
+            .visible(() -> mode.get() == Mode.RealJoinMessage)
+            .build()
+    );
+
+    private Map<UUID, String> playerCache = new HashMap<>();
+    private final List<String> messageCache = new ArrayList<>();
+
+    private final Random random = new Random();
+    private final List<Integer> completionIDs = new ArrayList<>();
+    private List<String> completionPlayerCache = new ArrayList<>();
+
+    private int timer = 0;
+
     public AntiVanish() {
         super(MeteorRejectsAddon.CATEGORY, "anti-vanish", "Notifies user when a admin uses /vanish");
     }
-    
+
     @Override
-    public void onDeactivate() {
-        toLookup.clear();
+    public void onActivate() {
+        timer = 0;
+        completionIDs.clear();
+        messageCache.clear();
     }
-    @EventHandler
-    public void onLeave(GameLeftEvent event) {
-        toLookup.clear();
+
+    @Override
+    public WWidget getWidget(GuiTheme theme) {
+        WVerticalList l = theme.verticalList();
+        l.add(theme.label("LeaveMessage: If client didn't receive a quit game message (like essentials)."));
+        l.add(theme.label("RealJoinMessage: Tell whether the player is really left."));
+        return l;
     }
 
     @EventHandler
-    public void onPacket(PacketEvent.Receive event) {
-        if (event.packet instanceof PlayerListS2CPacket packet) {
-            if (packet.getActions().contains(PlayerListS2CPacket.Action.UPDATE_LATENCY)) {
-                try {
-                    for (PlayerListS2CPacket.Entry entry : packet.getEntries()) {
-                        if (mc.getNetworkHandler().getPlayerListEntry(entry.profileId()) != null)
-                            continue;
-                        toLookup.add(entry.profileId());
+    private void onPacket(PacketEvent.Receive event) {
+        if (mode.get() == Mode.RealJoinMessage && event.packet instanceof CommandSuggestionsS2CPacket packet) {
+            if (completionIDs.contains(packet.getCompletionId())) {
+                var lastUsernames = completionPlayerCache.stream().toList();
+
+                completionPlayerCache = packet.getSuggestions().getList().stream()
+                        .map(Suggestion::getText)
+                        .toList();
+
+                if (lastUsernames.isEmpty()) return;
+
+                Predicate<String> joinedOrQuit = playerName -> lastUsernames.contains(playerName) != completionPlayerCache.contains(playerName);
+
+                for (String playerName : completionPlayerCache) {
+                    if (Objects.equals(playerName, mc.player.getName().getString())) continue;
+                    if (joinedOrQuit.test(playerName)) {
+                        info("Player joined: " + playerName);
                     }
-                } catch (Exception ignore) {}
+                }
+
+                for (String playerName : lastUsernames) {
+                    if (Objects.equals(playerName, mc.player.getName().getString())) continue;
+                    if (joinedOrQuit.test(playerName)) {
+                        info("Player left: " + playerName);
+                    }
+                }
+
+                completionIDs.remove(Integer.valueOf(packet.getCompletionId()));
+                event.cancel();
             }
         }
     }
 
     @EventHandler
-    public void onTick(TickEvent.Post event) {
-        long time = mc.world.getTime();
-        UUID lookup;
-
-        if (Math.abs(lastTick - time) > 100 && (lookup = toLookup.poll()) != null) {
-            try {
-                String name = getPlayerNameFromUUID(lookup);
-                if (name != null) {
-                   warning(name + " has gone into vanish.");
-                }
-            } catch (Exception ignore) {}
-            lastTick = time;
-        }
+    private void onReceiveMessage(ReceiveMessageEvent event) {
+        messageCache.add(event.getMessage().getString());
     }
 
-    public String getPlayerNameFromUUID(UUID id) {
-        try {
-            final NameLookup process = new NameLookup(id, mc);
-            final Thread thread = new Thread(process);
-            thread.start();
-            thread.join();
-            return process.getName();
-        } catch (Exception ignored) {
-            return null;
-        }
-    }
+    @EventHandler
+    private void onTick(TickEvent.Post event) {
+        timer++;
+        if (timer < interval.get()) return;
 
-    public static class NameLookup implements Runnable {
-        private final String uuidstr;
-        private final UUID uuid;
-        private final MinecraftClient mc;
-        private volatile String name;
+        switch (mode.get()) {
+            case LeaveMessage -> {
+                Map<UUID, String> oldPlayers = Map.copyOf(playerCache);
+                playerCache = mc.getNetworkHandler().getPlayerList().stream().collect(Collectors.toMap(e -> e.getProfile().getId(), e -> e.getProfile().getName()));
 
-        public NameLookup(final String input, MinecraftClient mc) {
-            this.uuidstr = input;
-            this.uuid = UUID.fromString(input);
-            this.mc = mc;
-        }
-
-        public NameLookup(final UUID input, MinecraftClient mc) {
-            this.uuid = input;
-            this.uuidstr = input.toString();
-            this.mc = mc;
-        }
-
-        @Override
-        public void run() {
-            name = this.lookUpName();
-        }
-
-        public String lookUpName() {
-            PlayerEntity player = null;
-            if (mc.world != null) {
-                player = mc.world.getPlayerByUuid(uuid);
-            }
-            if (player == null) {
-                final String url = "https://api.mojang.com/user/profiles/" + uuidstr.replace("-", "") + "/names";
-                try {
-                    JsonArray res = Http.get(url).sendJson(JsonArray.class);
-                    return res.get(res.size() - 1).getAsJsonObject().get("name").getAsString();
-                } catch (Exception e) {
-                    return uuidstr;
+                for (UUID uuid : oldPlayers.keySet()) {
+                    if (playerCache.containsKey(uuid)) continue;
+                    String name = oldPlayers.get(uuid);
+                    if (messageCache.stream().noneMatch(s -> s.contains(name))) {
+                        warning(name + " has gone into vanish.");
+                    }
                 }
             }
-            return player.getName().getString();
+            case RealJoinMessage -> {
+                int id = random.nextInt(200);
+                completionIDs.add(id);
+                mc.getNetworkHandler().sendPacket(new RequestCommandCompletionsC2SPacket(id, command.get() + " "));
+            }
         }
+        timer = 0;
+        messageCache.clear();
+    }
 
-        public String getName() {
-            return this.name;
-        }
+    public enum Mode {
+        LeaveMessage,
+        RealJoinMessage//https://github.com/xtrm-en/meteor-antistaff/blob/main/src/main/java/me/xtrm/meteorclient/antistaff/modules/AntiStaff.java
     }
 }
-
-
