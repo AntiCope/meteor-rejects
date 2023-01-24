@@ -6,28 +6,24 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class NameLookup implements Runnable {
-    private final String uuidstr;
+    private final String uuidString;
     private final UUID uuid;
     private final MinecraftClient mc;
-    private volatile String name;
+    private final Consumer<String> callback;
 
-    public NameLookup(final String input, MinecraftClient mc) {
-        this.uuidstr = input;
-        this.uuid = UUID.fromString(input);
-        this.mc = mc;
-    }
-
-    public NameLookup(final UUID input, MinecraftClient mc) {
+    public NameLookup(UUID input, MinecraftClient mc, Consumer<String> callback) {
         this.uuid = input;
-        this.uuidstr = input.toString();
+        this.uuidString = input.toString();
         this.mc = mc;
+        this.callback = callback;
     }
 
     @Override
     public void run() {
-        name = this.lookUpName();
+        callback.accept(lookUpName());
     }
 
     public String lookUpName() {
@@ -36,18 +32,14 @@ public class NameLookup implements Runnable {
             player = mc.world.getPlayerByUuid(uuid);
         }
         if (player == null) {
-            final String url = "https://api.mojang.com/user/profiles/" + uuidstr.replace("-", "") + "/names";
+            final String url = "https://api.mojang.com/user/profiles/" + uuidString.replace("-", "") + "/names";
             try {
                 JsonArray res = Http.get(url).sendJson(JsonArray.class);
                 return res.get(res.size() - 1).getAsJsonObject().get("name").getAsString();
             } catch (Exception e) {
-                return uuidstr;
+                return uuidString;
             }
         }
         return player.getName().getString();
-    }
-
-    public String getName() {
-        return this.name;
     }
 }

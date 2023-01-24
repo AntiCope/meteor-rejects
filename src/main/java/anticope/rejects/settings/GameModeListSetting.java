@@ -27,7 +27,7 @@ public class GameModeListSetting extends Setting<List<GameMode>> {
         String[] values = str.split(",");
         List<GameMode> modes = new ArrayList<>(values.length);
         for (String s : values) {
-            GameMode mode = GameMode.byId(Integer.parseInt(s));
+            GameMode mode = GameMode.byName(s);
             if (mode != null) modes.add(mode);
         }
         return modes;
