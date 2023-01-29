@@ -5,8 +5,8 @@ import net.minecraft.util.math.Vec3d;
 
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.events.world.TickEvent;
 
 public class Boost extends Module {
 
