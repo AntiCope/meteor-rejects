@@ -64,6 +64,7 @@ public class Boost extends Module {
     }
     
     private void boostPlayer() {
+        if (mc.player ==  null) return;
         Vec3d v = mc.player.getRotationVecClient().multiply(strength.get());
         mc.player.addVelocity(v.getX(), v.getY(), v.getZ());   
     }
