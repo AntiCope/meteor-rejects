@@ -86,6 +86,7 @@
   - `Random characters` (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack))
 - Module
   - `Duplicate names`
+- KillAura & Aim Assist: FoV option
 
 ## Commands
 - `.center`
