@@ -12,13 +12,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Module.class)
+@Mixin(value = Module.class, remap = false)
 public class ModuleMixin {
-    @Mutable @Shadow(remap = false) public String name;
+    @Mutable @Shadow public String name;
 
-    @Mutable @Shadow(remap = false) public String title;
+    @Mutable @Shadow public String title;
 
-    @Inject(method = "<init>", at = @At("TAIL"), remap = false)
+    @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(Category category, String name, String description, CallbackInfo info) {
         if (RejectsConfig.get().duplicateModuleNames) {
             this.name = RejectsUtils.getModuleName(name);

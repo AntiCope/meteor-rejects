@@ -13,6 +13,8 @@
     "modules.FlightMixin",
     "modules.NoRenderAccessor",
     "modules.AutoSignMixin",
-    "modules.InventoryTweaksMixin"
+    "modules.InventoryTweaksMixin",
+    "modules.KillAuraMixin",
+    "modules.AimAssistMixin"
   ]
 }
