@@ -20,7 +20,6 @@ import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
@@ -83,7 +82,7 @@ public class AutoLogin extends Module {
         @EventHandler
         private void onGameJoined(GameJoinedEvent event) {
             if (!isActive()) return;
-            String command = commands.get().getOrDefault("*", commands.get().get(Utils.getWorldName()));
+            String command = commands.get().getOrDefault("*", commands.get().get(meteordevelopment.meteorclient.utils.Utils.getWorldName()));
             if (command != null) {
                 timer.schedule(new TimerTask() {
                     @Override
@@ -104,7 +103,7 @@ public class AutoLogin extends Module {
             List<String> hint = Arrays.asList("reg", "register", "l", "login", "log");
             String[] cmds = command.split(" ");
             if (cmds.length >= 2 && hint.contains(cmds[0])) {
-                commands.get().put(Utils.getWorldName(), "/login " + cmds[1]);
+                commands.get().put(meteordevelopment.meteorclient.utils.Utils.getWorldName(), "/login " + cmds[1]);
             }
         }
     }

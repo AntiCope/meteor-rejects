@@ -5,8 +5,13 @@ import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.PostInit;
+import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.Random;
+
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class RejectsUtils {
 
@@ -39,5 +44,13 @@ public class RejectsUtils {
             sb.append(str.charAt(number));
         }
         return sb.toString();
+    }
+
+    public static boolean inFov(Entity entity, double fov) {
+        float[] angle = PlayerUtils.calculateAngle(entity.getBoundingBox().getCenter());
+        double xDist = MathHelper.angleBetween(angle[0], mc.player.getYaw());
+        double yDist = MathHelper.angleBetween(angle[1], mc.player.getPitch());
+        double angleDistance = Math.hypot(xDist, yDist);
+        return angleDistance <= fov;
     }
 }

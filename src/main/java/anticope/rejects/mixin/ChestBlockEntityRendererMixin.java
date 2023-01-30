@@ -21,14 +21,14 @@ public class ChestBlockEntityRendererMixin {
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;FII)V", at = @At("HEAD"), cancellable = true)
     public void render1(MatrixStack matrices, VertexConsumer vertices, ModelPart lid, ModelPart latch, ModelPart base, float openFactor, int light, int overlay, CallbackInfo ci) {
         Rendering rendering = Modules.get().get(Rendering.class);
-        if (rendering != null)
-            this.christmas = rendering.chistmas();
+        if (rendering != null && rendering.chistmas())
+            this.christmas = true;
     }
 
     @Inject(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/model/ModelPart;FII)V", at = @At("RETURN"))
     public void render2(MatrixStack matrices, VertexConsumer vertices, ModelPart lid, ModelPart latch, ModelPart base, float openFactor, int light, int overlay, CallbackInfo ci) {
         Rendering rendering = Modules.get().get(Rendering.class);
         if (rendering != null)
-            this.christmas = rendering.chistmas();
+            this.christmas = true;
     }
 }
