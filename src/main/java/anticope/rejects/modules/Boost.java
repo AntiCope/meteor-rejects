@@ -28,7 +28,7 @@ public class Boost extends Module {
         .build()
     );
     
-    private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
+    private final Setting<Integer> delaySetting = sgGeneral.add(new IntSetting.Builder()
         .name("delay")
         .description("delay between each boost")
         .visible(autoBoost::get)
