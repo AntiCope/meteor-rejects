@@ -54,11 +54,11 @@ public class Boost extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         if(autoBoost.get()) {
-            if(_delay <= 1) {
+            if(delay <= 1) {
                 boostPlayer();
-                _delay = delay.get();
+                delay = delay.get();
             } else {
-                _delay--;
+                delay--;
             }
         }
     }
