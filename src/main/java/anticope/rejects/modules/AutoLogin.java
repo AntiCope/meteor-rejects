@@ -1,8 +1,3 @@
-/*
- * This file is part of the Meteor Client distribution (https://github.com/MeteorDevelopment/meteor-client).
- * Copyright (c) Meteor Development.
- */
-
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
@@ -63,7 +58,7 @@ public class AutoLogin extends Module {
 
     public AutoLogin() {
         super(MeteorRejectsAddon.CATEGORY, "auto-login", "Runs command when joining specified server.");
-        MeteorClient.EVENT_BUS.subscribe(new Listener());
+        runInMainMenu = true;
     }
 
     @Override
@@ -79,19 +74,17 @@ public class AutoLogin extends Module {
         return l;
     }
 
-    private class Listener {
-        @EventHandler
-        private void onGameJoined(GameJoinedEvent event) {
-            if (!isActive()) return;
-            String command = commands.get().getOrDefault("*", commands.get().get(Utils.getWorldName()));
-            if (command != null) {
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (mc.player != null) ChatUtils.sendPlayerMsg(command);
-                    }
-                }, delay.get());
-            }
+    @EventHandler
+    private void onGameJoined(GameJoinedEvent event) {
+        if (!isActive()) return;
+        String command = commands.get().getOrDefault("*", commands.get().get(Utils.getWorldName()));
+        if (command != null) {
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mc.player != null) ChatUtils.sendPlayerMsg(command);
+                }
+            }, delay.get());
         }
     }
 
