@@ -47,7 +47,7 @@ public class Boost extends Module {
     @Override
     public void onActivate() {
         boostPlayer();
-        _delay = delay.get();
+        delay = delaySetting.get();
         if(!autoBoost.get()) this.toggle();
     }
     
