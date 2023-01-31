@@ -42,7 +42,7 @@ public class Boost extends Module {
         super(MeteorRejectsAddon.CATEGORY, "boost", "Works like a dash move.");
     }
     
-    private int _delay = 0;
+    private int delay = 0;
     
     @Override
     public void onActivate() {
