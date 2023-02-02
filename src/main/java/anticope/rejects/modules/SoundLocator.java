@@ -32,17 +32,18 @@ public class SoundLocator extends Module {
     private final SettingGroup sgRender = settings.createGroup("Render");
     
     // General
-    private final Setting<List<SoundEvent>> sounds = sgGeneral.add(new SoundEventListSetting.Builder()
-        .name("sounds")
-        .description("Sounds to find.")
-        .defaultValue(new ArrayList<>(0))
-        .build()
-    );
-
     private final Setting<Boolean> whitelist = sgGeneral.add(new BoolSetting.Builder()
         .name("whitelist")
         .description("Enable sounds filter whitelist.")
         .defaultValue(false)
+        .build()
+    );
+    
+    private final Setting<List<SoundEvent>> sounds = sgGeneral.add(new SoundEventListSetting.Builder()
+        .name("sounds")
+        .description("Sounds to find.")
+        .defaultValue(new ArrayList<>(0))
+        .visible(whitelist::get)
         .build()
     );
     
