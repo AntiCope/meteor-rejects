@@ -8,6 +8,6 @@ public class SeedCrackerEP implements SeedCrackerAPI {
     @Override
     public void pushWorldSeed(long seed) {
         Seeds.get().setSeed(String.format("%d", seed));
-        ChatUtils.info("Seed", "Added seed from SeedCrackerX");
+        ChatUtils.infoPrefix("Seed", "Added seed from SeedCrackerX");
     }
 }

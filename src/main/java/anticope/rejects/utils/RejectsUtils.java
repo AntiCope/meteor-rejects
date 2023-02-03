@@ -47,6 +47,7 @@ public class RejectsUtils {
     }
 
     public static boolean inFov(Entity entity, double fov) {
+        if (fov >= 360) return true;
         float[] angle = PlayerUtils.calculateAngle(entity.getBoundingBox().getCenter());
         double xDist = MathHelper.angleBetween(angle[0], mc.player.getYaw());
         double yDist = MathHelper.angleBetween(angle[1], mc.player.getPitch());

@@ -1,6 +1,7 @@
 package anticope.rejects.mixin.meteor.modules;
 
 import anticope.rejects.utils.RejectsUtils;
+import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
@@ -20,7 +21,12 @@ public class KillAuraMixin {
     @Final
     private SettingGroup sgGeneral;
 
+    @Shadow
+    @Final
+    private SettingGroup sgTargeting;
+
     private Setting<Double> fov;
+    private Setting<Boolean> ignoreInvisible;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
@@ -32,10 +38,19 @@ public class KillAuraMixin {
                 .max(360)
                 .build()
         );
+
+        ignoreInvisible = sgTargeting.add(new BoolSetting.Builder()
+                .name("ignore-invisible")
+                .description("Whether or not to attack invisible entities.")
+                .defaultValue(false)
+                .build()
+        );
     }
 
     @Inject(method = "entityCheck", at = @At(value = "RETURN", ordinal = 14), cancellable = true)
     private void onReturn(Entity entity, CallbackInfoReturnable<Boolean> info) {
-        info.setReturnValue(info.getReturnValueZ() && RejectsUtils.inFov(entity, fov.get()));
+        if (ignoreInvisible.get() && entity.isInvisible()) info.setReturnValue(false);
+        if (!RejectsUtils.inFov(entity, fov.get())) info.setReturnValue(false);
+        info.setReturnValue(info.getReturnValueZ());
     }
 }

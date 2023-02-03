@@ -186,7 +186,7 @@ public class WorldGenUtils {
             blocks,64,10,32);
         if (posList.isEmpty()) return null;
         if (posList.size() < 5) {
-            ChatUtils.warning("Locate", "Only %d block(s) found. This search might be a false positive.", posList.size());
+            ChatUtils.warningPrefix("Locate", "Only %d block(s) found. This search might be a false positive.", posList.size());
         }
         return posList.get(0);
     }

@@ -90,7 +90,7 @@ public class HeadScreen extends WindowScreen {
                     try {
                         GiveUtils.giveItem(head);
                     } catch (CommandSyntaxException e) {
-                        ChatUtils.error("Heads", e.getMessage());
+                        ChatUtils.errorPrefix("Heads", e.getMessage());
                     }
                 };
                 WButton equip = t.add(theme.button("Equip")).widget();
