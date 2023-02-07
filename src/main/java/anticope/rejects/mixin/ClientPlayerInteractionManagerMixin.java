@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public class ClientPlayerInteractionManagerMixin {
-    @Inject(at = @At("HEAD"), method = "stopUsingItem")
+    @Inject(method = "stopUsingItem", at = @At("HEAD"))
     public void onStopUsingItem(PlayerEntity player, CallbackInfo ci) {
         MeteorClient.EVENT_BUS.post(StopUsingItemEvent.get(player.getInventory().getMainHandStack()));
     }
