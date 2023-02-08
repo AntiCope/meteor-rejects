@@ -61,7 +61,7 @@ public class ShieldBypass extends Module {
             if (new Vec3d(vec3d3.x, 0.0d, vec3d3.z).dotProduct(e.getRotationVec(1.0f)) >= 0.0d) return;
 
             double range = mc.player.distanceTo(e);
-            while (range > 0.5) {
+            while (range >= 0) {
                 Vec3d tp = Vec3d.fromPolar(0, mc.player.getYaw()).normalize().multiply(range);
                 Vec3d newPos = tp.add(e.getPos());
                 BlockPos pos = new BlockPos(newPos);
