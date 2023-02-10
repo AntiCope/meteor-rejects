@@ -32,6 +32,7 @@
 # Features
 ## Modules
 - AntiBot (Removed from Meteor in [166fc](https://github.com/MeteorDevelopment/meteor-client/commit/166fccc73e53de6cfdbe41ea58dc593a2f5011f6))
+- AntiCrash
 - AntiSpawnpoint
 - AntiVanish
 - ArrowDmg (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
