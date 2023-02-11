@@ -29,7 +29,6 @@ public class AntiCrash extends Module {
     @EventHandler
     private void onPacketReceive(PacketEvent.Receive event) {
         if (event.packet instanceof ExplosionS2CPacket packet) {
-            // From https://github.com/wagyourtail/Anti-ClientCrasher
             if (/* outside of world */ packet.getX() > 30_000_000 || packet.getY() > 30_000_000 || packet.getZ() > 30_000_000 || packet.getX() < -30_000_000 || packet.getY() < -30_000_000 || packet.getZ() < -30_000_000 ||
                     // power too high
                     packet.getRadius() > 1000 ||
