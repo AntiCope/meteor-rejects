@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.systems.hud.HudElementInfo;
+import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
@@ -108,17 +109,17 @@ public class RadarHud extends HudElement {
                     String icon = "*";
                     if (letters.get()) 
                         icon = entity.getType().getUntranslatedName().substring(0,1).toUpperCase();
-                    renderer.text(icon, xPos + x, yPos + y, esp.getColor(entity), false);
+                    Color c = esp.getColor(entity);
+                    if (c == null) c = Color.WHITE;
+                    renderer.text(icon, xPos + x, yPos + y, c, false);
                 }
             }
             if (showWaypoints.get()) {
-                Iterator<Waypoint> waypoints = Waypoints.get().iterator();
-                while (waypoints.hasNext()) {
-                    Waypoint waypoint = waypoints.next();
+                for (Waypoint waypoint : Waypoints.get()) {
                     BlockPos blockPos = waypoint.getPos();
                     Vec3d coords = new Vec3d(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
-                    double xPos = ((coords.getX() - mc.player.getX()) * scale.get() * zoom.get() + width/2);
-                    double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + height/2);
+                    double xPos = ((coords.getX() - mc.player.getX()) * scale.get() * zoom.get() + width / 2);
+                    double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get() + height / 2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
                     String icon = "*";
                     if (letters.get() && waypoint.name.get().length() > 0)

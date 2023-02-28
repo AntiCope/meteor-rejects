@@ -73,6 +73,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new PacketFly());
         modules.add(new Painter());
         modules.add(new Rendering());
+        modules.add(new RoboWalk());
         modules.add(new ShieldBypass());
         modules.add(new SilentDisconnect());
         modules.add(new SkeletonESP());
