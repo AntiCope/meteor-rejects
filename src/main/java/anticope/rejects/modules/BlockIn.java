@@ -1,6 +1,8 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import net.minecraft.entity.MovementType;
+import net.minecraft.util.math.Vec3d;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -57,14 +59,26 @@ public class BlockIn extends Module {
     
     private final BlockPos.Mutable bp = new BlockPos.Mutable();
     private boolean return_;
+    private double sY;
     
     public BlockIn() {
         super(MeteorRejectsAddon.CATEGORY, "block-in", "Block yourself in using any block.");
     }
     
+    @Override
+    public void onActivate() {
+        sY = mc.player.getPos().getY();
+    }
+    
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
-        if (center.get()) PlayerUtils.centerPlayer();
+        if (center.get()) {
+            if (!onlyOnGround.get()) {
+                mc.player.setVelocity(0,0,0);
+                mc.player.move(MovementType.SELF, new Vec3d(0, -(sY-Math.floor(sY)), 0));
+            }
+            PlayerUtils.centerPlayer();
+        }
         if (onlyOnGround.get() && !mc.player.isOnGround()) return;
         
         return_ = false;
