@@ -9,7 +9,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.InsecureTextureException;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
@@ -54,11 +53,6 @@ public class CustomYggdrasilLogin {
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }
-    }
-
-    public static void applyYggdrasilAccount(LocalYggdrasilAuthenticationService authService, Session session) {
-        MinecraftSessionService service = new LocalYggdrasilMinecraftSessionService(authService, authService.server);
-        AccountUtils.applyLoginEnvironment(authService, service, session);
     }
 
     public static class LocalYggdrasilApi implements Environment {
