@@ -34,13 +34,13 @@ public class Confuse extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     private final Setting<Mode> mode = sgGeneral.add(new EnumSetting.Builder<Mode>()
-        .name("mode")
-        .defaultValue(Mode.RandomTP)
-        .description("Mode")
-        .build()
+            .name("mode")
+            .defaultValue(Mode.RandomTP)
+            .description("Mode")
+            .build()
     );
-    
-    private final Setting<Integer> delay  = sgGeneral.add(new IntSetting.Builder()
+
+    private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
             .name("delay")
             .description("Delay")
             .defaultValue(3)
@@ -48,7 +48,7 @@ public class Confuse extends Module {
             .sliderMax(20)
             .build()
     );
-    
+
     private final Setting<Integer> range = sgGeneral.add(new IntSetting.Builder()
             .name("radius")
             .description("Range to confuse opponents")
@@ -56,15 +56,15 @@ public class Confuse extends Module {
             .min(0).sliderMax(10)
             .build()
     );
-    
+
     private final Setting<SortPriority> priority = sgGeneral.add(new EnumSetting.Builder<SortPriority>()
             .name("priority")
             .description("Targetting priority")
             .defaultValue(SortPriority.LowestHealth)
             .build()
     );
-    
-    private final Setting<Integer> circleSpeed  = sgGeneral.add(new IntSetting.Builder()
+
+    private final Setting<Integer> circleSpeed = sgGeneral.add(new IntSetting.Builder()
             .name("circle-speed")
             .description("Circle mode speed")
             .defaultValue(10)
@@ -72,19 +72,19 @@ public class Confuse extends Module {
             .sliderMax(180)
             .build()
     );
-    
+
     private final Setting<Boolean> moveThroughBlocks = sgGeneral.add(new BoolSetting.Builder()
             .name("move-through-blocks")
             .defaultValue(false)
             .build()
     );
-    
+
     private final Setting<Boolean> budgetGraphics = sgGeneral.add(new BoolSetting.Builder()
             .name("budget-graphics")
             .defaultValue(false)
             .build()
     );
-    
+
     private final Setting<SettingColor> circleColor = sgGeneral.add(new ColorSetting.Builder()
             .name("circle-color")
             .description("Color for circle rendering")
@@ -92,13 +92,13 @@ public class Confuse extends Module {
             .visible(budgetGraphics::get)
             .build()
     );
-    
-    
+
+
     int delayWaited = 0;
     double circleProgress = 0;
     double addition = 0.0;
     Entity target = null;
-    
+
     public Confuse() {
         super(MeteorRejectsAddon.CATEGORY, "confuse", "Makes your enemies shit themselves");
     }
@@ -113,24 +113,24 @@ public class Confuse extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        
+
         // Delay
         delayWaited++;
         if (delayWaited < delay.get()) return;
         delayWaited = 0;
-        
-        
+
+
         // Targetting
         target = TargetUtils.getPlayerTarget(range.get(), priority.get());
-        
+
         if (target == null) return;
-        
+
         Vec3d entityPos = target.getPos();
         Vec3d playerPos = mc.player.getPos();
         Random r = new Random();
         BlockHitResult hit;
         int halfRange = range.get() / 2;
-        
+
         switch (mode.get()) {
             case RandomTP:
                 double x = r.nextDouble() * range.get() - halfRange;
@@ -138,11 +138,11 @@ public class Confuse extends Module {
                 double z = r.nextDouble() * range.get() - halfRange;
                 Vec3d addend = new Vec3d(x, y, z);
                 Vec3d goal = entityPos.add(addend);
-                if (mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock() != Blocks.AIR) {
+                if (mc.world.getBlockState(BlockPos.ofFloored(goal.x, goal.y, goal.z)).getBlock() != Blocks.AIR) {
                     goal = new Vec3d(x, playerPos.y, z);
                 }
-                if (mc.world.getBlockState(new BlockPos(goal.x, goal.y, goal.z)).getBlock() == Blocks.AIR) {
-                    hit = mc.world.raycast(new RaycastContext(mc.player.getPos(),goal, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
+                if (mc.world.getBlockState(BlockPos.ofFloored(goal.x, goal.y, goal.z)).getBlock() == Blocks.AIR) {
+                    hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
                     if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
                         delayWaited = (int) (delay.get() - 1);
                         break;
@@ -152,7 +152,7 @@ public class Confuse extends Module {
                     delayWaited = (int) (delay.get() - 1);
                 }
                 break;
-                
+
             case Switch:
                 Vec3d diff = entityPos.subtract(playerPos);
                 Vec3d diff1 = new Vec3d(Utils.clamp(diff.x, -halfRange, halfRange), Utils.clamp(diff.y, -halfRange, halfRange), Utils.clamp(diff.z, -halfRange, halfRange));
@@ -164,7 +164,7 @@ public class Confuse extends Module {
                 }
                 mc.player.updatePosition(goal2.x, goal2.y, goal2.z);
                 break;
-                
+
             case Circle:
                 delay.set(0);
                 circleProgress += circleSpeed.get();

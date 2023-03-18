@@ -71,7 +71,7 @@ public class AutoCraft extends Module {
         List<RecipeResultCollection> recipeResultCollectionList  = mc.player.getRecipeBook().getOrderedResults();
         for (RecipeResultCollection recipeResultCollection : recipeResultCollectionList) {
             for (Recipe<?> recipe : recipeResultCollection.getRecipes(true)) {
-                if (!itemList.contains(recipe.getOutput().getItem())) continue;
+                if (!itemList.contains(recipe.getOutput(mc.world.getRegistryManager()).getItem())) continue;
                 mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe, craftAll.get());
                 mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1,
                         drop.get() ? SlotActionType.THROW : SlotActionType.QUICK_MOVE, mc.player);

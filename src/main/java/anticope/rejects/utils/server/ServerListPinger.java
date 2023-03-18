@@ -22,7 +22,6 @@ import net.minecraft.server.ServerMetadata;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,6 +64,7 @@ public class ServerListPinger {
         }
     }
 
+
     public void add(final MServerInfo entry, final Runnable runnable) throws UnknownHostException {
         Timer timeoutTimer = new Timer();
         ServerAddress serverAddress = ServerAddress.parse(entry.address);
@@ -90,58 +90,44 @@ public class ServerListPinger {
                     clientConnection.disconnect(Text.translatable("multiplayer.status.unrequested"));
                 } else {
                     this.received = true;
-                    ServerMetadata serverMetadata = packet.getServerMetadata();
-                    if (serverMetadata.getDescription() != null) {
-                        entry.label = serverMetadata.getDescription().getString();
-                    } else {
-                        entry.label = "";
-                    }
-
-                    if (serverMetadata.getVersion() != null) {
-                        entry.version = serverMetadata.getVersion().getGameVersion();
-                        entry.protocolVersion = serverMetadata.getVersion().getProtocolVersion();
-                    } else {
+                    ServerMetadata serverMetadata = packet.metadata();
+                    entry.label = serverMetadata.description().getString();
+                    serverMetadata.version().ifPresentOrElse((version) -> {
+                        entry.version = version.gameVersion();
+                        entry.protocolVersion = version.protocolVersion();
+                    }, () -> {
                         entry.version = "multiplayer.status.old";
                         entry.protocolVersion = 0;
-                    }
+                    });
+                    serverMetadata.players().ifPresentOrElse((players) -> {
+                        entry.playerCountLabel = getPlayerCountLabel(players.online(), players.max());
+                        entry.playerCount = players.online();
+                        if (!players.sample().isEmpty()) {
+                            List<Text> list = new ArrayList(players.sample().size());
+                            Iterator var3 = players.sample().iterator();
 
-                    if (serverMetadata.getPlayers() != null) {
-                        entry.playerCountLabel = ServerListPinger.getPlayerCountLabel(serverMetadata.getPlayers().getOnlinePlayerCount(), serverMetadata.getPlayers().getPlayerLimit());
-                        entry.playerCount = serverMetadata.getPlayers().getOnlinePlayerCount();
-                        entry.playercountMax = serverMetadata.getPlayers().getPlayerLimit();
-                        List<Text> list = Lists.newArrayList();
-                        if (ArrayUtils.isNotEmpty(serverMetadata.getPlayers().getSample())) {
-                            GameProfile[] var4 = serverMetadata.getPlayers().getSample();
-
-                            for (GameProfile gameProfile : var4) {
+                            while (var3.hasNext()) {
+                                GameProfile gameProfile = (GameProfile) var3.next();
                                 list.add(Text.literal(gameProfile.getName()));
                             }
 
-                            if (serverMetadata.getPlayers().getSample().length < serverMetadata.getPlayers().getOnlinePlayerCount()) {
-                                list.add(Text.translatable("multiplayer.status.and_more", serverMetadata.getPlayers().getOnlinePlayerCount() - serverMetadata.getPlayers().getSample().length));
+                            if (players.sample().size() < players.online()) {
+                                list.add(Text.translatable("multiplayer.status.and_more", players.online() - players.sample().size()));
                             }
 
                             entry.playerListSummary = list;
-                        }
-                    } else {
-                        entry.playerCountLabel = "multiplayer.status.unknown";
-                    }
-
-                    String string = null;
-                    if (serverMetadata.getFavicon() != null) {
-                        String string2 = serverMetadata.getFavicon();
-                        if (string2.startsWith("data:image/png;base64,")) {
-                            string = string2.substring("data:image/png;base64," .length());
                         } else {
-                            ServerListPinger.LOGGER.error("Invalid server icon (unknown format)");
+                            entry.playerListSummary = List.of();
                         }
-                    }
 
-                    if (!Objects.equals(string, entry.getIcon())) {
-                        entry.setIcon(string);
-                        runnable.run();
-                    }
+                    }, () -> entry.playerCountLabel = "multiplayer.status.unknown");
+                    serverMetadata.favicon().ifPresent((favicon) -> {
+                        if (!Arrays.equals(favicon.iconBytes(), entry.getIcon())) {
+                            entry.setIcon(favicon.iconBytes());
+                            runnable.run();
+                        }
 
+                    });
                     this.startTime = Util.getMeasuringTimeMs();
                     clientConnection.send(new QueryPingC2SPacket(this.startTime));
                     this.sentQuery = true;
@@ -168,17 +154,18 @@ public class ServerListPinger {
                 notifyDisconnectListeners();
             }
 
-            public ClientConnection getConnection() {
-                return clientConnection;
+            public boolean isConnectionOpen() {
+                return clientConnection.isOpen();
             }
         });
 
         try {
             clientConnection.send(new HandshakeC2SPacket(serverAddress.getAddress(), serverAddress.getPort(), NetworkState.STATUS));
             clientConnection.send(new QueryRequestC2SPacket());
-        } catch (Throwable var6) {
-            LOGGER.error("Couldn't send handshake", var6);
+        } catch (Throwable var8) {
+            LOGGER.error("Failed to ping server {}", serverAddress, var8);
         }
+
     }
 
     private void ping(final MServerInfo serverInfo) {
@@ -187,7 +174,7 @@ public class ServerListPinger {
             protected void initChannel(Channel channel) {
                 try {
                     channel.config().setOption(ChannelOption.TCP_NODELAY, true);
-                } catch (ChannelException var3) {
+                } catch (ChannelException ignored) {
                 }
 
                 channel.pipeline().addLast(new SimpleChannelInboundHandler<ByteBuf>() {
@@ -199,7 +186,7 @@ public class ServerListPinger {
                             byteBuf.writeByte(254);
                             byteBuf.writeByte(1);
                             byteBuf.writeByte(250);
-                            char[] cs = "MC|PingHost" .toCharArray();
+                            char[] cs = "MC|PingHost".toCharArray();
                             byteBuf.writeShort(cs.length);
                             char[] var4 = cs;
                             int var5 = cs.length;
@@ -235,7 +222,7 @@ public class ServerListPinger {
                         if (s == 255) {
                             String string = new String(byteBuf.readBytes(byteBuf.readShort() * 2).array(), StandardCharsets.UTF_16BE);
                             String[] strings = Iterables.toArray(ServerListPinger.ZERO_SPLITTER.split(string), String.class);
-                            if ("§1" .equals(strings[0])) {
+                            if ("§1".equals(strings[0])) {
                                 String string2 = strings[2];
                                 String string3 = strings[3];
                                 int j = MathHelper.parseInt(strings[4], -1);

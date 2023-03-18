@@ -10,6 +10,7 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -55,7 +56,7 @@ public class MossBot extends Module {
             return;
         }
 
-        BlockPos bestBlock = BlockPos.streamOutwards(new BlockPos(mc.player.getEyePos()), range.get(), range.get(), range.get())
+        BlockPos bestBlock = BlockPos.streamOutwards(BlockPos.ofFloored(mc.player.getEyePos()), range.get(), range.get(), range.get())
                 .filter(b -> mc.player.getEyePos().distanceTo(Vec3d.ofCenter(b)) <= range.get() && !mossMap.containsKey(b))
                 .map(b -> Pair.of(b.toImmutable(), getMossSpots(b)))
                 .filter(p -> p.getRight() > 10)
@@ -67,7 +68,7 @@ public class MossBot extends Module {
                 mc.interactionManager.updateBlockBreakingProgress(bestBlock.up(), Direction.UP);
             }
 
-            WorldUtils.interact(bestBlock, findItemResult, rotate.get());
+            BlockUtils.place(bestBlock, findItemResult, rotate.get(), -50);
             mossMap.put(bestBlock, 100);
         }
     }

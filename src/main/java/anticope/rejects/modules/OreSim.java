@@ -187,7 +187,7 @@ public class OreSim extends Module {
                 .get(chunkKey)
                 .getOrDefault(ore, new HashSet<>())
                 .stream()
-                .map((vec3d) -> new BlockPos(vec3d))
+                .map(BlockPos::ofFloored)
                 .forEach(baritoneGoals::add);
             });
             return baritoneGoals;

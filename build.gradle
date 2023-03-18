@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id 'fabric-loom' version '1.1-SNAPSHOT'
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
@@ -30,6 +30,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation("meteordevelopment:meteor-client:${project.meteor_version}-SNAPSHOT")
+	modImplementation "baritone:fabric:${project.minecraft_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
 	extraLibs('com.seedfinding:mc_math:0eb505174da8a92550f8ec6efe254e0fa936cc0d') { transitive = false }

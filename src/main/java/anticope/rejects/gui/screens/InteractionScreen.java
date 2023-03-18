@@ -1,7 +1,7 @@
 package anticope.rejects.gui.screens;
 
-import anticope.rejects.modules.InteractionMenu;
 import anticope.rejects.mixin.EntityAccessor;
+import anticope.rejects.modules.InteractionMenu;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.MeteorClient;
@@ -14,7 +14,6 @@ import meteordevelopment.starscript.compiler.Compiler;
 import meteordevelopment.starscript.compiler.Parser;
 import meteordevelopment.starscript.utils.Error;
 import meteordevelopment.starscript.utils.StarscriptError;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -23,7 +22,8 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -251,7 +251,7 @@ public class InteractionScreen extends Screen {
 
         drawDots(matrix, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
         matrix.scale(2f, 2f, 1f);
-        drawCenteredText(matrix, textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
+        drawCenteredTextWithShadow(matrix, textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
 
         int scale = client.options.getGuiScale().getValue();
         Vector2 mouse = new Vector2(mouseX, mouseY);
@@ -324,10 +324,10 @@ public class InteractionScreen extends Screen {
     private void drawTextField(MatrixStack matrix, int x, int y, String key) {
         if (x >= width / 2) {
             drawRect(matrix, x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
-            drawStringWithShadow(matrix, textRenderer, key, x + 12, y - 4, textColor);
+            drawTextWithShadow(matrix, textRenderer, key, x + 12, y - 4, textColor);
         } else {
             drawRect(matrix, x - 14 - textRenderer.getWidth(key), y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
-            drawStringWithShadow(matrix, textRenderer, key, x - 12 - textRenderer.getWidth(key), y - 4, textColor);
+            drawTextWithShadow(matrix, textRenderer, key, x - 12 - textRenderer.getWidth(key), y - 4, textColor);
         }
     }
 
