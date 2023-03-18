@@ -4,7 +4,7 @@
 name: Java CI with Gradle
 
 concurrency: 
-  group: "build-1.19.2"
+  group: "build-1.19.4"
   cancel-in-progress: true
 
 on:
