@@ -1,5 +1,6 @@
 package anticope.rejects.modules;
 
+import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.game.OpenScreenEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -9,7 +10,6 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.screen.DeathScreen;
-import anticope.rejects.MeteorRejectsAddon;
 
 public class GhostMode extends Module {
 

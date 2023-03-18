@@ -65,6 +65,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new InstaMine());
         modules.add(new ItemGenerator());
         modules.add(new InteractionMenu());
+        modules.add(new Jetpack());
         modules.add(new Lavacast());
         modules.add(new MossBot());
         modules.add(new NewChunks());

@@ -38,7 +38,7 @@ public class AntiVanish extends Module {
 
     private final Setting<String> command = sgGeneral.add(new StringSetting.Builder()
             .name("command")
-            .description("The completion command.")
+            .description("The completion command to detect player names.")
             .defaultValue("minecraft:msg")
             .visible(() -> mode.get() == Mode.RealJoinMessage)
             .build()
@@ -68,7 +68,7 @@ public class AntiVanish extends Module {
     public WWidget getWidget(GuiTheme theme) {
         WVerticalList l = theme.verticalList();
         l.add(theme.label("LeaveMessage: If client didn't receive a quit game message (like essentials)."));
-        l.add(theme.label("RealJoinMessage: Tell whether the player is really left."));
+        l.add(theme.label("RealJoinMessage: Tell whether the player is really left by using player name completion."));
         return l;
     }
 

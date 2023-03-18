@@ -1,11 +1,10 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
-
-import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.orbit.EventHandler;
+import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 
 public class ColorSigns extends Module {

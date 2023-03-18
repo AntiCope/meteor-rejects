@@ -1,5 +1,6 @@
 package anticope.rejects.modules;
 
+import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -20,7 +21,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-import anticope.rejects.MeteorRejectsAddon;
 
 import java.util.ArrayList;
 import java.util.Collections;

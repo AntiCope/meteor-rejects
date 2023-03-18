@@ -10,7 +10,6 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
-import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -68,7 +67,7 @@ public class MossBot extends Module {
                 mc.interactionManager.updateBlockBreakingProgress(bestBlock.up(), Direction.UP);
             }
 
-            BlockUtils.place(bestBlock, findItemResult, rotate.get(), -50);
+            WorldUtils.interact(bestBlock, findItemResult, rotate.get());
             mossMap.put(bestBlock, 100);
         }
     }

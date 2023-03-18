@@ -62,7 +62,6 @@ public class SkeletonESP extends Module {
         float g = event.tickDelta;
 
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
@@ -88,8 +87,8 @@ public class SkeletonESP extends Module {
             float j = MathHelper.lerpAngleDegrees(g, playerEntity.prevHeadYaw, playerEntity.headYaw);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) j = Rotations.serverYaw;
 
-            float q = playerEntity.limbAngle - playerEntity.limbDistance * (1.0F - g);
-            float p = MathHelper.lerp(g, playerEntity.lastLimbDistance, playerEntity.limbDistance);
+            float q = playerEntity.limbAnimator.getPos() - playerEntity.limbAnimator.getSpeed() * (1.0F - g);
+            float p = playerEntity.limbAnimator.getSpeed(g);
             float o = (float) playerEntity.age + g;
             float k = j - h;
             float m = playerEntity.getPitch(g);
@@ -186,7 +185,6 @@ public class SkeletonESP extends Module {
             matrixStack.translate(-footPos.x, -footPos.y, -footPos.z);
         });
 
-        RenderSystem.enableTexture();
         RenderSystem.disableCull();
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();

@@ -63,6 +63,7 @@
 - Insta Mine (Removed from Meteor in [62cd0](https://github.com/MeteorDevelopment/meteor-client/commit/62cd0461e48a6c50f040bf48de25be1fa4eba77e))
 - Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
+- Jetpack
 - Lavacast
 - MossBot (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - NewChunks (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/module/mods/NewChunks.java))

@@ -1,16 +1,15 @@
 package anticope.rejects.modules;
 
-import java.io.IOException;
-
 import anticope.rejects.MeteorRejectsAddon;
-import net.minecraft.client.gl.PostEffectProcessor;
-import net.minecraft.util.Identifier;
-
-import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.BoolSetting;
+import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import net.minecraft.client.gl.PostEffectProcessor;
+import net.minecraft.util.Identifier;
+
+import java.io.IOException;
 
 public class Rendering extends Module {
 

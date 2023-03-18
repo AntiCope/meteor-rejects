@@ -1,13 +1,13 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
+import meteordevelopment.orbit.EventHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
@@ -19,7 +19,7 @@ public class ItemGenerator extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final Setting<Integer> speed = sgGeneral.add(new IntSetting.Builder()
             .name("speed")
-            .description("WARNING: High speeds will cause a ton of lag and can easily crash the game!")
+            .description("Stacks per tick. High speeds may cause lag.")
             .defaultValue(1)
             .min(1)
             .max(36)
@@ -29,7 +29,7 @@ public class ItemGenerator extends Module {
 
     private final Setting<Integer> stackSize = sgGeneral.add(new IntSetting.Builder()
             .name("stack-size")
-            .description("How many items to place in each stack. Doesn't seem to affect performance.")
+            .description("How many items to place in each stack. ")
             .defaultValue(1)
             .min(1)
             .max(64)

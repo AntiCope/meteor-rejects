@@ -3,7 +3,6 @@ package anticope.rejects.modules;
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.settings.StringMapSetting;
 import anticope.rejects.utils.RejectsUtils;
-import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.gui.GuiTheme;
