@@ -2,7 +2,6 @@ package anticope.rejects.utils.server;
 
 import anticope.rejects.gui.servers.ServerFinderScreen;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 

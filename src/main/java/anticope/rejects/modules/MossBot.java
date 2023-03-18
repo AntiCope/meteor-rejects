@@ -55,7 +55,7 @@ public class MossBot extends Module {
             return;
         }
 
-        BlockPos bestBlock = BlockPos.streamOutwards(new BlockPos(mc.player.getEyePos()), range.get(), range.get(), range.get())
+        BlockPos bestBlock = BlockPos.streamOutwards(BlockPos.ofFloored(mc.player.getEyePos()), range.get(), range.get(), range.get())
                 .filter(b -> mc.player.getEyePos().distanceTo(Vec3d.ofCenter(b)) <= range.get() && !mossMap.containsKey(b))
                 .map(b -> Pair.of(b.toImmutable(), getMossSpots(b)))
                 .filter(p -> p.getRight() > 10)

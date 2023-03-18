@@ -1,8 +1,11 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.events.OffGroundSpeedEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
-import meteordevelopment.meteorclient.settings.*;
+import meteordevelopment.meteorclient.settings.DoubleSetting;
+import meteordevelopment.meteorclient.settings.Setting;
+import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -46,19 +49,23 @@ public class Glide extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-		ClientPlayerEntity player = mc.player;
-		Vec3d v = player.getVelocity();
-		
-		if(player.isOnGround() || player.isTouchingWater() || player.isInLava() || player.isClimbing() || v.y >= 0) return;
-		
-		if(minHeight.get() > 0)
-		{
-			Box box = player.getBoundingBox();
-			box = box.union(box.offset(0, -minHeight.get(), 0));
-			if(!mc.world.isSpaceEmpty(box)) return;
-		}
-		
-		player.setVelocity(v.x, Math.max(v.y, -fallSpeed.get()), v.z);
-		player.airStrafingSpeed *= moveSpeed.get();
+        ClientPlayerEntity player = mc.player;
+        Vec3d v = player.getVelocity();
+
+        if (player.isOnGround() || player.isTouchingWater() || player.isInLava() || player.isClimbing() || v.y >= 0)
+            return;
+
+        if (minHeight.get() > 0) {
+            Box box = player.getBoundingBox();
+            box = box.union(box.offset(0, -minHeight.get(), 0));
+            if (!mc.world.isSpaceEmpty(box)) return;
+        }
+
+        player.setVelocity(v.x, Math.max(v.y, -fallSpeed.get()), v.z);
+    }
+
+    @EventHandler
+    private void onOffGroundSpeed(OffGroundSpeedEvent event) {
+        event.speed *= moveSpeed.get().floatValue();
     }
 }

@@ -24,7 +24,7 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 
 public class AutoSoup extends Module {
-    private static final String desc = "Automatically eats soup when your health is low. Note: This hack ignores hunger and assumes that eating soup directly refills your health. If the server you are playing on is not configured to do that, use AutoEat instead.";
+    private static final String desc = "Automatically eats soup when your health is low on some servers.";
 
     public AutoSoup() {
         super(MeteorRejectsAddon.CATEGORY, "auto-soup", desc);
