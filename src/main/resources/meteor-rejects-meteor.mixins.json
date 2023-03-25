@@ -19,6 +19,6 @@
     "modules.FlightMixin",
     "modules.InventoryTweaksMixin",
     "modules.KillAuraMixin",
-    "modules.NoRenderAccessor"
+    "modules.NoRenderMixin"
   ]
 }

@@ -1,6 +1,8 @@
 package anticope.rejects.mixin;
 
-import anticope.rejects.modules.modifier.NoRenderModifier;
+import anticope.rejects.mixininterface.INoRender;
+import meteordevelopment.meteorclient.systems.modules.Modules;
+import meteordevelopment.meteorclient.systems.modules.render.NoRender;
 import net.minecraft.client.gui.screen.ChatInputSuggestor;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class CommandSuggestorMixin {
     @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
     public void onRenderCommandSuggestion(MatrixStack matrices, int mouseX, int mouseY, CallbackInfo info) {
-        if (NoRenderModifier.noCommandSuggestions()) info.cancel();
+        if (((INoRender) Modules.get().get(NoRender.class)).noCommandSuggestions()) info.cancel();
     }
 }

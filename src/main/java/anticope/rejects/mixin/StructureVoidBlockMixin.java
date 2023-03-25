@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(StructureVoidBlock.class)
 public abstract class StructureVoidBlockMixin extends Block {
-
 	public StructureVoidBlockMixin(Settings settings) {
 		super(settings);
 	}
@@ -31,5 +30,4 @@ public abstract class StructureVoidBlockMixin extends Block {
 		Rendering renderingModule = Modules.get().get(Rendering.class);
 		return !(renderingModule != null && renderingModule.renderStructureVoid());
 	}
-
 }
