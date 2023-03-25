@@ -6,7 +6,6 @@
     "ClientPlayerInteractionManagerMixin",
     "ClientPlayNetworkHandlerMixin",
     "CommandSuggestorMixin",
-    "CustomPayloadS2CPacketMixin",
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
     "GameRendererMixin",

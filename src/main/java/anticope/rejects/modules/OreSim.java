@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import anticope.rejects.events.ChunkPosDataEvent;
 import anticope.rejects.events.PlayerRespawnEvent;
 import anticope.rejects.events.SeedChangedEvent;
 import anticope.rejects.utils.Ore;
@@ -10,6 +9,7 @@ import anticope.rejects.utils.seeds.Seeds;
 import baritone.api.BaritoneAPI;
 import com.seedfinding.mccore.version.MCVersion;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
+import meteordevelopment.meteorclient.events.world.ChunkDataEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -106,7 +106,7 @@ public class OreSim extends Module {
                         continue;
                     }
                     for (Vec3d pos : chunkRenderers.get(chunkKey).get(ore)) {
-                        event.renderer.boxLines(pos.x,pos.y,pos.z,pos.x+1,pos.y+1,pos.z+1, ore.color,0);
+                        event.renderer.boxLines(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1, ore.color, 0);
                     }
                 }
             }
@@ -151,11 +151,11 @@ public class OreSim extends Module {
             oreGoals.clear();
             var chunkPos = mc.player.getChunkPos();
             int rangeVal = 4;
-            for(int range = 0; range <= rangeVal; ++range) {
-                for(int x = -range + chunkPos.x; x <= range + chunkPos.x; ++x) {
+            for (int range = 0; range <= rangeVal; ++range) {
+                for (int x = -range + chunkPos.x; x <= range + chunkPos.x; ++x) {
                     oreGoals.addAll(addToBaritone(x, chunkPos.z + range - rangeVal));
                 }
-                for(int x = -range + 1 + chunkPos.x; x < range + chunkPos.x; ++x) {
+                for (int x = -range + 1 + chunkPos.x; x < range + chunkPos.x; ++x) {
                     oreGoals.addAll(this.addToBaritone(x, chunkPos.z - range + rangeVal + 1));
                 }
             }
@@ -164,20 +164,16 @@ public class OreSim extends Module {
 
     private ArrayList<BlockPos> addToBaritone(int chunkX, int chunkZ) {
         ArrayList<BlockPos> baritoneGoals = new ArrayList<>();
-        long chunkKey = (long)chunkX + ((long)chunkZ << 32);
+        long chunkKey = (long) chunkX + ((long) chunkZ << 32);
         if (!this.chunkRenderers.containsKey(chunkKey)) {
             return baritoneGoals;
         } else {
-            this.oreConfig.stream().filter((config) -> {
-                return (Boolean)config.enabled.get();
-            }).forEach((ore) -> {
-               chunkRenderers
-                .get(chunkKey)
-                .getOrDefault(ore, new HashSet<>())
-                .stream()
-                .map(BlockPos::ofFloored)
-                .forEach(baritoneGoals::add);
-            });
+            this.oreConfig.stream().filter((config) -> config.enabled.get()).forEach((ore) -> chunkRenderers
+                    .get(chunkKey)
+                    .getOrDefault(ore, new HashSet<>())
+                    .stream()
+                    .map(BlockPos::ofFloored)
+                    .forEach(baritoneGoals::add));
             return baritoneGoals;
         }
     }
@@ -235,8 +231,8 @@ public class OreSim extends Module {
     }
 
     @EventHandler
-    public void onChunkData(ChunkPosDataEvent event) {
-        doMathOnChunk(event.chunkX, event.chunkZ);
+    public void onChunkData(ChunkDataEvent event) {
+        doMathOnChunk(event.chunk.getPos().x, event.chunk.getPos().z);
     }
 
     private void doMathOnChunk(int chunkX, int chunkZ) {
@@ -317,7 +313,8 @@ public class OreSim extends Module {
                 y += ore.minY;
 
                 switch (ore.generator) {
-                    case DEFAULT -> ores.addAll(generateNormal(world, random, new BlockPos(x, y, z), ore.size, ore.discardOnAir));
+                    case DEFAULT ->
+                            ores.addAll(generateNormal(world, random, new BlockPos(x, y, z), ore.size, ore.discardOnAir));
                     case EMERALD -> {
                         if (airCheck.get() == AirCheck.OFF || world.getBlockState(new BlockPos(x, y, z)).isOpaque()) {
                             ores.add(new Vec3d(x, y, z));

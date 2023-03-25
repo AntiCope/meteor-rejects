@@ -1,11 +1,11 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import anticope.rejects.events.CustomPayloadEvent;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
@@ -13,6 +13,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -24,7 +25,8 @@ import java.util.Map;
 
 public class CustomPackets extends Module {
     private static final Gson GSON_NON_PRETTY = new GsonBuilder().enableComplexMapKeySerialization().disableHtmlEscaping().create();
-    private static final Type BADLION_MODS_TYPE = new TypeToken<Map<String, BadlionMod>>() {}.getType();
+    private static final Type BADLION_MODS_TYPE = new TypeToken<Map<String, BadlionMod>>() {
+    }.getType();
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgBadlion = settings.createGroup("Bad Lion");
@@ -49,30 +51,32 @@ public class CustomPackets extends Module {
     }
 
     @EventHandler
-    private void onCustomPayloadPacket(CustomPayloadEvent event) {
-        switch (event.packet.getChannel().toString()) {
-            case "badlion:mods" -> onBadlionModsPacket(event);
-            default -> onUnknownPacket(event);
+    private void onCustomPayloadPacket(PacketEvent.Receive event) {
+        if (event.packet instanceof CustomPayloadS2CPacket packet) {
+            switch (packet.getChannel().toString()) {
+                case "badlion:mods" -> event.setCancelled(onBadlionModsPacket(packet));
+                default -> onUnknownPacket(packet);
+            }
         }
     }
 
-    private void onUnknownPacket(CustomPayloadEvent event) {
+    private void onUnknownPacket(CustomPayloadS2CPacket packet) {
         if (!unknownPackets.get()) return;
-        MutableText text = Text.literal(event.packet.getChannel().toString());
+        MutableText text = Text.literal(packet.getChannel().toString());
         text.setStyle(text.getStyle()
-        .withHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                Text.literal(readString(event.packet.getData()))
-        )));
+                .withHoverEvent(new HoverEvent(
+                        HoverEvent.Action.SHOW_TEXT,
+                        Text.literal(readString(packet.getData()))
+                )));
         info(text);
     }
 
-    private void onBadlionModsPacket(CustomPayloadEvent event) {
-        if (!mods.get()) return;
-        String json = readString(event.packet.getData());
+    private boolean onBadlionModsPacket(CustomPayloadS2CPacket packet) {
+        if (!mods.get()) return false;
+        String json = readString(packet.getData());
         Map<String, BadlionMod> mods = GSON_NON_PRETTY.fromJson(json, BADLION_MODS_TYPE);
         ChatUtils.sendMsg("Badlion", format("Mods", formatMods(mods)));
-        event.cancel();
+        return true;
     }
 
     private MutableText format(String type, MutableText message) {

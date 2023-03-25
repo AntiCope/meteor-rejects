@@ -19,7 +19,7 @@ public class StatsScreen extends WindowScreen {
     public final Entity entity;
     private boolean effectListExpanded = true;
     private boolean attribListExpanded = true;
-    private boolean dimensionExpanded = false;
+    private boolean dimensionExpanded = true;
     public StatsScreen(Entity e) {
         super(GuiThemes.get(),e.getName().getString());
         this.entity = e;
@@ -40,15 +40,12 @@ public class StatsScreen extends WindowScreen {
         add(theme.label(String.format("Type: %s", lang.get(entity.getType().getTranslationKey()))));
         add(theme.label(String.format("Age: %d", entity.age)));
         add(theme.label(String.format("UUID: %s", entity.getUuidAsString())));
-        if (entity instanceof LivingEntity) {
-            LivingEntity liv = (LivingEntity) entity;
+        if (entity instanceof LivingEntity liv) {
             add(theme.label(String.format("Health: %.2f/%.2f", liv.getHealth(), liv.getMaxHealth())));
             add(theme.label(String.format("Armor: %d/20", liv.getArmor())));
             
             WSection effectList = add(theme.section("Status Effects", effectListExpanded)).expandX().widget();
-            effectList.action = () -> {
-                effectListExpanded = effectList.isExpanded();
-            };
+            effectList.action = () -> effectListExpanded = effectList.isExpanded();
             liv.getActiveStatusEffects().forEach((effect, instance) -> {
                 String status = lang.get(effect.getTranslationKey());
                 if (instance.getAmplifier() != 0) {
@@ -63,20 +60,14 @@ public class StatsScreen extends WindowScreen {
             }
             
             WSection attribList = add(theme.section("Attributes", attribListExpanded)).expandX().widget();
-            attribList.action = () -> {
-                attribListExpanded = attribList.isExpanded();
-            };
-            liv.getAttributes().getTracked().forEach((attrib) -> {
-                attribList.add(theme.label(String.format("%s: %.2f",
-                    lang.get(attrib.getAttribute().getTranslationKey()),
-                    attrib.getValue()
-                ))).expandX();
-            });
+            attribList.action = () -> attribListExpanded = attribList.isExpanded();
+            liv.getAttributes().getTracked().forEach((attrib) -> attribList.add(theme.label(String.format("%s: %.2f",
+                lang.get(attrib.getAttribute().getTranslationKey()),
+                attrib.getValue()
+            ))).expandX());
         }
         WSection dimension = add(theme.section("Dimensions", dimensionExpanded)).expandX().widget();
-        dimension.action = () -> {
-            dimensionExpanded = dimension.isExpanded();
-        };
+        dimension.action = () -> dimensionExpanded = dimension.isExpanded();
         dimension.add(theme.label(String.format("Position: %.2f, %.2f, %.2f", entity.getX(), entity.getY(), entity.getZ()))).expandX();
         dimension.add(theme.label(String.format("Yaw: %.2f, Pitch: %.2f", entity.getYaw(), entity.getPitch()))).expandX();
         Box box = entity.getBoundingBox();

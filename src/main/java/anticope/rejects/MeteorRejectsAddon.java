@@ -4,7 +4,6 @@ import anticope.rejects.commands.*;
 import anticope.rejects.gui.hud.*;
 import anticope.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
 import anticope.rejects.modules.*;
-import anticope.rejects.modules.modifier.NoRenderModifier;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
 import meteordevelopment.meteorclient.gui.GuiThemes;
@@ -80,9 +79,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
         modules.add(new TreeAura());
-        
-        // Module modifications
-        NoRenderModifier.init();
         
         // Commands
         Commands commands = Commands.get();
