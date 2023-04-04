@@ -127,7 +127,8 @@
 - Radar HUD
 
 ## Config
-- `Http Allowed` - Modify what http requests can be made with Meteor's http api
+- `Http Allowed` - Modify what HTTP requests can be made with Meteor's HTTP API
+- `Http User Agent` - Modify the HTTP header of Meteor's HTTP API
 - `Hidden Modules` - Hide modules from module gui. **requires restart when unhiding**
-- `Load system fonts` - Disabling this for faster launch. You can put font into meteor-client/fonts folder. **requires restart to take effect**
-- `Duplicate module names` - Allow duplicate module names. Best for addon compatibility.
+- `Load System Fonts` - Disabling this for faster launch. You can put font into meteor-client/fonts folder. **requires restart to take effect**
+- `Duplicate Module Names` - Allow duplicate module names. Enable it when you have one module overriding another.

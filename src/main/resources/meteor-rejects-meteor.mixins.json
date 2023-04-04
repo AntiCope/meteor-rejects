@@ -11,6 +11,7 @@
     "FontUtilsMixin",
     "GuiRendererAccessor",
     "HttpMixin",
+    "HttpRequestMixin",
     "ModuleMixin",
     "ModulesMixin",
     "WAccountMixin",

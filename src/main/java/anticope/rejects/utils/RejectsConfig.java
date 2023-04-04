@@ -26,6 +26,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     }
 
     public HttpAllowed httpAllowed = HttpAllowed.Everything;
+    public String httpUserAgent = "Meteor Client";
     public Set<String> hiddenModules = new HashSet<>();
     public boolean loadSystemFonts = true;
     public boolean duplicateModuleNames = false;
@@ -66,6 +67,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     public NbtCompound toTag() {
         NbtCompound tag = new NbtCompound();
         tag.putString("httpAllowed", httpAllowed.toString());
+        tag.putString("httpUserAgent", httpUserAgent);
         tag.putBoolean("loadSystemFonts", loadSystemFonts);
         tag.putBoolean("duplicateModuleNames", duplicateModuleNames);
 
@@ -79,6 +81,7 @@ public class RejectsConfig extends System<RejectsConfig> {
     @Override
     public RejectsConfig fromTag(NbtCompound tag) {
         httpAllowed = HttpAllowed.valueOf(tag.getString("httpAllowed"));
+        httpUserAgent = tag.getString("httpUserAgent");
         loadSystemFonts = tag.getBoolean("loadSystemFonts");
         duplicateModuleNames = tag.getBoolean("duplicateModuleNames");
 

@@ -20,6 +20,14 @@ public class ConfigModifier {
             .build()
     );
 
+    public final Setting<String> httpUserAgent = sgRejects.add(new StringSetting.Builder()
+            .name("http-user-agent")
+            .description("Changes the HTTP user agent. Empty for none.")
+            .defaultValue(RejectsConfig.get().httpUserAgent)
+            .onChanged(v -> RejectsConfig.get().httpUserAgent = v)
+            .build()
+    );
+
     public final Setting<List<Module>> hiddenModules = sgRejects.add(new ModuleListSetting.Builder()
             .name("hidden-modules")
             .description("Which modules to hide.")
