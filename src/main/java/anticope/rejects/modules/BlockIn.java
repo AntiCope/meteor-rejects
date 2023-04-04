@@ -72,6 +72,8 @@ public class BlockIn extends Module {
     
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
+        if (mc.player.isOnGround() && mc.player.getY()>Math.floor(mc.player.getY()+0.2)) mc.options.sneakKey.setPressed(true);
+        if (return_ && mc.options.sneakKey.isPressed()) mc.options.sneakKey.setPressed(false);
         if (center.get()) {
             if (!onlyOnGround.get()) {
                 mc.player.setVelocity(0,0,0);
