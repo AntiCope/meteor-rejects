@@ -1,8 +1,8 @@
 package anticope.rejects.commands;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import meteordevelopment.meteorclient.systems.commands.Command;
-
+import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
@@ -10,8 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-
-import com.mojang.brigadier.arguments.IntegerArgumentType;
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class GhostCommand extends Command {
     public GhostCommand() {

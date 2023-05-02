@@ -2,10 +2,11 @@ package anticope.rejects.commands;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import meteordevelopment.meteorclient.systems.commands.Command;
+import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
 
 import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class SetVelocityCommand extends Command {
     public SetVelocityCommand() {
@@ -19,7 +20,7 @@ public class SetVelocityCommand extends Command {
             mc.player.setVelocity(currentVelocity.x, DoubleArgumentType.getDouble(ctx, "y"), currentVelocity.z);
             return SINGLE_SUCCESS;
         }));
-        
+
         builder.then(argument("x", DoubleArgumentType.doubleArg()).then(argument("z", DoubleArgumentType.doubleArg()).executes(ctx -> {
             double x = DoubleArgumentType.getDouble(ctx, "x");
             double z = DoubleArgumentType.getDouble(ctx, "z");
