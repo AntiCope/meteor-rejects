@@ -1,28 +1,33 @@
 package anticope.rejects.commands;
 
 import anticope.rejects.arguments.EnumStringArgumentType;
+import anticope.rejects.utils.GiveUtils;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-
+import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
-import net.minecraft.item.*;
-import net.minecraft.nbt.*;
-
-import anticope.rejects.utils.GiveUtils;
-import meteordevelopment.meteorclient.systems.commands.Command;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
+import java.util.Collection;
 
-import java.util.*;
+import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
+import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class GiveCommand extends Command {
+
+    private final Collection<String> PRESETS = GiveUtils.PRESETS.keySet();
 
     public GiveCommand() {
         super("give", "Gives items in creative", "item", "kit");
     }
-    private final Collection<String> PRESETS = GiveUtils.PRESETS.keySet();
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
@@ -31,7 +36,7 @@ public class GiveCommand extends Command {
             ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
             NbtCompound ct = new NbtCompound();
             if (inHand.getItem() instanceof BlockItem) {
-                ct.putInt("Time",1);
+                ct.putInt("Time", 1);
                 ct.putString("id", "minecraft:falling_block");
                 ct.put("BlockState", new NbtCompound());
                 ct.getCompound("BlockState").putString("Name", Registries.ITEM.getId(inHand.getItem()).toString());
@@ -45,11 +50,11 @@ public class GiveCommand extends Command {
                 ct.putString("id", "minecraft:item");
                 NbtCompound it = new NbtCompound();
                 it.putString("id", Registries.ITEM.getId(inHand.getItem()).toString());
-                it.putInt("Count",inHand.getCount());
+                it.putInt("Count", inHand.getCount());
                 if (inHand.hasNbt()) {
                     it.put("tag", inHand.getNbt());
                 }
-                ct.put("Item",it);
+                ct.put("Item", it);
             }
             NbtCompound t = new NbtCompound();
             t.put("EntityTag", ct);
@@ -94,8 +99,8 @@ public class GiveCommand extends Command {
             return SINGLE_SUCCESS;
         })));
 
-        builder.then(literal("head").then(argument("owner",StringArgumentType.greedyString()).executes(ctx -> {
-            String playerName = ctx.getArgument("owner",String.class);
+        builder.then(literal("head").then(argument("owner", StringArgumentType.greedyString()).executes(ctx -> {
+            String playerName = ctx.getArgument("owner", String.class);
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
             NbtCompound tag = new NbtCompound();
             tag.putString("SkullOwner", playerName);

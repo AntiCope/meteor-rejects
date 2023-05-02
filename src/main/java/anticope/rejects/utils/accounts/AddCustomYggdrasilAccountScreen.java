@@ -1,8 +1,8 @@
 package anticope.rejects.utils.accounts;
 
 import meteordevelopment.meteorclient.gui.GuiTheme;
-import meteordevelopment.meteorclient.gui.screens.AccountsScreen;
-import meteordevelopment.meteorclient.gui.screens.AddAccountScreen;
+import meteordevelopment.meteorclient.gui.screens.accounts.AccountsScreen;
+import meteordevelopment.meteorclient.gui.screens.accounts.AddAccountScreen;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.systems.accounts.Accounts;

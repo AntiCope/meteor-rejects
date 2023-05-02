@@ -1,8 +1,5 @@
 package anticope.rejects.arguments;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -10,10 +7,12 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import java.lang.reflect.InvocationTargetException;
-
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.Text;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
     private static final DynamicCommandExceptionType NO_SUCH_TYPE = new DynamicCommandExceptionType(o ->
@@ -32,7 +31,7 @@ public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
     }
 
     public static <T extends Enum<?>> EnumArgumentType<T> enumArgument(T defaultValue) {
-        return new EnumArgumentType<T>(defaultValue);
+        return new EnumArgumentType<>(defaultValue);
     }
 
     public static <T extends Enum<?>> T getEnum(CommandContext<?> context, String name, T defaultValue) {

@@ -2,8 +2,8 @@ package anticope.rejects.commands;
 
 import anticope.rejects.gui.screens.HeadScreen;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.gui.GuiThemes;
-import meteordevelopment.meteorclient.systems.commands.Command;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.command.CommandSource;
 
@@ -21,8 +21,8 @@ public class HeadsCommand extends Command {
             Utils.screenToOpen = new HeadScreen(GuiThemes.get());
             return SINGLE_SUCCESS;
         });
-        
+
     }
-    
-    
+
+
 }

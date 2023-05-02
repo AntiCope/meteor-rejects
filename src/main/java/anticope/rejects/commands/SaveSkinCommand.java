@@ -1,14 +1,15 @@
 package anticope.rejects.commands;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import meteordevelopment.meteorclient.systems.commands.Command;
-import meteordevelopment.meteorclient.systems.commands.arguments.PlayerListEntryArgumentType;
+import meteordevelopment.meteorclient.commands.Command;
+import meteordevelopment.meteorclient.commands.arguments.PlayerListEntryArgumentType;
 import meteordevelopment.meteorclient.utils.network.Http;
 import net.minecraft.command.CommandSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import org.apache.commons.codec.binary.Base64;
 import org.lwjgl.BufferUtils;
@@ -32,7 +33,7 @@ public class SaveSkinCommand extends Command {
     private final Gson GSON = new Gson();
 
     public SaveSkinCommand() {
-        super("save-skin","Download a player's skin by name.", "skin","skinsteal");
+        super("save-skin", "Download a player's skin by name.", "skin", "skinsteal");
 
         filters = BufferUtils.createPointerBuffer(1);
 
@@ -50,9 +51,9 @@ public class SaveSkinCommand extends Command {
             if (path == null) IO_EXCEPTION.create();
             if (path != null) {
                 if (!path.endsWith(".png")) path += ".png";
-                saveSkin(id.toString(),path);
+                saveSkin(id.toString(), path);
             }
-            
+
             return SINGLE_SUCCESS;
         }));
     }
