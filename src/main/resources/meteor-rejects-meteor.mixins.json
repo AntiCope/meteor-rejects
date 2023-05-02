@@ -15,7 +15,6 @@
     "ModuleMixin",
     "ModulesMixin",
     "WAccountMixin",
-    "modules.AimAssistMixin",
     "modules.AutoSignMixin",
     "modules.FlightMixin",
     "modules.InventoryTweaksMixin",

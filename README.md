@@ -31,6 +31,7 @@
 
 # Features
 ## Modules
+- AimAssist (Removed from Meteor in [ee391](https://github.com/MeteorDevelopment/meteor-client/commit/ee391e431f345f253447f425dbc0de8625f88e65))
 - AntiBot (Removed from Meteor in [166fc](https://github.com/MeteorDevelopment/meteor-client/commit/166fccc73e53de6cfdbe41ea58dc593a2f5011f6))
 - AntiCrash (Ported from [Anti-ClientCrasher](https://github.com/wagyourtail/Anti-ClientCrasher))
 - AntiSpawnpoint
@@ -93,8 +94,6 @@
 - KillAura
   - `Fov and invisible filter`
   - `Random Teleport, Hit Chance, Random Delay` (Removed from Meteor in [8722e](https://github.com/MeteorDevelopment/meteor-client/commit/8722ef565afa02ca4b6d9710a20fc9fcfd97bf05))
-- AimAssist
-  - `Fov filter`
 - Alts
   -  `Yggdrasil Login`
 
