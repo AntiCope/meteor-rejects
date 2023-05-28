@@ -3,11 +3,9 @@ package anticope.rejects.modules;
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.gui.screens.InteractionScreen;
 import anticope.rejects.settings.StringMapSetting;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
@@ -20,17 +18,17 @@ import net.minecraft.entity.LivingEntity;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class InteractionMenu extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgStyle = settings.createGroup("Style");
 
-    private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
+    private final Setting<Set<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Entities")
-            .defaultValue(Utils.asO2BMap(
-                    EntityType.PLAYER))
+            .defaultValue(EntityType.PLAYER)
             .build()
     );
     public final Setting<Keybind> keybind = sgGeneral.add(new KeybindSetting.Builder()
@@ -103,7 +101,7 @@ public class InteractionMenu extends Module {
         }
 
         if (e == null) return;
-        if (entities.get().getBoolean(e.getType())) {
+        if (entities.get().contains(e.getType())) {
             mc.setScreen(new InteractionScreen(e, this));
         }
     }

@@ -2,7 +2,6 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.utils.RejectsUtils;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
@@ -21,13 +20,15 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector3d;
 
+import java.util.Set;
+
 public class AimAssist extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgSpeed = settings.createGroup("Aim Speed");
 
     // General
 
-    private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
+    private final Setting<Set<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Entities to aim at.")
             .defaultValue(EntityType.PLAYER)
@@ -103,7 +104,7 @@ public class AimAssist extends Module {
             if (!entity.isAlive()) return false;
             if (!PlayerUtils.isWithin(entity, range.get())) return false;
             if (!ignoreWalls.get() && !PlayerUtils.canSeeEntity(entity)) return false;
-            if (entity == mc.player || !entities.get().getBoolean(entity.getType())) return false;
+            if (entity == mc.player || !entities.get().contains(entity.getType())) return false;
             if (entity instanceof PlayerEntity) return Friends.get().shouldAttack((PlayerEntity) entity);
             return RejectsUtils.inFov(entity, fov.get());
         }, priority.get());

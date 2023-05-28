@@ -1,7 +1,6 @@
 package anticope.rejects.gui.hud;
 
 import anticope.rejects.MeteorRejectsAddon;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import meteordevelopment.meteorclient.renderer.Renderer2D;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.hud.HudElement;
@@ -18,6 +17,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Set;
+
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class RadarHud extends HudElement {
@@ -33,7 +34,7 @@ public class RadarHud extends HudElement {
     );
 
 
-    private final Setting<Object2BooleanMap<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
+    private final Setting<Set<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Select specific entities.")
             .defaultValue(EntityType.PLAYER)
@@ -95,7 +96,7 @@ public class RadarHud extends HudElement {
             Renderer2D.COLOR.render(null);
             if (mc.world != null) {
                 for (Entity entity : mc.world.getEntities()) {
-                    if (!entities.get().getBoolean(entity.getType())) return;
+                    if (!entities.get().contains(entity.getType())) return;
                     double xPos = ((entity.getX() - mc.player.getX()) * scale.get() * zoom.get() + width/2);
                     double yPos = ((entity.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + height/2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
