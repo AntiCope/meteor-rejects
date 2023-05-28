@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.net.http.HttpRequest;
 
-@Mixin(Http.Request.class)
+@Mixin(value = Http.Request.class, remap = false)
 public class HttpRequestMixin {
     @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Ljava/net/http/HttpRequest$Builder;header(Ljava/lang/String;Ljava/lang/String;)Ljava/net/http/HttpRequest$Builder;"))
     private HttpRequest.Builder onAddUAHeader(HttpRequest.Builder builder, String userAgent, String value) {
