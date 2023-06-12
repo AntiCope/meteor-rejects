@@ -3,9 +3,7 @@ package anticope.rejects.modules;
 import anticope.rejects.MeteorRejectsAddon;
 import com.google.common.collect.Streams;
 import java.util.stream.Stream;
-import meteordevelopment.meteorclient.events.world.CollisionShapeEvent;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
-import meteordevelopment.meteorclient.events.entity.BoatMoveEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.mixininterface.IVec3d;
 import meteordevelopment.meteorclient.mixin.PlayerMoveC2SPacketAccessor;
@@ -20,7 +18,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 
 public class FullFlight extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
