@@ -44,7 +44,7 @@ public class FullFlight extends Module {
     private final Setting<AntiKickMode> antiKickMode = sgAntiKick.add(new EnumSetting.Builder<AntiKickMode>()
         .name("mode")
         .description("The mode for anti kick.")
-        .defaultValue(AntiKickMode.Old)
+        .defaultValue(AntiKickMode.PaperNew)
         .build()
     );
 	
