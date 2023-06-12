@@ -35,6 +35,7 @@ public class FullNoClip extends Module {
 
 	@EventHandler
 	private void onCollision(CollisionShapeEvent event) {
+		if (mc.player.getVehicle() == null)
 			event.shape = VoxelShapes.empty();
 	}
 	
