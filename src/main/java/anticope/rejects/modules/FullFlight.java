@@ -90,7 +90,7 @@ public class FullFlight extends Module {
 				
 				if(blockCollisions.findAny().isPresent()) break;
 				
-				mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.4, mc.player.getZ(), mc.player.isOnGround()));
+				mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.05, mc.player.getZ(), mc.player.isOnGround()));
 				mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround()));
 				
 				break;
@@ -149,7 +149,7 @@ public class FullFlight extends Module {
 			ySpeed -= speed.get();
 		((IVec3d) event.movement).setY(verticalSpeedMatch.get() ? ySpeed : ySpeed/2);
 		
-		if (ySpeed >= 0 && floatingTicks < 40)
+		if (ySpeed >= -0.05 && floatingTicks < 40)
 			floatingTicks++;
 	}
 	
