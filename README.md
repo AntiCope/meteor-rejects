@@ -80,6 +80,8 @@
 - SoundLocator
 - Server Finder (Ported from [MeteorAdditions](https://github.com/JFronny/MeteorAdditions))
 - TreeAura (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/2138))
+- FullNoClip
+- FullFlight
 
 ### Modifications
 - NoRender
