@@ -48,6 +48,10 @@ dependencies {
 	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
 
+loom {
+    accessWidenerPath = file("src/main/resources/meteor-client.accesswidener")
+}
+
 processResources {
 	inputs.property "version", project.version
 
