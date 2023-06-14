@@ -20,7 +20,8 @@
     "TexturedRenderLayersMixin",
     "ToastManagerMixin",
     "VehicleMoveC2SPacketAccessor",
-    "baritone.MineProcessMixin"
+    "baritone.MineProcessMixin",
+	"MixinEntity"
   ],
   "injectors": {
     "defaultRequire": 1
