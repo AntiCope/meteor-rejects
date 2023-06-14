@@ -81,7 +81,7 @@
 - Server Finder (Ported from [MeteorAdditions](https://github.com/JFronny/MeteorAdditions))
 - TreeAura (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/2138))
 - FullNoClip
-- FullFlight
+- FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
 - NoJumpDelay
 - KnockbackPlus
 
