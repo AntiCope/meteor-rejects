@@ -80,6 +80,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new TreeAura());
         modules.add(new FullNoClip());
         modules.add(new FullFlight());
+        modules.add(new NoJumpDelay());
+        modules.add(new KnockbackPlus());
 
         // Commands
         Commands.add(new CenterCommand());

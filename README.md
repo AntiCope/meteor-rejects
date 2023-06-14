@@ -82,6 +82,8 @@
 - TreeAura (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/2138))
 - FullNoClip
 - FullFlight
+- NoJumpDelay
+- KnockbackPlus
 
 ### Modifications
 - NoRender
