@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import meteordevelopment.meteorclient.events.world.CollisionShapeEvent;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.mixininterface.IVec3d;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -31,12 +30,6 @@ public class FullNoClip extends Module {
 	
 	public FullNoClip() {
 		super(MeteorRejectsAddon.CATEGORY, "fullnoclip", "FullNoClip.");
-	}
-
-	@EventHandler
-	private void onCollision(CollisionShapeEvent event) {
-		if (mc.player.getVehicle() == null)
-			event.shape = VoxelShapes.empty();
 	}
 	
     private double getDir() {
