@@ -19,6 +19,6 @@ public class PlayerEntityMixin {
     }
     @Redirect(method = {"tick", "updatePose"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSpectator()Z"))
     private boolean FullNoClip(PlayerEntity player) {
-        return Modules.get().isActive(FullNoClip.class);
+        return player.isSpectator() || Modules.get().isActive(FullNoClip.class);
     }
 }
