@@ -35,6 +35,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
@@ -57,6 +58,8 @@ public class InteractionScreen extends Screen {
     private float yaw, pitch;
     private final Map<String, Consumer<Entity>> functions;
     private final Map<String, String> msgs;
+
+    private final Identifier GUI_ICONS_TEXTURE = new Identifier("textures/gui/icons.png");
 
     private final StaticListener shiftListener = new StaticListener();
 
@@ -244,14 +247,11 @@ public class InteractionScreen extends Screen {
         // Fake crosshair stuff
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        // idk, GUI_ICONS_TEXTURE does not exists
-//        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
                 GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
                 GlStateManager.DstFactor.ZERO);
-        // idk, Identifier is required
-//        context.drawTexture(matrix, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
+        context.drawTexture(GUI_ICONS_TEXTURE, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
 
         drawDots(context, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
         matrix.scale(2f, 2f, 1f);
