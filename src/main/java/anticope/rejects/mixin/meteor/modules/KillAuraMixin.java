@@ -7,7 +7,6 @@ import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Box;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -112,7 +111,7 @@ public class KillAuraMixin extends Module {
     }
 
     @Inject(method = "onTick", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void onTick(TickEvent.Pre event, CallbackInfo info, Entity primary, Box hitbox) {
+    private void onTick(TickEvent.Pre event, CallbackInfo ci, Entity primary) {
         if (randomTeleport.get() && !onlyOnLook.get()) {
             mc.player.setPosition(primary.getX() + randomOffset(), primary.getY(), primary.getZ() + randomOffset());
         }

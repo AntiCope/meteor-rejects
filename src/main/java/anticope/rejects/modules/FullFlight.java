@@ -1,23 +1,22 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.utils.RejectsUtils;
 import com.google.common.collect.Streams;
-import java.util.stream.Stream;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
-import meteordevelopment.meteorclient.mixininterface.IVec3d;
-import meteordevelopment.meteorclient.mixin.PlayerMoveC2SPacketAccessor;
 import meteordevelopment.meteorclient.mixin.ClientPlayerEntityAccessor;
-import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.mixin.PlayerMoveC2SPacketAccessor;
 import meteordevelopment.meteorclient.settings.*;
-import meteordevelopment.meteorclient.utils.Utils;
-import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.entity.Entity;
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.shape.VoxelShape;
+
+import java.util.stream.Stream;
 
 public class FullFlight extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -50,29 +49,14 @@ public class FullFlight extends Module {
         super(MeteorRejectsAddon.CATEGORY, "fullflight", "FullFlight.");
     }
 
-    private double getDir() {
-        double dir = 0;
-
-        if (Utils.canUpdate()) {
-            dir = mc.player.getYaw() + ((mc.player.forwardSpeed < 0) ? 180 : 0);
-
-            if (mc.player.sidewaysSpeed > 0) {
-                dir += -90F * ((mc.player.forwardSpeed < 0) ? -0.5F : ((mc.player.forwardSpeed > 0) ? 0.5F : 1F));
-            } else if (mc.player.sidewaysSpeed < 0) {
-                dir += 90F * ((mc.player.forwardSpeed < 0) ? -0.5F : ((mc.player.forwardSpeed > 0) ? 0.5F : 1F));
-            }
-        }
-        return dir;
-    }
-
     private double calculateGround() {
-        for(double ground = mc.player.getY(); ground > 0D; ground -= 0.05) {
+        for (double ground = mc.player.getY(); ground > 0D; ground -= 0.05) {
             Box box = mc.player.getBoundingBox();
             Box adjustedBox = box.offset(0, ground - mc.player.getY(), 0);
 
             Stream<VoxelShape> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, adjustedBox));
 
-            if(blockCollisions.findAny().isPresent()) return ground + 0.05;
+            if (blockCollisions.findAny().isPresent()) return ground + 0.05;
         }
 
         return 0F;
@@ -111,7 +95,8 @@ public class FullFlight extends Module {
 
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
-        if (mc.player.getVehicle() == null || !(event.packet instanceof PlayerMoveC2SPacket packet) || antiKickMode.get() != AntiKickMode.PaperNew) return;
+        if (mc.player.getVehicle() == null || !(event.packet instanceof PlayerMoveC2SPacket packet) || antiKickMode.get() != AntiKickMode.PaperNew)
+            return;
 
         double currentY = packet.getY(Double.MAX_VALUE);
         if (currentY != Double.MAX_VALUE) {
@@ -151,8 +136,7 @@ public class FullFlight extends Module {
             // Resend movement packets
             ((ClientPlayerEntityAccessor) mc.player).setTicksSinceLastPositionPacketSent(20);
         }
-        if (floatingTicks >= 20)
-        {
+        if (floatingTicks >= 20) {
             switch (antiKickMode.get()) {
                 case New -> {
                     Box box = mc.player.getBoundingBox();
@@ -160,12 +144,10 @@ public class FullFlight extends Module {
 
                     Stream<VoxelShape> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, adjustedBox));
 
-                    if(blockCollisions.findAny().isPresent()) break;
+                    if (blockCollisions.findAny().isPresent()) break;
 
                     mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.4, mc.player.getZ(), mc.player.isOnGround()));
                     mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround()));
-
-                    break;
                 }
                 case Old -> {
                     Box box = mc.player.getBoundingBox();
@@ -173,53 +155,33 @@ public class FullFlight extends Module {
 
                     Stream<VoxelShape> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, adjustedBox));
 
-                    if(blockCollisions.findAny().isPresent()) break;
+                    if (blockCollisions.findAny().isPresent()) break;
 
                     double ground = calculateGround();
                     double groundExtra = ground + 0.1D;
 
-                    for(double posY = mc.player.getY(); posY > groundExtra; posY -= 4D) {
+                    for (double posY = mc.player.getY(); posY > groundExtra; posY -= 4D) {
                         mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), true));
 
-                        if(posY - 4D < groundExtra) break; // Prevent next step
+                        if (posY - 4D < groundExtra) break; // Prevent next step
                     }
 
                     mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), groundExtra, mc.player.getZ(), true));
 
-
-                    for(double posY = groundExtra; posY < mc.player.getY(); posY += 4D) {
+                    for (double posY = groundExtra; posY < mc.player.getY(); posY += 4D) {
                         mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), mc.player.isOnGround()));
 
-                        if(posY + 4D > mc.player.getY()) break; // Prevent next step
+                        if (posY + 4D > mc.player.getY()) break; // Prevent next step
                     }
 
                     mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround()));
 
-                    break;
                 }
             }
             floatingTicks = 0;
         }
 
-        if (PlayerUtils.isMoving()) {
-            double dir = getDir();
-
-            double xDir = Math.cos(Math.toRadians(dir + 90));
-            double zDir = Math.sin(Math.toRadians(dir + 90));
-
-            ((IVec3d) event.movement).setXZ(xDir * speed.get(), zDir * speed.get());
-        }
-        else {
-            ((IVec3d) event.movement).setXZ(0, 0);
-        }
-
-        float ySpeed = 0;
-
-        if (mc.options.jumpKey.isPressed())
-            ySpeed += speed.get();
-        if (mc.options.sneakKey.isPressed())
-            ySpeed -= speed.get();
-        ((IVec3d) event.movement).setY(verticalSpeedMatch.get() ? ySpeed : ySpeed/2);
+        float ySpeed = RejectsUtils.fullFlightMove(event, speed.get(), verticalSpeedMatch.get());
 
         if (floatingTicks < 20)
             if (ySpeed >= -0.1)
@@ -234,5 +196,4 @@ public class FullFlight extends Module {
         PaperNew,
         None
     }
-
 }

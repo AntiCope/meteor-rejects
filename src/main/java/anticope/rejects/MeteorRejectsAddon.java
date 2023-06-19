@@ -57,6 +57,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new CoordLogger());
         modules.add(new CustomPackets());
         modules.add(new ExtraElytra());
+        modules.add(new FullNoClip());
+        modules.add(new FullFlight());
         modules.add(new GamemodeNotifier());
         modules.add(new GhostMode());
         modules.add(new Glide());
@@ -64,9 +66,11 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new ItemGenerator());
         modules.add(new InteractionMenu());
         modules.add(new Jetpack());
+        modules.add(new KnockbackPlus());
         modules.add(new Lavacast());
         modules.add(new MossBot());
         modules.add(new NewChunks());
+        modules.add(new NoJumpDelay());
         modules.add(new ObsidianFarm());
         modules.add(new OreSim());
         modules.add(new PacketFly());
@@ -78,10 +82,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
         modules.add(new TreeAura());
-        modules.add(new FullNoClip());
-        modules.add(new FullFlight());
-        modules.add(new NoJumpDelay());
-        modules.add(new KnockbackPlus());
+        modules.add(new VehicleOneHit());
 
         // Commands
         Commands.add(new CenterCommand());
