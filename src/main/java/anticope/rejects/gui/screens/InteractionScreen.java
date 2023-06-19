@@ -15,6 +15,7 @@ import meteordevelopment.starscript.compiler.Parser;
 import meteordevelopment.starscript.utils.Error;
 import meteordevelopment.starscript.utils.StarscriptError;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -238,27 +239,29 @@ public class InteractionScreen extends Screen {
         return false;
     }
 
-    public void render(MatrixStack matrix, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        MatrixStack matrix = context.getMatrices();
         // Fake crosshair stuff
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
+        // idk, GUI_ICONS_TEXTURE does not exists
+//        RenderSystem.setShaderTexture(0, GUI_ICONS_TEXTURE);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
                 GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
                 GlStateManager.DstFactor.ZERO);
-        drawTexture(matrix, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
+        // idk, Identifier is required
+//        context.drawTexture(matrix, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
 
-        drawDots(matrix, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
+        drawDots(context, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
         matrix.scale(2f, 2f, 1f);
-        drawCenteredTextWithShadow(matrix, textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
 
         int scale = client.options.getGuiScale().getValue();
         Vector2 mouse = new Vector2(mouseX, mouseY);
         Vector2 center = new Vector2(width / 2, height / 2);
         mouse.subtract(center);
         mouse.normalize();
-        Vector2 cross = mouse;
 
         if (scale == 0)
             scale = 4;
@@ -272,13 +275,13 @@ public class InteractionScreen extends Screen {
         this.crosshairX = (int) mouse.x + width / 2;
         this.crosshairY = (int) mouse.y + height / 2;
 
-        client.player.setYaw(yaw + cross.x / 3);
-        client.player.setPitch(MathHelper.clamp(pitch + cross.y / 3, -90f, 90f));
-        super.render(matrix, mouseX, mouseY, delta);
+        client.player.setYaw(yaw + mouse.x / 3);
+        client.player.setPitch(MathHelper.clamp(pitch + mouse.y / 3, -90f, 90f));
+        super.render(context, mouseX, mouseY, delta);
     }
 
 
-    private void drawDots(MatrixStack matrix, int radius, int mouseX, int mouseY) {
+    private void drawDots(DrawContext context, int radius, int mouseX, int mouseY) {
         ArrayList<Point> pointList = new ArrayList<Point>();
         String cache[] = new String[functions.size()];
         double lowestDistance = Double.MAX_VALUE;
@@ -289,7 +292,7 @@ public class InteractionScreen extends Screen {
             double s = (double) i / functions.size() * 2 * Math.PI;
             int x = (int) Math.round(radius * Math.cos(s) + width / 2);
             int y = (int) Math.round(radius * Math.sin(s) + height / 2);
-            drawTextField(matrix, x, y, string);
+            drawTextField(context, x, y, string);
 
             // Calculate lowest distance between mouse and dot
             if (Math.hypot(x - mouseX, y - mouseY) < lowestDistance) {
@@ -306,46 +309,46 @@ public class InteractionScreen extends Screen {
         for (int j = 0; j < functions.size(); j++) {
             Point point = pointList.get(j);
             if (pointList.get(focusedDot) == point) {
-                drawDot(matrix, point.x - 4, point.y - 4, selectedDotColor);
+                drawDot(context, point.x - 4, point.y - 4, selectedDotColor);
                 this.focusedString = cache[focusedDot];
             } else
-                drawDot(matrix, point.x - 4, point.y - 4, dotColor);
+                drawDot(context, point.x - 4, point.y - 4, dotColor);
         }
     }
 
-    private void drawRect(MatrixStack matrix, int startX, int startY, int width, int height, int colorInner, int colorOuter) {
-        drawHorizontalLine(matrix, startX, startX + width, startY, colorOuter);
-        drawHorizontalLine(matrix, startX, startX + width, startY + height, colorOuter);
-        drawVerticalLine(matrix, startX, startY, startY + height, colorOuter);
-        drawVerticalLine(matrix, startX + width, startY, startY + height, colorOuter);
-        fill(matrix, startX + 1, startY + 1, startX + width, startY + height, colorInner);
+    private void drawRect(DrawContext context, int startX, int startY, int width, int height, int colorInner, int colorOuter) {
+        context.drawHorizontalLine(startX, startX + width, startY, colorOuter);
+        context.drawHorizontalLine(startX, startX + width, startY + height, colorOuter);
+        context.drawVerticalLine(startX, startY, startY + height, colorOuter);
+        context.drawVerticalLine(startX + width, startY, startY + height, colorOuter);
+        context.fill(startX + 1, startY + 1, startX + width, startY + height, colorInner);
     }
 
-    private void drawTextField(MatrixStack matrix, int x, int y, String key) {
+    private void drawTextField(DrawContext context, int x, int y, String key) {
         if (x >= width / 2) {
-            drawRect(matrix, x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
-            drawTextWithShadow(matrix, textRenderer, key, x + 12, y - 4, textColor);
+            drawRect(context,x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
+            context.drawTextWithShadow(textRenderer, key, x + 12, y - 4, textColor);
         } else {
-            drawRect(matrix, x - 14 - textRenderer.getWidth(key), y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
-            drawTextWithShadow(matrix, textRenderer, key, x - 12 - textRenderer.getWidth(key), y - 4, textColor);
+            drawRect(context, x - 14 - textRenderer.getWidth(key), y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
+            context.drawTextWithShadow(textRenderer, key, x - 12 - textRenderer.getWidth(key), y - 4, textColor);
         }
     }
 
     // Literally drawing it in code
-    private void drawDot(MatrixStack matrix, int startX, int startY, int colorInner) {
+    private void drawDot(DrawContext context, int startX, int startY, int colorInner) {
         // Draw dot itself
-        drawHorizontalLine(matrix, startX + 2, startX + 5, startY, borderColor);
-        drawHorizontalLine(matrix, startX + 1, startX + 6, startY + 1, borderColor);
-        drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 1, colorInner);
-        fill(matrix, startX, startY + 2, startX + 8, startY + 6, borderColor);
-        fill(matrix, startX + 1, startY + 2, startX + 7, startY + 6, colorInner);
-        drawHorizontalLine(matrix, startX + 1, startX + 6, startY + 6, borderColor);
-        drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 6, colorInner);
-        drawHorizontalLine(matrix, startX + 2, startX + 5, startY + 7, borderColor);
+        context.drawHorizontalLine(startX + 2, startX + 5, startY, borderColor);
+        context.drawHorizontalLine(startX + 1, startX + 6, startY + 1, borderColor);
+        context.drawHorizontalLine(startX + 2, startX + 5, startY + 1, colorInner);
+        context.fill(startX, startY + 2, startX + 8, startY + 6, borderColor);
+        context.fill(startX + 1, startY + 2, startX + 7, startY + 6, colorInner);
+        context.drawHorizontalLine(startX + 1, startX + 6, startY + 6, borderColor);
+        context.drawHorizontalLine(startX + 2, startX + 5, startY + 6, colorInner);
+        context.drawHorizontalLine(startX + 2, startX + 5, startY + 7, borderColor);
 
         // Draw light overlay
-        drawHorizontalLine(matrix, startX + 2, startX + 3, startY + 1, 0x80FFFFFF);
-        drawHorizontalLine(matrix, startX + 1, startX + 1, startY + 2, 0x80FFFFFF);
+        context.drawHorizontalLine(startX + 2, startX + 3, startY + 1, 0x80FFFFFF);
+        context.drawHorizontalLine(startX + 1, startX + 1, startY + 2, 0x80FFFFFF);
     }
 
     private class StaticListener {

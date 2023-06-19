@@ -301,7 +301,7 @@ public class AutoWither extends Module {
             for (int z = blockPos.getZ() - widthZ; z <= blockPos.getZ(); z++) {
                 for (int y = blockPos.getY(); y <= blockPos.getY() + 2; y++) {
                     bp.set(x, y, z);
-                    if (!mc.world.getBlockState(bp).getMaterial().isReplaceable()) return false;
+                    if (!mc.world.getBlockState(bp).isReplaceable()) return false;
                     if (!mc.world.canPlace(Blocks.STONE.getDefaultState(), bp, ShapeContext.absent())) return false;
                 }
             }

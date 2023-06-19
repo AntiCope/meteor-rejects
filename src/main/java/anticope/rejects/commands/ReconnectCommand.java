@@ -24,7 +24,7 @@ public class ReconnectCommand extends Command {
             if (info != null) {
                 mc.world.disconnect();
                 ConnectScreen.connect(new MultiplayerScreen(new TitleScreen()), mc,
-                        ServerAddress.parse(info.address), info);
+                        ServerAddress.parse(info.address), info, false);
             }
             return SINGLE_SUCCESS;
         });
