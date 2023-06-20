@@ -21,7 +21,8 @@
     "ToastManagerMixin",
     "VehicleMoveC2SPacketAccessor",
     "baritone.MineProcessMixin",
-    "MixinEntity"
+    "MixinEntity",
+	"ChatScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
