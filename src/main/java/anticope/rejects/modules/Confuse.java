@@ -155,7 +155,7 @@ public class Confuse extends Module {
 
             case Switch:
                 Vec3d diff = entityPos.subtract(playerPos);
-                Vec3d diff1 = new Vec3d(Utils.clamp(diff.x, -halfRange, halfRange), Utils.clamp(diff.y, -halfRange, halfRange), Utils.clamp(diff.z, -halfRange, halfRange));
+                Vec3d diff1 = new Vec3d(Math.max(-halfRange, Math.min(halfRange, diff.x)), Math.max(-halfRange, Math.min(halfRange, diff.y)), Math.max(-halfRange, Math.min(halfRange, diff.z)));
                 Vec3d goal2 = entityPos.add(diff1);
                 hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal2, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
                 if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
