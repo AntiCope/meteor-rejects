@@ -22,7 +22,7 @@
     "VehicleMoveC2SPacketAccessor",
     "baritone.MineProcessMixin",
     "MixinEntity",
-	"ChatScreenMixin"
+    "ChatScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
