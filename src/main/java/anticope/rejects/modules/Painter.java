@@ -121,12 +121,12 @@ public class Painter extends Module {
     
     private boolean shouldPlace(BlockPos blockPos, Block useBlock) {
         // Self
-        if (!mc.world.getBlockState(blockPos).getMaterial().isReplaceable()) return false;
+        if (!mc.world.getBlockState(blockPos).isReplaceable()) return false;
     
         // One block height
         if (!oneBlockHeight.get() &&
-                !mc.world.getBlockState(blockPos.up()).getMaterial().isReplaceable() &&
-                !mc.world.getBlockState(blockPos.down()).getMaterial().isReplaceable()) return false;
+                !mc.world.getBlockState(blockPos.up()).isReplaceable() &&
+                !mc.world.getBlockState(blockPos.down()).isReplaceable()) return false;
     
     
         boolean north = true;
@@ -144,21 +144,21 @@ public class Painter extends Module {
     
         // Top surface
         if (topSurfaces.get()) {
-            if (upState.getMaterial().isReplaceable() || upState.getBlock() == useBlock) up = false;
+            if (upState.isReplaceable() || upState.getBlock() == useBlock) up = false;
         }
         
         // Side surfaces
         if (sideSurfaces.get()) {
             
-            if (northState.getMaterial().isReplaceable() || northState.getBlock() == useBlock) north = false;
-            if (southState.getMaterial().isReplaceable() || southState.getBlock() == useBlock) south = false;
-            if (eastState.getMaterial().isReplaceable() || eastState.getBlock() == useBlock) east = false;
-            if (westState.getMaterial().isReplaceable() || westState.getBlock() == useBlock) west = false;
+            if (northState.isReplaceable() || northState.getBlock() == useBlock) north = false;
+            if (southState.isReplaceable() || southState.getBlock() == useBlock) south = false;
+            if (eastState.isReplaceable() || eastState.getBlock() == useBlock) east = false;
+            if (westState.isReplaceable() || westState.getBlock() == useBlock) west = false;
         }
         
         // Bottom surface
         if (bottomSurfaces.get()) {
-            if (bottomState.getMaterial().isReplaceable() || bottomState.getBlock() == useBlock) bottom = false;
+            if (bottomState.isReplaceable() || bottomState.getBlock() == useBlock) bottom = false;
         }
     
         return north || south || east || west || up || bottom;

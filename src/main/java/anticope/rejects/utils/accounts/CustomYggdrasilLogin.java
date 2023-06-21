@@ -7,7 +7,7 @@ import com.google.gson.*;
 import com.mojang.authlib.Environment;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
-import com.mojang.authlib.minecraft.InsecureTextureException;
+import com.mojang.authlib.minecraft.InsecurePublicKeyException;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
@@ -134,11 +134,11 @@ public class CustomYggdrasilLogin {
             if (requireSecure) {
                 if (!textureProperty.hasSignature()) {
                     LOGGER.error("Signature is missing from textures payload");
-                    throw new InsecureTextureException("Signature is missing from textures payload");
+                    throw new InsecurePublicKeyException("Signature is missing from textures payload");
                 }
                 if (!textureProperty.isSignatureValid(publicKey)) {
                     LOGGER.error("Textures payload has been tampered with (signature invalid)");
-                    throw new InsecureTextureException("Textures payload has been tampered with (signature invalid)");
+                    throw new InsecurePublicKeyException("Textures payload has been tampered with (signature invalid)");
                 }
             }
 

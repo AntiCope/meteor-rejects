@@ -68,7 +68,7 @@ public class WMeteorTextBox extends WTextBox implements MeteorWidget {
 
         // Cursor
         animProgress += delta * 10 * (focused && cursorVisible ? 1 : -1);
-        animProgress = Utils.clamp(animProgress, 0, 1);
+        animProgress = Math.max(0, Math.min(1, animProgress));
 
         if ((focused && cursorVisible) || animProgress > 0) {
             renderer.setAlpha(animProgress);
