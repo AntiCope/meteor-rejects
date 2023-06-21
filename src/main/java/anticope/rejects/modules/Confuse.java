@@ -5,7 +5,6 @@ import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.entity.SortPriority;
 import meteordevelopment.meteorclient.utils.entity.TargetUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
@@ -15,6 +14,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
@@ -155,7 +155,7 @@ public class Confuse extends Module {
 
             case Switch:
                 Vec3d diff = entityPos.subtract(playerPos);
-                Vec3d diff1 = new Vec3d(Math.max(-halfRange, Math.min(halfRange, diff.x)), Math.max(-halfRange, Math.min(halfRange, diff.y)), Math.max(-halfRange, Math.min(halfRange, diff.z)));
+                Vec3d diff1 = new Vec3d(MathHelper.clamp(diff.x, -halfRange, halfRange), MathHelper.clamp(diff.y, -halfRange, halfRange), MathHelper.clamp(diff.z, -halfRange, halfRange));
                 Vec3d goal2 = entityPos.add(diff1);
                 hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal2, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
                 if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
