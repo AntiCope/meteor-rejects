@@ -8,6 +8,7 @@
     "CommandSuggestorMixin",
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
+    "EntityMixin",
     "GameRendererMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
