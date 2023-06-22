@@ -30,7 +30,7 @@
     "meteor-rejects.mixins.json",
     "meteor-rejects-meteor.mixins.json"
   ],
-  "accessWidener": "meteor-client.accesswidener",
+  "accessWidener": "meteor-rejects.accesswidener",
   "custom": {
     "meteor-client:color": "227,0,0",
     "github:sha": "${gh_hash}"

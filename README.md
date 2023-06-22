@@ -58,6 +58,8 @@
 - Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/misc/CoordFinder.java))
 - Custom Packets
 - Extra Elytra (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
+- FullNoClip
+- FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
 - Gamemode notifier
 - Ghost Mode (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1932))
 - Glide (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
@@ -65,9 +67,11 @@
 - Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Jetpack
+- KnockbackPlus
 - Lavacast
 - MossBot (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - NewChunks (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/module/mods/NewChunks.java))
+- NoJumpDelay
 - ObsidianFarm (Taken from [Meteor ObsidianFarm Addon](https://github.com/VoidCyborg/meteor-obsidian-farm))
 - Oresim (Ported from [Atomic](https://gitlab.com/0x151/atomic))
 - PacketFly (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/813))
@@ -80,10 +84,7 @@
 - SoundLocator
 - Server Finder (Ported from [MeteorAdditions](https://github.com/JFronny/MeteorAdditions))
 - TreeAura (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/2138))
-- FullNoClip
-- FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
-- NoJumpDelay
-- KnockbackPlus
+- VehicleOneHit (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/3539))
 
 ### Modifications
 - NoRender

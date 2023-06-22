@@ -8,6 +8,7 @@
     "CommandSuggestorMixin",
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
+    "EntityMixin",
     "GameRendererMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
@@ -20,8 +21,7 @@
     "TexturedRenderLayersMixin",
     "ToastManagerMixin",
     "VehicleMoveC2SPacketAccessor",
-    "baritone.MineProcessMixin",
-    "MixinEntity"
+    "baritone.MineProcessMixin"
   ],
   "injectors": {
     "defaultRequire": 1
