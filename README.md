@@ -58,7 +58,6 @@
 - Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/misc/CoordFinder.java))
 - Custom Packets
 - Extra Elytra (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
-- FullNoClip
 - FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
 - Gamemode notifier
 - Ghost Mode (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1932))
