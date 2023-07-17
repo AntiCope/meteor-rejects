@@ -2,6 +2,7 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.utils.WorldUtils;
+import meteordevelopment.meteorclient.events.entity.player.BreakBlockEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -140,6 +141,21 @@ public class AutoFarm extends Module {
     }
 
     @EventHandler
+    private void onBreakBlock(BreakBlockEvent event) {
+        BlockState state = mc.world.getBlockState(event.blockPos);
+        Block block = state.getBlock();
+        if (onlyReplant.get()) {
+            Item item = null;
+            if (block == Blocks.WHEAT) item = Items.WHEAT_SEEDS;
+            else if (block == Blocks.CARROTS) item = Items.CARROT;
+            else if (block == Blocks.POTATOES) item = Items.POTATO;
+            else if (block == Blocks.BEETROOTS) item = Items.BEETROOT_SEEDS;
+            else if (block == Blocks.NETHER_WART) item = Items.NETHER_WART;
+            if (item != null) replantMap.put(event.blockPos, item);
+        }
+    }
+
+    @EventHandler
     private void onTick(TickEvent.Pre event) {
         actions = 0;
         BlockIterator.register(range.get(), range.get(), (pos, state) -> {
@@ -187,15 +203,6 @@ public class AutoFarm extends Module {
             mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
         else {
             mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
-            if (onlyReplant.get()) {
-                Item item = null;
-                if (block == Blocks.WHEAT) item = Items.WHEAT_SEEDS;
-                else if (block == Blocks.CARROTS) item = Items.CARROT;
-                else if (block == Blocks.POTATOES) item = Items.POTATO;
-                else if (block == Blocks.BEETROOTS) item = Items.BEETROOT_SEEDS;
-                else if (block == Blocks.NETHER_WART) item = Items.NETHER_WART;
-                if (item != null) replantMap.put(pos, item);
-            }
         }
         return true;
     }
