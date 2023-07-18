@@ -1,10 +1,13 @@
 package anticope.rejects.mixin.meteor.modules;
 
+import anticope.rejects.modules.ShieldBypass;
 import anticope.rejects.utils.RejectsUtils;
+import meteordevelopment.meteorclient.events.Cancellable;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
@@ -37,9 +40,6 @@ public class KillAuraMixin extends Module {
     @Shadow
     @Final
     private Setting<Boolean> customDelay;
-    @Shadow
-    @Final
-    private Setting<Integer> hitDelay;
 
     private final Random random = new Random();
     private Setting<Double> fov;
@@ -121,6 +121,19 @@ public class KillAuraMixin extends Module {
     private void modifyHitDelay(CallbackInfo info) {
         if (randomDelayMax.get() == 0) return;
         hitTimer -= random.nextInt(randomDelayMax.get());
+    }
+
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;attackEntity(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;)V"), cancellable = true)
+    private void onHit(Entity target, CallbackInfo info) {
+        ShieldBypass shieldBypass = Modules.get().get(ShieldBypass.class);
+        if (shieldBypass.isActive()) {
+            Cancellable dummyEvent = new Cancellable();
+            shieldBypass.bypass(target, dummyEvent);
+            if (dummyEvent.isCancelled()) {
+                hitTimer = 0;
+                info.cancel();
+            }
+        }
     }
 
     private double randomOffset() {
