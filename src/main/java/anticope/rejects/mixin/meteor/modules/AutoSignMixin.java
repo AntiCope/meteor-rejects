@@ -45,7 +45,7 @@ public class AutoSignMixin extends Module {
         super(category, name, description);
     }
 
-    @Inject(method = "onOpenScreen",at = @At("HEAD"))
+    @Inject(method = "onOpenScreen",at = @At(value = "INVOKE", target = "Lmeteordevelopment/meteorclient/mixin/AbstractSignEditScreenAccessor;getSign()Lnet/minecraft/block/entity/SignBlockEntity;"))
     private void beforeGetSign(OpenScreenEvent event, CallbackInfo info) {
         if (random.get()) {
             text = new String[4];
