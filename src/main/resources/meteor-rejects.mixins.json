@@ -9,6 +9,7 @@
     "Deadmau5FeatureRendererMixin",
     "EntityAccessor",
     "GameRendererMixin",
+    "HandshakeC2SPacketAccessor",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
     "MultiplayerScreenAccessor",

@@ -49,6 +49,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new BlockIn());
         modules.add(new BoatPhase());
         modules.add(new Boost());
+        modules.add(new BungeeCordSpoof());
         modules.add(new ChatBot());
         modules.add(new ChestAura());
         modules.add(new ChorusExploit());
