@@ -50,6 +50,7 @@
 - BlockIn
 - BoatGlitch & BoatPhase (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/814))
 - Boost (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/Boost.java))
+- BungeeCordSpoof (Ported from [LiquidBounce](https://github.com/CCBlueX/LiquidBounce))
 - ChatBot
 - ChestAura
 - ChorusExploit (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1727))
