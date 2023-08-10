@@ -1,11 +1,11 @@
 package anticope.rejects.modules;
 
 
+import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
-import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
@@ -28,7 +28,7 @@ public class VehicleOneHit extends Module {
     private boolean ignorePackets;
 
     public VehicleOneHit() {
-        super(Categories.Player, "vehicle-one-hit", "Destroy vehicles with one hit.");
+        super(MeteorRejectsAddon.CATEGORY, "vehicle-one-hit", "Destroy vehicles with one hit.");
     }
 
     @EventHandler

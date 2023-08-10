@@ -1,5 +1,6 @@
 package anticope.rejects.utils;
 
+import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.utils.seeds.Seeds;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
@@ -17,7 +18,6 @@ import java.util.Random;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class RejectsUtils {
-
     @PostInit
     public static void init() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -29,7 +29,12 @@ public class RejectsUtils {
 
     public static String getModuleName(String name) {
         int dupe = 0;
-        for (Module module : Modules.get().getAll()) {
+        Modules modules = Modules.get();
+        if (modules == null) {
+            MeteorRejectsAddon.LOG.warn("Module instantiation before Modules initialized.");
+            return name;
+        }
+        for (Module module : modules.getAll()) {
             if (module.name.equals(name)) {
                 dupe++;
                 break;
@@ -58,7 +63,7 @@ public class RejectsUtils {
         return angleDistance <= fov;
     }
 
-    public static float fullFlightMove(PlayerMoveEvent event, double speed, boolean verticalSpeedMatch){
+    public static float fullFlightMove(PlayerMoveEvent event, double speed, boolean verticalSpeedMatch) {
         if (PlayerUtils.isMoving()) {
             double dir = getDir();
 
