@@ -37,6 +37,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
@@ -167,7 +168,6 @@ public class InteractionScreen extends Screen {
                     MeteorStarscript.printChatError(err);
                 }
             });
-
         });
         functions.put("Cancel", (Entity e) -> {
             closeScreen();
@@ -215,8 +215,8 @@ public class InteractionScreen extends Screen {
 
     private void cursorMode(int mode) {
         KeyBinding.unpressAll();
-        double x = (double) (this.client.getWindow().getWidth() / 2);
-        double y = (double) (this.client.getWindow().getHeight() / 2);
+        double x = (double) this.client.getWindow().getWidth() / 2;
+        double y = (double) this.client.getWindow().getHeight() / 2;
         InputUtil.setCursorParameters(this.client.getWindow().getHandle(), mode, x, y);
     }
 
@@ -226,7 +226,7 @@ public class InteractionScreen extends Screen {
     }
 
     private void closeScreen() {
-        client.setScreen((Screen) null);
+        client.setScreen(null);
     }
 
     public void close() {
@@ -235,7 +235,7 @@ public class InteractionScreen extends Screen {
         if (focusedString != null) {
             functions.get(focusedString).accept(this.entity);
         } else
-            client.setScreen((Screen) null);
+            client.setScreen(null);
     }
 
     public boolean isPauseScreen() {
@@ -257,20 +257,7 @@ public class InteractionScreen extends Screen {
         matrix.scale(2f, 2f, 1f);
         context.drawCenteredTextWithShadow(textRenderer, entity.getName(), width / 4, 6, 0xFFFFFFFF);
 
-        int scale = client.options.getGuiScale().getValue();
-        Vector2 mouse = new Vector2(mouseX, mouseY);
-        Vector2 center = new Vector2(width / 2, height / 2);
-        mouse.subtract(center);
-        mouse.normalize();
-
-        if (scale == 0)
-            scale = 4;
-
-        // Move crossHair based on distance between mouse and center. But with limit
-        if (Math.hypot(width / 2 - mouseX, height / 2 - mouseY) < 1f / scale * 200f)
-            mouse.multiply((float) Math.hypot(width / 2 - mouseX, height / 2 - mouseY));
-        else
-            mouse.multiply(1f / scale * 200f);
+        Vector2f mouse = getMouseVecs(mouseX, mouseY);
 
         this.crosshairX = (int) mouse.x + width / 2;
         this.crosshairY = (int) mouse.y + height / 2;
@@ -280,6 +267,21 @@ public class InteractionScreen extends Screen {
         super.render(context, mouseX, mouseY, delta);
     }
 
+    private Vector2f getMouseVecs(int mouseX, int mouseY) {
+        int scale = client.options.getGuiScale().getValue();
+        Vector2f mouse = new Vector2f(mouseX, mouseY);
+        Vector2f center = new Vector2f(width / 2, height / 2);
+        mouse.sub(center).normalize();
+
+        if (scale == 0) scale = 4;
+
+        // Move crossHair based on distance between mouse and center. But with limit
+        if (Math.hypot(width / 2 - mouseX, height / 2 - mouseY) < 1f / scale * 200f)
+            mouse.mul((float) Math.hypot(width / 2 - mouseX, height / 2 - mouseY));
+        else
+            mouse.mul(1f / scale * 200f);
+        return mouse;
+    }
 
     private void drawDots(DrawContext context, int radius, int mouseX, int mouseY) {
         ArrayList<Point> pointList = new ArrayList<Point>();
@@ -326,7 +328,7 @@ public class InteractionScreen extends Screen {
 
     private void drawTextField(DrawContext context, int x, int y, String key) {
         if (x >= width / 2) {
-            drawRect(context,x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
+            drawRect(context, x + 10, y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
             context.drawTextWithShadow(textRenderer, key, x + 12, y - 4, textColor);
         } else {
             drawRect(context, x - 14 - textRenderer.getWidth(key), y - 8, textRenderer.getWidth(key) + 3, 15, backgroundColor, borderColor);
@@ -360,41 +362,5 @@ public class InteractionScreen extends Screen {
                 MeteorClient.EVENT_BUS.unsubscribe(this);
             }
         }
-    }
-}
-
-
-// Creating my own Vector class beacause I couldn´t find a good one in minecrafts code
-class Vector2 {
-    float x, y;
-
-    Vector2(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    void normalize() {
-        float mag = getMag();
-        if (mag != 0 && mag != 1)
-            divide(mag);
-    }
-
-    void subtract(Vector2 vec) {
-        this.x -= vec.x;
-        this.y -= vec.y;
-    }
-
-    void divide(float n) {
-        x /= n;
-        y /= n;
-    }
-
-    void multiply(float n) {
-        x *= n;
-        y *= n;
-    }
-
-    private float getMag() {
-        return (float) Math.sqrt(x * x + y * y);
     }
 }
