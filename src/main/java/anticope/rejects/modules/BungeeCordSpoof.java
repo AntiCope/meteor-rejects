@@ -54,16 +54,16 @@ public class BungeeCordSpoof extends Module {
 
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
-        if (event.packet instanceof HandshakeC2SPacket packet && packet.getIntendedState() == NetworkState.LOGIN) {
+        if (event.packet instanceof HandshakeC2SPacket packet && packet.getNewNetworkState() == NetworkState.LOGIN) {
             if (whitelist.get() && !whitelistedServers.get().contains(Utils.getWorldName())) return;
-            String address = packet.getAddress() + "\0" + forwardedIP + "\0" + mc.getSession().getUuid().replace("-", "")
+            String address = packet.address() + "\0" + forwardedIP + "\0" + mc.getSession().getUuidOrNull().toString().replace("-", "")
                     + (spoofProfile.get() ? getProperty() : "");
-            ((HandshakeC2SPacketAccessor) packet).setAddress(address);
+            ((HandshakeC2SPacketAccessor) (Object) packet).setAddress(address);
         }
     }
 
     private String getProperty() {
-        PropertyMap propertyMap = mc.getSession().getProfile().getProperties();
+        PropertyMap propertyMap = mc.getGameProfile().getProperties();
         return "\0" + GSON.toJson(propertyMap.values().toArray());
     }
 }

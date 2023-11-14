@@ -241,7 +241,7 @@ public class ServerFinderScreen extends WindowScreen implements IServerFinderDon
             if (!isServerInList(pinger.getServerIP()) && filterPass(pinger.getServerInfo())) {
                 synchronized (serverFinderLock) {
                     working++;
-                    multiplayerScreen.getServerList().add(new ServerInfo("Server discovery #" + working, pinger.getServerIP(), false), false);
+                    multiplayerScreen.getServerList().add(new ServerInfo("Server discovery #" + working, pinger.getServerIP(), ServerInfo.ServerType.OTHER), false);
                     multiplayerScreen.getServerList().saveFile();
                     ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setSelected(null);
                     ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setServers(multiplayerScreen.getServerList());
