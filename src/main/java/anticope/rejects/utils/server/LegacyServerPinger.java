@@ -18,7 +18,7 @@ public class LegacyServerPinger {
     }
 
     public void ping(String ip, int port) {
-        server = new ServerInfo("", ip + ":" + port, false);
+        server = new ServerInfo("", ip + ":" + port, ServerInfo.ServerType.OTHER);
 
         new Thread(() -> pingInCurrentThread(ip, port),
                 "Server Pinger #" + threadNumber.incrementAndGet()).start();

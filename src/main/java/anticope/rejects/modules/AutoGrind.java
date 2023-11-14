@@ -63,7 +63,7 @@ public class AutoGrind extends Module {
 
                     if (mc.currentScreen == null) break;
 
-                    InvUtils.quickMove().slot(i);
+                    InvUtils.quickSwap().slot(i);
                     InvUtils.move().fromId(2).to(i);
                 }
             }

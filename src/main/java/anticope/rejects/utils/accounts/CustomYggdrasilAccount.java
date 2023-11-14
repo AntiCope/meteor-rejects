@@ -7,7 +7,7 @@ import meteordevelopment.meteorclient.mixin.MinecraftClientAccessor;
 import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.accounts.AccountType;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 import net.minecraft.nbt.NbtCompound;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -27,7 +27,7 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
             Session session = CustomYggdrasilLogin.login(name, password, server);
 
             cache.username = session.getUsername();
-            cache.uuid = session.getUuid();
+            cache.uuid = session.getUuidOrNull().toString();
 
             return true;
         } catch (AuthenticationException e) {

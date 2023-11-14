@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import io.netty.buffer.Unpooled;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -13,7 +14,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -53,27 +54,33 @@ public class CustomPackets extends Module {
     @EventHandler
     private void onCustomPayloadPacket(PacketEvent.Receive event) {
         if (event.packet instanceof CustomPayloadS2CPacket packet) {
-            switch (packet.getChannel().toString()) {
+            switch (packet.payload().id().toString()) {
                 case "badlion:mods" -> event.setCancelled(onBadlionModsPacket(packet));
                 default -> onUnknownPacket(packet);
             }
         }
     }
 
+    PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
+
     private void onUnknownPacket(CustomPayloadS2CPacket packet) {
         if (!unknownPackets.get()) return;
-        MutableText text = Text.literal(packet.getChannel().toString());
+        MutableText text = Text.literal(packet.payload().id().toString());
+        buffer.clear();
+        packet.payload().write(buffer);
         text.setStyle(text.getStyle()
                 .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        Text.literal(readString(packet.getData()))
-                )));
+                        Text.literal(readString(buffer)
+                ))));
         info(text);
     }
 
     private boolean onBadlionModsPacket(CustomPayloadS2CPacket packet) {
         if (!mods.get()) return false;
-        String json = readString(packet.getData());
+        buffer.clear();
+        packet.payload().write(buffer);
+        String json = readString(buffer);
         Map<String, BadlionMod> mods = GSON_NON_PRETTY.fromJson(json, BADLION_MODS_TYPE);
         ChatUtils.sendMsg("Badlion", format("Mods", formatMods(mods)));
         return true;

@@ -104,7 +104,7 @@ public class AutoSoup extends Module {
 
         // move soup in inventory to hotbar
         if (soupInInventory != -1)
-            InvUtils.quickMove().slot(soupInInventory);
+            InvUtils.quickSwap().slot(soupInInventory);
     }
 
     private int findSoup(int startSlot, int endSlot) {

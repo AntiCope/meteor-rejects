@@ -11,6 +11,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.item.Item;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.screen.CraftingScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 
@@ -70,8 +71,8 @@ public class AutoCraft extends Module {
         List<Item> itemList = items.get();
         List<RecipeResultCollection> recipeResultCollectionList  = mc.player.getRecipeBook().getOrderedResults();
         for (RecipeResultCollection recipeResultCollection : recipeResultCollectionList) {
-            for (Recipe<?> recipe : recipeResultCollection.getRecipes(true)) {
-                if (!itemList.contains(recipe.getOutput(mc.world.getRegistryManager()).getItem())) continue;
+            for (RecipeEntry<?> recipe : recipeResultCollection.getRecipes(true)) {
+                if (!itemList.contains(recipe.value().getResult(mc.world.getRegistryManager()).getItem())) continue;
                 mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe, craftAll.get());
                 mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1,
                         drop.get() ? SlotActionType.THROW : SlotActionType.QUICK_MOVE, mc.player);
