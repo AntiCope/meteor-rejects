@@ -88,7 +88,7 @@ public class Seeds extends System<Seeds> {
         return this;
     }
 
-    // https://minecraft.fandom.com/wiki/Seed_(level_generation)#Java_Edition
+    // https://minecraft.wiki/w/Seed_(level_generation)#Java_Edition
     private static long toSeed(String inSeed) {
         try {
             return Long.parseLong(inSeed);

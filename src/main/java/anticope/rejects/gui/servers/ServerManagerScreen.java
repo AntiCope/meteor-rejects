@@ -120,7 +120,7 @@ public class ServerManagerScreen extends WindowScreen {
             for (ServerInfo server : servers) presentAddresses.add(server.address);
             for (String addr : MinecraftClient.getInstance().keyboard.getClipboard().split("[\r\n]+")) {
                 if (presentAddresses.add(addr = addr.split(" ")[0])) {
-                    servers.add(new ServerInfo("Server discovery #" + presentAddresses.size(), addr, false));
+                    servers.add(new ServerInfo("Server discovery #" + presentAddresses.size(), addr, ServerInfo.ServerType.OTHER));
                     newIPs++;
                 }
             }
