@@ -8,14 +8,15 @@ import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
 import baritone.api.BaritoneAPI;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
+import meteordevelopment.meteorclient.events.world.BlockUpdateEvent;
 import meteordevelopment.meteorclient.events.world.ChunkDataEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.pathing.BaritoneUtils;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.*;
@@ -36,7 +37,6 @@ public class OreSim extends Module {
     private Seed worldSeed = null;
     private Map<RegistryKey<Biome>, List<Ore>> oreConfig;
     public List<BlockPos> oreGoals = new ArrayList<>();
-    private ChunkPos prevOffset = new ChunkPos(0, 0);
 
     public enum AirCheck {
         ON_LOAD,
@@ -45,7 +45,6 @@ public class OreSim extends Module {
     }
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
-    private final SettingGroup sgOres = settings.createGroup("Ores");
 
     private final Setting<Integer> horizontalRadius = sgGeneral.add(new IntSetting.Builder()
             .name("chunk-range")
@@ -73,11 +72,12 @@ public class OreSim extends Module {
 
     public OreSim() {
         super(MeteorRejectsAddon.CATEGORY, "ore-sim", "Xray on crack.");
+        SettingGroup sgOres = settings.createGroup("Ores");
         Ore.oreSettings.forEach(sgOres::add);
     }
 
     public boolean baritone() {
-        return isActive() && baritone.get();
+        return isActive() && baritone.get() && BaritoneUtils.IS_AVAILABLE;
     }
 
     @EventHandler
@@ -119,47 +119,23 @@ public class OreSim extends Module {
     }
 
     @EventHandler
+    private void onBlockUpdate(BlockUpdateEvent event) {
+        if (airCheck.get() != AirCheck.RECHECK || event.newState.isOpaque()) return;
+
+        long chunkKey = ChunkPos.toLong(event.pos);
+        if (chunkRenderers.containsKey(chunkKey)) {
+            Vec3d pos = Vec3d.of(event.pos);
+            for (var ore : chunkRenderers.get(chunkKey).values()) {
+                ore.remove(pos);
+            }
+        }
+    }
+
+    @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (mc.player == null || mc.world == null || oreConfig == null) return;
 
-        if (airCheck.get() == AirCheck.RECHECK) {
-            int chunkX = mc.player.getChunkPos().x;
-            int chunkZ = mc.player.getChunkPos().z;
-            ClientWorld world = mc.world;
-            int renderdistance = mc.options.getViewDistance().getValue();
-
-            //maybe another config option? But its already crowded
-            int chunkCounter = 5;
-
-            loop:
-            while (true) {
-                for (int offsetX = prevOffset.x; offsetX <= renderdistance; offsetX++) {
-                    for (int offsetZ = prevOffset.z; offsetZ <= renderdistance; offsetZ++) {
-                        prevOffset = new ChunkPos(offsetX, offsetZ);
-                        if (chunkCounter <= 0) {
-                            break loop;
-                        }
-                        long chunkKey = ChunkPos.toLong(chunkX + offsetX, chunkZ + offsetZ);
-
-                        Chunk chunk = world.getChunk(chunkX + offsetX, chunkZ + offsetZ, ChunkStatus.FULL, false);
-                        if (chunk != null && chunkRenderers.containsKey(chunkKey)) {
-                            chunkRenderers.get(chunkKey).values().forEach(oreSet ->
-                                    oreSet.removeIf(ore -> {
-                                        BlockState state = world.getBlockState(new BlockPos((int) ore.x, (int) ore.y, (int) ore.z));
-                                        return state.isOpaque() && !state.isOf(Blocks.VOID_AIR);
-                                    })
-                            );
-                        }
-
-                        chunkCounter--;
-                    }
-                    prevOffset = new ChunkPos(offsetX, -renderdistance);
-                }
-                prevOffset = new ChunkPos(-renderdistance, -renderdistance);
-            }
-        }
-
-        if (baritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getMineProcess().isActive()) {
+        if (baritone() && BaritoneAPI.getProvider().getPrimaryBaritone().getMineProcess().isActive()) {
             oreGoals.clear();
             var chunkPos = mc.player.getChunkPos();
             int rangeVal = 4;
@@ -199,7 +175,7 @@ public class OreSim extends Module {
     @Override
     public void onDeactivate() {
         this.chunkRenderers.clear();
-        this.oreConfig.clear();
+        this.oreConfig = null;
     }
 
     @EventHandler
@@ -213,18 +189,12 @@ public class OreSim extends Module {
     }
 
     private void loadVisibleChunks() {
-        int renderdistance = mc.options.getViewDistance().getValue()+2;
-
         if (mc.player == null) {
             return;
         }
-        int playerChunkX = mc.player.getChunkPos().x;
-        int playerChunkZ = mc.player.getChunkPos().z;
 
-        for (int i = playerChunkX - renderdistance; i < playerChunkX + renderdistance; i++) {
-            for (int j = playerChunkZ - renderdistance; j < playerChunkZ + renderdistance; j++) {
-                doMathOnChunk(i, j);
-            }
+        for (Chunk chunk : Utils.chunks(false)) {
+            doMathOnChunk(chunk);
         }
     }
 
@@ -242,22 +212,18 @@ public class OreSim extends Module {
 
     @EventHandler
     public void onChunkData(ChunkDataEvent event) {
-        doMathOnChunk(event.chunk.getPos().x, event.chunk.getPos().z);
+        doMathOnChunk(event.chunk);
+        ChunkDataEvent.returnChunkDataEvent(event);
     }
 
-    private void doMathOnChunk(int chunkX, int chunkZ) {
-        var chunkPos = new ChunkPos(chunkX, chunkZ);
+    private void doMathOnChunk(Chunk chunk) {
+
+        var chunkPos = chunk.getPos();
         long chunkKey = chunkPos.toLong();
 
         ClientWorld world = mc.world;
 
         if (chunkRenderers.containsKey(chunkKey) || world == null) {
-            return;
-        }
-
-        Chunk chunk = world.getChunk(chunkX, chunkZ, ChunkStatus.FULL, false);
-
-        if (chunk == null) {
             return;
         }
 
@@ -272,8 +238,8 @@ public class OreSim extends Module {
         });
         Set<Ore> oreSet = biomes.stream().flatMap(b -> getDefaultOres(b).stream()).collect(Collectors.toSet());
 
-        chunkX = chunkX << 4;
-        chunkZ = chunkZ << 4;
+        int chunkX = chunkPos.x << 4;
+        int chunkZ = chunkPos.z << 4;
         ChunkRandom random = new ChunkRandom(ChunkRandom.RandomProvider.XOROSHIRO.create(0));
 
         long populationSeed = random.setPopulationSeed(worldSeed.seed, chunkX, chunkZ);
@@ -289,7 +255,7 @@ public class OreSim extends Module {
 
             for (int i = 0; i < repeat; i++) {
 
-                if (ore.rarity != 1F && random.nextFloat() >= ore.rarity) {
+                if (ore.rarity != 1F && random.nextFloat() >= 1/ore.rarity) {
                     continue;
                 }
 
