@@ -59,7 +59,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
 
     @EventHandler
     private void onOpenScreen(OpenScreenEvent event) {
-        if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler))
+        if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler handler))
             return;
         MeteorExecutor.execute(this::autoEnchant);
     }
@@ -87,9 +87,13 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-
-            if(mc.player.experienceLevel < handler.enchantmentPower[level.get()-1]){
+            if (mc.player.experienceLevel < handler.enchantmentPower[level.get() - 1]) {
                 info("You don't have enough experience levels");
+                break;
+            }
+            if (EnchantmentHelper.get(handler.slots.get(0).getStack()).isEmpty() && handler.enchantmentPower[level.get() - 1] == 0
+                    && handler.slots.get(0).hasStack()) {
+                info("You need to continue in a higher-level enchanting table");
                 break;
             }
             Objects.requireNonNull(mc.interactionManager).clickButton(handler.syncId, level.get() - 1);
