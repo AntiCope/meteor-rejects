@@ -87,12 +87,14 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             if (mc.player.experienceLevel < handler.enchantmentPower[level.get() - 1]) {
                 info("You don't have enough experience levels");
                 break;
             }
-            if (EnchantmentHelper.get(handler.slots.get(0).getStack()).isEmpty() && handler.enchantmentPower[level.get() - 1] == 0
-                    && handler.slots.get(0).hasStack()) {
+            if (handler.slots.get(0).hasStack()
+                            && EnchantmentHelper.get(handler.slots.get(0).getStack()).isEmpty()
+                            && handler.enchantmentPower[level.get() - 1] == 0) {
                 info("You need to continue in a higher-level enchanting table");
                 break;
             }
