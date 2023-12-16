@@ -72,13 +72,24 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 info("Enchanting table is closed.");
                 break;
             }
-
             if (handler.getLapisCount() < 3 && !fillLapisItem()) {
                 info("Lapis lazuli is not found.");
                 break;
             }
             if (!fillCanEnchantItem()) {
                 info("No items found to enchant.");
+                break;
+            }
+
+            // Why sleep here? I don't know either.
+            try {
+                Thread.sleep(delay.get());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            if(mc.player.experienceLevel < handler.enchantmentPower[level.get()-1]){
+                info("You don't have enough experience levels");
                 break;
             }
             Objects.requireNonNull(mc.interactionManager).clickButton(handler.syncId, level.get() - 1);
@@ -88,12 +99,6 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 // I don't know why an exception LegacyRandomSource is thrown here,
                 // so I used the main thread to drop items.
                 mc.execute(() -> InvUtils.drop().slotId(0));
-            }
-
-            try {
-                Thread.sleep(delay.get());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
             }
         }
     }
