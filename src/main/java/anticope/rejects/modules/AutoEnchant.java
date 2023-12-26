@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+
 import meteordevelopment.meteorclient.events.game.OpenScreenEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
@@ -59,7 +60,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
 
     @EventHandler
     private void onOpenScreen(OpenScreenEvent event) {
-        if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler handler))
+        if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler))
             return;
         MeteorExecutor.execute(this::autoEnchant);
     }
@@ -67,6 +68,10 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
     private void autoEnchant() {
         if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler handler))
             return;
+        if (mc.player.experienceLevel < 30) {
+            info("You don't have enough experience levels");
+            return;
+        }
         while (getEmptySlotCount(handler) > 2 || drop.get()) {
             if (!(mc.player.currentScreenHandler instanceof EnchantmentScreenHandler)) {
                 info("Enchanting table is closed.");
@@ -80,24 +85,6 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 info("No items found to enchant.");
                 break;
             }
-
-            // Why sleep here? I don't know either.
-            try {
-                Thread.sleep(delay.get());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            if (mc.player.experienceLevel < handler.enchantmentPower[level.get() - 1]) {
-                info("You don't have enough experience levels");
-                break;
-            }
-            if (handler.slots.get(0).hasStack()
-                            && EnchantmentHelper.get(handler.slots.get(0).getStack()).isEmpty()
-                            && handler.enchantmentPower[level.get() - 1] == 0) {
-                info("You need to continue in a higher-level enchanting table");
-                break;
-            }
             Objects.requireNonNull(mc.interactionManager).clickButton(handler.syncId, level.get() - 1);
             if (getEmptySlotCount(handler) > 2) {
                 InvUtils.shiftClick().slotId(0);
@@ -105,6 +92,13 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 // I don't know why an exception LegacyRandomSource is thrown here,
                 // so I used the main thread to drop items.
                 mc.execute(() -> InvUtils.drop().slotId(0));
+            }
+
+            // Why sleep here? I don't know either.
+            try {
+                Thread.sleep(delay.get());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
