@@ -25,24 +25,19 @@ public class VehicleOneHit extends Module {
             .build()
     );
 
-    private boolean ignorePackets;
-
     public VehicleOneHit() {
         super(MeteorRejectsAddon.CATEGORY, "vehicle-one-hit", "Destroy vehicles with one hit.");
     }
 
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
-        if (ignorePackets
-                || !(event.packet instanceof PlayerInteractEntityC2SPacket)
-                || !(mc.crosshairTarget instanceof EntityHitResult ehr)
-                || (!(ehr.getEntity() instanceof AbstractMinecartEntity) && !(ehr.getEntity() instanceof BoatEntity))
+        if (!(event.packet instanceof PlayerInteractEntityC2SPacket)
+            || !(mc.crosshairTarget instanceof EntityHitResult ehr)
+            || (!(ehr.getEntity() instanceof AbstractMinecartEntity) && !(ehr.getEntity() instanceof BoatEntity))
         ) return;
 
-        ignorePackets = true;
         for (int i = 0; i < amount.get() - 1; i++) {
-            mc.player.networkHandler.sendPacket(event.packet);
+            mc.player.networkHandler.getConnection().send(event.packet, null);
         }
-        ignorePackets = false;
     }
 }
