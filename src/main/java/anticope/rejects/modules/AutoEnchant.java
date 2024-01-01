@@ -55,7 +55,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
     );
 
     public AutoEnchant() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-enchant ", "Automatically enchanting items.");
+        super(MeteorRejectsAddon.CATEGORY, "auto-enchant", "Automatically enchanting items.");
     }
 
     @EventHandler
@@ -77,7 +77,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 info("Enchanting table is closed.");
                 break;
             }
-            if (handler.getLapisCount() < 3 && !fillLapisItem()) {
+            if (handler.getLapisCount() < level.get() && !fillLapisItem()) {
                 info("Lapis lazuli is not found.");
                 break;
             }
@@ -94,7 +94,12 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 mc.execute(() -> InvUtils.drop().slotId(0));
             }
 
-            // Why sleep here? I don't know either.
+            /*
+            Although the description here indicates that the tick is the unit,
+            the actual delay is not the tick unit,
+            but it does not affect the normal operation in the game.
+            Perhaps we can ignore it
+            */
             try {
                 Thread.sleep(delay.get());
             } catch (InterruptedException e) {
@@ -112,7 +117,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
 
     private boolean fillLapisItem() {
         FindItemResult res = InvUtils.find(Items.LAPIS_LAZULI);
-        if (res.slot() == -1) return false;
+        if (!res.found()) return false;
         InvUtils.shiftClick().slot(res.slot());
         return true;
     }
