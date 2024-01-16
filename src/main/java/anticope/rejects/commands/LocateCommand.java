@@ -68,7 +68,7 @@ public class LocateCommand extends Command {
 					Pos pos = null;
 					if (cubiomesVersion != null) {
 						pos = Cubiomes.GetNearestStructure(feature, playerPos.getX(), playerPos.getZ(), seed,
-								Cubiomes.MCVersion.MC_1_20, 8);
+								cubiomesVersion);
 					} else {
 						BlockPos bpos = WorldGenUtils.locateFeature(feature, playerPos);
 						pos = new Pos();
