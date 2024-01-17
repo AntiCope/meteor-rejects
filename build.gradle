@@ -25,10 +25,10 @@ configurations {
 
 dependencies {
 	// This will make it work on most platforms. It automatically chooses the right dependencies at runtime.
-	extraLibs('dev.duti.acheong:cubiomes:1.22.1') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.1:linux64') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.1:osx') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.1:windows64') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.2') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.2:linux64') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.2:osx') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.2:windows64') { transitive = false }
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"

@@ -77,12 +77,17 @@ public class LocateCommand extends Command {
 
 					}
 					if (pos != null) {
+						// Calculate distance
+						int distance = (int) Math.hypot(pos.x - playerPos.getX(), pos.z - playerPos.getZ());
 						MutableText text = Text.literal(String.format(
 								"%s located at ",
 								Utils.nameToTitle(feature.toString().replaceAll("_", "-"))));
 						Vec3d coords = new Vec3d(pos.x, 0, pos.z);
 						text.append(ChatUtils.formatCoords(coords));
 						text.append(".");
+						if (distance > 0) {
+							text.append(String.format(" (%d blocks away)", distance));
+						}
 						info(text);
 						return SINGLE_SUCCESS;
 					}
