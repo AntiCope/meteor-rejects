@@ -30,7 +30,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation("meteordevelopment:meteor-client:${project.meteor_version}-SNAPSHOT")
-	modImplementation "baritone:fabric:${project.minecraft_version}-SNAPSHOT"
+	modImplementation "meteordevelopment:baritone:${project.minecraft_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
 	extraLibs('com.seedfinding:mc_math:ffd2edcfcc0d18147549c88cc7d8ec6cf21b5b91') { transitive = false }

@@ -49,9 +49,9 @@ public class StatsScreen extends WindowScreen {
             liv.getActiveStatusEffects().forEach((effect, instance) -> {
                 String status = lang.get(effect.getTranslationKey());
                 if (instance.getAmplifier() != 0) {
-                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1)));
+                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1, 20)));
                 } else {
-                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1)));
+                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1, 20)));
                 }
                 effectList.add(theme.label(status)).expandX();
             });

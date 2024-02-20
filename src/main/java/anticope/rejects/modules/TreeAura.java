@@ -117,7 +117,7 @@ public class TreeAura extends Module {
 
     private boolean canPlant(BlockPos pos) {
         Block b = mc.world.getBlockState(pos).getBlock();
-        if (b.equals(Blocks.GRASS) || b.equals(Blocks.GRASS_BLOCK) || b.equals(Blocks.DIRT) || b.equals(Blocks.COARSE_DIRT)) {
+        if (b.equals(Blocks.SHORT_GRASS) || b.equals(Blocks.GRASS_BLOCK) || b.equals(Blocks.DIRT) || b.equals(Blocks.COARSE_DIRT)) {
             final AtomicBoolean plant = new AtomicBoolean(true);
             IntStream.rangeClosed(1, 5).forEach(i -> {
                 // Check above
