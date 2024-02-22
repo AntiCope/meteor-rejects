@@ -10,6 +10,7 @@ import net.minecraft.util.math.Box;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.utils.world.TickRate;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.WindowScreen;
@@ -48,10 +49,11 @@ public class StatsScreen extends WindowScreen {
             effectList.action = () -> effectListExpanded = effectList.isExpanded();
             liv.getActiveStatusEffects().forEach((effect, instance) -> {
                 String status = lang.get(effect.getTranslationKey());
+                float tps = TickRate.INSTANCE.getTickRate();
                 if (instance.getAmplifier() != 0) {
-                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1)));
+                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1, tps)));
                 } else {
-                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1)));
+                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1, tps)));
                 }
                 effectList.add(theme.label(status)).expandX();
             });

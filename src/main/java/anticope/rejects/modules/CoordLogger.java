@@ -107,7 +107,7 @@ public class CoordLogger extends Module {
                     Vec3d playerPosition = entity.getPos();
                     
                     if (playerPosition.distanceTo(packetPosition) >= minDistance.get()) {
-                        info(formatMessage("Player '" + entity.getEntityName() + "' has teleported to ", packetPosition));
+                        info(formatMessage("Player '" + entity.getNameForScoreboard() + "' has teleported to ", packetPosition));
                     }
                 }
 

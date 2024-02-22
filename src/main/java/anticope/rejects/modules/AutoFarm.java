@@ -270,19 +270,20 @@ public class AutoFarm extends Module {
 
     private boolean bonemealFilter(Block block) {
         return block instanceof CropBlock ||
-                block instanceof CocoaBlock ||
                 block instanceof StemBlock ||
                 block instanceof MushroomPlantBlock ||
-                block instanceof SweetBerryBushBlock ||
                 block instanceof AzaleaBlock ||
-                block instanceof SaplingBlock;
+                block instanceof SaplingBlock ||
+                block == Blocks.COCOA ||
+                block == Blocks.SWEET_BERRY_BUSH;
     }
 
     private boolean harvestFilter(Block block) {
         return block instanceof CropBlock ||
-                block instanceof GourdBlock ||
-                block instanceof NetherWartBlock ||
-                block instanceof SweetBerryBushBlock;
+                block == Blocks.PUMPKIN ||
+                block == Blocks.MELON ||
+                block == Blocks.NETHER_WART ||
+                block == Blocks.SWEET_BERRY_BUSH;
     }
 
     private boolean plantFilter(Item item) {

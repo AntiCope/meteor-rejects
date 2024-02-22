@@ -77,7 +77,7 @@ public class GiveCommand extends Command {
             tag.putBoolean("Interpret", true);
             tag.putBoolean("NoGravity", true);
             tag.putBoolean("CustomNameVisible", true);
-            tag.putString("CustomName", Text.Serializer.toJson(Text.literal(message)));
+            tag.putString("CustomName", Text.Serialization.toJsonString(Text.literal(message)));
             tag.put("Pos", NbtList);
             stack.setSubNbt("EntityTag", tag);
             GiveUtils.giveItem(stack);
@@ -88,7 +88,7 @@ public class GiveCommand extends Command {
             String message = ctx.getArgument("message", String.class).replace("&", "\247");
             ItemStack stack = new ItemStack(Items.BAT_SPAWN_EGG);
             NbtCompound tag = new NbtCompound();
-            tag.putString("CustomName", Text.Serializer.toJson(Text.literal(message)));
+            tag.putString("CustomName", Text.Serialization.toJsonString(Text.literal(message)));
             tag.putBoolean("NoAI", true);
             tag.putBoolean("Silent", true);
             tag.putBoolean("PersistenceRequired", true);
