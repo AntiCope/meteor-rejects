@@ -212,8 +212,7 @@ public class OreSim extends Module {
 
     @EventHandler
     public void onChunkData(ChunkDataEvent event) {
-        doMathOnChunk(event.chunk);
-        ChunkDataEvent.returnChunkDataEvent(event);
+        doMathOnChunk(event.chunk());
     }
 
     private void doMathOnChunk(Chunk chunk) {
