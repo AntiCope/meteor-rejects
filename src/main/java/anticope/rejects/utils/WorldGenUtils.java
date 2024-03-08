@@ -3,6 +3,8 @@ package anticope.rejects.utils;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
 import baritone.api.BaritoneAPI;
+import cubitect.Cubiomes;
+
 import com.seedfinding.mcbiome.source.BiomeSource;
 import com.seedfinding.mcfeature.misc.SlimeChunk;
 import com.seedfinding.mcfeature.structure.*;
@@ -126,7 +128,20 @@ public class WorldGenUtils {
         desert_pyramid
     }
 
-    public static BlockPos locateFeature(Feature feature, BlockPos center) {
+    public static BlockPos locateFeature(Cubiomes.StructureType cfeature, BlockPos center) {
+				Feature feature = switch (cfeature) {
+					case Treasure -> Feature.buried_treasure;
+					case Mansion -> Feature.mansion;
+					case Stronghold -> Feature.stronghold;
+					case Fortress -> Feature.nether_fortress;
+					case Monument -> Feature.ocean_monument;
+					case Bastion -> Feature.bastion_remnant;
+					case End_City -> Feature.end_city;
+					case Village -> Feature.village;
+					case Mineshaft -> Feature.mineshaft;
+					case Desert_Pyramid -> Feature.desert_pyramid;
+					default -> null;
+				};
         Seed seed = Seeds.get().getSeed();
         BlockPos pos = null;
         if (!checkIfInDimension(getDimension(feature))) {
