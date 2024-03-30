@@ -62,7 +62,6 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new GamemodeNotifier());
         modules.add(new GhostMode());
         modules.add(new Glide());
-        modules.add(new InstaMine());
         modules.add(new ItemGenerator());
         modules.add(new InteractionMenu());
         modules.add(new Jetpack());
