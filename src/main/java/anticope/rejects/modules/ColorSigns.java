@@ -6,6 +6,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.server.MinecraftServer;
 
 public class ColorSigns extends Module {
 
@@ -35,7 +36,10 @@ public class ColorSigns extends Module {
     }
 
     private void checkWarning() {
-        String brand = mc.player.getServer().getServerModName();
+        assert mc.player != null;
+        MinecraftServer server = mc.player.getServer();
+        if (server == null) return;
+        String brand = server.getServerModName();
         if (brand == null) return;
         if (brand.contains("Paper")) warning("You are on a paper server. Color signs won't work here");
     }
