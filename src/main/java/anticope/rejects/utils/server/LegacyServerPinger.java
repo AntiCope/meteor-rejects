@@ -29,8 +29,7 @@ public class LegacyServerPinger {
         MeteorRejectsAddon.LOG.info("Pinging " + ip + ":" + port + "...");
 
         try {
-            pinger.add(server, () -> {
-            });
+            pinger.add(server, () -> {}, () -> {});
             MeteorRejectsAddon.LOG.info("Ping successful: " + ip + ":" + port);
 
         } catch (UnknownHostException e) {

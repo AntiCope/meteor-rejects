@@ -75,7 +75,7 @@ public class AntiVanish extends Module {
     @EventHandler
     private void onPacket(PacketEvent.Receive event) {
         if (mode.get() == Mode.RealJoinMessage && event.packet instanceof CommandSuggestionsS2CPacket packet) {
-            if (completionIDs.contains(packet.getCompletionId())) {
+            if (completionIDs.contains(packet.id())) {
                 var lastUsernames = completionPlayerCache.stream().toList();
 
                 completionPlayerCache = packet.getSuggestions().getList().stream()
@@ -100,7 +100,7 @@ public class AntiVanish extends Module {
                     }
                 }
 
-                completionIDs.remove(Integer.valueOf(packet.getCompletionId()));
+                completionIDs.remove(Integer.valueOf(packet.id()));
                 event.cancel();
             }
         }

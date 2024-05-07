@@ -49,13 +49,13 @@ public class ColorSigns extends Module {
             }
         }
         if (books.get() && event.packet instanceof BookUpdateC2SPacket packet) {
-            List<String> newPages = packet.getPages().stream().map(text ->
+            List<String> newPages = packet.pages().stream().map(text ->
                     text.replaceAll("(?i)&([0-9A-Z])", "§$1")).toList();
             // BookUpdateC2SPacket.pages is final, so we need to create a new packet
-            if (!packet.getPages().equals(newPages)) {
+            if (!packet.pages().equals(newPages)) {
                 assert mc.getNetworkHandler() != null;
                 mc.getNetworkHandler().sendPacket(new BookUpdateC2SPacket(
-                        packet.getSlot(), newPages, packet.getTitle()));
+                        packet.slot(), newPages, packet.title()));
                 event.cancel();
             }
         }
