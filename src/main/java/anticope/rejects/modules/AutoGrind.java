@@ -85,6 +85,6 @@ public class AutoGrind extends Module {
                 return false;
         }
 
-        return enchantments.size() > 0 && availEnchs > 0;
+        return !enchantments.isEmpty() && availEnchs > 0;
     }
 }
