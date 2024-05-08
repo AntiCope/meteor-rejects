@@ -48,7 +48,7 @@ public class StatsScreen extends WindowScreen {
             WSection effectList = add(theme.section("Status Effects", effectListExpanded)).expandX().widget();
             effectList.action = () -> effectListExpanded = effectList.isExpanded();
             liv.getActiveStatusEffects().forEach((effect, instance) -> {
-                String status = lang.get(effect.getIdAsString());
+                String status = lang.get(effect.value().getTranslationKey());
                 float tps = TickRate.INSTANCE.getTickRate();
                 if (instance.getAmplifier() != 0) {
                     status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1, tps)));
@@ -64,7 +64,7 @@ public class StatsScreen extends WindowScreen {
             WSection attribList = add(theme.section("Attributes", attribListExpanded)).expandX().widget();
             attribList.action = () -> attribListExpanded = attribList.isExpanded();
             liv.getAttributes().getTracked().forEach((attrib) -> attribList.add(theme.label(String.format("%s: %.2f",
-                lang.get(attrib.getAttribute().getIdAsString()),
+                lang.get(attrib.getAttribute().value().getTranslationKey()),
                 attrib.getValue()
             ))).expandX());
         }
