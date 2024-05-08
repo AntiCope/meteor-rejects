@@ -37,35 +37,41 @@ public class GiveCommand extends Command {
             ItemStack inHand = mc.player.getMainHandStack();
             ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
             NbtCompound ct = new NbtCompound();
+
+            NbtCompound itemNbt = inHand
+                    .getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT)
+                    .copyNbt();
+
             if (inHand.getItem() instanceof BlockItem) {
-                ct.putInt("Time", 1);
-                ct.putString("id", "minecraft:falling_block");
-                ct.put("BlockState", new NbtCompound());
-                ct.getCompound("BlockState").putString("Name", Registries.ITEM.getId(inHand.getItem()).toString());
-                if (inHand.hasNbt() && inHand.getNbt().contains("BlockEntityTag")) {
-                    ct.put("TileEntityData", inHand.getNbt().getCompound("BlockEntityTag"));
+                itemNbt.putInt("Time", 1);
+                itemNbt.putString("id", "minecraft:falling_block");
+                itemNbt.put("BlockState", new NbtCompound());
+                itemNbt.getCompound("BlockState").putString("Name", Registries.ITEM.getId(inHand.getItem()).toString());
+                if (inHand.getComponents().contains(DataComponentTypes.BLOCK_ENTITY_DATA)) {
+                    itemNbt.put("TileEntityData", inHand.get(DataComponentTypes.BLOCK_ENTITY_DATA).copyNbt());
                 }
                 NbtCompound t = new NbtCompound();
                 t.put("EntityTag", ct);
-                item.setNbt(t);
+                item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(itemNbt));
             } else {
                 ct.putString("id", "minecraft:item");
                 NbtCompound it = new NbtCompound();
                 it.putString("id", Registries.ITEM.getId(inHand.getItem()).toString());
                 it.putInt("Count", inHand.getCount());
-                if (inHand.hasNbt()) {
-                    it.put("tag", inHand.getNbt());
+                if (!inHand.getComponents().isEmpty()) {
+                    it.put("tag", inHand.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt());
                 }
                 ct.put("Item", it);
             }
             NbtCompound t = new NbtCompound();
             t.put("EntityTag", ct);
-            item.setNbt(t);
+            item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(t));
             item.set(DataComponentTypes.CUSTOM_NAME, inHand.getName());
             GiveUtils.giveItem(item);
             return SINGLE_SUCCESS;
         }));
 
+        //TODO: allow for custom cords to place oob
         builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
             String message = ctx.getArgument("message", String.class).replace("&", "\247");
             ItemStack stack = new ItemStack(Items.ARMOR_STAND);
@@ -106,7 +112,7 @@ public class GiveCommand extends Command {
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
             NbtCompound tag = new NbtCompound();
             tag.putString("SkullOwner", playerName);
-            itemStack.setNbt(tag);
+            itemStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
             GiveUtils.giveItem(itemStack);
             return SINGLE_SUCCESS;
         })));

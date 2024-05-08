@@ -1,6 +1,7 @@
 package anticope.rejects.utils;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -72,7 +73,7 @@ public class GiveUtils {
                 if (preview) preset.getMiddle().getDefaultStack();
                 ItemStack item = preset.getMiddle().getDefaultStack();
                 try {
-                    item.setNbt(StringNbtReader.parse(preset.getRight()));
+                    item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(StringNbtReader.parse(preset.getRight())));
                 } catch (CommandSyntaxException e) { }
                 item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(toName(preset.getLeft())));
                 return item;
@@ -83,8 +84,9 @@ public class GiveUtils {
             if (preview) Items.SPIDER_SPAWN_EGG.getDefaultStack();
             ItemStack item = Items.SPIDER_SPAWN_EGG.getDefaultStack();
             String nick = mc.player.getName().getString();
+
             try {
-                item.setNbt(StringNbtReader.parse("{EntityTag:{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}}"));
+                item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(StringNbtReader.parse("{EntityTag:{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}}")));
             } catch (CommandSyntaxException e) { }
             item.set(DataComponentTypes.CUSTOM_NAME, Text.of("Force OP"));
             return item;
@@ -104,7 +106,7 @@ public class GiveUtils {
             }
             NbtCompound nbt = new NbtCompound();
             nbt.put("CustomPotionEffects", effects);
-            stack.setNbt(nbt);
+            stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
             stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Lingering Potion of Trolling"));
             return stack;
         });
@@ -123,7 +125,7 @@ public class GiveUtils {
             addEnchant(enchants, "minecraft:vanishing_curse", (short)1);
             NbtCompound nbt = new NbtCompound();
             nbt.put("Enchantments", enchants);
-            stack.setNbt(nbt);
+            stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
             stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Bonk"));
             return stack;
         });
@@ -136,7 +138,7 @@ public class GiveUtils {
             for(int i = 0; i < 40000; i++)
                 nbtList.add(new NbtList());
             nbtCompound.put("nothingsuspicioushere", nbtList);
-            stack.setNbt(nbtCompound);
+            stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbtCompound));
             stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Copy Me"));
             return stack;
         });
@@ -161,7 +163,7 @@ public class GiveUtils {
             tagCompound.putInt("Flight", 0);
             tagCompound.put("Explosions", explosionList);
             baseCompound.put("Fireworks", tagCompound);
-            firework.setNbt(baseCompound);
+            firework.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(baseCompound));
             return firework;
         });
 
@@ -173,7 +175,7 @@ public class GiveUtils {
                 NbtCompound entityTag = new NbtCompound();
                 entityTag.putString("id", id.toString());
                 tag.put("EntityTag", entityTag);
-                egg.setNbt(tag);
+                egg.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
                 egg.set(DataComponentTypes.CUSTOM_NAME, Text.literal(String.format("%s", toName(id.getPath()))));
                 return egg;
             });
