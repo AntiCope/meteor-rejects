@@ -25,6 +25,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
@@ -191,19 +192,21 @@ public class InteractionScreen extends Screen {
                 index[0]++;
             }
         }
-        e.getHandItems().forEach(itemStack -> {
+        LivingEntity a = (LivingEntity) e;
+        a.getHandItems().forEach(itemStack -> {
             if (itemStack != null) {
                 stack[index[0]] = itemStack;
                 index[0]++;
             }
         });
 
-        e.getArmorItems().forEach(itemStack -> {
+        a.getArmorItems().forEach(itemStack -> {
             if (itemStack != null) {
                 stack[index[0]] = itemStack;
                 index[0]++;
             }
         });
+
         for (int i = index[0]; i < 27; i++) stack[i] = Items.AIR.getDefaultStack();
         return stack;
     }

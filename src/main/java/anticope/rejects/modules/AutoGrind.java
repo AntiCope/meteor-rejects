@@ -7,6 +7,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
@@ -32,7 +33,7 @@ public class AutoGrind extends Module {
             .name("item-blacklist")
             .description("Items that should be ignored.")
             .defaultValue()
-            .filter(Item::isDamageable)
+            .filter(Item -> Item.getComponents().get(DataComponentTypes.DAMAGE) != null)
             .build()
     );
 
@@ -73,7 +74,7 @@ public class AutoGrind extends Module {
     private boolean canGrind(ItemStack stack) {
         if (itemBlacklist.get().contains(stack.getItem())) return false;
 
-        Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
+        Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) EnchantmentHelper.getEnchantments(stack);
         int availEnchs = 0;
 
         for (Enchantment enchantment : enchantments.keySet()) {

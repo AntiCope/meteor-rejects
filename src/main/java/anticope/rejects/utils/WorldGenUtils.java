@@ -371,16 +371,16 @@ public class WorldGenUtils {
 
     private static BlockPos getMapMarker(ItemStack stack) {
         if (stack.getComponents().isEmpty()) return null;
-        if (!stack.getComponents().contains(DataComponentTypes.MAP_DECORATIONS)) return null;
+        if (!stack.getDefaultComponents().contains(DataComponentTypes.MAP_DECORATIONS)) return null;
 
-
-        NbtList decorationsTag = stack.getNbt().getList("Decorations", NbtElement.COMPOUND_TYPE);
-        if (decorationsTag.size() < 1) return null;
-        NbtCompound iconTag = decorationsTag.getCompound(0);
+        MapDecorationsComponent decorationsTag = stack.get(DataComponentTypes.MAP_DECORATIONS);
+        if (decorationsTag.decorations().isEmpty()) return null;
+        MapDecorationsComponent.Decoration iconTag = decorationsTag.decorations().get(0);
+        // check this
         return new BlockPos(
-            (int)iconTag.getDouble("x"),
-            (int)iconTag.getDouble("y"),
-            (int)iconTag.getDouble("z")
+            (int)iconTag.x(),
+            0,
+            (int)iconTag.z()
         );
     }
 }

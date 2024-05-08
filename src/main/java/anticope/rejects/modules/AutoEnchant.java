@@ -110,7 +110,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
     }
 
     private boolean fillCanEnchantItem() {
-        FindItemResult res = InvUtils.find(stack -> itemWhitelist.get().contains(stack.getItem()) && EnchantmentHelper.get(stack).isEmpty());
+        FindItemResult res = InvUtils.find(stack -> itemWhitelist.get().contains(stack.getItem()) && EnchantmentHelper.canHaveEnchantments(stack));
         if (!res.found()) return false;
         InvUtils.shiftClick().slot(res.slot());
         return true;

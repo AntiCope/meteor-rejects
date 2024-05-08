@@ -10,6 +10,7 @@ import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.gui.screen.ingame.AnvilScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -125,7 +126,7 @@ public class AutoRename extends Module {
         if (!(item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof ShulkerBoxBlock)) {
             return "";
         }
-        NbtCompound compound = stack.getNbt();
+        NbtCompound compound = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if (compound == null) {
             return "";
         }
@@ -149,7 +150,7 @@ public class AutoRename extends Module {
             if (itemId == null) {
                 continue;
             }
-            name = ItemStack.fromNbt(invItem).getName().getString();
+            name = String.valueOf(invItem.getCompound("Name"));
             minslot = invSlot;
         }
         return name;
