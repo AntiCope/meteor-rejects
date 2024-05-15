@@ -19,6 +19,10 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.DataComponentType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.MapDecorationsComponent;
+import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.IronGolemEntity;
@@ -345,12 +349,14 @@ public class WorldGenUtils {
         return new BlockPos(pos.getX(), pos.getY(), pos.getZ());
     }
 
+    // TODO: check this lmao
     private static boolean isValidMap(Feature feature, ItemStack stack) {
-        if (!stack.hasNbt()) return false;
-        if (!stack.getNbt().contains("display")) return false;
-        NbtCompound displayTag = stack.getNbt().getCompound("display");
-        if (!displayTag.contains("Name")) return false;
-        String nameTag = displayTag.getString("Name");
+        if (stack.getComponents().isEmpty()) return false;
+        if (!stack.getComponents().contains(DataComponentTypes.MAP_DECORATIONS)) return false;
+        MapDecorationsComponent displayTag = stack.getDefaultComponents().get(DataComponentTypes.MAP_DECORATIONS);
+
+        if (!displayTag.toString().contains("Name")) return false;
+        String nameTag = String.valueOf(displayTag.decorations().get("Name"));
         if (!nameTag.contains("translate")) return false;
 
         if (feature == Feature.buried_treasure) {
@@ -364,15 +370,17 @@ public class WorldGenUtils {
     }
 
     private static BlockPos getMapMarker(ItemStack stack) {
-        if (!stack.hasNbt()) return null;
-        if (!stack.getNbt().contains("Decorations")) return null;
-        NbtList decorationsTag = stack.getNbt().getList("Decorations", NbtElement.COMPOUND_TYPE);
-        if (decorationsTag.size() < 1) return null;
-        NbtCompound iconTag = decorationsTag.getCompound(0);
+        if (stack.getComponents().isEmpty()) return null;
+        if (!stack.getDefaultComponents().contains(DataComponentTypes.MAP_DECORATIONS)) return null;
+
+        MapDecorationsComponent decorationsTag = stack.get(DataComponentTypes.MAP_DECORATIONS);
+        if (decorationsTag.decorations().isEmpty()) return null;
+        MapDecorationsComponent.Decoration iconTag = decorationsTag.decorations().get(0);
+        // check this
         return new BlockPos(
-            (int)iconTag.getDouble("x"),
-            (int)iconTag.getDouble("y"),
-            (int)iconTag.getDouble("z")
+            (int)iconTag.x(),
+            0,
+            (int)iconTag.z()
         );
     }
 }

@@ -257,13 +257,13 @@ public class AutoFarm extends Module {
         if (block instanceof CropBlock cropBlock) {
             return cropBlock.isMature(state);
         } else if (block instanceof CocoaBlock cocoaBlock) {
-            return !cocoaBlock.hasRandomTicks(state);
+            return state.get(cocoaBlock.AGE) >= 2;
         } else if (block instanceof StemBlock) {
             return state.get(StemBlock.AGE) == StemBlock.MAX_AGE;
         } else if (block instanceof SweetBerryBushBlock sweetBerryBushBlock) {
-            return !sweetBerryBushBlock.hasRandomTicks(state);
+            return state.get(sweetBerryBushBlock.AGE) >= 2;
         } else if (block instanceof NetherWartBlock netherWartBlock) {
-            return !netherWartBlock.hasRandomTicks(state);
+            return state.get(netherWartBlock.AGE) >= 3;
         }
         return true;
     }
@@ -283,7 +283,8 @@ public class AutoFarm extends Module {
                 block == Blocks.PUMPKIN ||
                 block == Blocks.MELON ||
                 block == Blocks.NETHER_WART ||
-                block == Blocks.SWEET_BERRY_BUSH;
+                block == Blocks.SWEET_BERRY_BUSH ||
+                block == Blocks.COCOA;
     }
 
     private boolean plantFilter(Item item) {

@@ -19,15 +19,17 @@ import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.entry.RegistryEntry;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -86,7 +88,7 @@ public class AutoPot extends Module {
     private boolean drinking, splashing;
     private final List<Class<? extends Module>> wasAura = new ArrayList<>();
     private boolean wasBaritone;
-    
+
     public AutoPot() {
         super(MeteorRejectsAddon.CATEGORY, "auto-pot", "Automatically Drinks Potions");
     }
@@ -322,14 +324,12 @@ public class AutoPot extends Module {
             ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.POTION) continue;
-            if (stack.getItem() == Items.POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
-                if (effects.size() > 0) {
-                    StatusEffectInstance effect = effects.get(0);
-                    if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
-                        slot = i;
-                        break;
-                    }
+            Iterator<StatusEffectInstance> effects = stack.getItem().getComponents().get(DataComponentTypes.POTION_CONTENTS).getEffects().iterator();
+            if (effects.hasNext()) {
+                StatusEffectInstance effect = effects.next();
+                if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
+                    slot = i;
+                    break;
                 }
             }
         }
@@ -342,14 +342,12 @@ public class AutoPot extends Module {
             ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.SPLASH_POTION) continue;
-            if (stack.getItem() == Items.SPLASH_POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
-                if (effects.size() > 0) {
-                    StatusEffectInstance effect = effects.get(0);
-                    if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
-                        slot = i;
-                        break;
-                    }
+            Iterator<StatusEffectInstance> effects = stack.getItem().getComponents().get(DataComponentTypes.POTION_CONTENTS).getEffects().iterator();
+            if (effects.hasNext()) {
+                StatusEffectInstance effect = effects.next();
+                if (effect.getTranslationKey().equals("effect.minecraft.instant_health")) {
+                    slot = i;
+                    break;
                 }
             }
         }
@@ -363,17 +361,15 @@ public class AutoPot extends Module {
             ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.SPLASH_POTION) continue;
-            if (stack.getItem() == Items.SPLASH_POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
-                if (effects.size() > 0) {
-                    StatusEffectInstance effect = effects.get(0);
-                    if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
-                        slot = i;
-                        break;
-                    }
+            Iterator<StatusEffectInstance> effects = stack.getItem().getComponents().get(DataComponentTypes.POTION_CONTENTS).getEffects().iterator();
+            if (effects.hasNext()) {
+                StatusEffectInstance effect = effects.next();
+                if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
+                    slot = i;
+                    break;
                 }
-
             }
+
         }
         return slot;
     }
@@ -384,17 +380,15 @@ public class AutoPot extends Module {
             ItemStack stack = mc.player.getInventory().getStack(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() != Items.POTION) continue;
-            if (stack.getItem() == Items.POTION) {
-                List<StatusEffectInstance> effects = PotionUtil.getPotion(mc.player.getInventory().getStack(i)).getEffects();
-                if (effects.size() > 0) {
-                    StatusEffectInstance effect = effects.get(0);
-                    if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
-                        slot = i;
-                        break;
-                    }
+            Iterator<StatusEffectInstance> effects = stack.getItem().getComponents().get(DataComponentTypes.POTION_CONTENTS).getEffects().iterator();
+            if (effects.hasNext()) {
+                StatusEffectInstance effect = effects.next();
+                if (effect.getTranslationKey().equals("effect.minecraft.strength")) {
+                    slot = i;
+                    break;
                 }
-
             }
+
         }
         return slot;
     }
@@ -415,7 +409,7 @@ public class AutoPot extends Module {
         return false;
     }
     private boolean ShouldDrinkStrength(){
-        Map<StatusEffect, StatusEffectInstance> effects = mc.player.getActiveStatusEffects();
+        Map<RegistryEntry<StatusEffect>, StatusEffectInstance> effects = mc.player.getActiveStatusEffects();
         return !effects.containsKey(StatusEffects.STRENGTH);
     }
 }

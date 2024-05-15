@@ -54,7 +54,7 @@ public class CustomPackets extends Module {
     @EventHandler
     private void onCustomPayloadPacket(PacketEvent.Receive event) {
         if (event.packet instanceof CustomPayloadS2CPacket packet) {
-            switch (packet.payload().id().toString()) {
+            switch (packet.payload().getId().toString()) {
                 case "badlion:mods" -> event.setCancelled(onBadlionModsPacket(packet));
                 default -> onUnknownPacket(packet);
             }
@@ -65,9 +65,8 @@ public class CustomPackets extends Module {
 
     private void onUnknownPacket(CustomPayloadS2CPacket packet) {
         if (!unknownPackets.get()) return;
-        MutableText text = Text.literal(packet.payload().id().toString());
+        MutableText text = Text.literal(packet.payload().getId().toString());
         buffer.clear();
-        packet.payload().write(buffer);
         text.setStyle(text.getStyle()
                 .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
@@ -79,7 +78,6 @@ public class CustomPackets extends Module {
     private boolean onBadlionModsPacket(CustomPayloadS2CPacket packet) {
         if (!mods.get()) return false;
         buffer.clear();
-        packet.payload().write(buffer);
         String json = readString(buffer);
         Map<String, BadlionMod> mods = GSON_NON_PRETTY.fromJson(json, BADLION_MODS_TYPE);
         ChatUtils.sendMsg("Badlion", format("Mods", formatMods(mods)));

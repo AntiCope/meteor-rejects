@@ -10,6 +10,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.NetworkState;
+import net.minecraft.network.packet.c2s.handshake.ConnectionIntent;
 import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class BungeeCordSpoof extends Module {
 
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
-        if (event.packet instanceof HandshakeC2SPacket packet && packet.getNewNetworkState() == NetworkState.LOGIN) {
+        if (event.packet instanceof HandshakeC2SPacket packet && packet.intendedState() == ConnectionIntent.LOGIN) {
             if (whitelist.get() && !whitelistedServers.get().contains(Utils.getWorldName())) return;
             String address = packet.address() + "\0" + forwardedIP + "\0" + mc.getSession().getUuidOrNull().toString().replace("-", "")
                     + (spoofProfile.get() ? getProperty() : "");

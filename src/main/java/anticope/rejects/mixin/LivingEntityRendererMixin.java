@@ -16,10 +16,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(LivingEntityRenderer.class)
-public class LivingEntityRendererMixin {
+public class LivingEntityRendererMixin<T extends LivingEntity> {
 
     @Inject(method = "setupTransforms", at = @At(value = "TAIL"))
-    private void dinnerboneEntities(LivingEntity entity, MatrixStack matrices, float _animationProgress, float _bodyYaw, float _tickDelta, CallbackInfo _info) {
+    private void dinnerboneEntities(T entity, MatrixStack matrices, float animationProgress, float bodyYaw, float tickDelta, float scale, CallbackInfo ci) {
         Rendering renderingModule = Modules.get().get(Rendering.class);
         if (renderingModule == null) return;
         if ((!(entity instanceof PlayerEntity)) && renderingModule.dinnerboneEnabled()) {
