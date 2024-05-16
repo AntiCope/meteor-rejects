@@ -22,7 +22,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import static anticope.rejects.utils.accounts.GetPlayerUUID.getUUID;
 
