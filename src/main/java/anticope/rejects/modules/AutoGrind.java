@@ -8,14 +8,15 @@ import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.GrindstoneScreenHandler;
 
 import java.util.List;
-import java.util.Map;
 
 public class AutoGrind extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -74,14 +75,14 @@ public class AutoGrind extends Module {
     private boolean canGrind(ItemStack stack) {
         if (itemBlacklist.get().contains(stack.getItem())) return false;
 
-        Map<Enchantment, Integer> enchantments = (Map<Enchantment, Integer>) EnchantmentHelper.getEnchantments(stack);
+        ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
         int availEnchs = 0;
 
-        for (Enchantment enchantment : enchantments.keySet()) {
+        for (RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
             availEnchs++;
-            if (enchantment.isCursed())
+            if (enchantment.value().isCursed())
                 availEnchs--;
-            if (enchantmentBlacklist.get().contains(enchantment))
+            if (enchantmentBlacklist.get().contains(enchantment.value()))
                 return false;
         }
 
