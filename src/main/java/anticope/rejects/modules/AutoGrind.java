@@ -14,6 +14,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.GrindstoneScreenHandler;
 
 import java.util.List;
@@ -80,7 +81,7 @@ public class AutoGrind extends Module {
 
         for (RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
             availEnchs++;
-            if (enchantment.value().isCursed())
+            if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, EnchantmentTags.CURSE))
                 availEnchs--;
             if (enchantmentBlacklist.get().contains(enchantment.value()))
                 return false;

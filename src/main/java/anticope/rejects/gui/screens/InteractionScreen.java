@@ -62,7 +62,7 @@ public class InteractionScreen extends Screen {
     private final Map<String, Consumer<Entity>> functions;
     private final Map<String, String> msgs;
 
-    private final Identifier GUI_ICONS_TEXTURE = new Identifier("textures/gui/icons.png");
+    private final Identifier GUI_ICONS_TEXTURE = Identifier.of("textures/gui/icons.png");
 
     private final StaticListener shiftListener = new StaticListener();
 

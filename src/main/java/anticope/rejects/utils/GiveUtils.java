@@ -38,13 +38,13 @@ public class GiveUtils {
     private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(Text.literal("No space in hotbar."));
 
     private static final List<Identifier> HIDDEN_ENTITIES = Arrays.asList(
-        new Identifier("giant"),
-        new Identifier("ender_dragon"),
-        new Identifier("wither"),
-        new Identifier("iron_golem"),
-        new Identifier("ender_dragon"),
-        new Identifier("tnt_minecart"),
-        new Identifier("lightning_bolt"));
+        Identifier.of("giant"),
+        Identifier.of("ender_dragon"),
+        Identifier.of("wither"),
+        Identifier.of("iron_golem"),
+        Identifier.of("ender_dragon"),
+        Identifier.of("tnt_minecart"),
+        Identifier.of("lightning_bolt"));
 
     // Some ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/command/commands/CmdGive.java
     private static final List<Triple<String, Item, String>> ENTITY_PRESETS = Arrays.asList(

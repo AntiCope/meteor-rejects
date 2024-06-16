@@ -9,6 +9,7 @@ import net.minecraft.client.network.AllowedAddressResolver;
 import net.minecraft.client.network.LegacyServerPinger;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.DisconnectionInfo;
 import net.minecraft.network.listener.ClientQueryPacketListener;
 import net.minecraft.network.packet.c2s.query.QueryPingC2SPacket;
 import net.minecraft.network.packet.c2s.query.QueryRequestC2SPacket;
@@ -121,6 +122,11 @@ public class ServerListPinger {
                     ServerListPinger.this.ping(entry);
                 }
                 notifyDisconnectListeners();
+            }
+
+            @Override
+            public void onDisconnected(DisconnectionInfo info) {
+
             }
 
             public boolean isConnectionOpen() {
