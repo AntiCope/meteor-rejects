@@ -2,12 +2,12 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
+import net.minecraft.block.*;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
@@ -17,25 +17,37 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
+import java.util.List;
 
+//TODO: add settings to find/use shovel, delay, range ?
 //https://github.com/DustinRepo/JexClient/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/world/LawnBot.java
 public class LawnBot extends Module {
     private final ArrayList<BlockPos> myceliumSpots = new ArrayList<>();
-    //TODO: add settings to find/use shovel, delay, range ?
+    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+
+    private final Setting<List<Block>> blockWhitelist = sgGeneral.add(new BlockListSetting.Builder()
+            .name("block-whitelist")
+            .description("Which blocks to replace with grass.")
+            .defaultValue()
+            .filter(this::grassFilter)
+            .build()
+    );
+
     public LawnBot() {
-        super(MeteorRejectsAddon.CATEGORY, "lawnbot", "Replaces mycelium with grass blocks");
+        super(MeteorRejectsAddon.CATEGORY, "lawnbot", "Replace a variety of dirt-type blocks with grass");
     }
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
         Item grassBlockItem = Items.GRASS_BLOCK;
-        int grassCount = countItems(grassBlockItem);
+        int grassCount = InvUtils.find(grassBlockItem).count();
         if (grassCount == 0) {
             return;
         }
-        int grassHotbarSlot = getFromInv(grassBlockItem, 9);
+
+        int grassHotbarSlot = InvUtils.findInHotbar((itemStack -> itemStack.getItem() == grassBlockItem)).slot();
         if (grassHotbarSlot == -1) {
-            int grassInvSlot = getFromInv(grassBlockItem, 36);
+            int grassInvSlot = InvUtils.find((itemStack -> itemStack.getItem() == grassBlockItem)).slot();
             if (grassInvSlot == -1)
                 return;
 
@@ -50,7 +62,7 @@ public class LawnBot extends Module {
                 mc.player.getInventory().selectedSlot = grassHotbarSlot;
                 mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
                 return;
-            } else if (block != Blocks.MYCELIUM) {
+            } else if (!blockWhitelist.get().contains(block)) {
                 myceliumSpots.remove(i);
             }
         }
@@ -58,7 +70,7 @@ public class LawnBot extends Module {
             BlockPos pos = myceliumSpots.get(i);
             Block block = mc.world.getBlockState(pos).getBlock();
             double distance = mc.player.getPos().distanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
-            if (block == Blocks.MYCELIUM && distance <= 5) {
+            if (blockWhitelist.get().contains(block) && distance <= 5) {
                 mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
                 return;
             }
@@ -68,7 +80,7 @@ public class LawnBot extends Module {
             for (int y = -3; y < 3; y++) {
                 for (int z = -5; z < 5; z++) {
                     BlockPos pos = mc.player.getBlockPos().add(x, y, z);
-                    if (mc.world.getBlockState(pos).getBlock() == Blocks.MYCELIUM) {
+                    if (blockWhitelist.get().contains(mc.world.getBlockState(pos).getBlock())) {
                         myceliumSpots.add(pos);
                     }
                 }
@@ -76,22 +88,11 @@ public class LawnBot extends Module {
         }
     }
 
-    public int countItems(Item item) {
-        int count = 0;
-        for (int i = 0; i < 44; i++) {
-            ItemStack itemStack = mc.player.getInventory().getStack(i);
-            if (itemStack != null && itemStack.getItem() == item)
-                count+=itemStack.getCount();
-        }
-        return count;
-    }
-
-    // Maybe move this into utils and use for a refactor someday
-    public int getFromInv(Item item, int maxSlot) {
-        for (int i = 0; i < maxSlot; i++) {
-            if (mc.player.getInventory().getStack(i) != null && mc.player.getInventory().getStack(i).getItem() == item)
-                return i;
-        }
-        return -1;
+    private boolean grassFilter(Block block) {
+        return  block == Blocks.MYCELIUM ||
+                block == Blocks.PODZOL ||
+                block == Blocks.DIRT_PATH ||
+                block == Blocks.COARSE_DIRT ||
+                block == Blocks.ROOTED_DIRT;
     }
 }
