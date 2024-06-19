@@ -151,6 +151,8 @@ public class AutoFarm extends Module {
             else if (block == Blocks.POTATOES) item = Items.POTATO;
             else if (block == Blocks.BEETROOTS) item = Items.BEETROOT_SEEDS;
             else if (block == Blocks.NETHER_WART) item = Items.NETHER_WART;
+            else if (block == Blocks.PITCHER_CROP) item = Items.PITCHER_POD;
+            else if (block == Blocks.TORCHFLOWER) item = Items.TORCHFLOWER_SEEDS;
             if (item != null) replantMap.put(event.blockPos, item);
         }
     }
@@ -264,6 +266,8 @@ public class AutoFarm extends Module {
             return state.get(sweetBerryBushBlock.AGE) >= 2;
         } else if (block instanceof NetherWartBlock netherWartBlock) {
             return state.get(netherWartBlock.AGE) >= 3;
+        } else if (block instanceof PitcherCropBlock pitcherCropBlock) {
+            return state.get(pitcherCropBlock.AGE) >= 4;
         }
         return true;
     }
@@ -275,7 +279,9 @@ public class AutoFarm extends Module {
                 block instanceof AzaleaBlock ||
                 block instanceof SaplingBlock ||
                 block == Blocks.COCOA ||
-                block == Blocks.SWEET_BERRY_BUSH;
+                block == Blocks.SWEET_BERRY_BUSH ||
+                block == Blocks.PITCHER_CROP ||
+                block == Blocks.TORCHFLOWER;
     }
 
     private boolean harvestFilter(Block block) {
@@ -284,7 +290,9 @@ public class AutoFarm extends Module {
                 block == Blocks.MELON ||
                 block == Blocks.NETHER_WART ||
                 block == Blocks.SWEET_BERRY_BUSH ||
-                block == Blocks.COCOA;
+                block == Blocks.COCOA ||
+                block == Blocks.PITCHER_CROP ||
+                block == Blocks.TORCHFLOWER;
     }
 
     private boolean plantFilter(Item item) {
@@ -294,6 +302,8 @@ public class AutoFarm extends Module {
                 item == Items.BEETROOT_SEEDS ||
                 item == Items.PUMPKIN_SEEDS ||
                 item == Items.MELON_SEEDS ||
-                item == Items.NETHER_WART;
+                item == Items.NETHER_WART ||
+                item == Items.PITCHER_POD ||
+                item == Items.TORCHFLOWER_SEEDS;
     }
 }
