@@ -19,9 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import cubitect.Cubiomes;
 import cubitect.Cubiomes.Pos;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-
 public class LocateCommand extends Command {
 
 	private final static DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType(o -> {

@@ -5,9 +5,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-
 public class SetVelocityCommand extends Command {
     public SetVelocityCommand() {
         super("set-velocity", "Sets player velocity", "velocity", "vel");
