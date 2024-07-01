@@ -23,8 +23,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-
 public class SaveSkinCommand extends Command {
 
     private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An exception occurred"));

@@ -83,7 +83,7 @@ public class AutoExtinguish extends Module {
     private BlockPos blockPos = null;
     private boolean doesWaterBucketWork = true;
 
-    private static final StatusEffect FIRE_RESISTANCE = Registries.STATUS_EFFECT.get(new Identifier("fire_resistance"));
+    private static final StatusEffect FIRE_RESISTANCE = Registries.STATUS_EFFECT.get(Identifier.of("fire_resistance"));
 
     public AutoExtinguish() {
         super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");

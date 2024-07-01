@@ -106,7 +106,7 @@ public class Rendering extends Module {
         if (s == Shader.Vibrant) name = "color_convolve";
         else if (s == Shader.Scanline) name = "scan_pincushion";
         else name = s.toString().toLowerCase();
-        Identifier shaderID = new Identifier(String.format("shaders/post/%s.json", name));
+        Identifier shaderID = Identifier.of(String.format("shaders/post/%s.json", name));
         try {
             PostEffectProcessor shader = new PostEffectProcessor(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), shaderID);
             this.shader = shader;

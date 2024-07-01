@@ -9,9 +9,6 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-
 public class GhostCommand extends Command {
     public GhostCommand() {
         super("ghost", "Remove ghost blocks & bypass AntiXray", "aax", "anti-anti-xray");

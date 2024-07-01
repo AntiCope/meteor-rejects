@@ -19,10 +19,8 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.component.DataComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.MapDecorationsComponent;
-import net.minecraft.component.type.MapIdComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.IronGolemEntity;
@@ -30,7 +28,6 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.vehicle.ChestMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 

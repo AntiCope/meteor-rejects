@@ -13,10 +13,13 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.GrindstoneScreenHandler;
 
 import java.util.List;
+import java.util.Set;
 
 public class AutoGrind extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -38,7 +41,7 @@ public class AutoGrind extends Module {
             .build()
     );
 
-    private final Setting<List<Enchantment>> enchantmentBlacklist = sgGeneral.add(new EnchantmentListSetting.Builder()
+    private final Setting<Set<RegistryKey<Enchantment>>> enchantmentBlacklist = sgGeneral.add(new EnchantmentListSetting.Builder()
             .name("enchantment-blacklist")
             .description("Enchantments that should be ignored.")
             .defaultValue()
@@ -80,7 +83,7 @@ public class AutoGrind extends Module {
 
         for (RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
             availEnchs++;
-            if (enchantment.value().isCursed())
+            if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, EnchantmentTags.CURSE))
                 availEnchs--;
             if (enchantmentBlacklist.get().contains(enchantment.value()))
                 return false;

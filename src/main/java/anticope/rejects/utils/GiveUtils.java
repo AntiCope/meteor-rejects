@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.*;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -15,6 +16,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -38,13 +41,13 @@ public class GiveUtils {
     private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(Text.literal("No space in hotbar."));
 
     private static final List<Identifier> HIDDEN_ENTITIES = Arrays.asList(
-        new Identifier("giant"),
-        new Identifier("ender_dragon"),
-        new Identifier("wither"),
-        new Identifier("iron_golem"),
-        new Identifier("ender_dragon"),
-        new Identifier("tnt_minecart"),
-        new Identifier("lightning_bolt"));
+        Identifier.of("giant"),
+        Identifier.of("ender_dragon"),
+        Identifier.of("wither"),
+        Identifier.of("iron_golem"),
+        Identifier.of("ender_dragon"),
+        Identifier.of("tnt_minecart"),
+        Identifier.of("lightning_bolt"));
 
     // Some ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/command/commands/CmdGive.java
     private static final List<Triple<String, Item, String>> ENTITY_PRESETS = Arrays.asList(
@@ -65,6 +68,7 @@ public class GiveUtils {
     );
 
     private static final Random random = new Random();
+    private static Registry<Enchantment> enchantmentRegistry;
 
     public static void giveItem(ItemStack item) throws CommandSyntaxException {
         if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
@@ -134,19 +138,21 @@ public class GiveUtils {
         });
 
         PRESETS.put("32k", (preview) -> {
-            if (preview) return Items.DIAMOND_SWORD.getDefaultStack();
+            enchantmentRegistry = mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+
+            if (preview || enchantmentRegistry == null) return Items.DIAMOND_SWORD.getDefaultStack();
             ItemStack stack = Items.DIAMOND_SWORD.getDefaultStack();
 
             stack.apply(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT, component -> {
                 ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(component);
-                builder.add(Enchantments.SHARPNESS, 255);
-                builder.add(Enchantments.KNOCKBACK, 255);
-                builder.add(Enchantments.FIRE_ASPECT, 255);
-                builder.add(Enchantments.LOOTING, 10);
-                builder.add(Enchantments.SWEEPING_EDGE, 3);
-                builder.add(Enchantments.UNBREAKING, 255);
-                builder.add(Enchantments.MENDING, 1);
-                builder.add(Enchantments.VANISHING_CURSE, 1);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.SHARPNESS), 255);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.KNOCKBACK), 255);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.FIRE_ASPECT), 255);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.LOOTING), 10);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.SWEEPING_EDGE), 3);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.UNBREAKING), 255);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.MENDING), 1);
+                builder.add(enchantmentRegistry.entryOf(Enchantments.VANISHING_CURSE), 1);
                 return builder.build();
             });
 
