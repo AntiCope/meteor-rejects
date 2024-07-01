@@ -23,6 +23,8 @@ import net.minecraft.world.chunk.WorldChunk;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /*
     Ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/module/mods/NewChunks.java
@@ -93,6 +95,7 @@ public class NewChunks extends Module {
     private final Set<ChunkPos> newChunks = Collections.synchronizedSet(new HashSet<>());
     private final Set<ChunkPos> oldChunks = Collections.synchronizedSet(new HashSet<>());
     private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
+	private final Executor taskExecutor = Executors.newSingleThreadExecutor();
 
     public NewChunks() {
         super(MeteorRejectsAddon.CATEGORY,"new-chunks", "Detects completely new chunks using certain traits of them");
@@ -177,7 +180,7 @@ public class NewChunks extends Module {
 			if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getChunkX(), packet.getChunkZ()) == null) {
 				WorldChunk chunk = new WorldChunk(mc.world, pos);
 				try {
-					chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new NbtCompound(), packet.getChunkData().getBlockEntities(packet.getChunkX(), packet.getChunkZ()));
+					taskExecutor.execute(() -> chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new NbtCompound(), packet.getChunkData().getBlockEntities(packet.getChunkX(), packet.getChunkZ())));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					return;
 				}
