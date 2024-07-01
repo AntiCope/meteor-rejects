@@ -70,6 +70,7 @@
 - Jetpack
 - KnockbackPlus
 - Lavacast
+- LawnBot (Ported from [JexClient](https://github.com/DustinRepo/JexClient/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/world/LawnBot.java))
 - MossBot (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - NewChunks (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/module/mods/NewChunks.java))
 - NoJumpDelay
