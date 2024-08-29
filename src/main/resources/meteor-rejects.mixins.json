@@ -9,6 +9,8 @@
     "CommandSuggestorMixin",
     "CountPlacementModifierAccessor",
     "Deadmau5FeatureRendererMixin",
+    "DebugInfoSenderMixin",
+    "DebugRendererMixin",
     "EntityAccessor",
     "GameRendererMixin",
     "HandshakeC2SPacketAccessor",
@@ -16,6 +18,7 @@
     "HeightRangePlacementModifierAccessor",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
+    "MobEntityAccessor",
     "MultiplayerScreenAccessor",
     "MultiplayerScreenMixin",
     "PlayerEntityMixin",
@@ -30,5 +33,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "PathMixin"
+  ]
 }

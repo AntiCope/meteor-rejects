@@ -14,6 +14,7 @@ import meteordevelopment.meteorclient.systems.hud.HudGroup;
 import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
     public static final Logger LOG = LoggerFactory.getLogger("Rejects");
     public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultStack());
     public static final HudGroup HUD_GROUP = new HudGroup("Rejects");
+    public static DebugRenderer DEBUG_RENDERER;
 
     @Override
     public void onInitialize() {
@@ -57,6 +59,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new Confuse());
         modules.add(new CoordLogger());
         modules.add(new CustomPackets());
+        modules.add(new DebugRender());
         modules.add(new ExtraElytra());
         modules.add(new FullFlight());
         modules.add(new GamemodeNotifier());
