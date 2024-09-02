@@ -38,14 +38,14 @@ public class WorldUtils {
         return MathHelper.sqrt((float) (d * d + e * e + f * f));
     }
 
-    public static boolean interact(BlockPos pos, FindItemResult findItemResult, boolean rotate) {
+    public static boolean interact(BlockPos pos, FindItemResult findItemResult, boolean rotate, boolean swingHand) {
         if (!findItemResult.found()) return false;
         Runnable action = () -> {
             boolean wasSneaking = mc.player.input.sneaking;
             mc.player.input.sneaking = false;
             InvUtils.swap(findItemResult.slot(), true);
             mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.UP, pos, false));
-            mc.player.swingHand(Hand.MAIN_HAND);
+            if (swingHand) {mc.player.swingHand(Hand.MAIN_HAND);}
             InvUtils.swapBack();
             mc.player.input.sneaking = wasSneaking;
         };

@@ -46,6 +46,7 @@
 - AutoLogin
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
 - AutoSoup (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
+- AutoTorch
 - AutoTNT
 - AutoWither (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1070))
 - BlockIn

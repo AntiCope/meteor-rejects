@@ -192,7 +192,7 @@ public class AutoFarm extends Module {
                 block == Blocks.ROOTED_DIRT;
         if (moist && tillable && mc.world.getBlockState(pos.up()).isAir()) {
             FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
-            return WorldUtils.interact(pos, hoe, rotate.get());
+            return WorldUtils.interact(pos, hoe, rotate.get(), true);
         }
         return false;
     }
@@ -245,7 +245,7 @@ public class AutoFarm extends Module {
         if (isMature(state, block)) return false;
 
         FindItemResult bonemeal = InvUtils.findInHotbar(Items.BONE_MEAL);
-        return WorldUtils.interact(pos, bonemeal, rotate.get());
+        return WorldUtils.interact(pos, bonemeal, rotate.get(), true);
     }
 
     private boolean isWaterNearby(WorldView world, BlockPos pos) {

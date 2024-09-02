@@ -67,7 +67,7 @@ public class MossBot extends Module {
                 mc.interactionManager.updateBlockBreakingProgress(bestBlock.up(), Direction.UP);
             }
 
-            WorldUtils.interact(bestBlock, findItemResult, rotate.get());
+            WorldUtils.interact(bestBlock, findItemResult, rotate.get(), true);
             mossMap.put(bestBlock, 100);
         }
     }
