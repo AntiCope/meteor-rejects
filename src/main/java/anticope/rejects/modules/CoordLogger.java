@@ -97,9 +97,9 @@ public class CoordLogger extends Module {
         // Teleports
         if (event.packet instanceof EntityPositionS2CPacket) {
             EntityPositionS2CPacket packet = (EntityPositionS2CPacket) event.packet;
-            
+
             try {
-                Entity entity = mc.world.getEntityById(packet.getId());
+                Entity entity = mc.world.getEntityById(packet.getEntityId());
                 
                 // Player teleport
                 if (entity.getType().equals(EntityType.PLAYER) && players.get()) {
