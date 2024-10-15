@@ -3,12 +3,13 @@ package anticope.rejects.commands;
 import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.arguments.EnumArgumentType;
 import anticope.rejects.utils.WorldGenUtils;
+import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
-
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.seedfinding.mccore.version.MCVersion;
-
+import cubitect.Cubiomes;
+import cubitect.Cubiomes.Pos;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
@@ -17,8 +18,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import cubitect.Cubiomes;
-import cubitect.Cubiomes.Pos;
 
 @AutoRegister
 public class LocateCommand extends Command {
@@ -42,8 +41,13 @@ public class LocateCommand extends Command {
 				.then(argument("feature", EnumArgumentType.enumArgument(Cubiomes.StructureType.Village)).executes(ctx -> {
 					Cubiomes.StructureType feature = EnumArgumentType.getEnum(ctx, "feature", Cubiomes.StructureType.Village);
 					BlockPos playerPos = mc.player.getBlockPos();
-					long seed = Seeds.get().getSeed().seed;
-					MCVersion version = Seeds.get().getSeed().version;
+					Seed seedObj = Seeds.get().getSeed();
+					if (null == seedObj) {
+						info(Text.literal("No seed found or seed is null"));
+						return SINGLE_SUCCESS;
+					}
+					long seed = seedObj.seed;
+					MCVersion version = seedObj.version;
 					Cubiomes.MCVersion cubiomesVersion = null;
 					if (version.isNewerOrEqualTo(MCVersion.v1_20)) {
 						cubiomesVersion = Cubiomes.MCVersion.MC_1_20;
