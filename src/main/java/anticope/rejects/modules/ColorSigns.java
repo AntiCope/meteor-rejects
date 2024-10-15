@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -14,6 +15,7 @@ import net.minecraft.server.MinecraftServer;
 
 import java.util.List;
 
+@AutoRegister
 public class ColorSigns extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.mixin.HandshakeC2SPacketAccessor;
 import com.google.gson.Gson;
 import com.mojang.authlib.properties.PropertyMap;
@@ -14,6 +15,7 @@ import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
 
 import java.util.List;
 
+@AutoRegister
 public class BungeeCordSpoof extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

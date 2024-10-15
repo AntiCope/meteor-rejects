@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.arguments.EnumStringArgumentType;
 import anticope.rejects.utils.GiveUtils;
 import com.mojang.authlib.GameProfile;
@@ -25,6 +26,7 @@ import java.util.Collection;
 
 import static anticope.rejects.utils.accounts.GetPlayerUUID.getUUID;
 
+@AutoRegister
 public class GiveCommand extends Command {
 
     private final Collection<String> PRESETS = GiveUtils.PRESETS.keySet();

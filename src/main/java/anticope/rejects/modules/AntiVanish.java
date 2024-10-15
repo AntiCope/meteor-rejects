@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import com.mojang.brigadier.suggestion.Suggestion;
 import meteordevelopment.meteorclient.events.game.ReceiveMessageEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@AutoRegister
 public class AntiVanish extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

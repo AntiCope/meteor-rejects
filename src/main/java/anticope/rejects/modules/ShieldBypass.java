@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.Cancellable;
 import meteordevelopment.meteorclient.events.meteor.MouseButtonEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
@@ -23,6 +24,7 @@ import net.minecraft.util.math.Vec3d;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
+@AutoRegister
 public class ShieldBypass extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.utils.RejectsUtils;
 import com.google.common.collect.Streams;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
@@ -18,6 +19,7 @@ import net.minecraft.util.shape.VoxelShape;
 
 import java.util.stream.Stream;
 
+@AutoRegister
 public class FullFlight extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgAntiKick = settings.createGroup("Anti Kick");

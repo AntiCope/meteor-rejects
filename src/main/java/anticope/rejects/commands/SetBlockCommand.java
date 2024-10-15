@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.arguments.ClientPosArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
@@ -10,6 +11,7 @@ import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+@AutoRegister
 public class SetBlockCommand extends Command {
     public SetBlockCommand() {
         super("setblock", "Sets client side blocks", "sblk");

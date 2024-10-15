@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.gui.screens.InteractionScreen;
 import anticope.rejects.settings.StringMapSetting;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+@AutoRegister
 public class InteractionMenu extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

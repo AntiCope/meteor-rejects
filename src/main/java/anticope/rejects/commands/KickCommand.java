@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
@@ -11,6 +12,7 @@ import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.SystemUtils;
 
+@AutoRegister
 public class KickCommand extends Command {
 
     public KickCommand() {

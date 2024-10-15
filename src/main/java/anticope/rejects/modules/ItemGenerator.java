@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -15,6 +16,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.random.Random;
 
+@AutoRegister
 public class ItemGenerator extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final Setting<Integer> speed = sgGeneral.add(new IntSetting.Builder()

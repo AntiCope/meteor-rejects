@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.settings.StringMapSetting;
 import anticope.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.events.game.GameJoinedEvent;
@@ -25,6 +26,7 @@ import net.minecraft.util.Formatting;
 
 import java.util.*;
 
+@AutoRegister
 public class AutoLogin extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.game.OpenScreenEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -21,6 +22,7 @@ import net.minecraft.screen.GrindstoneScreenHandler;
 import java.util.List;
 import java.util.Set;
 
+@AutoRegister
 public class AutoGrind extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

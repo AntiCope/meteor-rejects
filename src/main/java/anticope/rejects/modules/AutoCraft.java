@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.ItemListSetting;
@@ -17,6 +18,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import java.util.Arrays;
 import java.util.List;
 
+@AutoRegister
 public class AutoCraft extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

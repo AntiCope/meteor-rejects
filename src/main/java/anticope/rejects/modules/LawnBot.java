@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -21,6 +22,7 @@ import java.util.List;
 
 //TODO: add settings to find/use shovel, delay, range ?
 //https://github.com/DustinRepo/JexClient/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/world/LawnBot.java
+@AutoRegister
 public class LawnBot extends Module {
     private final ArrayList<BlockPos> myceliumSpots = new ArrayList<>();
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

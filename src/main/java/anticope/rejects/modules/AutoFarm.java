@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.utils.WorldUtils;
 import meteordevelopment.meteorclient.events.entity.player.BreakBlockEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -27,6 +28,7 @@ import net.minecraft.world.WorldView;
 
 import java.util.*;
 
+@AutoRegister
 public class AutoFarm extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final SettingGroup sgTill = settings.createGroup("Till");

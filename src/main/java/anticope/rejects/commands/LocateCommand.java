@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.arguments.EnumArgumentType;
 import anticope.rejects.utils.WorldGenUtils;
 import anticope.rejects.utils.seeds.Seeds;
@@ -19,6 +20,7 @@ import net.minecraft.util.math.Vec3d;
 import cubitect.Cubiomes;
 import cubitect.Cubiomes.Pos;
 
+@AutoRegister
 public class LocateCommand extends Command {
 
 	private final static DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType(o -> {

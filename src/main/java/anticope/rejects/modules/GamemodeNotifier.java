@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.settings.GameModeListSetting;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -13,6 +14,7 @@ import net.minecraft.world.GameMode;
 
 import java.util.List;
 
+@AutoRegister
 public class GamemodeNotifier extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
     private final Setting<List<GameMode>> gamemodes = sgGeneral.add(new GameModeListSetting.Builder()

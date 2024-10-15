@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.entity.player.SendMovementPacketsEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.HashSet;
 
+@AutoRegister
 public class PacketFly extends Module {
     private final HashSet<PlayerMoveC2SPacket> packets = new HashSet<>();
     private final SettingGroup sgMovement = settings.createGroup("movement");

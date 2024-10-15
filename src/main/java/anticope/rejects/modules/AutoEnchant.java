@@ -1,9 +1,9 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.game.OpenScreenEvent;
 import meteordevelopment.meteorclient.settings.*;
-import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
@@ -18,11 +18,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+@AutoRegister
 public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.Module {
 
     public final SettingGroup sgGeneral = settings.getDefaultGroup();
+
+    private final ScheduledExecutorService executors = Executors.newSingleThreadScheduledExecutor();
 
     private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
             .name("delay")
@@ -65,32 +70,32 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
     private void onOpenScreen(OpenScreenEvent event) {
         if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler))
             return;
-        MeteorExecutor.execute(this::autoEnchant);
+        this.autoEnchant();
     }
 
-    private synchronized void autoEnchant() {
+    private void autoEnchant() {
         if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler handler))
             return;
         if (mc.player.experienceLevel < 30) {
             info("You don't have enough experience levels");
             return;
         }
-        ScheduledExecutorService executors = Executors.newSingleThreadScheduledExecutor();
-        executors.scheduleAtFixedRate(() -> {
+        AtomicReference<ScheduledFuture<?>> task = new AtomicReference<>();
+        task.set(executors.scheduleAtFixedRate(() -> {
             try {
                 if (!(mc.player.currentScreenHandler instanceof EnchantmentScreenHandler)) {
                     info("Enchanting table is closed.");
-                    executors.shutdown();
+                    task.get().cancel(true);
                     return;
                 }
                 if (handler.getLapisCount() < level.get() && !fillLapisItem()) {
                     info("Lapis lazuli is not found.");
-                    executors.shutdown();
+                    task.get().cancel(true);
                     return;
                 }
                 if (!fillCanEnchantItem()) {
                     info("No items found to enchant.");
-                    executors.shutdown();
+                    task.get().cancel(true);
                     return;
                 }
 
@@ -98,13 +103,12 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 if (getEmptySlotCount(handler) > 2) {
                     InvUtils.shiftClick().slotId(0);
                 } else if (drop.get() && handler.getSlot(0).hasStack()) {
-                    mc.execute(() -> InvUtils.drop().slotId(0));
+                    mc.executeSync(() -> InvUtils.drop().slotId(0));
                 }
-            }catch (Exception e) {
-                e.printStackTrace();
-                executors.shutdown();
+            } catch (Exception ignored) {
+                task.get().cancel(true);
             }
-        }, 0, delay.get(), TimeUnit.MILLISECONDS);
+        }, 0, delay.get(), TimeUnit.MILLISECONDS));
     }
 
     private boolean fillCanEnchantItem() {
@@ -130,5 +134,4 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
         }
         return emptySlotCount;
     }
-
 }

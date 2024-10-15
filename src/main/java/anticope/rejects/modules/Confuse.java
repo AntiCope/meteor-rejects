@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
@@ -23,6 +24,7 @@ import java.util.Random;
 // Too much much spaghetti!
 // -StormyBytes
 
+@AutoRegister
 public class Confuse extends Module {
 
     public enum Mode {

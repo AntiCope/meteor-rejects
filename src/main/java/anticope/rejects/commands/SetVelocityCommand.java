@@ -1,10 +1,12 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
 
+@AutoRegister
 public class SetVelocityCommand extends Command {
     public SetVelocityCommand() {
         super("set-velocity", "Sets player velocity", "velocity", "vel");

@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.arguments.EnumArgumentType;
 import anticope.rejects.utils.seeds.Seed;
 import anticope.rejects.utils.seeds.Seeds;
@@ -13,6 +14,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+@AutoRegister
 public class SeedCommand extends Command {
     private final static SimpleCommandExceptionType NO_SEED = new SimpleCommandExceptionType(Text.literal("No seed for current world saved."));
 

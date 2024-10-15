@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.settings.StringMapSetting;
 import meteordevelopment.meteorclient.events.game.ReceiveMessageEvent;
 import meteordevelopment.meteorclient.gui.utils.StarscriptTextBoxRenderer;
@@ -20,6 +21,7 @@ import meteordevelopment.starscript.utils.StarscriptError;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@AutoRegister
 public class ChatBot extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();

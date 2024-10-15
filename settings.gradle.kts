@@ -4,5 +4,7 @@ pluginManagement {
             name = "Fabric"
         }
         gradlePluginPortal()
+        google()
     }
 }
+include("processor")

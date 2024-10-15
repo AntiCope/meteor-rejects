@@ -3,6 +3,7 @@ package anticope.rejects.modules;
 //import baritone.api.BaritoneAPI;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import baritone.api.BaritoneAPI;
 import meteordevelopment.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
@@ -29,6 +30,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import java.util.ArrayList;
 import java.util.List;
 
+@AutoRegister
 public class AutoPot extends Module {
     private static final Class<? extends Module>[] AURAS = new Class[]{KillAura.class, CrystalAura.class, AnchorAura.class, BedAura.class};
 

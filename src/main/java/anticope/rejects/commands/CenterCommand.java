@@ -1,11 +1,13 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.math.MathHelper;
 
+@AutoRegister
 public class CenterCommand extends Command {
     public CenterCommand() {
         super("center", "Centers the player on a block.");

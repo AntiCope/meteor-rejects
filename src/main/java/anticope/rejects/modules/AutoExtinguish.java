@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.IntSetting;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.Direction;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@AutoRegister
 public class AutoExtinguish extends Module {
     private final SettingGroup sgGeneral = settings.createGroup("Extinguish Fire around you");
     private final SettingGroup sgBucket = settings.createGroup("Extinguish yourself");

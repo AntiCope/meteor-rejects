@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.utils.portscanner.PScanRunner;
 import anticope.rejects.utils.portscanner.PortScannerManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -24,6 +25,7 @@ import java.util.*;
     Ported from Cornos
     https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/command/impl/Scan.java
 */
+@AutoRegister
 public class ServerCommand extends Command {
 
     private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(Text.literal("Couldn't obtain server address"));

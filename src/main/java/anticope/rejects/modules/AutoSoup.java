@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -25,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
+@AutoRegister
 public class AutoSoup extends Module {
     private static final String desc = "Automatically eats soup when your health is low on some servers.";
 

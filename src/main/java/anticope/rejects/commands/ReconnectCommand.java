@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
@@ -9,6 +10,7 @@ import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.command.CommandSource;
 
+@AutoRegister
 public class ReconnectCommand extends Command {
     public ReconnectCommand() {
         super("reconnect", "Reconnects server.");

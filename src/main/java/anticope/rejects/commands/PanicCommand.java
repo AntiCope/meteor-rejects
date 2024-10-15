@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -8,6 +9,7 @@ import net.minecraft.command.CommandSource;
 
 import java.util.ArrayList;
 
+@AutoRegister
 public class PanicCommand extends Command {
     public PanicCommand() {
         super("panic", "Disables all modules.", "disable-all");

@@ -2,6 +2,7 @@ package anticope.rejects.modules;
 
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.settings.IntSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -13,6 +14,7 @@ import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.util.hit.EntityHitResult;
 
+@AutoRegister
 public class VehicleOneHit extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

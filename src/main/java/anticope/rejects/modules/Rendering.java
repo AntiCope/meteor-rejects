@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -11,6 +12,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.IOException;
 
+@AutoRegister
 public class Rendering extends Module {
 
     public enum Shader {

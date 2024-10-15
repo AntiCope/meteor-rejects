@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.annotation.AutoRegister;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -20,6 +21,7 @@ import net.minecraft.screen.AnvilScreenHandler;
 
 import java.util.List;
 
+@AutoRegister
 public class AutoRename extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 

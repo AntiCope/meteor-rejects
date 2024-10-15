@@ -1,5 +1,6 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.annotation.AutoRegister;
 import anticope.rejects.gui.screens.HeadScreen;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
@@ -7,6 +8,7 @@ import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.command.CommandSource;
 
+@AutoRegister
 public class HeadsCommand extends Command {
 
     public HeadsCommand() {

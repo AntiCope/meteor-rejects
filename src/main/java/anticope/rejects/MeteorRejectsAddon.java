@@ -1,12 +1,10 @@
 package anticope.rejects;
 
-import anticope.rejects.commands.*;
 import anticope.rejects.gui.hud.RadarHud;
 import anticope.rejects.gui.themes.rounded.MeteorRoundedGuiTheme;
-import anticope.rejects.modules.*;
+import anticope.rejects.utils.MeteorManagerKt;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
-import meteordevelopment.meteorclient.commands.Commands;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.systems.Systems;
 import meteordevelopment.meteorclient.systems.hud.Hud;
@@ -28,81 +26,10 @@ public class MeteorRejectsAddon extends MeteorAddon {
         LOG.info("Initializing Meteor Rejects Addon");
 
         // Modules
-        Modules modules = Modules.get();
-        modules.add(new AimAssist());
-        modules.add(new AntiBot());
-        modules.add(new AntiCrash());
-        modules.add(new AntiSpawnpoint());
-        modules.add(new AntiVanish());
-        modules.add(new ArrowDmg());
-        modules.add(new AutoBedTrap());
-        modules.add(new AutoCraft());
-        modules.add(new AutoExtinguish());
-        modules.add(new AutoFarm());
-        modules.add(new AutoGrind());
-        modules.add(new AutoLogin());
-        modules.add(new AutoPot());
-        modules.add(new AutoSoup());
-        modules.add(new AutoTNT());
-        modules.add(new AutoWither());
-        modules.add(new BoatGlitch());
-        modules.add(new BlockIn());
-        modules.add(new BoatPhase());
-        modules.add(new Boost());
-        modules.add(new BungeeCordSpoof());
-        modules.add(new ChatBot());
-        modules.add(new ChestAura());
-        modules.add(new ChorusExploit());
-        modules.add(new ColorSigns());
-        modules.add(new Confuse());
-        modules.add(new CoordLogger());
-        modules.add(new CustomPackets());
-        modules.add(new ExtraElytra());
-        modules.add(new FullFlight());
-        modules.add(new GamemodeNotifier());
-        modules.add(new GhostMode());
-        modules.add(new Glide());
-        modules.add(new ItemGenerator());
-        modules.add(new InteractionMenu());
-        modules.add(new Jetpack());
-        modules.add(new KnockbackPlus());
-        modules.add(new LawnBot());
-        modules.add(new Lavacast());
-        modules.add(new MossBot());
-        modules.add(new NewChunks());
-        modules.add(new NoJumpDelay());
-        modules.add(new ObsidianFarm());
-        modules.add(new OreSim());
-        modules.add(new PacketFly());
-        modules.add(new Painter());
-        modules.add(new Rendering());
-        modules.add(new RoboWalk());
-        modules.add(new ShieldBypass());
-        modules.add(new SilentDisconnect());
-        modules.add(new SkeletonESP());
-        modules.add(new SoundLocator());
-        modules.add(new TreeAura());
-        modules.add(new VehicleOneHit());
-        modules.add(new AutoEnchant());
-        modules.add(new AutoRename());
+        MeteorManagerKt.moduleRegister("anticope.rejects.modules");
 
         // Commands
-        Commands.add(new CenterCommand());
-        Commands.add(new ClearChatCommand());
-        Commands.add(new GhostCommand());
-        Commands.add(new GiveCommand());
-        Commands.add(new HeadsCommand());
-        Commands.add(new KickCommand());
-        Commands.add(new LocateCommand());
-        Commands.add(new PanicCommand());
-        Commands.add(new ReconnectCommand());
-        Commands.add(new ServerCommand());
-        Commands.add(new SaveSkinCommand());
-        Commands.add(new SeedCommand());
-        Commands.add(new SetBlockCommand());
-        Commands.add(new SetVelocityCommand());
-        Commands.add(new TeleportCommand());
-        Commands.add(new TerrainExport());
+        MeteorManagerKt.commandRegister("anticope.rejects.commands");
 
         // HUD
         Hud hud = Systems.get(Hud.class);
