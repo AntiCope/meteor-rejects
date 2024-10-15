@@ -27,12 +27,12 @@ private inline fun <reified T> registerClasses(packageName: String, addInstance:
 }
 
 /**
- * Registers all modules in the specified package that are annotated with @AutoRegister.
+ * Registers all modules in the specified package that are annotated with `@AutoRegister`.
  *
- * This function scans the given package for classes that extend [Module] and have the @AutoRegister annotation,
+ * This function scans the given package for classes that extend [Module] and have the `@AutoRegister` annotation,
  * creating instances of those classes and adding them to the [Modules] system.
  *
- * @param packageName The name of the package to search for modules, formatted as "com.example.module".
+ * @param packageName The name of the package to search for modules, formatted as `com.example.module`.
  *
  * @throws ClassNotFoundException If the classes in the specified package cannot be found.
  *
@@ -40,19 +40,19 @@ private inline fun <reified T> registerClasses(packageName: String, addInstance:
  * ```
  * moduleRegister("com.github.shu.module")
  * ```
- * This will register all auto-registered modules from the "com.github.shu.module" package.
+ * This will register all auto-registered modules from the `com.github.shu.module` package.
  */
 fun moduleRegister(packageName: String) {
     registerClasses<Module>(packageName, Modules.get()::add)
 }
 
 /**
- * Registers all commands in the specified package that are annotated with @AutoRegister.
+ * Registers all commands in the specified package that are annotated with `@AutoRegister`.
  *
- * This function scans the given package for classes that extend [Command] and have the @AutoRegister annotation,
+ * This function scans the given package for classes that extend [Command] and have the `@AutoRegister` annotation,
  * creating instances of those classes and adding them to the [Commands] system.
  *
- * @param packageName The name of the package to search for commands, formatted as "com.example.command".
+ * @param packageName The name of the package to search for commands, formatted as `com.example.command`.
  *
  * @throws ClassNotFoundException If the classes in the specified package cannot be found.
  *
@@ -60,7 +60,7 @@ fun moduleRegister(packageName: String) {
  * ```
  * commandRegister("com.github.shu.command")
  * ```
- * This will register all auto-registered commands from the "com.github.shu.command" package.
+ * This will register all auto-registered commands from the `com.github.shu.command` package.
  */
 fun commandRegister(packageName: String) {
     registerClasses<Command>(packageName, Commands::add)

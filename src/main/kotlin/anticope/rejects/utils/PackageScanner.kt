@@ -14,7 +14,7 @@ class PackageScanner {
         /**
          * Finds all Kotlin classes in the specified package and filters them based on the provided criteria.
          *
-         * @param packageName The name of the package to search, formatted as "com.example.package".
+         * @param packageName The name of the package to search, formatted as `com.example.package`.
          * @param filter An optional filtering function that takes a [KClass] parameter and returns a boolean value.
          *               Only classes for which this function returns `true` will be included in the results.
          *               Defaults to a filter that accepts all classes (returns `true`).
@@ -26,7 +26,7 @@ class PackageScanner {
          * ```
          * val classes = findKClasses("com.example") { it.annotations.any { annotation -> annotation is MyAnnotation } }
          * ```
-         * This will return all classes in the "com.example" package that are annotated with `@MyAnnotation`.
+         * This will return all classes in the `com.example` package that are annotated with `@MyAnnotation`.
          */
         @JvmStatic
         fun findKClasses(packageName: String, filter: (KClass<*>) -> Boolean = { true }): List<KClass<*>> {

@@ -39,19 +39,13 @@ repositories {
 	maven { url = uri("https://jitpack.io") }
 	maven { url = uri("https://maven.duti.dev/releases") }
 }
+
+val extraLibs: Configuration by configurations.creating
 configurations {
 	// configuration that holds jars to include in the jar
-	create("extraLibs")
-}
-
-configurations {
-	named("implementation") {
-		extendsFrom(getByName("extraLibs"))
+	implementation {
+		extendsFrom(extraLibs)
 	}
-}
-
-fun DependencyHandlerScope.extraLibs(dependencyNotation: String, configure: ModuleDependency.() -> Unit = {}) {
-	add("extraLibs", dependencyNotation, configure)
 }
 
 dependencies {
@@ -78,7 +72,7 @@ dependencies {
 		"com.seedfinding:mc_noise:7e3ba65e181796c4a2a1c8881d840b2254b92962",
 		"com.seedfinding:mc_biome:41a42cb9019a552598f12089059538853e18ec78",
 		"com.seedfinding:mc_terrain:b4246cbd5880c4f8745ccb90e1b102bde3448126",
-		"com.seedfinding:mc_feature:919b7e513cc1e87e029a9cd703fc4e2dc8686229"
+		"com.seedfinding:mc_feature:919b7e513cc1e87e029a9cd703fc4e2dc8686229",
 	)
 	seedFindingDependencies.forEach { dependency ->
 		extraLibs(dependency) { isTransitive = false }
@@ -114,7 +108,7 @@ tasks.jar {
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName}" }
 	}
-	from(configurations["extraLibs"].map { if (it.isDirectory) it else zipTree(it) })
+	from(extraLibs.map { if (it.isDirectory) it else zipTree(it) })
 }
 
 tasks.withType<Jar>() {
