@@ -31,15 +31,20 @@ public class VehicleOneHit extends Module {
         super(MeteorRejectsAddon.CATEGORY, "vehicle-one-hit", "Destroy vehicles with one hit.");
     }
 
+    private boolean isManualSend = false;
+
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
+        if (isManualSend) return;
         if (!(event.packet instanceof PlayerInteractEntityC2SPacket)
             || !(mc.crosshairTarget instanceof EntityHitResult ehr)
             || (!(ehr.getEntity() instanceof AbstractMinecartEntity) && !(ehr.getEntity() instanceof BoatEntity))
         ) return;
 
+        isManualSend = true;
         for (int i = 0; i < amount.get() - 1; i++) {
             mc.player.networkHandler.getConnection().send(event.packet, null);
         }
+        isManualSend = false;
     }
 }
