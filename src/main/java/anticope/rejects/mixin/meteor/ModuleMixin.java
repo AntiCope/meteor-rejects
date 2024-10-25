@@ -19,7 +19,7 @@ public class ModuleMixin {
     @Mutable @Shadow public String title;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void onInit(Category category, String name, String description, CallbackInfo info) {
+    private void onInit(Category category, String name, String description, String[] aliases, CallbackInfo info) {
         if (RejectsConfig.get().duplicateModuleNames) {
             this.name = RejectsUtils.getModuleName(name);
             this.title = Utils.nameToTitle(this.name);
