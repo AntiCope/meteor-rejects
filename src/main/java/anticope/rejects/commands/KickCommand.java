@@ -44,7 +44,7 @@ public class KickCommand extends Command {
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("pos").executes(ctx -> {
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !mc.player.isOnGround()));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !mc.player.isOnGround(), mc.player.horizontalCollision));
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("hurt").executes(ctx -> {

@@ -15,12 +15,14 @@ import meteordevelopment.starscript.compiler.Parser;
 import meteordevelopment.starscript.utils.Error;
 import meteordevelopment.starscript.utils.StarscriptError;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
@@ -38,6 +40,7 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.PlayerInput;
 import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
@@ -47,6 +50,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static net.minecraft.client.render.RenderLayer.getGuiTextured;
 
 /*
     Ported from: https://github.com/BleachDrinker420/BleachHack/pull/211
@@ -102,7 +107,9 @@ public class InteractionScreen extends Screen {
             functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 if (client.player.isRiding()) {
-                    client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(0, 0, false, true));
+//                    client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(0, 0, false, true));
+                    client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(new PlayerInput(false, false, false, false, false, true, false)));
+
                 }
                 client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
                 client.player.setSneaking(false);
@@ -251,12 +258,12 @@ public class InteractionScreen extends Screen {
         MatrixStack matrix = context.getMatrices();
         // Fake crosshair stuff
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
                 GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
                 GlStateManager.DstFactor.ZERO);
-        context.drawTexture(GUI_ICONS_TEXTURE, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
+        context.drawTexture(RenderLayer::getGuiTextured, GUI_ICONS_TEXTURE,  crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, 256, 256);
 
         drawDots(context, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
         matrix.scale(2f, 2f, 1f);
