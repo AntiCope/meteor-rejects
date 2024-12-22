@@ -18,6 +18,11 @@ repositories {
 	maven { url 'https://jitpack.io' }
 	maven { url 'https://maven.duti.dev/releases' }
 }
+
+loom {
+	accessWidenerPath = file("src/main/resources/meteor-rejects.accesswidener")
+}
+
 configurations {
 	// configuration that holds jars to include in the jar
 	extraLibs
@@ -53,10 +58,6 @@ dependencies {
 	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/meteor-rejects.accesswidener")
-}
-
 processResources {
 	inputs.property "version", project.version
 
@@ -70,7 +71,7 @@ processResources {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.archivesBaseName}" }
 	}
 	from {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }

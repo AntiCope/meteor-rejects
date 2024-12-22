@@ -107,12 +107,14 @@ public class Rendering extends Module {
         else if (s == Shader.Scanline) name = "scan_pincushion";
         else name = s.toString().toLowerCase();
         Identifier shaderID = Identifier.of(String.format("shaders/post/%s.json", name));
-        try {
-            PostEffectProcessor shader = new PostEffectProcessor(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), shaderID);
-            this.shader = shader;
-        } catch (IOException e) {
-            this.shader = null;
-        }
+        // TODO: How do I fix this? I don't know. - xtendera
+        // It might be helpful to check out https://github.com/Ladysnake/Satin/blob/7da140228c1946ffa707da905c497fd6bc2e950c/1_21_2_model.md
+//        try {
+//            PostEffectProcessor shader = new PostEffectProcessor(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), shaderID);
+//            this.shader = shader;
+//        } catch (IOException e) {
+//            this.shader = null;
+//        }
     }
 
     public boolean renderStructureVoid() {

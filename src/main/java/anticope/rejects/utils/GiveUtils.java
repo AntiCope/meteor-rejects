@@ -132,27 +132,27 @@ public class GiveUtils {
             }
 
             stack.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(Optional.empty(), Optional.empty(),
-                    effects));
+                    effects, Optional.empty()));
             stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Lingering Potion of Trolling"));
             return stack;
         });
 
         PRESETS.put("32k", (preview) -> {
-            enchantmentRegistry = mc.world.getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+            enchantmentRegistry = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
 
             if (preview || enchantmentRegistry == null) return Items.DIAMOND_SWORD.getDefaultStack();
             ItemStack stack = Items.DIAMOND_SWORD.getDefaultStack();
 
             stack.apply(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT, component -> {
                 ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(component);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.SHARPNESS), 255);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.KNOCKBACK), 255);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.FIRE_ASPECT), 255);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.LOOTING), 10);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.SWEEPING_EDGE), 3);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.UNBREAKING), 255);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.MENDING), 1);
-                builder.add(enchantmentRegistry.entryOf(Enchantments.VANISHING_CURSE), 1);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.SHARPNESS), 255);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.KNOCKBACK), 255);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.FIRE_ASPECT), 255);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.LOOTING), 10);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.SWEEPING_EDGE), 3);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.UNBREAKING), 255);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.MENDING), 1);
+                builder.add(enchantmentRegistry.getOrThrow(Enchantments.VANISHING_CURSE), 1);
                 return builder.build();
             });
 
