@@ -48,8 +48,8 @@ public class Ore {
     public static Map<RegistryKey<Biome>, List<Ore>> getRegistry(Dimension dimension) {
 
         RegistryWrapper.WrapperLookup registry = BuiltinRegistries.createWrapperLookup();
-        RegistryWrapper.Impl<PlacedFeature> features = registry.getWrapperOrThrow(RegistryKeys.PLACED_FEATURE);
-        var reg = registry.getWrapperOrThrow(RegistryKeys.WORLD_PRESET).getOrThrow(WorldPresets.DEFAULT).value().createDimensionsRegistryHolder().dimensions();
+        RegistryWrapper.Impl<PlacedFeature> features = registry.getOrThrow(RegistryKeys.PLACED_FEATURE);
+        var reg = registry.getOrThrow(RegistryKeys.WORLD_PRESET).getOrThrow(WorldPresets.DEFAULT).value().createDimensionsRegistryHolder().dimensions();
 
         var dim = switch (dimension) {
             case Overworld -> reg.get(DimensionOptions.OVERWORLD);

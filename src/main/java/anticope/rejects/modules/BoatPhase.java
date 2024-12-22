@@ -130,7 +130,7 @@ public class BoatPhase extends Module {
                 else if (fall.get()) velY -= fallSpeed.get() / 20;
             } else if (fall.get()) velY -= fallSpeed.get() / 20;
 
-            ((IVec3d) boat.getVelocity()).set(velX,velY,velZ);
+            ((IVec3d) boat.getVelocity()).meteor$set(velX,velY,velZ);
         }
     }
 }

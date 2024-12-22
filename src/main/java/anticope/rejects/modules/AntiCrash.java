@@ -47,7 +47,7 @@ public class AntiCrash extends Module {
             // too many particles
             if (packet.getCount() > 100_000) cancel(event);
         } else if (event.packet instanceof PlayerPositionLookS2CPacket packet) {
-            Vec3d playerPos = packet.change().deltaMovement();
+            Vec3d playerPos = packet.change().position();
             // out of world movement
             if (playerPos.x > 30_000_000 || playerPos.y > 30_000_000 || playerPos.z > 30_000_000 || playerPos.x < -30_000_000 || playerPos.y < -30_000_000 || playerPos.z < -30_000_000)
                 cancel(event);

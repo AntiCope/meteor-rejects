@@ -18,6 +18,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.Collections;
@@ -25,6 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import static net.minecraft.world.Heightmap.Type.MOTION_BLOCKING;
 
 /*
     Ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/module/mods/NewChunks.java
@@ -187,8 +190,8 @@ public class NewChunks extends Module {
 
 
 				for (int x = 0; x < 16; x++) {
-					for (int y = mc.world.getBottomY(); y < mc.world.getTopY(); y++) {
-						for (int z = 0; z < 16; z++) {
+					for (int z = 0; z < 16; z++) {
+						for (int y = mc.world.getBottomY(); y < mc.world.getTopY(Heightmap.Type.MOTION_BLOCKING, x, z); y++) {
 							FluidState fluid = chunk.getFluidState(x, y, z);
 
 							if (!fluid.isEmpty() && !fluid.isStill()) {

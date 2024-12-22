@@ -10,7 +10,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.item.Item;
-import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RecipeDisplayEntry;
+import net.minecraft.recipe.display.RecipeDisplay;
+import net.minecraft.recipe.display.SlotDisplayContexts;
 import net.minecraft.screen.CraftingScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 
@@ -70,11 +73,20 @@ public class AutoCraft extends Module {
         List<Item> itemList = items.get();
         List<RecipeResultCollection> recipeResultCollectionList  = mc.player.getRecipeBook().getOrderedResults();
         for (RecipeResultCollection recipeResultCollection : recipeResultCollectionList) {
-            for (RecipeEntry<?> recipe : recipeResultCollection.getRecipes(true)) {
-                if (!itemList.contains(recipe.value().getResult(mc.world.getRegistryManager()).getItem())) continue;
-                mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe, craftAll.get());
-                mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1,
-                        drop.get() ? SlotActionType.THROW : SlotActionType.QUICK_MOVE, mc.player);
+            // Get craftable recipes only
+            List<RecipeDisplayEntry> craftRecipes = recipeResultCollection.filter(RecipeResultCollection.RecipeFilterMode.CRAFTABLE);
+            for (RecipeDisplayEntry recipe : craftRecipes) {
+                RecipeDisplay recipeDisplay = recipe.display();
+                if (mc.world == null) continue; // TODO: I don't know how to handle this. Please do something! :D - xtendera
+                List<ItemStack> resultStacks = recipeDisplay.result().getStacks(SlotDisplayContexts.createParameters(mc.world));
+                for (ItemStack resultStack : resultStacks) {
+                    // Check if the result item is in the item list
+                    if (!itemList.contains(resultStack.getItem())) continue;
+
+                    mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe.id(), craftAll.get());
+                    mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1,
+                            drop.get() ? SlotActionType.THROW : SlotActionType.QUICK_MOVE, mc.player);
+                }
             }
         }
     }
