@@ -1,6 +1,7 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.utils.WorldUtils;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -139,22 +140,9 @@ public class TreeAura extends Module {
         return false;
     }
 
-    private List<BlockPos> getBlocks(BlockPos centerPos, int radius, int height) {
-        ArrayList<BlockPos> blocks = new ArrayList<>();
-        for (int i = centerPos.getX() - radius; i < centerPos.getX() + radius; i++) {
-            for (int j = centerPos.getY() - height; j < centerPos.getY() + height; j++) {
-                for (int k = centerPos.getZ() - radius; k < centerPos.getZ() + radius; k++) {
-                    BlockPos pos = new BlockPos(i, j, k);
-                    if (distanceBetween(centerPos, pos) <= radius && !blocks.contains(pos)) blocks.add(pos);
-                }
-            }
-        }
-        return blocks;
-    }
-
     private List<BlockPos> findSaplings(BlockPos centerPos, int radius, int height) {
         ArrayList<BlockPos> blocc = new ArrayList<>();
-        List<BlockPos> blocks = getBlocks(centerPos, radius, height);
+        List<BlockPos> blocks = WorldUtils.getSphere(centerPos, radius, height);
         for (BlockPos b : blocks) if (isSapling(b)) blocc.add(b);
         return blocc;
     }
@@ -169,7 +157,7 @@ public class TreeAura extends Module {
 
     private List<BlockPos> getPlantLocations(BlockPos centerPos, int radius, int height) {
         ArrayList<BlockPos> blocc = new ArrayList<>();
-        List<BlockPos> blocks = getBlocks(centerPos, radius, height);
+        List<BlockPos> blocks = WorldUtils.getSphere(centerPos, radius, height);
         for (BlockPos b : blocks) if (canPlant(b)) blocc.add(b);
         return blocc;
     }

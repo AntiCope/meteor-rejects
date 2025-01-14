@@ -7,38 +7,17 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import net.minecraft.client.gl.PostEffectProcessor;
+import net.minecraft.client.render.DefaultFramebufferSet;
 import net.minecraft.util.Identifier;
-
-import java.io.IOException;
 
 public class Rendering extends Module {
 
     public enum Shader {
         None,
-        Notch,
-        FXAA,
-        Art,
-        Bumpy,
-        Blobs,
-        Blobs2,
-        Pencil,
-        Vibrant,
-        Deconverge,
-        Flip,
-        Invert,
-        NTSC,
-        Outline,
-        Phosphor,
-        Scanline,
-        Sobel,
-        Bits,
-        Desaturate,
-        Green,
         Blur,
-        Wobble,
-        Antialias,
         Creeper,
-        Spider
+        Invert,
+        Spider,
     }
 
     private final SettingGroup sgInvisible = settings.createGroup("Invisible");
@@ -102,19 +81,17 @@ public class Rendering extends Module {
     }
 
     public void onChanged(Shader s) {
-        String name;
-        if (s == Shader.Vibrant) name = "color_convolve";
-        else if (s == Shader.Scanline) name = "scan_pincushion";
-        else name = s.toString().toLowerCase();
-        Identifier shaderID = Identifier.of(String.format("shaders/post/%s.json", name));
-        // TODO: How do I fix this? I don't know. - xtendera
-        // It might be helpful to check out https://github.com/Ladysnake/Satin/blob/7da140228c1946ffa707da905c497fd6bc2e950c/1_21_2_model.md
-//        try {
-//            PostEffectProcessor shader = new PostEffectProcessor(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), shaderID);
-//            this.shader = shader;
-//        } catch (IOException e) {
-//            this.shader = null;
-//        }
+        if (mc.world == null) return;
+        String name = s.toString().toLowerCase();
+
+        if (name.equals("none")) {
+            this.shader = null;
+            return;
+        }
+
+        Identifier shaderID = Identifier.ofVanilla(name);
+        PostEffectProcessor shader = mc.getShaderLoader().loadPostEffect(shaderID, DefaultFramebufferSet.MAIN_ONLY);
+        this.shader = shader;
     }
 
     public boolean renderStructureVoid() {
