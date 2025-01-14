@@ -3,9 +3,7 @@ package anticope.rejects.utils;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.PlayerInput;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -43,13 +41,13 @@ public class WorldUtils {
     public static boolean interact(BlockPos pos, FindItemResult findItemResult, boolean rotate) {
         if (!findItemResult.found()) return false;
         Runnable action = () -> {
-            PlayerInput oldInput = mc.player.input.playerInput;
-            mc.player.input.playerInput = new PlayerInput(oldInput.forward(), oldInput.backward(), oldInput.left(), oldInput.right(), oldInput.jump(), false, oldInput.sprint());
+            boolean wasSneaking = mc.player.isSneaking();
+            mc.player.setSneaking(false);
             InvUtils.swap(findItemResult.slot(), true);
             mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.UP, pos, false));
             mc.player.swingHand(Hand.MAIN_HAND);
             InvUtils.swapBack();
-            mc.player.input.playerInput = oldInput;
+            mc.player.setSneaking(wasSneaking);
         };
         if (rotate) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), -100, action);
         else action.run();

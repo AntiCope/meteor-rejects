@@ -95,8 +95,7 @@ public class SkeletonESP extends Module {
             float k = j - h;
             float m = playerEntity.getPitch(g);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) m = Rotations.serverPitch;
-            // TODO: Fix this as well. Not only do I not know what it does, I also cannot figure out how to update this. - xtendera
-//            playerEntityModel.animateModel(playerEntity, q, p, g);
+
             PlayerEntityRenderState renderState = new PlayerEntityRenderState();
             renderState.limbFrequency = q;
             renderState.limbAmplitudeMultiplier = p;

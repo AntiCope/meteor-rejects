@@ -50,8 +50,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static net.minecraft.client.render.RenderLayer.getGuiTextured;
-
 /*
     Ported from: https://github.com/BleachDrinker420/BleachHack/pull/211
 */

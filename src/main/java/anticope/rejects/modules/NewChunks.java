@@ -27,8 +27,6 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static net.minecraft.world.Heightmap.Type.MOTION_BLOCKING;
-
 /*
     Ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/module/mods/NewChunks.java
 */
