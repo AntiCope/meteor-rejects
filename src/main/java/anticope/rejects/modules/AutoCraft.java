@@ -7,6 +7,7 @@ import meteordevelopment.meteorclient.settings.ItemListSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
 import net.minecraft.item.Item;
@@ -58,11 +59,11 @@ public class AutoCraft extends Module {
     
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        if (mc.interactionManager == null) return;
+        if (!Utils.canUpdate() || mc.interactionManager == null) return;
+
         if (items.get().isEmpty()) return;
 
         if (!(mc.player.currentScreenHandler instanceof CraftingScreenHandler)) return;
-        
 
         if (antiDesync.get()) 
             mc.player.getInventory().updateItems();
@@ -77,7 +78,6 @@ public class AutoCraft extends Module {
             List<RecipeDisplayEntry> craftRecipes = recipeResultCollection.filter(RecipeResultCollection.RecipeFilterMode.CRAFTABLE);
             for (RecipeDisplayEntry recipe : craftRecipes) {
                 RecipeDisplay recipeDisplay = recipe.display();
-                if (mc.world == null) continue; // TODO: I don't know how to handle this. Please do something! :D - xtendera
                 List<ItemStack> resultStacks = recipeDisplay.result().getStacks(SlotDisplayContexts.createParameters(mc.world));
                 for (ItemStack resultStack : resultStacks) {
                     // Check if the result item is in the item list
