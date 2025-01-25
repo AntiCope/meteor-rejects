@@ -62,11 +62,11 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new GamemodeNotifier());
         modules.add(new GhostMode());
         modules.add(new Glide());
-        modules.add(new InstaMine());
         modules.add(new ItemGenerator());
         modules.add(new InteractionMenu());
         modules.add(new Jetpack());
         modules.add(new KnockbackPlus());
+        modules.add(new LawnBot());
         modules.add(new Lavacast());
         modules.add(new MossBot());
         modules.add(new NewChunks());
@@ -83,6 +83,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new SoundLocator());
         modules.add(new TreeAura());
         modules.add(new VehicleOneHit());
+        modules.add(new AutoEnchant());
+        modules.add(new AutoRename());
 
         // Commands
         Commands.add(new CenterCommand());
@@ -133,7 +135,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
                 .get().getMetadata()
                 .getCustomValue("github:sha")
                 .getAsString();
-        LOG.info(String.format("Rejects version: %s", commit));
+        LOG.info("Rejects version: {}", commit);
         return commit.isEmpty() ? null : commit.trim();
     }
 

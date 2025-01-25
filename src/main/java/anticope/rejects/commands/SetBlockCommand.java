@@ -10,9 +10,6 @@ import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
-
 public class SetBlockCommand extends Command {
     public SetBlockCommand() {
         super("setblock", "Sets client side blocks", "sblk");

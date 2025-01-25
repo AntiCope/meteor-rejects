@@ -66,7 +66,7 @@ public class AntiBot extends Module {
     @EventHandler
     public void onTick(TickEvent.Post tickEvent) {
         for (Entity entity : mc.world.getEntities()) {
-            if (entity == null || !(entity instanceof PlayerEntity playerEntity)) continue;
+            if (!(entity instanceof PlayerEntity playerEntity)) continue;
             if (removeInvisible.get() && !entity.isInvisible()) continue;
 
             if (isBot(playerEntity)) entity.remove(Entity.RemovalReason.DISCARDED);

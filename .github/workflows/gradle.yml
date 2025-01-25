@@ -3,8 +3,8 @@
 
 name: Java CI with Gradle
 
-concurrency: 
-  group: "build-1.20"
+concurrency:
+  group: "build"
   cancel-in-progress: true
 
 on:
@@ -12,18 +12,18 @@ on:
     branches: [ master ]
     paths-ignore:
       - '*.md'
-      
+
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up JDK 17
       uses: actions/setup-java@v3.13.0
       with:
-        java-version: 17
+        java-version: 21
         distribution: 'zulu'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
@@ -34,9 +34,9 @@ jobs:
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest-1.20.1"
+          automatic_release_tag: "latest-1.21"
           prerelease: false
-          title: "1.20.1 Build"
+          title: "1.21 Build"
           files: |
             ./build/libs/*.jar
-    
+

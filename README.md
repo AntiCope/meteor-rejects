@@ -8,7 +8,7 @@
   <a href="https://anticope.ml/pages/MeteorAddons.html"><img src="https://img.shields.io/badge/Verified%20Addon-Yes-blueviolet" alt="Verified Addon"></a>
   <a href="https://github.com/AntiCope/meteor-rejects/releases"><img src="https://img.shields.io/badge/Version-v0.1-orange" alt="Version"></a>
   <img src="https://img.shields.io/badge/spaghetti%20code-yes-success?logo=java" alt="Spagetti code: yes">
-  <img src="https://img.shields.io/badge/Minecraft%20Version-1.19-blue" alt="Minecraft Version">
+  <img src="https://img.shields.io/badge/Minecraft%20Version-1.20.6-blue" alt="Minecraft Version">
   <a href="https://github.com/AntiCope/meteor-rejects/commits/master"><img src="https://img.shields.io/github/last-commit/AntiCope/meteor-rejects?logo=git" alt="Last commit"></a>
   <img src="https://img.shields.io/github/workflow/status/AntiCope/meteor-rejects/Java%20CI%20with%20Gradle?logo=github" alt="build status">
   <img src="https://img.shields.io/github/languages/code-size/AntiCope/meteor-rejects" alt="Code Size">
@@ -39,6 +39,7 @@
 - ArrowDmg (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
+- AutoEnchant
 - AutoExtinguish
 - AutoFarm
 - AutoGrind
@@ -69,6 +70,7 @@
 - Jetpack
 - KnockbackPlus
 - Lavacast
+- LawnBot (Ported from [JexClient](https://github.com/DustinRepo/JexClient/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/world/LawnBot.java))
 - MossBot (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - NewChunks (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/module/mods/NewChunks.java))
 - NoJumpDelay

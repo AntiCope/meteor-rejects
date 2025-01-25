@@ -116,7 +116,7 @@ public class RadarHud extends HudElement {
                     double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get() + height / 2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
                     String icon = "*";
-                    if (letters.get() && waypoint.name.get().length() > 0)
+                    if (letters.get() && !waypoint.name.get().isEmpty())
                         icon = waypoint.name.get().substring(0, 1);
                     renderer.text(icon, xPos + x, yPos + y, waypoint.color.get(), false);
                 }

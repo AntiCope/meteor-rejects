@@ -17,11 +17,15 @@ import net.minecraft.network.packet.s2c.play.ChunkDeltaUpdateS2CPacket;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /*
     Ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/module/mods/NewChunks.java
@@ -92,6 +96,7 @@ public class NewChunks extends Module {
     private final Set<ChunkPos> newChunks = Collections.synchronizedSet(new HashSet<>());
     private final Set<ChunkPos> oldChunks = Collections.synchronizedSet(new HashSet<>());
     private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
+	private final Executor taskExecutor = Executors.newSingleThreadExecutor();
 
     public NewChunks() {
         super(MeteorRejectsAddon.CATEGORY,"new-chunks", "Detects completely new chunks using certain traits of them");
@@ -112,7 +117,7 @@ public class NewChunks extends Module {
 			synchronized (newChunks) {
 				for (ChunkPos c : newChunks) {
 					if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
-						render(new Box(c.getStartPos(), c.getStartPos().add(16, renderHeight.get(), 16)), newChunksSideColor.get(), newChunksLineColor.get(), shapeMode.get(), event);
+						render(new Box(Vec3d.of(c.getStartPos()), Vec3d.of(c.getStartPos().add(16, renderHeight.get(), 16))), newChunksSideColor.get(), newChunksLineColor.get(), shapeMode.get(), event);
 					}
 				}
 			}
@@ -122,7 +127,7 @@ public class NewChunks extends Module {
 			synchronized (oldChunks) {
 				for (ChunkPos c : oldChunks) {
 					if (mc.getCameraEntity().getBlockPos().isWithinDistance(c.getStartPos(), 1024)) {
-						render(new Box(c.getStartPos(), c.getStartPos().add(16, renderHeight.get(), 16)), oldChunksSideColor.get(), oldChunksLineColor.get(), shapeMode.get(), event);
+						render(new Box(Vec3d.of(c.getStartPos()), Vec3d.of(c.getStartPos().add(16, renderHeight.get(), 16))), oldChunksSideColor.get(), oldChunksLineColor.get(), shapeMode.get(), event);
 					}
 				}
 			}
@@ -171,20 +176,20 @@ public class NewChunks extends Module {
 		else if (event.packet instanceof ChunkDataS2CPacket && mc.world != null) {
 			ChunkDataS2CPacket packet = (ChunkDataS2CPacket) event.packet;
 
-			ChunkPos pos = new ChunkPos(packet.getX(), packet.getZ());
+			ChunkPos pos = new ChunkPos(packet.getChunkX(), packet.getChunkZ());
 
-			if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getX(), packet.getZ()) == null) {
+			if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getChunkX(), packet.getChunkZ()) == null) {
 				WorldChunk chunk = new WorldChunk(mc.world, pos);
 				try {
-					chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new NbtCompound(), packet.getChunkData().getBlockEntities(packet.getX(), packet.getZ()));
+					taskExecutor.execute(() -> chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new NbtCompound(), packet.getChunkData().getBlockEntities(packet.getChunkX(), packet.getChunkZ())));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					return;
 				}
 
 
 				for (int x = 0; x < 16; x++) {
-					for (int y = mc.world.getBottomY(); y < mc.world.getTopY(); y++) {
-						for (int z = 0; z < 16; z++) {
+					for (int z = 0; z < 16; z++) {
+						for (int y = mc.world.getBottomY(); y < mc.world.getTopY(Heightmap.Type.MOTION_BLOCKING, x, z); y++) {
 							FluidState fluid = chunk.getFluidState(x, y, z);
 
 							if (!fluid.isEmpty() && !fluid.isStill()) {

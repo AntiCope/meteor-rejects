@@ -2,33 +2,33 @@
 
 package anticope.rejects.utils.accounts;
 
-import com.google.common.collect.Iterables;
 import com.google.gson.*;
 import com.mojang.authlib.Environment;
-import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.SignatureState;
 import com.mojang.authlib.exceptions.AuthenticationException;
-import com.mojang.authlib.minecraft.InsecurePublicKeyException;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import com.mojang.authlib.minecraft.MinecraftProfileTextures;
 import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.yggdrasil.ServicesKeyInfo;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
+import com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo;
 import com.mojang.authlib.yggdrasil.response.MinecraftTexturesPayload;
 import com.mojang.util.UUIDTypeAdapter;
 import meteordevelopment.meteorclient.utils.network.Http;
-import net.minecraft.client.util.Session;
+import net.minecraft.client.session.Session;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.Proxy;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 
+import static meteordevelopment.meteorclient.MeteorClient.mc;
+
 public class CustomYggdrasilLogin {
+    public static Environment localYggdrasilApi = new Environment("/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
+
     public static Session login(String name, String password, String server) throws AuthenticationException {
         try {
             String url = server + "/authserver/authenticate";
@@ -47,7 +47,7 @@ public class CustomYggdrasilLogin {
                 throw new AuthenticationException(json.get("errorMessage").getAsString());
             }
             String token = json.get("accessToken").getAsString();
-            String uuid = json.get("selectedProfile").getAsJsonObject().get("id").getAsString();
+            UUID uuid = UUID.fromString(json.get("selectedProfile").getAsJsonObject().get("id").getAsString());
             String username = json.get("selectedProfile").getAsJsonObject().get("name").getAsString();
             return new Session(username, uuid, token, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
         } catch (Exception e) {
@@ -55,106 +55,65 @@ public class CustomYggdrasilLogin {
         }
     }
 
-    public static class LocalYggdrasilApi implements Environment {
-        private final String url;
-
-        public LocalYggdrasilApi(String serverUrl) {
-            this.url = serverUrl;
-        }
-
-        @Override
-        public String getAuthHost() {
-            return url + "/authserver";
-        }
-
-        @Override
-        public String getAccountsHost() {
-            return url + "/api";
-        }
-
-        @Override
-        public String getSessionHost() {
-            return url + "/sessionserver";
-        }
-
-        @Override
-        public String getServicesHost() {
-            return url + "/minecraftservices";
-        }
-
-        @Override
-        public String getName() {
-            return "Custom-Yggdrasil";
-        }
-
-        @Override
-        public String asString() {
-            return new StringJoiner(", ", "", "")
-                    .add("authHost='" + getAuthHost() + "'")
-                    .add("accountsHost='" + getAccountsHost() + "'")
-                    .add("sessionHost='" + getSessionHost() + "'")
-                    .add("servicesHost='" + getServicesHost() + "'")
-                    .add("name='" + getName() + "'")
-                    .toString();
-        }
-    }
-
     public static class LocalYggdrasilMinecraftSessionService extends YggdrasilMinecraftSessionService {
         private static final Logger LOGGER = LogManager.getLogger();
-        private final PublicKey publicKey;
+        private final ServicesKeyInfo publicKey;
         private final Gson gson = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
 
         public LocalYggdrasilMinecraftSessionService(YggdrasilAuthenticationService service, String serverUrl) {
-            super(service, new LocalYggdrasilApi(serverUrl));
+            super(service.getServicesKeySet(), mc.getNetworkProxy(), localYggdrasilApi);
             String data = Http.get(serverUrl).sendString();
             JsonObject json = JsonParser.parseString(data).getAsJsonObject();
             this.publicKey = getPublicKey(json.get("signaturePublickey").getAsString());
         }
 
-        private static PublicKey getPublicKey(String key) {
+        private static ServicesKeyInfo getPublicKey(String key) {
             key = key.replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "");
             try {
                 byte[] byteKey = Base64.getDecoder().decode(key.replace("\n", ""));
-                X509EncodedKeySpec spec = new X509EncodedKeySpec(byteKey);
-                KeyFactory factory = KeyFactory.getInstance("RSA");
-                return factory.generatePublic(spec);
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                return YggdrasilServicesKeyInfo.parse(byteKey);
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
             return null;
         }
 
-        @Override
-        public Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> getTextures(final GameProfile profile, final boolean requireSecure) {
-            final Property textureProperty = Iterables.getFirst(profile.getProperties().get("textures"), null);
-
-            if (textureProperty == null)
-                return new HashMap<>();
-
-            if (requireSecure) {
-                if (!textureProperty.hasSignature()) {
-                    LOGGER.error("Signature is missing from textures payload");
-                    throw new InsecurePublicKeyException("Signature is missing from textures payload");
-                }
-                if (!textureProperty.isSignatureValid(publicKey)) {
-                    LOGGER.error("Textures payload has been tampered with (signature invalid)");
-                    throw new InsecurePublicKeyException("Textures payload has been tampered with (signature invalid)");
-                }
+        private SignatureState getPropertySignatureState(final Property property) {
+            if (!property.hasSignature()) {
+                return SignatureState.UNSIGNED;
             }
+            if (!publicKey.validateProperty(property)) {
+                return SignatureState.INVALID;
+            }
+            return SignatureState.SIGNED;
+        }
+
+        @Override
+        public MinecraftProfileTextures unpackTextures(final Property packedTextures) {
+            final String value = packedTextures.value();
+            final SignatureState signatureState =  getPropertySignatureState(packedTextures);
 
             final MinecraftTexturesPayload result;
             try {
-                final String json = new String(org.apache.commons.codec.binary.Base64.decodeBase64(textureProperty.getValue()), StandardCharsets.UTF_8);
+                final String json = new String(Base64.getDecoder().decode(value), StandardCharsets.UTF_8);
                 result = gson.fromJson(json, MinecraftTexturesPayload.class);
-            } catch (final JsonParseException e) {
+            } catch (final JsonParseException | IllegalArgumentException e) {
                 LOGGER.error("Could not decode textures payload", e);
-                return new HashMap<>();
+                return MinecraftProfileTextures.EMPTY;
             }
 
-            if (result == null || result.getTextures() == null)
-                return new HashMap<>();
+            if (result == null || result.textures() == null || result.textures().isEmpty()) {
+                return MinecraftProfileTextures.EMPTY;
+            }
 
-            return result.getTextures();
+            final Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> textures = result.textures();
+
+            return new MinecraftProfileTextures(
+                    textures.get(MinecraftProfileTexture.Type.SKIN),
+                    textures.get(MinecraftProfileTexture.Type.CAPE),
+                    textures.get(MinecraftProfileTexture.Type.ELYTRA),
+                    signatureState
+            );
         }
     }
 
@@ -162,7 +121,7 @@ public class CustomYggdrasilLogin {
         public final String server;
 
         public LocalYggdrasilAuthenticationService(Proxy proxy, String server) {
-            super(proxy, new LocalYggdrasilApi(server));
+            super(proxy, localYggdrasilApi);
             this.server = server;
         }
     }

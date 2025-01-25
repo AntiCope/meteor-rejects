@@ -99,21 +99,21 @@ public class CoordLogger extends Module {
             EntityPositionS2CPacket packet = (EntityPositionS2CPacket) event.packet;
             
             try {
-                Entity entity = mc.world.getEntityById(packet.getId());
+                Entity entity = mc.world.getEntityById(packet.entityId());
                 
                 // Player teleport
                 if (entity.getType().equals(EntityType.PLAYER) && players.get()) {
-                    Vec3d packetPosition = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
+                    Vec3d packetPosition = packet.change().position();
                     Vec3d playerPosition = entity.getPos();
                     
                     if (playerPosition.distanceTo(packetPosition) >= minDistance.get()) {
-                        info(formatMessage("Player '" + entity.getEntityName() + "' has teleported to ", packetPosition));
+                        info(formatMessage("Player '" + entity.getNameForScoreboard() + "' has teleported to ", packetPosition));
                     }
                 }
 
                 // World teleport
                 else if (entity.getType().equals(EntityType.WOLF) && wolves.get()) {
-                    Vec3d packetPosition = new Vec3d(packet.getX(), packet.getY(), packet.getZ());
+                    Vec3d packetPosition = packet.change().position();
                     Vec3d wolfPosition = entity.getPos();
                     
                     UUID ownerUuid = ((TameableEntity) entity).getOwnerUuid();
@@ -152,7 +152,7 @@ public class CoordLogger extends Module {
     public MutableText formatMessage(String message, Vec3d coords) {
         MutableText text = Text.literal(message);
         text.append(ChatUtils.formatCoords(coords));
-        text.append(Formatting.GRAY.toString()+".");
+        text.append(Formatting.GRAY +".");
         return text;
     }
 

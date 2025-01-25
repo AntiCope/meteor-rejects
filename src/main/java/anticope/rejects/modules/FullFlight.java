@@ -112,14 +112,16 @@ public class FullFlight extends Module {
                         mc.player.getZ(),
                         packet.getYaw(0),
                         packet.getPitch(0),
-                        packet.isOnGround()
+                        packet.isOnGround(),
+                        packet.horizontalCollision()
                 );
             } else {
                 fullPacket = new PlayerMoveC2SPacket.PositionAndOnGround(
                         mc.player.getX(),
                         mc.player.getY(),
                         mc.player.getZ(),
-                        packet.isOnGround()
+                        packet.isOnGround(),
+                        packet.horizontalCollision()
                 );
             }
             event.cancel();
@@ -146,8 +148,8 @@ public class FullFlight extends Module {
 
                     if (blockCollisions.findAny().isPresent()) break;
 
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.4, mc.player.getZ(), mc.player.isOnGround()));
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround()));
+                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.4, mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
                 }
                 case Old -> {
                     Box box = mc.player.getBoundingBox();
@@ -161,20 +163,20 @@ public class FullFlight extends Module {
                     double groundExtra = ground + 0.1D;
 
                     for (double posY = mc.player.getY(); posY > groundExtra; posY -= 4D) {
-                        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), true));
+                        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), true, mc.player.horizontalCollision));
 
                         if (posY - 4D < groundExtra) break; // Prevent next step
                     }
 
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), groundExtra, mc.player.getZ(), true));
+                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), groundExtra, mc.player.getZ(), true, mc.player.horizontalCollision));
 
                     for (double posY = groundExtra; posY < mc.player.getY(); posY += 4D) {
-                        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), mc.player.isOnGround()));
+                        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 
                         if (posY + 4D > mc.player.getY()) break; // Prevent next step
                     }
 
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround()));
+                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
 
                 }
             }

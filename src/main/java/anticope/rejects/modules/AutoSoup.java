@@ -14,14 +14,16 @@ import net.minecraft.block.CraftingTableBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.StewItem;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
 
 public class AutoSoup extends Module {
     private static final String desc = "Automatically eats soup when your health is low on some servers.";
@@ -104,14 +106,16 @@ public class AutoSoup extends Module {
 
         // move soup in inventory to hotbar
         if (soupInInventory != -1)
-            InvUtils.quickMove().slot(soupInInventory);
+            InvUtils.quickSwap().slot(soupInInventory);
     }
 
     private int findSoup(int startSlot, int endSlot) {
+        List<Item> stews = List.of(Items.RABBIT_STEW, Items.MUSHROOM_STEW, Items.BEETROOT_SOUP);
+
         for (int i = startSlot; i < endSlot; i++) {
             ItemStack stack = mc.player.getInventory().getStack(i);
 
-            if (stack != null && stack.getItem() instanceof StewItem)
+            if (stack != null && stews.contains(stack.getItem()))
                 return i;
         }
 
@@ -128,23 +132,26 @@ public class AutoSoup extends Module {
     }
 
     private boolean isClickable(HitResult hitResult) {
-        if (hitResult == null)
-            return false;
-
-        if (hitResult instanceof EntityHitResult) {
-            Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
-            return entity instanceof VillagerEntity
-                    || entity instanceof TameableEntity;
-        }
-
-        if (hitResult instanceof BlockHitResult) {
-            BlockPos pos = ((BlockHitResult) mc.crosshairTarget).getBlockPos();
-            if (pos == null)
+        switch (hitResult) {
+            case null -> {
                 return false;
+            }
+            case EntityHitResult entityHitResult -> {
+                Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
+                return entity instanceof VillagerEntity
+                        || entity instanceof TameableEntity;
+            }
+            case BlockHitResult blockHitResult -> {
+                BlockPos pos = ((BlockHitResult) mc.crosshairTarget).getBlockPos();
+                if (pos == null)
+                    return false;
 
-            Block block = mc.world.getBlockState(pos).getBlock();
-            return block instanceof BlockWithEntity
-                    || block instanceof CraftingTableBlock;
+                Block block = mc.world.getBlockState(pos).getBlock();
+                return block instanceof BlockWithEntity
+                        || block instanceof CraftingTableBlock;
+            }
+            default -> {
+            }
         }
 
         return false;

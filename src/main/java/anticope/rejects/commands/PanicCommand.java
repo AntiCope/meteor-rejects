@@ -8,8 +8,6 @@ import net.minecraft.command.CommandSource;
 
 import java.util.ArrayList;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-
 public class PanicCommand extends Command {
     public PanicCommand() {
         super("panic", "Disables all modules.", "disable-all");

@@ -114,7 +114,7 @@ public class SoundLocator extends Module {
         if(whitelist.get()) {
             // Whitelist ON
             for (SoundEvent sound : sounds.get()) {
-                if (sound.getId().equals(event.sound.getId())) {
+                if (sound.id().equals(event.sound.getId())) {
                     printSound(event.sound);
                     break;
                 }

@@ -7,38 +7,17 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import net.minecraft.client.gl.PostEffectProcessor;
+import net.minecraft.client.render.DefaultFramebufferSet;
 import net.minecraft.util.Identifier;
-
-import java.io.IOException;
 
 public class Rendering extends Module {
 
     public enum Shader {
         None,
-        Notch,
-        FXAA,
-        Art,
-        Bumpy,
-        Blobs,
-        Blobs2,
-        Pencil,
-        Vibrant,
-        Deconverge,
-        Flip,
-        Invert,
-        NTSC,
-        Outline,
-        Phosphor,
-        Scanline,
-        Sobel,
-        Bits,
-        Desaturate,
-        Green,
         Blur,
-        Wobble,
-        Antialias,
         Creeper,
-        Spider
+        Invert,
+        Spider,
     }
 
     private final SettingGroup sgInvisible = settings.createGroup("Invisible");
@@ -102,17 +81,16 @@ public class Rendering extends Module {
     }
 
     public void onChanged(Shader s) {
-        String name;
-        if (s == Shader.Vibrant) name = "color_convolve";
-        else if (s == Shader.Scanline) name = "scan_pincushion";
-        else name = s.toString().toLowerCase();
-        Identifier shaderID = new Identifier(String.format("shaders/post/%s.json", name));
-        try {
-            PostEffectProcessor shader = new PostEffectProcessor(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), shaderID);
-            this.shader = shader;
-        } catch (IOException e) {
+        if (mc.world == null) return;
+        String name = s.toString().toLowerCase();
+
+        if (name.equals("none")) {
             this.shader = null;
+            return;
         }
+
+        Identifier shaderID = Identifier.ofVanilla(name);
+        this.shader = mc.getShaderLoader().loadPostEffect(shaderID, DefaultFramebufferSet.MAIN_ONLY);
     }
 
     public boolean renderStructureVoid() {
