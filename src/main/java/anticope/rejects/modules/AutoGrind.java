@@ -7,14 +7,19 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.screen.GrindstoneScreenHandler;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 public class AutoGrind extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -32,11 +37,11 @@ public class AutoGrind extends Module {
             .name("item-blacklist")
             .description("Items that should be ignored.")
             .defaultValue()
-            .filter(Item::isDamageable)
+            .filter(Item -> Item.getComponents().get(DataComponentTypes.DAMAGE) != null)
             .build()
     );
 
-    private final Setting<List<Enchantment>> enchantmentBlacklist = sgGeneral.add(new EnchantmentListSetting.Builder()
+    private final Setting<Set<RegistryKey<Enchantment>>> enchantmentBlacklist = sgGeneral.add(new EnchantmentListSetting.Builder()
             .name("enchantment-blacklist")
             .description("Enchantments that should be ignored.")
             .defaultValue()
@@ -63,7 +68,7 @@ public class AutoGrind extends Module {
 
                     if (mc.currentScreen == null) break;
 
-                    InvUtils.quickMove().slot(i);
+                    InvUtils.shiftClick().slot(i);
                     InvUtils.move().fromId(2).to(i);
                 }
             }
@@ -73,17 +78,17 @@ public class AutoGrind extends Module {
     private boolean canGrind(ItemStack stack) {
         if (itemBlacklist.get().contains(stack.getItem())) return false;
 
-        Map<Enchantment, Integer> enchantments = EnchantmentHelper.get(stack);
+        ItemEnchantmentsComponent enchantments = EnchantmentHelper.getEnchantments(stack);
         int availEnchs = 0;
 
-        for (Enchantment enchantment : enchantments.keySet()) {
+        for (RegistryEntry<Enchantment> enchantment : enchantments.getEnchantments()) {
             availEnchs++;
-            if (enchantment.isCursed())
+            if (EnchantmentHelper.hasAnyEnchantmentsIn(stack, EnchantmentTags.CURSE))
                 availEnchs--;
-            if (enchantmentBlacklist.get().contains(enchantment))
+            if (enchantmentBlacklist.get().contains(enchantment.value()))
                 return false;
         }
 
-        return enchantments.size() > 0 && availEnchs > 0;
+        return !enchantments.isEmpty() && availEnchs > 0;
     }
 }

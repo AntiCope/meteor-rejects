@@ -82,9 +82,9 @@ public class AutoExtinguish extends Module {
     private boolean hasPlacedWater = false;
     private BlockPos blockPos = null;
     private boolean doesWaterBucketWork = true;
-    
-    private static final StatusEffect FIRE_RESISTANCE = Registries.STATUS_EFFECT.get(new Identifier("fire_resistance"));
-    
+
+    private static final StatusEffect FIRE_RESISTANCE = Registries.STATUS_EFFECT.get(Identifier.of("fire_resistance"));
+
     public AutoExtinguish() {
         super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");
     }
@@ -114,7 +114,7 @@ public class AutoExtinguish extends Module {
                 place(slot);
                 hasPlacedWater = false;
 
-            } else if (!mc.player.hasStatusEffect(FIRE_RESISTANCE) && mc.player.isOnFire()) {
+            } else if (!mc.player.hasStatusEffect(Registries.STATUS_EFFECT.getEntry(FIRE_RESISTANCE)) && mc.player.isOnFire()) {
                 blockPos = mc.player.getBlockPos();
                 final int slot = findSlot(Items.WATER_BUCKET);
                 if (mc.world.getBlockState(blockPos).getBlock() == Blocks.FIRE || mc.world.getBlockState(blockPos).getBlock() == Blocks.SOUL_FIRE) {

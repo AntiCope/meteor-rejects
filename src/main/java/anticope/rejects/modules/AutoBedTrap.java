@@ -124,7 +124,7 @@ public class AutoBedTrap extends Module {
                 if (cap >= bpt.get()) {
                     return true;
                 }
-            };
+            }
         }
         cap = 0;
         return true;

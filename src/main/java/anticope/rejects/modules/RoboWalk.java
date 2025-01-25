@@ -8,6 +8,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
+import net.minecraft.util.math.Vec3d;
 
 public class RoboWalk extends Module {
     public RoboWalk() {
@@ -30,11 +31,11 @@ public class RoboWalk extends Module {
             ((PlayerMoveC2SPacketAccessor) packet).setX(x);
             ((PlayerMoveC2SPacketAccessor) packet).setZ(z);
         } else if (event.packet instanceof VehicleMoveC2SPacket packet) {
-            double x = smooth(packet.getX());
-            double z = smooth(packet.getZ());
+            Vec3d pos = ((VehicleMoveC2SPacketAccessor) (Object) packet).getPosition();
+            double x = smooth(pos.getX());
+            double z = smooth(pos.getZ());
 
-            ((VehicleMoveC2SPacketAccessor) packet).setX(x);
-            ((VehicleMoveC2SPacketAccessor) packet).setZ(z);
+            event.packet = VehicleMoveC2SPacketAccessor.create(new Vec3d(x, pos.getY(), z), packet.yaw(), packet.pitch(), packet.onGround());
         }
     }
 }

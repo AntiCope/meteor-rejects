@@ -10,6 +10,7 @@ import net.minecraft.util.math.Box;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.utils.world.TickRate;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.gui.WindowScreen;
@@ -43,26 +44,27 @@ public class StatsScreen extends WindowScreen {
         if (entity instanceof LivingEntity liv) {
             add(theme.label(String.format("Health: %.2f/%.2f", liv.getHealth(), liv.getMaxHealth())));
             add(theme.label(String.format("Armor: %d/20", liv.getArmor())));
-            
+
             WSection effectList = add(theme.section("Status Effects", effectListExpanded)).expandX().widget();
             effectList.action = () -> effectListExpanded = effectList.isExpanded();
             liv.getActiveStatusEffects().forEach((effect, instance) -> {
-                String status = lang.get(effect.getTranslationKey());
+                String status = lang.get(effect.value().getTranslationKey());
+                float tps = TickRate.INSTANCE.getTickRate();
                 if (instance.getAmplifier() != 0) {
-                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1)));
+                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1, tps)));
                 } else {
-                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1)));
+                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1, tps)));
                 }
                 effectList.add(theme.label(status)).expandX();
             });
             if (liv.getActiveStatusEffects().isEmpty()) {
                 effectList.add(theme.label("No effects")).expandX();
             }
-            
+
             WSection attribList = add(theme.section("Attributes", attribListExpanded)).expandX().widget();
             attribList.action = () -> attribListExpanded = attribList.isExpanded();
             liv.getAttributes().getTracked().forEach((attrib) -> attribList.add(theme.label(String.format("%s: %.2f",
-                lang.get(attrib.getAttribute().getTranslationKey()),
+                lang.get(attrib.getAttribute().value().getTranslationKey()),
                 attrib.getValue()
             ))).expandX());
         }
@@ -71,7 +73,7 @@ public class StatsScreen extends WindowScreen {
         dimension.add(theme.label(String.format("Position: %.2f, %.2f, %.2f", entity.getX(), entity.getY(), entity.getZ()))).expandX();
         dimension.add(theme.label(String.format("Yaw: %.2f, Pitch: %.2f", entity.getYaw(), entity.getPitch()))).expandX();
         Box box = entity.getBoundingBox();
-        dimension.add(theme.label(String.format("Bounding Box: %.2f, %.2f, %.2f", 
+        dimension.add(theme.label(String.format("Bounding Box: %.2f, %.2f, %.2f",
             box.maxX-box.minX, box.maxY-box.minY, box.maxZ-box.minZ
         ))).expandX();
     }
@@ -80,7 +82,7 @@ public class StatsScreen extends WindowScreen {
     private void onTick(TickEvent.Post event) {
         updateData();
     }
-    
+
     @Override
     public void initWidgets() {}
 }

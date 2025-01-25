@@ -113,7 +113,7 @@ public class AutoTNT extends Module {
     @EventHandler
     private void onPostTick(TickEvent.Post event) {
         // Ignition
-        if (ignite.get() && blocksToIgnite.size() > 0) {
+        if (ignite.get() && !blocksToIgnite.isEmpty()) {
             if (igniteTick > igniteDelay.get()) {
                 // Sort based on closest tnt
                 blocksToIgnite.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));

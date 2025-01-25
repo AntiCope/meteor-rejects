@@ -14,6 +14,8 @@ import meteordevelopment.meteorclient.settings.Settings;
 import meteordevelopment.meteorclient.utils.network.Http;
 import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -80,7 +82,7 @@ public class HeadScreen extends WindowScreen {
                     heads.add(createHeadStack(a.get("uuid"), a.get("value"), a.get("name")));
                 } catch (Exception e) { }
             });
-            
+
             WTable t = theme.table();
             for (ItemStack head : heads) {
                 t.add(theme.item(head));
@@ -118,11 +120,11 @@ public class HeadScreen extends WindowScreen {
         properties.put("textures", textures);
         skullOwner.put("Properties", properties);
         tag.put("SkullOwner", skullOwner);
-        head.setNbt(tag);
-        head.setCustomName(Text.literal(name));
+        head.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+        head.set(DataComponentTypes.CUSTOM_NAME, Text.literal(name));
         return head;
     }
-    
+
     @Override
     public void initWidgets() {}
 }

@@ -18,7 +18,7 @@ public class LegacyServerPinger {
     }
 
     public void ping(String ip, int port) {
-        server = new ServerInfo("", ip + ":" + port, false);
+        server = new ServerInfo("", ip + ":" + port, ServerInfo.ServerType.OTHER);
 
         new Thread(() -> pingInCurrentThread(ip, port),
                 "Server Pinger #" + threadNumber.incrementAndGet()).start();
@@ -26,19 +26,18 @@ public class LegacyServerPinger {
 
     private void pingInCurrentThread(String ip, int port) {
         MultiplayerServerListPinger pinger = new MultiplayerServerListPinger();
-        MeteorRejectsAddon.LOG.info("Pinging " + ip + ":" + port + "...");
+        MeteorRejectsAddon.LOG.info("Pinging {}:{}...", ip, port);
 
         try {
-            pinger.add(server, () -> {
-            });
-            MeteorRejectsAddon.LOG.info("Ping successful: " + ip + ":" + port);
+            pinger.add(server, () -> {}, () -> {});
+            MeteorRejectsAddon.LOG.info("Ping successful: {}:{}", ip, port);
 
         } catch (UnknownHostException e) {
-            MeteorRejectsAddon.LOG.warn("Unknown host: " + ip + ":" + port);
+            MeteorRejectsAddon.LOG.warn("Unknown host: {}:{}", ip, port);
             failed = true;
 
         } catch (Exception e2) {
-            MeteorRejectsAddon.LOG.warn("Ping failed: " + ip + ":" + port);
+            MeteorRejectsAddon.LOG.warn("Ping failed: {}:{}", ip, port);
             failed = true;
         }
 

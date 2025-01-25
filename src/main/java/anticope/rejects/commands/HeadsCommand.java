@@ -7,8 +7,6 @@ import meteordevelopment.meteorclient.gui.GuiThemes;
 import meteordevelopment.meteorclient.utils.Utils;
 import net.minecraft.command.CommandSource;
 
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-
 public class HeadsCommand extends Command {
 
     public HeadsCommand() {

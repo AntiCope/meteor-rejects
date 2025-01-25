@@ -7,12 +7,9 @@ import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.s2c.play.DisconnectS2CPacket;
+import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.SystemUtils;
-
-import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class KickCommand extends Command {
 
@@ -47,7 +44,7 @@ public class KickCommand extends Command {
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("pos").executes(ctx -> {
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !mc.player.isOnGround()));
+            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !mc.player.isOnGround(), mc.player.horizontalCollision));
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("hurt").executes(ctx -> {

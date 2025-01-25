@@ -29,7 +29,7 @@ public class Jetpack extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (mc.options.jumpKey.isPressed()) {
-            ((IVec3d) mc.player.getVelocity()).setY(jetpackSpeed.get());
+            ((IVec3d) mc.player.getVelocity()).meteor$setY(jetpackSpeed.get());
         }
     }
 

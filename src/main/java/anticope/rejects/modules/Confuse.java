@@ -144,12 +144,12 @@ public class Confuse extends Module {
                 if (mc.world.getBlockState(BlockPos.ofFloored(goal.x, goal.y, goal.z)).getBlock() == Blocks.AIR) {
                     hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
                     if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
-                        delayWaited = (int) (delay.get() - 1);
+                        delayWaited = delay.get() - 1;
                         break;
                     }
                     mc.player.updatePosition(goal.x, goal.y, goal.z);
                 } else {
-                    delayWaited = (int) (delay.get() - 1);
+                    delayWaited = delay.get() - 1;
                 }
                 break;
 
@@ -159,7 +159,7 @@ public class Confuse extends Module {
                 Vec3d goal2 = entityPos.add(diff1);
                 hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal2, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
                 if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
-                    delayWaited = (int) (delay.get() - 1);
+                    delayWaited = delay.get() - 1;
                     break;
                 }
                 mc.player.updatePosition(goal2.x, goal2.y, goal2.z);

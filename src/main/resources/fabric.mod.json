@@ -36,7 +36,7 @@
     "github:sha": "${gh_hash}"
   },
   "depends": {
-    "java": ">=16",
+    "java": ">=21",
     "minecraft": "~${mc_version}",
     "meteor-client": "*"
   }

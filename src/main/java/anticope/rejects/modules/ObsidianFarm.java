@@ -7,6 +7,7 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.player.AutoEat;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -40,7 +41,7 @@ public class ObsidianFarm extends Module {
             return;
         }
         if (!allowBreakAgain) return;
-        if ((mc.player.isUsingItem() || Modules.get().get(AutoEat.class).isActive()) && (mc.player.getOffHandStack().getItem().isFood() || mc.player.getMainHandStack().getItem().isFood()))
+        if ((mc.player.isUsingItem() || Modules.get().get(AutoEat.class).isActive()) && (mc.player.getOffHandStack().contains(DataComponentTypes.FOOD) || mc.player.getMainHandStack().contains(DataComponentTypes.FOOD)))
             return;
 
         if(mc.player.getMainHandStack().getItem() != Items.NETHERITE_PICKAXE && mc.player.getMainHandStack().getItem() != Items.DIAMOND_PICKAXE) {
@@ -64,7 +65,6 @@ public class ObsidianFarm extends Module {
             allowBreakAgain = false;
         }
     }
-
 
     private BlockPos findObsidian() {
         List<BlockPos> blocksList = new ArrayList<>();
@@ -106,14 +106,12 @@ public class ObsidianFarm extends Module {
         return null;
     }
 
-
     private int findPickAxe() {
-        int result = -1;
         for (int i = 0; i < 9; i++) {
             if (mc.player.getInventory().getStack(i).getItem() == Items.NETHERITE_PICKAXE) return i;
-            if (mc.player.getInventory().getStack(i).getItem() == Items.DIAMOND_PICKAXE) result = i;
+            if (mc.player.getInventory().getStack(i).getItem() == Items.DIAMOND_PICKAXE) return i;
         }
-        return result;
+        return -1;
     }
 
 
