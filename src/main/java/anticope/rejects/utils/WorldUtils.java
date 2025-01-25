@@ -41,13 +41,13 @@ public class WorldUtils {
     public static boolean interact(BlockPos pos, FindItemResult findItemResult, boolean rotate) {
         if (!findItemResult.found()) return false;
         Runnable action = () -> {
-            boolean wasSneaking = mc.player.input.sneaking;
-            mc.player.input.sneaking = false;
+            boolean wasSneaking = mc.player.isSneaking();
+            mc.player.setSneaking(false);
             InvUtils.swap(findItemResult.slot(), true);
             mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.UP, pos, false));
             mc.player.swingHand(Hand.MAIN_HAND);
             InvUtils.swapBack();
-            mc.player.input.sneaking = wasSneaking;
+            mc.player.setSneaking(wasSneaking);
         };
         if (rotate) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), -100, action);
         else action.run();

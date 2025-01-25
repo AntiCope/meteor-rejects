@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.9-SNAPSHOT'
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
@@ -18,6 +18,11 @@ repositories {
 	maven { url 'https://jitpack.io' }
 	maven { url 'https://maven.duti.dev/releases' }
 }
+
+loom {
+	accessWidenerPath = file("src/main/resources/meteor-rejects.accesswidener")
+}
+
 configurations {
 	// configuration that holds jars to include in the jar
 	extraLibs
@@ -34,7 +39,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("meteordevelopment:meteor-client:${project.meteor_version}-SNAPSHOT")
+	modImplementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
     modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
@@ -53,10 +58,6 @@ dependencies {
 	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/meteor-rejects.accesswidener")
-}
-
 processResources {
 	inputs.property "version", project.version
 
@@ -70,7 +71,7 @@ processResources {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
+		rename { "${it}_${project.archivesBaseName}" }
 	}
 	from {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }

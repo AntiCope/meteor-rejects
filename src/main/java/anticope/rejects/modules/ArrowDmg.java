@@ -54,9 +54,9 @@ public class ArrowDmg extends Module {
 
         for (int i = 0; i < packets.get() / 2; i++) {
             p.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(x,
-                    y - 1e-10, z, true));
+                    y - 1e-10, z, true, mc.player.horizontalCollision));
             p.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(x,
-                    y + 1e-10, z, false));
+                    y + 1e-10, z, false, mc.player.horizontalCollision));
         }
     }
 

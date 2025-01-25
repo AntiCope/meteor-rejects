@@ -8,7 +8,6 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ElytraItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
@@ -72,18 +71,17 @@ public class ExtraElytra extends Module {
         if (chest.getItem() != Items.ELYTRA)
             return;
 
-        if (mc.player.isFallFlying()) {
+        if (mc.player.isGliding()) {
             if (stopInWater.get() && mc.player.isTouchingWater()) {
                 sendStartStopPacket();
                 return;
             }
-
             controlSpeed();
             controlHeight();
             return;
         }
 
-        if (ElytraItem.isUsable(chest) && mc.options.jumpKey.isPressed())
+        if (chest.getDamage() < chest.getMaxDamage() - 1 && mc.options.jumpKey.isPressed())
             doInstantFly();
     }
 

@@ -24,6 +24,7 @@ public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
         super();
 
         try {
+            //noinspection unchecked
             values = (T[]) defaultValue.getClass().getMethod("values").invoke(null);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
@@ -34,6 +35,7 @@ public class EnumArgumentType<T extends Enum<?>> implements ArgumentType<T> {
         return new EnumArgumentType<>(defaultValue);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Enum<?>> T getEnum(CommandContext<?> context, String name, T defaultValue) {
         return (T) context.getArgument(name, defaultValue.getClass());
     }

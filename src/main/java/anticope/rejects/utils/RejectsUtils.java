@@ -70,9 +70,9 @@ public class RejectsUtils {
             double xDir = Math.cos(Math.toRadians(dir + 90));
             double zDir = Math.sin(Math.toRadians(dir + 90));
 
-            ((IVec3d) event.movement).setXZ(xDir * speed, zDir * speed);
+            ((IVec3d) event.movement).meteor$setXZ(xDir * speed, zDir * speed);
         } else {
-            ((IVec3d) event.movement).setXZ(0, 0);
+            ((IVec3d) event.movement).meteor$setXZ(0, 0);
         }
 
         float ySpeed = 0;
@@ -81,7 +81,7 @@ public class RejectsUtils {
             ySpeed += speed;
         if (mc.options.sneakKey.isPressed())
             ySpeed -= speed;
-        ((IVec3d) event.movement).setY(verticalSpeedMatch ? ySpeed : ySpeed / 2);
+        ((IVec3d) event.movement).meteor$setY(verticalSpeedMatch ? ySpeed : ySpeed / 2);
 
         return ySpeed;
     }

@@ -54,9 +54,10 @@ public class CustomPackets extends Module {
     @EventHandler
     private void onCustomPayloadPacket(PacketEvent.Receive event) {
         if (event.packet instanceof CustomPayloadS2CPacket packet) {
-            switch (packet.payload().getId().toString()) {
-                case "badlion:mods" -> event.setCancelled(onBadlionModsPacket(packet));
-                default -> onUnknownPacket(packet);
+            if (packet.payload().getId().toString().equals("badlion:mods")) {
+                event.setCancelled(onBadlionModsPacket(packet));
+            } else {
+                onUnknownPacket(packet);
             }
         }
     }

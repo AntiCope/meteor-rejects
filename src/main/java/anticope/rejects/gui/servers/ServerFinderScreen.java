@@ -136,7 +136,7 @@ public class ServerFinderScreen extends WindowScreen implements IServerFinderDon
         versionFilters.clear();
         for (String version : versions) {
             String trimmed = version.trim();
-            if (trimmed.length() > 0)
+            if (!trimmed.isEmpty())
                 versionFilters.add(version.trim());
         }
     }
@@ -177,7 +177,7 @@ public class ServerFinderScreen extends WindowScreen implements IServerFinderDon
 
     private boolean pingNewIP() {
         synchronized (serverFinderLock) {
-            if (ipsToPing.size() > 0) {
+            if (!ipsToPing.isEmpty()) {
                 String ip = ipsToPing.pop();
                 ServerPinger pinger = new ServerPinger(scanPortsBox.checked, searchNumber);
                 pinger.addServerFinderDoneListener(this);
