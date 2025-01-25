@@ -132,23 +132,26 @@ public class AutoSoup extends Module {
     }
 
     private boolean isClickable(HitResult hitResult) {
-        if (hitResult == null)
-            return false;
-
-        if (hitResult instanceof EntityHitResult) {
-            Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
-            return entity instanceof VillagerEntity
-                    || entity instanceof TameableEntity;
-        }
-
-        if (hitResult instanceof BlockHitResult) {
-            BlockPos pos = ((BlockHitResult) mc.crosshairTarget).getBlockPos();
-            if (pos == null)
+        switch (hitResult) {
+            case null -> {
                 return false;
+            }
+            case EntityHitResult entityHitResult -> {
+                Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
+                return entity instanceof VillagerEntity
+                        || entity instanceof TameableEntity;
+            }
+            case BlockHitResult blockHitResult -> {
+                BlockPos pos = ((BlockHitResult) mc.crosshairTarget).getBlockPos();
+                if (pos == null)
+                    return false;
 
-            Block block = mc.world.getBlockState(pos).getBlock();
-            return block instanceof BlockWithEntity
-                    || block instanceof CraftingTableBlock;
+                Block block = mc.world.getBlockState(pos).getBlock();
+                return block instanceof BlockWithEntity
+                        || block instanceof CraftingTableBlock;
+            }
+            default -> {
+            }
         }
 
         return false;

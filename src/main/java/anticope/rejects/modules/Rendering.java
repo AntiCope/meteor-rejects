@@ -90,8 +90,7 @@ public class Rendering extends Module {
         }
 
         Identifier shaderID = Identifier.ofVanilla(name);
-        PostEffectProcessor shader = mc.getShaderLoader().loadPostEffect(shaderID, DefaultFramebufferSet.MAIN_ONLY);
-        this.shader = shader;
+        this.shader = mc.getShaderLoader().loadPostEffect(shaderID, DefaultFramebufferSet.MAIN_ONLY);
     }
 
     public boolean renderStructureVoid() {

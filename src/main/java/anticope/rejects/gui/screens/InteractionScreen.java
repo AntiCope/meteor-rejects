@@ -95,13 +95,12 @@ public class InteractionScreen extends Screen {
             closeScreen();
             client.setScreen(new StatsScreen(e));
         });
-        if (entity instanceof PlayerEntity) {
-            functions.put("Open Inventory", (Entity e) -> {
+        switch (entity) {
+            case PlayerEntity playerEntity -> functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 client.setScreen(new InventoryScreen((PlayerEntity) e));
             });
-        } else if (entity instanceof AbstractHorseEntity) {
-            functions.put("Open Inventory", (Entity e) -> {
+            case AbstractHorseEntity abstractHorseEntity -> functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 if (client.player.isRiding()) {
 //                    client.player.networkHandler.sendPacket(new PlayerInputC2SPacket(0, 0, false, true));
@@ -111,13 +110,11 @@ public class InteractionScreen extends Screen {
                 client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
                 client.player.setSneaking(false);
             });
-        } else if (entity instanceof StorageMinecartEntity) {
-            functions.put("Open Inventory", (Entity e) -> {
+            case StorageMinecartEntity storageMinecartEntity -> functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 client.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.interact(entity, true, Hand.MAIN_HAND));
             });
-        } else {
-            functions.put("Open Inventory", (Entity e) -> {
+            case null, default -> functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
                 ItemStack container = new ItemStack(Items.CHEST);
                 container.set(DataComponentTypes.CUSTOM_NAME, e.getName());
@@ -190,7 +187,7 @@ public class InteractionScreen extends Screen {
             } catch (NullPointerException ex) {
             }
         }
-        if (Saddleable.class.isInstance(e)) {
+        if (e instanceof Saddleable) {
             if (((Saddleable) e).isSaddled()) {
                 stack[index[0]] = Items.SADDLE.getDefaultStack();
                 index[0]++;
@@ -294,7 +291,7 @@ public class InteractionScreen extends Screen {
 
     private void drawDots(DrawContext context, int radius, int mouseX, int mouseY) {
         ArrayList<Point> pointList = new ArrayList<Point>();
-        String cache[] = new String[functions.size()];
+        String[] cache = new String[functions.size()];
         double lowestDistance = Double.MAX_VALUE;
         int i = 0;
 

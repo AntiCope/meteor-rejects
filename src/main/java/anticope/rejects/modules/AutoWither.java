@@ -267,15 +267,15 @@ public class AutoWither extends Module {
         BlockPos leftHead = wither.foot.up().up().offset(wither.axis, -1);
         BlockPos rightHead = wither.foot.up().up().offset(wither.axis, 1);
         
-        event.renderer.box((double) midHead.getX() + 0.2, (double) midHead.getX(), (double) midHead.getX() + 0.2,
+        event.renderer.box((double) midHead.getX() + 0.2, midHead.getX(), (double) midHead.getX() + 0.2,
                 (double) midHead.getX() + 0.8, (double) midHead.getX() + 0.7, (double) midHead.getX() + 0.8,
                 sideColor.get(), lineColor.get(), shapeMode.get(), 0);
         
-        event.renderer.box((double) leftHead.getX() + 0.2, (double) leftHead.getX(), (double) leftHead.getX() + 0.2,
+        event.renderer.box((double) leftHead.getX() + 0.2, leftHead.getX(), (double) leftHead.getX() + 0.2,
                 (double) leftHead.getX() + 0.8, (double) leftHead.getX() + 0.7, (double) leftHead.getX() + 0.8,
                 sideColor.get(), lineColor.get(), shapeMode.get(), 0);
         
-        event.renderer.box((double) rightHead.getX() + 0.2, (double) rightHead.getX(), (double) rightHead.getX() + 0.2,
+        event.renderer.box((double) rightHead.getX() + 0.2, rightHead.getX(), (double) rightHead.getX() + 0.2,
                 (double) rightHead.getX() + 0.8, (double) rightHead.getX() + 0.7, (double) rightHead.getX() + 0.8,
                 sideColor.get(), lineColor.get(), shapeMode.get(), 0);
     }

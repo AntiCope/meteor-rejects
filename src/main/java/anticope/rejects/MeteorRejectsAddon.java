@@ -135,7 +135,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
                 .get().getMetadata()
                 .getCustomValue("github:sha")
                 .getAsString();
-        LOG.info(String.format("Rejects version: %s", commit));
+        LOG.info("Rejects version: {}", commit);
         return commit.isEmpty() ? null : commit.trim();
     }
 

@@ -28,7 +28,7 @@ public class AutoCraft extends Module {
     private final Setting<List<Item>> items = sgGeneral.add(new ItemListSetting.Builder()
         .name("items")
         .description("Items you want to get crafted.")
-        .defaultValue(Arrays.asList())
+        .defaultValue(List.of())
         .build()
     );
 
