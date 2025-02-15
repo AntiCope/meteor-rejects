@@ -8,9 +8,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-public class GetPlayerUUID {
+public class PlayerProfileUtils {
 
     public static UUID getUUID(String playerName) {
         // Thanks Bento
@@ -27,6 +29,18 @@ public class GetPlayerUUID {
         } catch (Exception ignored) {
             return UUID.randomUUID();
         }
+    }
+
+    public static String getPlayerProfile(UUID uuid) {
+        String jsonResponse = getURLContent("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
+
+        JsonObject responseObject = JsonParser.parseString(jsonResponse).getAsJsonObject();
+        JsonArray properties = responseObject.getAsJsonArray("properties");
+
+        if (properties != null && !properties.isEmpty()) {
+            return properties.get(0).getAsJsonObject().get("value").getAsString();
+        }
+        return "";
     }
 
     private static String getURLContent(String requestedUrl) {
