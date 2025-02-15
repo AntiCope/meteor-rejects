@@ -1,8 +1,11 @@
 package anticope.rejects.commands;
 
+import anticope.rejects.arguments.ClientPosArgumentType;
 import anticope.rejects.arguments.EnumStringArgumentType;
 import anticope.rejects.utils.GiveUtils;
+import anticope.rejects.utils.accounts.PlayerProfileUtils;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
@@ -14,16 +17,15 @@ import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Collection;
+import java.util.UUID;
 
-import static anticope.rejects.utils.accounts.GetPlayerUUID.getUUID;
+import static anticope.rejects.utils.accounts.PlayerProfileUtils.getUUID;
 
 public class GiveCommand extends Command {
 
@@ -35,7 +37,6 @@ public class GiveCommand extends Command {
 
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
-        // TODO : finish this
         builder.then(literal("egg").executes(ctx -> {
             ItemStack inHand = mc.player.getMainHandStack();
             ItemStack item = new ItemStack(Items.STRIDER_SPAWN_EGG);
@@ -55,12 +56,10 @@ public class GiveCommand extends Command {
 
                 ct.put("Item", itemTag);
             }
-            NbtCompound t = new NbtCompound();
-            t.put("EntityTag", ct);
 
             var changes = ComponentChanges.builder()
                     .add(DataComponentTypes.CUSTOM_NAME, inHand.getName())
-                    .add(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(t))
+                    .add(DataComponentTypes.ENTITY_DATA, NbtComponent.of(ct))
                     .build();
 
             item.applyChanges(changes);
@@ -68,16 +67,16 @@ public class GiveCommand extends Command {
             return SINGLE_SUCCESS;
         }));
 
-        //TODO: allow for custom cords to place oob, though optional args
-        builder.then(literal("holo").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
+        builder.then(literal("holo").then(argument("pos", ClientPosArgumentType.pos()).then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
             String message = ctx.getArgument("message", String.class).replace("&", "\247");
             ItemStack stack = new ItemStack(Items.STRIDER_SPAWN_EGG);
             NbtCompound tag = new NbtCompound();
             NbtList pos = new NbtList();
+            Vec3d poss = ClientPosArgumentType.getPos(ctx, "pos");
 
-            pos.add(NbtDouble.of(mc.player.getX()));
-            pos.add(NbtDouble.of(mc.player.getY()));
-            pos.add(NbtDouble.of(mc.player.getZ()));
+            pos.add(NbtDouble.of(poss.getX()));
+            pos.add(NbtDouble.of(poss.getY()));
+            pos.add(NbtDouble.of(poss.getZ()));
 
             tag.putString("id", "minecraft:armor_stand");
             tag.put("Pos", pos);
@@ -94,17 +93,25 @@ public class GiveCommand extends Command {
             stack.applyChanges(changes);
             GiveUtils.giveItem(stack);
             return SINGLE_SUCCESS;
-        })));
+        }))));
 
-        //TODO, make invisible through potion effect
         builder.then(literal("bossbar").then(argument("message", StringArgumentType.greedyString()).executes(ctx -> {
             String message = ctx.getArgument("message", String.class).replace("&", "\247");
             ItemStack stack = new ItemStack(Items.BAT_SPAWN_EGG);
+            NbtCompound effect = new NbtCompound();
+            effect.put("amplifier", NbtInt.of(1));
+            effect.put("duration", NbtInt.of(-1));
+            effect.put("id", NbtString.of("minecraft:invisibility"));
+
+            NbtList effects = new NbtList();
+            effects.add(effect);
+
             NbtCompound tag = new NbtCompound();
             tag.putBoolean("NoAI", true);
             tag.putBoolean("Silent", true);
             tag.putBoolean("PersistenceRequired", true);
             tag.put("id", NbtString.of("minecraft:wither"));
+            tag.put("active_effects", effects);
 
             var changes = ComponentChanges.builder()
                     .add(DataComponentTypes.CUSTOM_NAME, Text.literal(message))
@@ -116,13 +123,16 @@ public class GiveCommand extends Command {
             return SINGLE_SUCCESS;
         })));
 
-        // TODO : resolve textures, should be easy now that UUID is resolved
         builder.then(literal("head").then(argument("owner", StringArgumentType.greedyString()).executes(ctx -> {
             String playerName = ctx.getArgument("owner", String.class);
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
+            UUID uuid = getUUID(playerName);
+            Property property = new Property("textures", PlayerProfileUtils.getPlayerProfile(uuid));
+            ProfileComponent profile = new ProfileComponent(new GameProfile(uuid, playerName));
+            profile.properties().put("textures", property);
 
             var changes = ComponentChanges.builder()
-                    .add(DataComponentTypes.PROFILE, new ProfileComponent(new GameProfile(getUUID(playerName), playerName)))
+                    .add(DataComponentTypes.PROFILE, profile)
                     .build();
 
             itemStack.applyChanges(changes);
