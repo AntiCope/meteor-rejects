@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'fabric-loom' version '1.10.1'
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
@@ -40,16 +40,17 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
-    modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
+	modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
-	extraLibs('com.seedfinding:mc_math:ffd2edcfcc0d18147549c88cc7d8ec6cf21b5b91') { transitive = false }
-	extraLibs('com.seedfinding:mc_seed:1ead6fcefe7e8de4b3d60cd6c4e993f1e8f33409') { transitive = false }
-	extraLibs('com.seedfinding:mc_core:1.210.0') { transitive = false }
-	extraLibs('com.seedfinding:mc_noise:7e3ba65e181796c4a2a1c8881d840b2254b92962') { transitive = false }
-	extraLibs('com.seedfinding:mc_biome:41a42cb9019a552598f12089059538853e18ec78') { transitive = false }
-	extraLibs('com.seedfinding:mc_terrain:b4246cbd5880c4f8745ccb90e1b102bde3448126') { transitive = false }
-	extraLibs('com.seedfinding:mc_feature:919b7e513cc1e87e029a9cd703fc4e2dc8686229') { transitive = false }
+	extraLibs('com.seedfinding:mc_math:851e9d0577dfdca50154e98f1d334bd31c641326') { transitive = false }
+	extraLibs('com.seedfinding:mc_seed:55f6242001f7eb4226df4ed0d023f1838a54a99d') { transitive = false }
+	extraLibs('com.seedfinding:mc_core:b84ff1c38be399eda096dbde2819258c62f81275') { transitive = false }
+	extraLibs('com.seedfinding:mc_noise:dbab3996ea3abff5dd420db53c31d5498afd2fe5') { transitive = false }
+	extraLibs('com.seedfinding:mc_biome:17af8cb1110fdc983b7cb2b887d1fb2060e23ee3') { transitive = false }
+	extraLibs('com.seedfinding:mc_terrain:a03e440ec5b282e399382f2cc5ad0db91b438d2e') { transitive = false }
+	extraLibs('com.seedfinding:mc_feature:755d3611ac1c499c28289ccca5b738af6a5859b7') { transitive = false }
+	extraLibs('com.seedfinding:mc_reversal:75aa6ce47a9f53a1aa212765e9830e08f6c86299') { transitive = false }
 
 	// seedcracker api
 	implementation (include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:2.10.1')) {transitive = false}
@@ -93,6 +94,6 @@ tasks.withType(JavaCompile).configureEach {
 	// We'll use that if it's available, but otherwise we'll use the older option.
 	def targetVersion = 21
 	if (JavaVersion.current().isJava9Compatible()) {
-		 it.options.release = targetVersion
+		it.options.release = targetVersion
 	}
 }

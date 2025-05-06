@@ -20,10 +20,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.chunk.WorldChunk;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -32,17 +32,17 @@ import java.util.concurrent.Executors;
 */
 public class NewChunks extends Module {
 
-    private final SettingGroup sgGeneral = settings.getDefaultGroup();
+	private final SettingGroup sgGeneral = settings.getDefaultGroup();
 	private final SettingGroup sgRender = settings.createGroup("Render");
 
 	// general
 
 	private final Setting<Boolean> remove = sgGeneral.add(new BoolSetting.Builder()
-        .name("remove")
-        .description("Removes the cached chunks when disabling the module.")
-        .defaultValue(true)
-        .build()
-    );
+			.name("remove")
+			.description("Removes the cached chunks when disabling the module.")
+			.defaultValue(true)
+			.build()
+	);
 
 	// render
 	public final Setting<Integer> renderHeight = sgRender.add(new IntSetting.Builder()
@@ -93,14 +93,14 @@ public class NewChunks extends Module {
 			.build()
 	);
 
-    private final Set<ChunkPos> newChunks = Collections.synchronizedSet(new HashSet<>());
-    private final Set<ChunkPos> oldChunks = Collections.synchronizedSet(new HashSet<>());
-    private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
+	private final Set<ChunkPos> newChunks = Collections.synchronizedSet(new HashSet<>());
+	private final Set<ChunkPos> oldChunks = Collections.synchronizedSet(new HashSet<>());
+	private static final Direction[] searchDirs = new Direction[] { Direction.EAST, Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.UP };
 	private final Executor taskExecutor = Executors.newSingleThreadExecutor();
 
-    public NewChunks() {
-        super(MeteorRejectsAddon.CATEGORY,"new-chunks", "Detects completely new chunks using certain traits of them");
-    }
+	public NewChunks() {
+		super(MeteorRejectsAddon.CATEGORY,"new-chunks", "Detects completely new chunks using certain traits of them");
+	}
 
 	@Override
 	public void onDeactivate() {
@@ -136,7 +136,7 @@ public class NewChunks extends Module {
 
 	private void render(Box box, Color sides, Color lines, ShapeMode shapeMode, Render3DEvent event) {
 		event.renderer.box(
-			box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, sides, lines, shapeMode, 0);
+				box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ, sides, lines, shapeMode, 0);
 	}
 
 	@EventHandler
@@ -181,7 +181,67 @@ public class NewChunks extends Module {
 			if (!newChunks.contains(pos) && mc.world.getChunkManager().getChunk(packet.getChunkX(), packet.getChunkZ()) == null) {
 				WorldChunk chunk = new WorldChunk(mc.world, pos);
 				try {
-					taskExecutor.execute(() -> chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new NbtCompound(), packet.getChunkData().getBlockEntities(packet.getChunkX(), packet.getChunkZ())));
+					taskExecutor.execute(() -> chunk.loadFromPacket(packet.getChunkData().getSectionsDataBuf(), new Map<Heightmap.Type, long[]>() {
+						@Override
+						public int size() {
+							return 0;
+						}
+
+						@Override
+						public boolean isEmpty() {
+							return false;
+						}
+
+						@Override
+						public boolean containsKey(Object key) {
+							return false;
+						}
+
+						@Override
+						public boolean containsValue(Object value) {
+							return false;
+						}
+
+						@Override
+						public long[] get(Object key) {
+							return new long[0];
+						}
+
+						@Override
+						public @Nullable long[] put(Heightmap.Type key, long[] value) {
+							return new long[0];
+						}
+
+						@Override
+						public long[] remove(Object key) {
+							return new long[0];
+						}
+
+						@Override
+						public void putAll(@NotNull Map<? extends Heightmap.Type, ? extends long[]> m) {
+
+						}
+
+						@Override
+						public void clear() {
+
+						}
+
+						@Override
+						public @NotNull Set<Heightmap.Type> keySet() {
+							return Set.of();
+						}
+
+						@Override
+						public @NotNull Collection<long[]> values() {
+							return List.of();
+						}
+
+						@Override
+						public @NotNull Set<Entry<Heightmap.Type, long[]>> entrySet() {
+							return Set.of();
+						}
+					}, packet.getChunkData().getBlockEntities(packet.getChunkX(), packet.getChunkZ())));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					return;
 				}

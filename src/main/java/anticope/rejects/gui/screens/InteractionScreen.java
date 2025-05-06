@@ -2,7 +2,9 @@ package anticope.rejects.gui.screens;
 
 import anticope.rejects.mixin.EntityAccessor;
 import anticope.rejects.modules.InteractionMenu;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.DestFactor;
+import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.KeyEvent;
@@ -15,7 +17,7 @@ import meteordevelopment.starscript.compiler.Parser;
 import meteordevelopment.starscript.utils.Error;
 import meteordevelopment.starscript.utils.StarscriptError;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderProgramKeys;
+import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -27,9 +29,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Saddleable;
+import net.minecraft.entity.SaddledComponent;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
+import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.StorageMinecartEntity;
 import net.minecraft.item.ItemStack;
@@ -187,26 +190,19 @@ public class InteractionScreen extends Screen {
             } catch (NullPointerException ex) {
             }
         }
-        if (e instanceof Saddleable) {
-            if (((Saddleable) e).isSaddled()) {
+        if (e instanceof HorseEntity) {
+            if (((HorseEntity) e).isWearingBodyArmor()) {
                 stack[index[0]] = Items.SADDLE.getDefaultStack();
                 index[0]++;
             }
         }
-        LivingEntity a = (LivingEntity) e;
-        a.getHandItems().forEach(itemStack -> {
-            if (itemStack != null) {
-                stack[index[0]] = itemStack;
-                index[0]++;
-            }
-        });
 
-        a.getArmorItems().forEach(itemStack -> {
-            if (itemStack != null) {
-                stack[index[0]] = itemStack;
-                index[0]++;
-            }
-        });
+        LivingEntity a = (LivingEntity) e;
+        ItemStack itemStack = a.getStackInHand(Hand.MAIN_HAND);
+        if (itemStack != null) {
+            stack[index[0]] = itemStack;
+            index[0]++;
+        }
 
         for (int i = index[0]; i < 27; i++) stack[i] = Items.AIR.getDefaultStack();
         return stack;
@@ -252,11 +248,16 @@ public class InteractionScreen extends Screen {
         MatrixStack matrix = context.getMatrices();
         // Fake crosshair stuff
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
-                GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
-                GlStateManager.DstFactor.ZERO);
+        GlStateManager._enableBlend();
+// Common blend mode for UI elements
+        GlStateManager._blendFuncSeparate(
+                770,  // GL_SRC_ALPHA
+                771,  // GL_ONE_MINUS_SRC_ALPHA
+                1,    // GL_ONE
+                0     // GL_ZERO
+        );
+
+
         context.drawTexture(RenderLayer::getGuiTextured, GUI_ICONS_TEXTURE,  crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, 256, 256);
 
         drawDots(context, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
@@ -277,7 +278,12 @@ public class InteractionScreen extends Screen {
         int scale = client.options.getGuiScale().getValue();
         Vector2f mouse = new Vector2f(mouseX, mouseY);
         Vector2f center = new Vector2f(width / 2, height / 2);
-        mouse.sub(center).normalize();
+        mouse.sub(center);
+
+        // Add this check to prevent normalizing a zero vector
+        if (mouse.x != 0 || mouse.y != 0) {
+            mouse.normalize();
+        }
 
         if (scale == 0) scale = 4;
 
@@ -288,6 +294,7 @@ public class InteractionScreen extends Screen {
             mouse.mul(1f / scale * 200f);
         return mouse;
     }
+
 
     private void drawDots(DrawContext context, int radius, int mouseX, int mouseY) {
         ArrayList<Point> pointList = new ArrayList<Point>();

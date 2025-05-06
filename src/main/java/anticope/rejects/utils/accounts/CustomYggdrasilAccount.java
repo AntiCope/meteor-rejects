@@ -70,8 +70,8 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
         super.fromTag(tag);
         if (!tag.contains("password")) throw new NbtException();
 
-        password = tag.getString("password");
-        server = tag.getString("server");
+        password = String.valueOf(tag.getString("password"));
+        server = String.valueOf(tag.getString("server"));
 
         return this;
     }

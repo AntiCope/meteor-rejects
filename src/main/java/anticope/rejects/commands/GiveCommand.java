@@ -45,7 +45,7 @@ public class GiveCommand extends Command {
                 ct.putInt("Time", 1);
                 ct.putString("id", "minecraft:falling_block");
                 ct.put("BlockState", new NbtCompound());
-                ct.getCompound("BlockState").putString("Name", Registries.ITEM.getId(inHand.getItem()).toString());
+                ct.getCompound("BlockState");
 
             } else {
                 ct.putString("id", "minecraft:item");

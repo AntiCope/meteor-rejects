@@ -14,6 +14,7 @@ import net.minecraft.nbt.NbtString;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -72,9 +73,9 @@ public class StringMapSetting extends Setting<Map<String, String>> {
     protected Map<String, String> load(NbtCompound tag) {
         get().clear();
 
-        NbtCompound valueTag = tag.getCompound("map");
-        for (String key : valueTag.getKeys()) {
-            get().put(key, valueTag.getString(key));
+        Optional<NbtCompound> valueTag = tag.getCompound("map");
+        for (String key : valueTag.get().getKeys()) {
+            get().put(key, String.valueOf(valueTag.get().getString(key)));
         }
 
         return get();

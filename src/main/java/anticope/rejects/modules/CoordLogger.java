@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
 import net.minecraft.network.packet.s2c.play.WorldEventS2CPacket;
@@ -29,7 +30,7 @@ public class CoordLogger extends Module {
     private final SettingGroup sgWorldEvents = settings.createGroup("World Events");
 
     // General
-    
+
     private final Setting<Double> minDistance = sgGeneral.add(new DoubleSetting.Builder()
             .name("minimum-distance")
             .description("Minimum distance to log event.")
@@ -40,9 +41,9 @@ public class CoordLogger extends Module {
             .defaultValue(10)
             .build()
     );
-    
+
     // Teleports
-    
+
     private final Setting<Boolean> players = sgTeleports.add(new BoolSetting.Builder()
             .name("players")
             .description("Logs player teleports.")
@@ -58,7 +59,7 @@ public class CoordLogger extends Module {
     );
 
     // World events
-    
+
     private final Setting<Boolean> enderDragons = sgWorldEvents.add(new BoolSetting.Builder()
             .name("ender-dragons")
             .description("Logs killed ender dragons.")
@@ -79,7 +80,7 @@ public class CoordLogger extends Module {
             .defaultValue(false)
             .build()
     );
-    
+
 
     private final Setting<Boolean> otherEvents = sgWorldEvents.add(new BoolSetting.Builder()
             .name("other-global-events")
@@ -87,7 +88,7 @@ public class CoordLogger extends Module {
             .defaultValue(false)
             .build()
     );
-    
+
     public CoordLogger() {
         super(MeteorRejectsAddon.CATEGORY,"coord-logger", "Logs coordinates of various events. Might not work on Spigot/Paper servers.");
     }
@@ -97,15 +98,15 @@ public class CoordLogger extends Module {
         // Teleports
         if (event.packet instanceof EntityPositionS2CPacket) {
             EntityPositionS2CPacket packet = (EntityPositionS2CPacket) event.packet;
-            
+
             try {
                 Entity entity = mc.world.getEntityById(packet.entityId());
-                
+
                 // Player teleport
                 if (entity.getType().equals(EntityType.PLAYER) && players.get()) {
                     Vec3d packetPosition = packet.change().position();
                     Vec3d playerPosition = entity.getPos();
-                    
+
                     if (playerPosition.distanceTo(packetPosition) >= minDistance.get()) {
                         info(formatMessage("Player '" + entity.getNameForScoreboard() + "' has teleported to ", packetPosition));
                     }
@@ -115,23 +116,23 @@ public class CoordLogger extends Module {
                 else if (entity.getType().equals(EntityType.WOLF) && wolves.get()) {
                     Vec3d packetPosition = packet.change().position();
                     Vec3d wolfPosition = entity.getPos();
-                    
-                    UUID ownerUuid = ((TameableEntity) entity).getOwnerUuid();
-                    
+
+                    LivingEntity ownerUuid = ((TameableEntity) entity).getOwner();
+
                     if (ownerUuid != null && wolfPosition.distanceTo(packetPosition) >= minDistance.get()) {
                         info(formatMessage("Wolf has teleported to ", packetPosition));
                     }
                 }
             } catch(NullPointerException ignored) {}
-            
-        // World events
+
+            // World events
         } else if (event.packet instanceof WorldEventS2CPacket) {
             WorldEventS2CPacket worldEventS2CPacket = (WorldEventS2CPacket) event.packet;
-            
+
             if (worldEventS2CPacket.isGlobal()) {
                 // Min distance
                 if (PlayerUtils.distanceTo(worldEventS2CPacket.getPos()) <= minDistance.get()) return;
-                
+
                 switch (worldEventS2CPacket.getEventId()) {
                     case 1023:
                         if (withers.get()) info(formatMessage("Wither spawned at ", worldEventS2CPacket.getPos()));

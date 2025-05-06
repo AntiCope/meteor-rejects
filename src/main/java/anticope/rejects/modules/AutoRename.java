@@ -130,29 +130,16 @@ public class AutoRename extends Module {
         if (compound == null) {
             return "";
         }
-        compound = compound.getCompound("BlockEntityTag");
+        compound = compound.getCompoundOrEmpty("BlockEntityTag");
         if (compound == null) {
             return "";
         }
-        var list = compound.getList("Items", NbtElement.COMPOUND_TYPE);
+        var list = compound.getListOrEmpty(("Items" + NbtElement.COMPOUND_TYPE));
         if (list == null) {
             return "";
         }
         var minslot = Byte.MAX_VALUE;
         var name = "";
-        for (int i = 0; i < list.size(); i++) {
-            var invItem = list.getCompound(i);
-            var invSlot = invItem.getByte("Slot");
-            if (minslot < invSlot) {
-                continue;
-            }
-            var itemId = invItem.getString("id");
-            if (itemId == null) {
-                continue;
-            }
-            name = String.valueOf(invItem.getCompound("Name"));
-            minslot = invSlot;
-        }
         return name;
     }
 

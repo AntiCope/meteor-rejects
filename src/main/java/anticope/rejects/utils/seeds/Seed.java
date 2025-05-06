@@ -8,6 +8,8 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
+import java.util.Optional;
+
 public class Seed {
     public final Long seed;
     public final MCVersion version;
@@ -26,30 +28,25 @@ public class Seed {
         return tag;
     }
 
-    public static Seed fromTag(NbtCompound tag) {
+    public static Seed fromTag(Optional<NbtCompound> tag) {
         return new Seed(
-            tag.getLong("seed"),
-            MCVersion.fromString(tag.getString("version"))
+                tag.get().getLong("seed", 1),
+                MCVersion.fromString(String.valueOf(tag.get().getString("version")))
         );
     }
 
     public Text toText() {
         MutableText text = Text.literal(String.format("[%s%s%s] (%s)",
-            Formatting.GREEN,
-            seed.toString(),
-            Formatting.WHITE,
-            version.toString()
+                Formatting.GREEN,
+                seed.toString(),
+                Formatting.WHITE,
+                version.toString()
         ));
         text.setStyle(text.getStyle()
-            .withClickEvent(new ClickEvent(
-                ClickEvent.Action.COPY_TO_CLIPBOARD,
-                seed.toString()
-            ))
-            .withHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                Text.literal("Copy to clipboard")
-            ))
+                .withClickEvent(new ClickEvent.CopyToClipboard(seed.toString()))
+                .withHoverEvent(new HoverEvent.ShowText(Text.literal("Copy to clipboard")))
         );
         return text;
     }
+
 }

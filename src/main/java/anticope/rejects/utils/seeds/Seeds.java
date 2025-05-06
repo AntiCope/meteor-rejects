@@ -102,14 +102,14 @@ public class Seeds extends System<Seeds> {
         String cmd = String.format("%sseed %s ", Config.get().prefix, seed);
         MutableText cmdText = Text.literal(cmd+"<version>");
         cmdText.setStyle(cmdText.getStyle()
-            .withUnderline(true)
-            .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, cmd))
-            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("run command")))
-        );
+                .withUnderline(true)
+                .withClickEvent(new ClickEvent.SuggestCommand(String.format("%sseed %s ", Config.get().prefix, seed)))
+                .withHoverEvent(new HoverEvent.ShowText(Text.literal("run command"))));
         msg.append(cmdText);
         msg.setStyle(msg.getStyle()
-            .withColor(Formatting.YELLOW)
+                .withColor(Formatting.YELLOW)
         );
         ChatUtils.sendMsg("Seed", msg);
     }
+
 }

@@ -80,16 +80,31 @@ public class RejectsConfig extends System<RejectsConfig> {
 
     @Override
     public RejectsConfig fromTag(NbtCompound tag) {
-        httpAllowed = HttpAllowed.valueOf(tag.getString("httpAllowed"));
-        httpUserAgent = tag.getString("httpUserAgent");
-        loadSystemFonts = tag.getBoolean("loadSystemFonts");
-        duplicateModuleNames = tag.getBoolean("duplicateModuleNames");
+        // Clean the "httpAllowed" string in case it's wrapped in Optional
+        String httpAllowedString = String.valueOf(tag.getString("httpAllowed"));
+        if (httpAllowedString.startsWith("Optional[")) {
+            httpAllowedString = httpAllowedString.substring(9, httpAllowedString.length() - 1); // Strip "Optional[" and "]"
+        }
 
-        NbtList valueTag = tag.getList("hiddenModules", 8);
+        try {
+            // Convert the cleaned string to the HttpAllowed enum
+            httpAllowed = HttpAllowed.valueOf(httpAllowedString);
+        } catch (IllegalArgumentException e) {
+            // Handle invalid enum value (optional)
+            java.lang.System.err.println("Invalid value for httpAllowed: " + httpAllowedString);
+            httpAllowed = HttpAllowed.Everything; // Default to Everything in case of error
+        }
+
+        httpUserAgent = String.valueOf(tag.getString("httpUserAgent"));
+        loadSystemFonts = Boolean.parseBoolean(String.valueOf(tag.getBoolean("loadSystemFonts")));
+        duplicateModuleNames = Boolean.parseBoolean(String.valueOf(tag.getBoolean("duplicateModuleNames")));
+
+        NbtList valueTag = tag.getListOrEmpty("hiddenModules");
         for (NbtElement tagI : valueTag) {
-            hiddenModules.add(tagI.asString());
+            hiddenModules.add(String.valueOf(tagI.asString()));
         }
 
         return this;
     }
+
 }

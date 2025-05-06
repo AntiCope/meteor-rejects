@@ -116,51 +116,24 @@ public class ServerCommand extends Command {
             text.append(ports.get(port));
             if (ports.get(port).startsWith("HTTP") || ports.get(port).startsWith("FTP")) {
                 text.setStyle(text.getStyle()
-                        .withClickEvent(new ClickEvent(
-                                Action.OPEN_URL,
-                                String.format("%s://%s:%d", ports.get(port).toLowerCase(), address.getHostAddress(), port)
-                        ))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
-                                Text.literal("Open in browser")
-                        ))
-                );
+                        .withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(String.format("%s://%s:%d", ports.get(port).toLowerCase(), address.getHostAddress(), port))))
+                        .withHoverEvent(new HoverEvent.ShowText(Text.literal("Open in browser"))));
             } else if (Objects.equals(ports.get(port), "DynMap")) {
                 text.setStyle(text.getStyle()
-                        .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.OPEN_URL,
-                                String.format("http://%s:%d", address.getHostAddress(), port)
-                        ))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
-                                Text.literal("Open in browser")
-                        ))
-                );
+                        .withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(String.format("http://%s:%d", address.getHostAddress(), port))))
+                        .withHoverEvent(new HoverEvent.ShowText(Text.literal("Open in browser"))));
             } else {
                 text.setStyle(text.getStyle()
-                        .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.COPY_TO_CLIPBOARD,
-                                String.format("%s:%d", address.getHostAddress(), port)
-                        ))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
-                                Text.literal("Copy")
-                        ))
-                );
+                        .withClickEvent(new ClickEvent.CopyToClipboard(String.format("%s:%d", address.getHostAddress(), port)))
+                        .withHoverEvent(new HoverEvent.ShowText(Text.literal("Copy"))));
             }
         } else {
             text.setStyle(text.getStyle()
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.COPY_TO_CLIPBOARD,
-                            String.format("%s:%d", address.getHostAddress(), port)
-                    ))
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
-                            Text.literal("Copy")
-                    ))
-            );
+                    .withClickEvent(new ClickEvent.CopyToClipboard(String.format("%s:%d", address.getHostAddress(), port)))
+                    .withHoverEvent(new HoverEvent.ShowText(Text.literal("Copy"))));
         }
 
         return text;
     }
+
 }
