@@ -83,7 +83,7 @@ public class Seeds extends System<Seeds> {
     @Override
     public Seeds fromTag(NbtCompound tag) {
         tag.getKeys().forEach(key -> {
-            seeds.put(key, Seed.fromTag(tag.getCompound(key)));
+            seeds.put(key, Seed.fromTag(tag.getCompoundOrEmpty(key)));
         });
         return this;
     }

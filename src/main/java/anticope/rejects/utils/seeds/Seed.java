@@ -8,8 +8,6 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
-import java.util.Optional;
-
 public class Seed {
     public final Long seed;
     public final MCVersion version;
@@ -28,10 +26,10 @@ public class Seed {
         return tag;
     }
 
-    public static Seed fromTag(Optional<NbtCompound> tag) {
+    public static Seed fromTag(NbtCompound tag) {
         return new Seed(
-                tag.get().getLong("seed", 1),
-                MCVersion.fromString(String.valueOf(tag.get().getString("version")))
+                tag.getLong("seed", 1),
+                MCVersion.fromString(String.valueOf(tag.getString("version")))
         );
     }
 

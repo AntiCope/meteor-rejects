@@ -73,9 +73,9 @@ public class StringMapSetting extends Setting<Map<String, String>> {
     protected Map<String, String> load(NbtCompound tag) {
         get().clear();
 
-        Optional<NbtCompound> valueTag = tag.getCompound("map");
-        for (String key : valueTag.get().getKeys()) {
-            get().put(key, String.valueOf(valueTag.get().getString(key)));
+        NbtCompound valueTag = tag.getCompoundOrEmpty("map");
+        for (String key : valueTag.getKeys()) {
+            get().put(key, String.valueOf(valueTag.getString(key)));
         }
 
         return get();
