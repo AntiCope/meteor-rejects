@@ -80,24 +80,32 @@ public class RejectsConfig extends System<RejectsConfig> {
 
     @Override
     public RejectsConfig fromTag(NbtCompound tag) {
-        // Clean the "httpAllowed" string in case it's wrapped in Optional
-        String httpAllowedString = String.valueOf(tag.getString("httpAllowed"));
-        if (httpAllowedString.startsWith("Optional[")) {
-            httpAllowedString = httpAllowedString.substring(9, httpAllowedString.length() - 1); // Strip "Optional[" and "]"
+        // Get the "httpAllowed" string safely
+        String httpAllowedString = "Everything";
+        if (tag.contains("httpAllowed")) {
+            NbtElement httpAllowedElement = tag.get("httpAllowed");
+            if (httpAllowedElement != null) {
+                httpAllowedString = String.valueOf(httpAllowedElement.asString());
+                // Remove quotes if present (asString() may wrap in quotes)
+                if (httpAllowedString.startsWith("\"") && httpAllowedString.endsWith("\"")) {
+                    httpAllowedString = httpAllowedString.substring(1, httpAllowedString.length() - 1);
+                }
+                if (httpAllowedString.startsWith("Optional[")) {
+                    httpAllowedString = httpAllowedString.substring(9, httpAllowedString.length() - 1);
+                }
+            }
         }
 
         try {
-            // Convert the cleaned string to the HttpAllowed enum
             httpAllowed = HttpAllowed.valueOf(httpAllowedString);
         } catch (IllegalArgumentException e) {
-            // Handle invalid enum value (optional)
             java.lang.System.err.println("Invalid value for httpAllowed: " + httpAllowedString);
-            httpAllowed = HttpAllowed.Everything; // Default to Everything in case of error
+            httpAllowed = HttpAllowed.Everything;
         }
 
-        httpUserAgent = String.valueOf(tag.getString("httpUserAgent"));
-        loadSystemFonts = Boolean.parseBoolean(String.valueOf(tag.getBoolean("loadSystemFonts")));
-        duplicateModuleNames = Boolean.parseBoolean(String.valueOf(tag.getBoolean("duplicateModuleNames")));
+        httpUserAgent = tag.contains("httpUserAgent") ? String.valueOf(tag.getString("httpUserAgent")) : "Meteor Client";
+        loadSystemFonts = tag.contains("loadSystemFonts") && tag.getBoolean("loadSystemFonts").orElse(false);
+        duplicateModuleNames = tag.contains("duplicateModuleNames") && tag.getBoolean("duplicateModuleNames").orElse(false);
 
         NbtList valueTag = tag.getListOrEmpty("hiddenModules");
         for (NbtElement tagI : valueTag) {
@@ -106,5 +114,4 @@ public class RejectsConfig extends System<RejectsConfig> {
 
         return this;
     }
-
 }
