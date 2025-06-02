@@ -5,6 +5,7 @@ import java.util.HashMap;
 import anticope.rejects.events.SeedChangedEvent;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
@@ -36,15 +37,44 @@ public class Seeds extends System<Seeds> {
     }
 
     public Seed getSeed() {
-        if (mc.isIntegratedServerRunning() && mc.getServer() != null) {
-            MCVersion version = MCVersion.fromString(mc.getServer().getVersion());
-            if (version == null)
-                version = MCVersion.latest();
-            return new Seed(mc.getServer().getOverworld().getSeed(), version);
+        try {
+            // Check if we're in single-player (integrated server)
+            if (mc != null && mc.isIntegratedServerRunning()) {
+                MinecraftServer server = mc.getServer();
+                if (server != null && server.getOverworld() != null) {
+                    MCVersion version = MCVersion.fromString(server.getVersion());
+                    if (version == null) {
+                        version = MCVersion.latest();
+                        java.lang.System.out.println("Warning: Server version could not be parsed. Defaulting to latest.");
+                    }
+
+                    long seedValue = server.getOverworld().getSeed();
+                    return new Seed(seedValue, version);
+                } else {
+                    java.lang.System.out.println("Warning: Server or Overworld is null.");
+                }
+            }
+
+            // Fallback: Try to retrieve the seed from the stored seeds map
+            if (seeds != null) {
+                String worldName = Utils.getWorldName();
+                if (worldName != null && seeds.containsKey(worldName)) {
+                    return seeds.get(worldName);
+                } else {
+                    java.lang.System.out.println("Warning: World name is null or not found in seeds map.");
+                }
+            } else {
+                java.lang.System.out.println("Warning: Seeds map is null.");
+            }
+        } catch (Exception e) {
+            java.lang.System.out.println("Error occurred while getting seed: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        return seeds.get(Utils.getWorldName());
+        // Final fallback: return a default seed to prevent crashing
+        return new Seed(0L, MCVersion.latest());
     }
+
 
     public void setSeed(String seed, MCVersion version) {
         if (mc.isIntegratedServerRunning()) return;

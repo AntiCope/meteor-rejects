@@ -19,8 +19,5 @@ public class HeadsCommand extends Command {
             Utils.screenToOpen = new HeadScreen(GuiThemes.get());
             return SINGLE_SUCCESS;
         });
-
     }
-
-
 }
