@@ -21,6 +21,7 @@
     "MobEntityAccessor",
     "MultiplayerScreenAccessor",
     "MultiplayerScreenMixin",
+    "PathMixin",
     "PlayerEntityMixin",
     "PlayerMoveC2SPacketAccessor",
     "RarityFilterPlacementModifierAccessor",
@@ -33,8 +34,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "PathMixin"
-  ]
+  }
 }

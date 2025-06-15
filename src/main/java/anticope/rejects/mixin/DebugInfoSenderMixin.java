@@ -81,7 +81,7 @@ public class DebugInfoSenderMixin {
 
     @Inject(method = {"sendPoi"}, at = {@At("HEAD")})
     private static void sendPoi(ServerWorld world, BlockPos pos, CallbackInfo ci) {
-        Registry<Structure> structureRegistry = world.getRegistryManager().get(RegistryKeys.STRUCTURE);
+        Registry<Structure> structureRegistry = world.getRegistryManager().getOrThrow(RegistryKeys.STRUCTURE);
         ChunkSectionPos chunkSectionPos = ChunkSectionPos.from(pos);
 
         for (RegistryEntry<Structure> entry : structureRegistry.iterateEntries(StructureTags.VILLAGE)) {
@@ -190,7 +190,7 @@ public class DebugInfoSenderMixin {
 
     @Inject(method = "sendBreezeDebugData", at = @At("HEAD"))
     private static void sendBreezeDebugData(BreezeEntity breeze, CallbackInfo ci) {
-        sendToAll((ServerWorld) breeze.getWorld(), new DebugBreezeCustomPayload(new DebugBreezeCustomPayload.BreezeInfo(breeze.getUuid(), breeze.getId(), breeze.getTarget() == null ? null : breeze.getTarget().getId(), (BlockPos)breeze.getBrain().getOptionalMemory(MemoryModuleType.BREEZE_JUMP_TARGET).orElse((null)))));
+        sendToAll((ServerWorld) breeze.getWorld(), new DebugBreezeCustomPayload(new DebugBreezeCustomPayload.BreezeInfo(breeze.getUuid(), breeze.getId(), breeze.getTarget() == null ? null : breeze.getTarget().getId(), breeze.getBrain().getOptionalMemory(MemoryModuleType.BREEZE_JUMP_TARGET).orElse((null)))));
     }
 
     @Inject(method = "sendGameEvent", at = @At("HEAD"))
