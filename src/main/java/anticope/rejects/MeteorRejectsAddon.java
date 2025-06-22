@@ -85,6 +85,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new VehicleOneHit());
         modules.add(new AutoEnchant());
         modules.add(new AutoRename());
+        modules.add(new HappyGhastSpeed());
+
 
         // Commands
         Commands.add(new CenterCommand());
