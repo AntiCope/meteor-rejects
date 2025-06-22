@@ -64,12 +64,11 @@ public class SkeletonESP extends Module {
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
 
-        //    RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
-        //    RenderSystem.enableBlend();
-        //    RenderSystem.defaultBlendFunc();
-        //    RenderSystem.disableDepthTest();
-        //    RenderSystem.depthMask(MinecraftClient.isFancyGraphicsOrBetter());
-        //    RenderSystem.enableCull();
+        GlStateManager.glAttachShader(1,1);
+        GlStateManager._enableBlend();
+        GlStateManager._disableDepthTest();
+        GlStateManager._depthMask(MinecraftClient.isFancyGraphicsOrBetter());
+        GlStateManager._enableCull();
 
         mc.world.getEntities().forEach(entity -> {
             if (!(entity instanceof PlayerEntity)) return;

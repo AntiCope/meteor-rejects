@@ -79,7 +79,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new RoboWalk());
         modules.add(new ShieldBypass());
         modules.add(new SilentDisconnect());
-        //    modules.add(new SkeletonESP());
+        //modules.add(new SkeletonESP());
         modules.add(new SoundLocator());
         modules.add(new TreeAura());
         modules.add(new VehicleOneHit());

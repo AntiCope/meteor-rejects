@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.Text;
 
 public class ReconnectCommand extends Command {
     public ReconnectCommand() {
@@ -19,7 +20,7 @@ public class ReconnectCommand extends Command {
         builder.executes(context -> {
             ServerInfo info = mc.isInSingleplayer() ? null : mc.getCurrentServerEntry();
             if (info != null) {
-                mc.world.disconnect();
+                mc.world.disconnect(Text.literal(""));
                 ConnectScreen.connect(new MultiplayerScreen(new TitleScreen()), mc,
                         ServerAddress.parse(info.address), info, false, null);
             }

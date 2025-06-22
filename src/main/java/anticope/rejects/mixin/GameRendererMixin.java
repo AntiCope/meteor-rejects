@@ -37,7 +37,7 @@ public class GameRendererMixin {
 
         if (shader != null) {
 //            shader.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
-            shader.render(this.client.getFramebuffer(),this.pool,this.consumer);
+            shader.render(this.client.getFramebuffer(),this.pool);
         }
     }
 }

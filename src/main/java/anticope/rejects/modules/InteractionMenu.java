@@ -9,12 +9,12 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import meteordevelopment.starscript.value.Value;
-import meteordevelopment.starscript.value.ValueMap;
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import org.meteordev.starscript.value.Value;
+import org.meteordev.starscript.value.ValueMap;
 
 import java.util.Map;
 import java.util.Optional;

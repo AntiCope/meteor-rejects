@@ -17,6 +17,13 @@ repositories {
 	maven { url "https://maven-snapshots.seedfinding.com/" }
 	maven { url 'https://jitpack.io' }
 	maven { url 'https://maven.duti.dev/releases' }
+	maven { url "https://maven.terraformersmc.com/releases" }
+	maven { url "https://maven.shedaniel.me/" }
+	maven { url "https://maven.latticg.com/" }
+	maven { url "https://maven.seedfinding.com/" }
+	maven { url "https://maven-snapshots.seedfinding.com/" }
+	maven { url "https://jitpack.io" }
+	maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
 }
 
 loom {
@@ -43,14 +50,14 @@ dependencies {
 	modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
-	extraLibs('com.seedfinding:mc_math:851e9d0577dfdca50154e98f1d334bd31c641326') { transitive = false }
-	extraLibs('com.seedfinding:mc_seed:55f6242001f7eb4226df4ed0d023f1838a54a99d') { transitive = false }
-	extraLibs('com.seedfinding:mc_core:b84ff1c38be399eda096dbde2819258c62f81275') { transitive = false }
-	extraLibs('com.seedfinding:mc_noise:dbab3996ea3abff5dd420db53c31d5498afd2fe5') { transitive = false }
-	extraLibs('com.seedfinding:mc_biome:17af8cb1110fdc983b7cb2b887d1fb2060e23ee3') { transitive = false }
-	extraLibs('com.seedfinding:mc_terrain:a03e440ec5b282e399382f2cc5ad0db91b438d2e') { transitive = false }
-	extraLibs('com.seedfinding:mc_feature:755d3611ac1c499c28289ccca5b738af6a5859b7') { transitive = false }
-	extraLibs('com.seedfinding:mc_reversal:75aa6ce47a9f53a1aa212765e9830e08f6c86299') { transitive = false }
+	extraLibs("com.seedfinding:mc_math:${project.seedfinding_math_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_seed:${project.seedfinding_seed_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_core:${project.seedfinding_core_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_noise:${project.seedfinding_noise_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_biome:${project.seedfinding_biome_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_terrain:${project.seedfinding_terrain_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_feature:${project.seedfinding_feature_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_reversal:${project.seedfinding_reversal_version}") { transitive = false }
 
 	// seedcracker api
 	implementation (include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:2.10.1')) {transitive = false}
