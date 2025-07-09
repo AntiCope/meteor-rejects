@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.10.1'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
@@ -37,10 +37,10 @@ configurations {
 
 dependencies {
 	// This will make it work on most platforms. It automatically chooses the right dependencies at runtime.
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:linux64') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:osx') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.4') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.4:linux64') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.4:osx') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.4:windows64') { transitive = false }
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
