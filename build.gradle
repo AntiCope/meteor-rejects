@@ -31,7 +31,7 @@ loom {
 }
 
 configurations {
-	// configuration that holds jars to include in the jar
+	// configuration that holds jars to include in the jard
 	extraLibs
 }
 
