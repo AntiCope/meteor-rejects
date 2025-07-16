@@ -39,37 +39,31 @@ public class LocateCommand extends Command {
 		builder.then(literal("feature")
 				.then(argument("feature", EnumArgumentType.enumArgument(Cubiomes.StructureType.Village)).executes(ctx -> {
 					Cubiomes.StructureType feature = EnumArgumentType.getEnum(ctx, "feature", Cubiomes.StructureType.Village);
-					BlockPos playerPos = mc.player.getBlockPos();
+                    assert mc.player != null;
+                    BlockPos playerPos = mc.player.getBlockPos();
 					long seed = Seeds.get().getSeed().seed;
 					MCVersion version = Seeds.get().getSeed().version;
 					Cubiomes.MCVersion cubiomesVersion = null;
 					if (version.isNewerOrEqualTo(MCVersion.v1_20)) {
-						cubiomesVersion = Cubiomes.MCVersion.MC_1_20;
+						cubiomesVersion = Cubiomes.MCVersion.MC_1_19_4;
 					} else if (version.isNewerOrEqualTo(MCVersion.v1_19)) {
-						switch (version) {
-							case v1_19:
-							case v1_19_1:
-								cubiomesVersion = Cubiomes.MCVersion.MC_1_19;
-								break;
-							case v1_19_2:
-							case v1_19_3:
-							case v1_19_4:
-								cubiomesVersion = Cubiomes.MCVersion.MC_1_19_2;
-								break;
-							default:
-								throw new IllegalStateException("Unexpected value: " + version);
-						}
+                        cubiomesVersion = switch (version) {
+                            case v1_19, v1_19_1 -> Cubiomes.MCVersion.MC_1_19_4;
+                            case v1_19_2, v1_19_3, v1_19_4 -> Cubiomes.MCVersion.MC_1_19_2;
+                            default -> throw new IllegalStateException("Unexpected value: " + version);
+                        };
 					} else if (version.isNewerOrEqualTo(MCVersion.v1_18)) {
-						cubiomesVersion = Cubiomes.MCVersion.MC_1_18;
+						cubiomesVersion = Cubiomes.MCVersion.MC_1_18_2;
 					}
-					Pos pos = null;
+					Pos pos;
 					if (cubiomesVersion != null) {
 						pos = Cubiomes.GetNearestStructure(feature, playerPos.getX(), playerPos.getZ(), seed,
 								cubiomesVersion);
 					} else {
 						BlockPos bpos = WorldGenUtils.locateFeature(feature, playerPos);
 						pos = new Pos();
-						pos.x = bpos.getX();
+                        assert bpos != null;
+                        pos.x = bpos.getX();
 						pos.z = bpos.getZ();
 
 					}
