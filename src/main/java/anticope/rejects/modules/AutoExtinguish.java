@@ -114,24 +114,27 @@ public class AutoExtinguish extends Module {
                 place(slot);
                 hasPlacedWater = false;
 
-            } else if (!mc.player.hasStatusEffect(Registries.STATUS_EFFECT.getEntry(FIRE_RESISTANCE)) && mc.player.isOnFire()) {
-                blockPos = mc.player.getBlockPos();
-                final int slot = findSlot(Items.WATER_BUCKET);
-                if (mc.world.getBlockState(blockPos).getBlock() == Blocks.FIRE || mc.world.getBlockState(blockPos).getBlock() == Blocks.SOUL_FIRE) {
-                    float yaw = mc.gameRenderer.getCamera().getYaw() % 360;
-                    float pitch = mc.gameRenderer.getCamera().getPitch() % 360;
-                    if (center.get()) {
-                        PlayerUtils.centerPlayer();
-                    }
-                    Rotations.rotate(yaw, 90);
-                    mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, blockPos, Direction.UP));
-                    mc.player.swingHand(Hand.MAIN_HAND);
-                    mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, blockPos, Direction.UP));
+            } else {
+                assert mc.player != null;
+                if (!mc.player.hasStatusEffect(Registries.STATUS_EFFECT.getEntry(FIRE_RESISTANCE)) && mc.player.isOnFire()) {
+                    blockPos = mc.player.getBlockPos();
+                    final int slot = findSlot(Items.WATER_BUCKET);
+                    if (mc.world.getBlockState(blockPos).getBlock() == Blocks.FIRE || mc.world.getBlockState(blockPos).getBlock() == Blocks.SOUL_FIRE) {
+                        float yaw = mc.gameRenderer.getCamera().getYaw() % 360;
+                        float pitch = mc.gameRenderer.getCamera().getPitch() % 360;
+                        if (center.get()) {
+                            PlayerUtils.centerPlayer();
+                        }
+                        Rotations.rotate(yaw, 90);
+                        mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.START_DESTROY_BLOCK, blockPos, Direction.UP));
+                        mc.player.swingHand(Hand.MAIN_HAND);
+                        mc.getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.STOP_DESTROY_BLOCK, blockPos, Direction.UP));
 
-                    Rotations.rotate(yaw, pitch);
+                        Rotations.rotate(yaw, pitch);
+                    }
+                    place(slot);
+                    hasPlacedWater = true;
                 }
-                place(slot);
-                hasPlacedWater = true;
             }
         }
 
