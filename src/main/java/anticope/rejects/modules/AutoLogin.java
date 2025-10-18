@@ -67,11 +67,14 @@ public class AutoLogin extends Module {
         btn.action = () -> {
             String password = RejectsUtils.getRandomPassword(16);
             MutableText text = Text.literal(Formatting.BOLD + "Click here to register securely.");
-            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/register %s %s", password, password))));
+            text.setStyle(text.getStyle().withClickEvent(
+                    new ClickEvent.RunCommand(String.format("/register %s %s", password, password))
+            ));
             info(text);
         };
         return l;
     }
+
 
     @EventHandler
     private void onGameJoined(GameJoinedEvent event) {

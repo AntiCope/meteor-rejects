@@ -21,7 +21,7 @@ import java.util.Optional;
 public class ObsidianFarm extends Module {
 
     private boolean allowBreakAgain;
-    
+
     public ObsidianFarm() {
         super(MeteorRejectsAddon.CATEGORY, "obsidian-farm", "Auto obsidian farm(portals).");
     }
@@ -52,7 +52,7 @@ public class ObsidianFarm extends Module {
                     return;
                 }
             }
-            mc.player.getInventory().selectedSlot = pickAxe;
+            mc.player.getInventory().setSelectedSlot(pickAxe);
         }
 
         BlockPos obsidian = findObsidian();

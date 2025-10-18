@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
@@ -17,6 +17,13 @@ repositories {
 	maven { url "https://maven-snapshots.seedfinding.com/" }
 	maven { url 'https://jitpack.io' }
 	maven { url 'https://maven.duti.dev/releases' }
+	maven { url "https://maven.terraformersmc.com/releases" }
+	maven { url "https://maven.shedaniel.me/" }
+	maven { url "https://maven.latticg.com/" }
+	maven { url "https://maven.seedfinding.com/" }
+	maven { url "https://maven-snapshots.seedfinding.com/" }
+	maven { url "https://jitpack.io" }
+	maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
 }
 
 loom {
@@ -24,32 +31,33 @@ loom {
 }
 
 configurations {
-	// configuration that holds jars to include in the jar
+	// configuration that holds jars to include in the jard
 	extraLibs
 }
 
 dependencies {
 	// This will make it work on most platforms. It automatically chooses the right dependencies at runtime.
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:linux64') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:osx') { transitive = false }
-	extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.5') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.5:linux64') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.5:osx') { transitive = false }
+	extraLibs('dev.duti.acheong:cubiomes:1.22.5:windows64') { transitive = false }
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
-    modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
+	modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
-	extraLibs('com.seedfinding:mc_math:ffd2edcfcc0d18147549c88cc7d8ec6cf21b5b91') { transitive = false }
-	extraLibs('com.seedfinding:mc_seed:1ead6fcefe7e8de4b3d60cd6c4e993f1e8f33409') { transitive = false }
-	extraLibs('com.seedfinding:mc_core:1.210.0') { transitive = false }
-	extraLibs('com.seedfinding:mc_noise:7e3ba65e181796c4a2a1c8881d840b2254b92962') { transitive = false }
-	extraLibs('com.seedfinding:mc_biome:41a42cb9019a552598f12089059538853e18ec78') { transitive = false }
-	extraLibs('com.seedfinding:mc_terrain:b4246cbd5880c4f8745ccb90e1b102bde3448126') { transitive = false }
-	extraLibs('com.seedfinding:mc_feature:919b7e513cc1e87e029a9cd703fc4e2dc8686229') { transitive = false }
+	extraLibs("com.seedfinding:mc_math:${project.seedfinding_math_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_seed:${project.seedfinding_seed_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_core:${project.seedfinding_core_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_noise:${project.seedfinding_noise_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_biome:${project.seedfinding_biome_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_terrain:${project.seedfinding_terrain_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_feature:${project.seedfinding_feature_version}") { transitive = false }
+	extraLibs("com.seedfinding:mc_reversal:${project.seedfinding_reversal_version}") { transitive = false }
 
 	// seedcracker api
 	implementation (include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:2.10.1')) {transitive = false}
@@ -93,6 +101,6 @@ tasks.withType(JavaCompile).configureEach {
 	// We'll use that if it's available, but otherwise we'll use the older option.
 	def targetVersion = 21
 	if (JavaVersion.current().isJava9Compatible()) {
-		 it.options.release = targetVersion
+		it.options.release = targetVersion
 	}
 }

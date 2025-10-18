@@ -128,7 +128,7 @@ public class PacketFly extends Module {
         double speed = 0.0;
         boolean checkCollisionBoxes = checkHitBoxes();
 
-        speed = mc.player.input.playerInput.jump() && (checkCollisionBoxes || !(mc.player.input.movementForward != 0.0 || mc.player.input.movementSideways != 0.0)) ? (antiKick.get() && !checkCollisionBoxes ? (resetCounter(downDelayFlying.get()) ? -0.032 : verticalSpeed.get()/20) : verticalSpeed.get()/20) : (mc.player.input.playerInput.sneak() ? verticalSpeed.get()/-20 : (!checkCollisionBoxes ? (resetCounter(downDelay.get()) ? (antiKick.get() ? -0.04 : 0.0) : 0.0) : 0.0));
+        speed = mc.player.input.playerInput.jump() && (checkCollisionBoxes || !(mc.player.forwardSpeed != 0.0 || mc.player.sidewaysSpeed != 0.0)) ? (antiKick.get() && !checkCollisionBoxes ? (resetCounter(downDelayFlying.get()) ? -0.032 : verticalSpeed.get()/20) : verticalSpeed.get()/20) : (mc.player.input.playerInput.sneak() ? verticalSpeed.get()/-20 : (!checkCollisionBoxes ? (resetCounter(downDelay.get()) ? (antiKick.get() ? -0.04 : 0.0) : 0.0) : 0.0));
 
         Vec3d horizontal = PlayerUtils.getHorizontalVelocity(horizontalSpeed.get());
 
@@ -170,6 +170,8 @@ public class PacketFly extends Module {
     }
 
     private boolean checkHitBoxes() {
+        assert mc.player != null;
+        assert mc.world != null;
         return !mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().stretch(-0.0625,-0.0625,-0.0625)).iterator().hasNext();
     }
 

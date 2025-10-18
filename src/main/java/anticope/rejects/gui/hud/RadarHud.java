@@ -62,16 +62,16 @@ public class RadarHud extends HudElement {
             .min(1)
             .sliderRange(0.01, 5)
             .onChanged(aDouble -> calculateSize())
-        .build()
+            .build()
     );
 
     private final Setting<Double> zoom = sgGeneral.add(new DoubleSetting.Builder()
-        .name("zoom")
-        .description("Radar zoom.")
-        .defaultValue(1)
-        .min(0.01)
-        .sliderRange(0.01, 3)
-        .build()
+            .name("zoom")
+            .description("Radar zoom.")
+            .defaultValue(1)
+            .min(0.01)
+            .sliderRange(0.01, 3)
+            .build()
     );
 
     public RadarHud() {
@@ -93,7 +93,7 @@ public class RadarHud extends HudElement {
             double height = getHeight();
             Renderer2D.COLOR.begin();
             Renderer2D.COLOR.quad(x, y, width, height, backgroundColor.get());
-            Renderer2D.COLOR.render(null);
+            Renderer2D.COLOR.render();
             if (mc.world != null) {
                 for (Entity entity : mc.world.getEntities()) {
                     if (!entities.get().contains(entity.getType())) return;
@@ -101,7 +101,7 @@ public class RadarHud extends HudElement {
                     double yPos = ((entity.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + height/2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
                     String icon = "*";
-                    if (letters.get()) 
+                    if (letters.get())
                         icon = entity.getType().getUntranslatedName().substring(0,1).toUpperCase();
                     Color c = esp.getColor(entity);
                     if (c == null) c = Color.WHITE;
@@ -121,9 +121,9 @@ public class RadarHud extends HudElement {
                     renderer.text(icon, xPos + x, yPos + y, waypoint.color.get(), false);
                 }
             }
-            Renderer2D.COLOR.render(null);
+            Renderer2D.COLOR.render();
         });
-        
+
     }
-    
+
 }

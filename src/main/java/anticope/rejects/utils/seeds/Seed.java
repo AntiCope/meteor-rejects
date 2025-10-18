@@ -28,28 +28,23 @@ public class Seed {
 
     public static Seed fromTag(NbtCompound tag) {
         return new Seed(
-            tag.getLong("seed"),
-            MCVersion.fromString(tag.getString("version"))
+                tag.getLong("seed", 1),
+                MCVersion.fromString(String.valueOf(tag.getString("version")))
         );
     }
 
     public Text toText() {
         MutableText text = Text.literal(String.format("[%s%s%s] (%s)",
-            Formatting.GREEN,
-            seed.toString(),
-            Formatting.WHITE,
-            version.toString()
+                Formatting.GREEN,
+                seed.toString(),
+                Formatting.WHITE,
+                version.toString()
         ));
         text.setStyle(text.getStyle()
-            .withClickEvent(new ClickEvent(
-                ClickEvent.Action.COPY_TO_CLIPBOARD,
-                seed.toString()
-            ))
-            .withHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                Text.literal("Copy to clipboard")
-            ))
+                .withClickEvent(new ClickEvent.CopyToClipboard(seed.toString()))
+                .withHoverEvent(new HoverEvent.ShowText(Text.literal("Copy to clipboard")))
         );
         return text;
     }
+
 }

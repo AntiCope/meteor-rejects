@@ -80,14 +80,36 @@ public class RejectsConfig extends System<RejectsConfig> {
 
     @Override
     public RejectsConfig fromTag(NbtCompound tag) {
-        httpAllowed = HttpAllowed.valueOf(tag.getString("httpAllowed"));
-        httpUserAgent = tag.getString("httpUserAgent");
-        loadSystemFonts = tag.getBoolean("loadSystemFonts");
-        duplicateModuleNames = tag.getBoolean("duplicateModuleNames");
+        // Get the "httpAllowed" string safely
+        String httpAllowedString = "Everything";
+        if (tag.contains("httpAllowed")) {
+            NbtElement httpAllowedElement = tag.get("httpAllowed");
+            if (httpAllowedElement != null) {
+                httpAllowedString = String.valueOf(httpAllowedElement.asString());
+                // Remove quotes if present (asString() may wrap in quotes)
+                if (httpAllowedString.startsWith("\"") && httpAllowedString.endsWith("\"")) {
+                    httpAllowedString = httpAllowedString.substring(1, httpAllowedString.length() - 1);
+                }
+                if (httpAllowedString.startsWith("Optional[")) {
+                    httpAllowedString = httpAllowedString.substring(9, httpAllowedString.length() - 1);
+                }
+            }
+        }
 
-        NbtList valueTag = tag.getList("hiddenModules", 8);
+        try {
+            httpAllowed = HttpAllowed.valueOf(httpAllowedString);
+        } catch (IllegalArgumentException e) {
+            java.lang.System.err.println("Invalid value for httpAllowed: " + httpAllowedString);
+            httpAllowed = HttpAllowed.Everything;
+        }
+
+        httpUserAgent = tag.contains("httpUserAgent") ? String.valueOf(tag.getString("httpUserAgent")) : "Meteor Client";
+        loadSystemFonts = tag.contains("loadSystemFonts") && tag.getBoolean("loadSystemFonts").orElse(false);
+        duplicateModuleNames = tag.contains("duplicateModuleNames") && tag.getBoolean("duplicateModuleNames").orElse(false);
+
+        NbtList valueTag = tag.getListOrEmpty("hiddenModules");
         for (NbtElement tagI : valueTag) {
-            hiddenModules.add(tagI.asString());
+            hiddenModules.add(String.valueOf(tagI.asString()));
         }
 
         return this;

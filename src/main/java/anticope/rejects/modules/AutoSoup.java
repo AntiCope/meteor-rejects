@@ -87,10 +87,10 @@ public class AutoSoup extends Module {
 
             // save old slot
             if (oldSlot == -1)
-                oldSlot = mc.player.getInventory().selectedSlot;
+                oldSlot = mc.player.getInventory().getSelectedSlot();
 
             // set slot
-            mc.player.getInventory().selectedSlot = soupInHotbar;
+            mc.player.getInventory().setSelectedSlot(soupInHotbar);
 
             // eat soup
             mc.options.useKey.setPressed(true);
@@ -166,7 +166,7 @@ public class AutoSoup extends Module {
         mc.options.useKey.setPressed(false);
 
         // reset slot
-        mc.player.getInventory().selectedSlot = oldSlot;
+        mc.player.getInventory().setSelectedSlot(oldSlot);
         oldSlot = -1;
     }
 

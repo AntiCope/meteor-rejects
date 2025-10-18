@@ -19,7 +19,7 @@ public class AntiBot extends Module {
 
     private final Setting<Boolean> removeInvisible = sgGeneral.add(new BoolSetting.Builder()
             .name("remove-invisible")
-            .description("Removes bot only if they are invisible.")
+            .description("Removes bot only if they are invisible")
             .defaultValue(true)
             .build()
     );

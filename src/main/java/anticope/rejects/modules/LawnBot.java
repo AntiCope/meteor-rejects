@@ -59,7 +59,7 @@ public class LawnBot extends Module {
             Block block = mc.world.getBlockState(pos).getBlock();
             double distance = mc.player.getPos().distanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
             if (block == Blocks.AIR && distance <= 5) {
-                mc.player.getInventory().selectedSlot = grassHotbarSlot;
+                mc.player.getInventory().setSelectedSlot(grassHotbarSlot);
                 mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
                 return;
             } else if (!blockWhitelist.get().contains(block)) {
