@@ -2,7 +2,6 @@ package anticope.rejects.gui.screens;
 
 import anticope.rejects.mixin.EntityAccessor;
 import anticope.rejects.modules.InteractionMenu;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.meteor.KeyEvent;
@@ -10,12 +9,9 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.PeekScreen;
 import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.utils.Error;
-import meteordevelopment.starscript.utils.StarscriptError;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
+import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -26,8 +22,8 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Saddleable;
 import net.minecraft.entity.mob.EndermanEntity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -158,17 +154,12 @@ public class InteractionScreen extends Screen {
             functions.put(key, (Entity e) -> {
                 closeScreen();
                 interactionMenuEntity = e;
-                var result = Parser.parse(msgs.get(key));
-                if (result.hasErrors()) {
-                    for (Error error : result.errors) MeteorStarscript.printChatError(error);
-                    return;
-                }
-                var script = Compiler.compile(result);
                 try {
-                    var section = MeteorStarscript.ss.run(script);
-                    client.setScreen(new ChatScreen(section.text));
-                } catch (StarscriptError err) {
-                    MeteorStarscript.printChatError(err);
+                    String result = MeteorStarscript.run(msgs.get(key));
+                    client.setScreen(new ChatScreen(result));
+                } catch (Exception err) {
+                    // Starscript error handling
+                    client.player.sendMessage(Text.literal("Error running script: " + err.getMessage()), false);
                 }
             });
         });
@@ -187,11 +178,21 @@ public class InteractionScreen extends Screen {
             } catch (NullPointerException ex) {
             }
         }
-        if (e instanceof Saddleable) {
-            if (((Saddleable) e).isSaddled()) {
+        // Check for saddled entities (Saddleable interface was removed in 1.21+)
+        if (e instanceof AbstractHorseEntity) {
+            if (((AbstractHorseEntity) e).isSaddled()) {
                 stack[index[0]] = Items.SADDLE.getDefaultStack();
                 index[0]++;
             }
+        } else if (e.getType() == EntityType.PIG || e.getType() == EntityType.STRIDER) {
+            // Pigs and Striders can also be saddled
+            try {
+                java.lang.reflect.Method isSaddled = e.getClass().getMethod("isSaddled");
+                if ((Boolean) isSaddled.invoke(e)) {
+                    stack[index[0]] = Items.SADDLE.getDefaultStack();
+                    index[0]++;
+                }
+            } catch (Exception ignored) {}
         }
         LivingEntity a = (LivingEntity) e;
         a.getHandItems().forEach(itemStack -> {
@@ -254,9 +255,9 @@ public class InteractionScreen extends Screen {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE_MINUS_DST_COLOR,
-                GlStateManager.DstFactor.ONE_MINUS_SRC_COLOR, GlStateManager.SrcFactor.ONE,
-                GlStateManager.DstFactor.ZERO);
+        RenderSystem.blendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR,
+                GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE,
+                GL11.GL_ZERO);
         context.drawTexture(RenderLayer::getGuiTextured, GUI_ICONS_TEXTURE,  crosshairX - 8, crosshairY - 8, 0, 0, 15, 15, 256, 256);
 
         drawDots(context, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);

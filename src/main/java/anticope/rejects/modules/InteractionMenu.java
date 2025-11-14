@@ -9,8 +9,6 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.Keybind;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import meteordevelopment.starscript.value.Value;
-import meteordevelopment.starscript.value.ValueMap;
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -85,7 +83,9 @@ public class InteractionMenu extends Module {
 
     public InteractionMenu() {
         super(MeteorRejectsAddon.CATEGORY, "interaction-menu", "An interaction screen when looking at an entity.");
-        MeteorStarscript.ss.set("entity", () -> wrap(InteractionScreen.interactionMenuEntity));
+        // Starscript integration - disabled due to API changes in 1.21.8
+        // TODO: Re-enable when starscript API is available
+        // MeteorStarscript.ss.set("entity", () -> wrap(InteractionScreen.interactionMenuEntity));
     }
 
     public void onKey() {
@@ -106,6 +106,9 @@ public class InteractionMenu extends Module {
         }
     }
 
+    // Starscript helper methods - disabled due to API changes in 1.21.8
+    // TODO: Re-enable when starscript API is available
+    /*
     private static Value wrap(Entity entity) {
         if (entity == null) {
             return Value.map(new ValueMap()
@@ -136,4 +139,5 @@ public class InteractionMenu extends Module {
     private static Value posString(double x, double y, double z) {
         return Value.string(String.format("X: %.0f Y: %.0f Z: %.0f", x, y, z));
     }
+    */
 }

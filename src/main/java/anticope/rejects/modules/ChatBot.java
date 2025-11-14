@@ -12,10 +12,6 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.starscript.Script;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.utils.StarscriptError;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -64,27 +60,14 @@ public class ChatBot extends Module {
         }
         for (String cmd : commands.get().keySet()) {
             if (msg.endsWith(prefix.get() + cmd)) {
-                Script script = compile(commands.get().get(cmd));
-                if (script == null) ChatUtils.sendPlayerMsg("An error occurred");
                 try {
-                    var section = MeteorStarscript.ss.run(script);
-                    ChatUtils.sendPlayerMsg(section.text);
-                } catch (StarscriptError e) {
-                    MeteorStarscript.printChatError(e);
-                    ChatUtils.sendPlayerMsg("An error occurred");
+                    String result = MeteorStarscript.run(commands.get().get(cmd));
+                    ChatUtils.sendPlayerMsg(result);
+                } catch (Exception e) {
+                    ChatUtils.sendPlayerMsg("An error occurred: " + e.getMessage());
                 }
                 return;
             }
         }
-    }
-
-    private static Script compile(String script) {
-        if (script == null) return null;
-        Parser.Result result = Parser.parse(script);
-        if (result.hasErrors()) {
-            MeteorStarscript.printChatError(result.errors.get(0));
-            return null;
-        }
-        return Compiler.compile(result);
     }
 }
