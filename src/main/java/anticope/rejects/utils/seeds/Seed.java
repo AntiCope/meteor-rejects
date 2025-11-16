@@ -28,8 +28,8 @@ public class Seed {
 
     public static Seed fromTag(NbtCompound tag) {
         return new Seed(
-            tag.getLong("seed"),
-            MCVersion.fromString(tag.getString("version"))
+            tag.getLong("seed").orElse(0L),
+            MCVersion.fromString(tag.getString("version").orElse(""))
         );
     }
 
@@ -41,12 +41,10 @@ public class Seed {
             version.toString()
         ));
         text.setStyle(text.getStyle()
-            .withClickEvent(new ClickEvent(
-                ClickEvent.Action.COPY_TO_CLIPBOARD,
+            .withClickEvent(new ClickEvent.CopyToClipboard(
                 seed.toString()
             ))
-            .withHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
+            .withHoverEvent(new HoverEvent.ShowText(
                 Text.literal("Copy to clipboard")
             ))
         );

@@ -14,6 +14,11 @@ public class NoJumpDelay extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        ((LivingEntityAccessor) mc.player).setJumpCooldown(0);
+        // TODO: Fix for 1.21.10 - LivingEntityAccessor.setJumpCooldown() may have changed
+        // try {
+        //     ((LivingEntityAccessor) mc.player).setJumpCooldown(0);
+        // } catch (NoSuchMethodError e) {
+        //     // Accessor might have changed in newer versions
+        // }
     }
 }

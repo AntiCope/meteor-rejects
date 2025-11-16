@@ -52,7 +52,7 @@ public class ObsidianFarm extends Module {
                     return;
                 }
             }
-            mc.player.getInventory().selectedSlot = pickAxe;
+            mc.player.getInventory().setSelectedSlot(pickAxe);
         }
 
         BlockPos obsidian = findObsidian();

@@ -10,13 +10,13 @@ import meteordevelopment.meteorclient.commands.Command;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.command.CommandSource;
 import net.minecraft.text.ClickEvent;
-import net.minecraft.text.ClickEvent.Action;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.*;
 
@@ -116,46 +116,38 @@ public class ServerCommand extends Command {
             text.append(ports.get(port));
             if (ports.get(port).startsWith("HTTP") || ports.get(port).startsWith("FTP")) {
                 text.setStyle(text.getStyle()
-                        .withClickEvent(new ClickEvent(
-                                Action.OPEN_URL,
-                                String.format("%s://%s:%d", ports.get(port).toLowerCase(), address.getHostAddress(), port)
+                        .withClickEvent(new ClickEvent.OpenUrl(
+                                URI.create(String.format("%s://%s:%d", ports.get(port).toLowerCase(), address.getHostAddress(), port))
                         ))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
+                        .withHoverEvent(new HoverEvent.ShowText(
                                 Text.literal("Open in browser")
                         ))
                 );
             } else if (Objects.equals(ports.get(port), "DynMap")) {
                 text.setStyle(text.getStyle()
-                        .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.OPEN_URL,
-                                String.format("http://%s:%d", address.getHostAddress(), port)
+                        .withClickEvent(new ClickEvent.OpenUrl(
+                                URI.create(String.format("http://%s:%d", address.getHostAddress(), port))
                         ))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
+                        .withHoverEvent(new HoverEvent.ShowText(
                                 Text.literal("Open in browser")
                         ))
                 );
             } else {
                 text.setStyle(text.getStyle()
-                        .withClickEvent(new ClickEvent(
-                                ClickEvent.Action.COPY_TO_CLIPBOARD,
+                        .withClickEvent(new ClickEvent.CopyToClipboard(
                                 String.format("%s:%d", address.getHostAddress(), port)
                         ))
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
+                        .withHoverEvent(new HoverEvent.ShowText(
                                 Text.literal("Copy")
                         ))
                 );
             }
         } else {
             text.setStyle(text.getStyle()
-                    .withClickEvent(new ClickEvent(
-                            ClickEvent.Action.COPY_TO_CLIPBOARD,
+                    .withClickEvent(new ClickEvent.CopyToClipboard(
                             String.format("%s:%d", address.getHostAddress(), port)
                     ))
-                    .withHoverEvent(new HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
+                    .withHoverEvent(new HoverEvent.ShowText(
                             Text.literal("Copy")
                     ))
             );

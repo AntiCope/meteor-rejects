@@ -27,7 +27,7 @@ import java.util.*;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class CustomYggdrasilLogin {
-    public static Environment localYggdrasilApi = new Environment("/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
+    public static Environment localYggdrasilApi = new Environment("/authserver", "/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
 
     public static Session login(String name, String password, String server) throws AuthenticationException {
         try {
@@ -49,7 +49,7 @@ public class CustomYggdrasilLogin {
             String token = json.get("accessToken").getAsString();
             UUID uuid = UUID.fromString(json.get("selectedProfile").getAsJsonObject().get("id").getAsString());
             String username = json.get("selectedProfile").getAsJsonObject().get("name").getAsString();
-            return new Session(username, uuid, token, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
+            return new Session(username, uuid, token, Optional.empty(), Optional.empty());
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }

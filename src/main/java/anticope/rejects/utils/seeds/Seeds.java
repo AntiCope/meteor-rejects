@@ -83,7 +83,7 @@ public class Seeds extends System<Seeds> {
     @Override
     public Seeds fromTag(NbtCompound tag) {
         tag.getKeys().forEach(key -> {
-            seeds.put(key, Seed.fromTag(tag.getCompound(key)));
+            tag.getCompound(key).ifPresent(compound -> seeds.put(key, Seed.fromTag(compound)));
         });
         return this;
     }
@@ -103,8 +103,8 @@ public class Seeds extends System<Seeds> {
         MutableText cmdText = Text.literal(cmd+"<version>");
         cmdText.setStyle(cmdText.getStyle()
             .withUnderline(true)
-            .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, cmd))
-            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("run command")))
+            .withClickEvent(new ClickEvent.SuggestCommand(cmd))
+            .withHoverEvent(new HoverEvent.ShowText(Text.literal("run command")))
         );
         msg.append(cmdText);
         msg.setStyle(msg.getStyle()

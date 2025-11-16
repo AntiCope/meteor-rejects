@@ -68,11 +68,9 @@ public class CustomPackets extends Module {
         if (!unknownPackets.get()) return;
         MutableText text = Text.literal(packet.payload().getId().toString());
         buffer.clear();
-        text.setStyle(text.getStyle()
-                .withHoverEvent(new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        Text.literal(readString(buffer)
-                ))));
+        text.setStyle(
+            text.getStyle().withHoverEvent(new HoverEvent.ShowText(Text.literal(readString(buffer))))
+        );
         info(text);
     }
 
@@ -112,10 +110,7 @@ public class CustomPackets extends Module {
             modLine.append("\n");
             if (data.extra_data != null) {
                 modLine.setStyle(modLine.getStyle()
-                        .withHoverEvent(new HoverEvent(
-                                HoverEvent.Action.SHOW_TEXT,
-                                Text.literal(data.extra_data.toString())
-                        )));
+                        .withHoverEvent(new HoverEvent.ShowText(Text.literal(data.extra_data.toString()))));
             }
             text.append(modLine);
         });

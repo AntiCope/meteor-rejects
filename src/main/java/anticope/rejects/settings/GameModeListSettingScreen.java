@@ -23,7 +23,7 @@ public class GameModeListSettingScreen extends WindowScreen {
     public void initWidgets() {
         List<GameMode> gms = setting.get();
         for (GameMode gameMode : GameMode.values()) {
-            table.add(theme.label(Utils.nameToTitle(gameMode.getName()))).expandCellX();
+            table.add(theme.label(Utils.nameToTitle(gameMode.getId()))).expandCellX();
 
             boolean contains = setting.get().contains(gameMode);
             WCheckbox checkbox = table.add(theme.checkbox(contains)).widget();

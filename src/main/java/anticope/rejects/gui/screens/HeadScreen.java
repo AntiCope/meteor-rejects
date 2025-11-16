@@ -19,6 +19,7 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtIntArray;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 
@@ -98,7 +99,7 @@ public class HeadScreen extends WindowScreen {
                 WButton equip = t.add(theme.button("Equip")).widget();
                 equip.tooltip = "Equip client-side.";
                 equip.action = () -> {
-                    mc.player.getInventory().armor.set(3, head);
+                    mc.player.getInventory().setStack(39, head); // 39 is helmet slot (36 + 3)
                 };
                 t.row();
             }
@@ -111,11 +112,17 @@ public class HeadScreen extends WindowScreen {
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
         NbtCompound tag = new NbtCompound();
         NbtCompound skullOwner = new NbtCompound();
-        skullOwner.putUuid("Id", UUID.fromString(uuid));
+        UUID parsedUuid = UUID.fromString(uuid);
+        skullOwner.put("Id", new NbtIntArray(new int[]{
+            (int)(parsedUuid.getMostSignificantBits() >> 32),
+            (int)parsedUuid.getMostSignificantBits(),
+            (int)(parsedUuid.getLeastSignificantBits() >> 32),
+            (int)parsedUuid.getLeastSignificantBits()
+        }));
         NbtCompound properties = new NbtCompound();
         NbtList textures = new NbtList();
         NbtCompound Value = new NbtCompound();
-        Value.putString("Value", value);
+        Value.put("Value", net.minecraft.nbt.NbtString.of(value));
         textures.add(Value);
         properties.put("textures", textures);
         skullOwner.put("Properties", properties);

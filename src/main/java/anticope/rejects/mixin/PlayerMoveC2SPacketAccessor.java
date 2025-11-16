@@ -12,6 +12,10 @@ public interface PlayerMoveC2SPacketAccessor {
     void setX(double x);
 
     @Mutable
+    @Accessor("y")
+    void setY(double y);
+
+    @Mutable
     @Accessor("z")
     void setZ(double z);
 }

@@ -67,7 +67,7 @@ public class BlockIn extends Module {
     
     @Override
     public void onActivate() {
-        sY = mc.player.getPos().getY();
+        sY = mc.player.getY();
     }
     
     @EventHandler

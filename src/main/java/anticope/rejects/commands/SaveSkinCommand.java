@@ -44,7 +44,7 @@ public class SaveSkinCommand extends Command {
     @Override
     public void build(LiteralArgumentBuilder<CommandSource> builder) {
         builder.then(argument("player", PlayerListEntryArgumentType.create()).executes(ctx -> {
-            UUID id = PlayerListEntryArgumentType.get(ctx).getProfile().getId();
+            UUID id = PlayerListEntryArgumentType.get(ctx).getProfile().id();
             String path = TinyFileDialogs.tinyfd_saveFileDialog("Save image", null, filters, null);
             if (path == null) IO_EXCEPTION.create();
             if (path != null) {

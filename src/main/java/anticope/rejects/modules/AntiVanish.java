@@ -123,7 +123,7 @@ public class AntiVanish extends Module {
         switch (mode.get()) {
             case LeaveMessage -> {
                 Map<UUID, String> oldPlayers = Map.copyOf(playerCache);
-                playerCache = mc.getNetworkHandler().getPlayerList().stream().collect(Collectors.toMap(e -> e.getProfile().getId(), e -> e.getProfile().getName()));
+                playerCache = mc.getNetworkHandler().getPlayerList().stream().collect(Collectors.toMap(e -> e.getProfile().id(), e -> e.getProfile().name()));
 
                 for (UUID uuid : oldPlayers.keySet()) {
                     if (playerCache.containsKey(uuid)) continue;

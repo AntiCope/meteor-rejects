@@ -150,17 +150,17 @@ public class AutoExtinguish extends Module {
 
     private void place(int slot) {
         if (slot != -1) {
-            final int preSlot = mc.player.getInventory().selectedSlot;
+            final int preSlot = mc.player.getInventory().getSelectedSlot();
             if (center.get()) {
                 PlayerUtils.centerPlayer();
             }
-            mc.player.getInventory().selectedSlot = slot;
+            mc.player.getInventory().setSelectedSlot(slot);
             float yaw = mc.gameRenderer.getCamera().getYaw() % 360;
             float pitch = mc.gameRenderer.getCamera().getPitch() % 360;
 
             Rotations.rotate(yaw, 90);
             mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
-            mc.player.getInventory().selectedSlot = preSlot;
+            mc.player.getInventory().setSelectedSlot(preSlot);
             Rotations.rotate(yaw, pitch);
 
         }

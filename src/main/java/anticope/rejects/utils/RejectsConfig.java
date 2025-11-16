@@ -80,15 +80,16 @@ public class RejectsConfig extends System<RejectsConfig> {
 
     @Override
     public RejectsConfig fromTag(NbtCompound tag) {
-        httpAllowed = HttpAllowed.valueOf(tag.getString("httpAllowed"));
-        httpUserAgent = tag.getString("httpUserAgent");
-        loadSystemFonts = tag.getBoolean("loadSystemFonts");
-        duplicateModuleNames = tag.getBoolean("duplicateModuleNames");
+        tag.getString("httpAllowed").ifPresent(s -> httpAllowed = HttpAllowed.valueOf(s));
+        httpUserAgent = tag.getString("httpUserAgent").orElse(httpUserAgent);
+        loadSystemFonts = tag.getBoolean("loadSystemFonts").orElse(loadSystemFonts);
+        duplicateModuleNames = tag.getBoolean("duplicateModuleNames").orElse(duplicateModuleNames);
 
-        NbtList valueTag = tag.getList("hiddenModules", 8);
-        for (NbtElement tagI : valueTag) {
-            hiddenModules.add(tagI.asString());
-        }
+        tag.getList("hiddenModules").ifPresent(valueTag -> {
+            for (NbtElement tagI : valueTag) {
+                tagI.asString().ifPresent(hiddenModules::add);
+            }
+        });
 
         return this;
     }

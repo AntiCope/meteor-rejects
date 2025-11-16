@@ -167,7 +167,7 @@ public class AutoPot extends Module {
     }
 
     private void changeSlot(int slot) {
-        mc.player.getInventory().selectedSlot = slot;
+        mc.player.getInventory().setSelectedSlot(slot);
         this.slot = slot;
     }
 
@@ -191,7 +191,7 @@ public class AutoPot extends Module {
     }
 
     private void startPotionUse() {
-        prevSlot = mc.player.getInventory().selectedSlot;
+        prevSlot = mc.player.getInventory().getSelectedSlot();
 
         if (useSplashPots.get()) {
             if (lookDown.get()) {

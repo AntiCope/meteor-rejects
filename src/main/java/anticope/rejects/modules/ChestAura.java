@@ -143,7 +143,7 @@ public class ChestAura extends Module {
         @EventHandler(priority = EventPriority.HIGH)
         private void onInventory(InventoryEvent event) {
             ScreenHandler handler = mc.player.currentScreenHandler;
-            if (event.packet.getSyncId() == handler.syncId) {
+            if (event.packet.syncId() == handler.syncId) {
                 switch (closeCondition.get()) {
                     case IfEmpty -> {
                         DefaultedList<ItemStack> stacks = DefaultedList.of();
@@ -152,7 +152,7 @@ public class ChestAura extends Module {
                     }
                     case Always -> mc.player.closeHandledScreen();
                     case AfterSteal ->
-                            ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).stealCallback(() -> RenderSystem.recordRenderCall(() -> mc.player.closeHandledScreen()));
+                            ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).stealCallback(() -> mc.player.closeHandledScreen());
                 }
             }
             MeteorClient.EVENT_BUS.unsubscribe(this);

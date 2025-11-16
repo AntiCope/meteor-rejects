@@ -57,9 +57,9 @@ public class LawnBot extends Module {
         for (int i = 0; i < myceliumSpots.size(); i++) {
             BlockPos pos = myceliumSpots.get(i);
             Block block = mc.world.getBlockState(pos).getBlock();
-            double distance = mc.player.getPos().distanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+            double distance = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ()).distanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
             if (block == Blocks.AIR && distance <= 5) {
-                mc.player.getInventory().selectedSlot = grassHotbarSlot;
+                mc.player.getInventory().setSelectedSlot(grassHotbarSlot);
                 mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
                 return;
             } else if (!blockWhitelist.get().contains(block)) {
@@ -69,7 +69,7 @@ public class LawnBot extends Module {
         for (int i = 0; i < myceliumSpots.size(); i++) {
             BlockPos pos = myceliumSpots.get(i);
             Block block = mc.world.getBlockState(pos).getBlock();
-            double distance = mc.player.getPos().distanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+            double distance = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ()).distanceTo(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
             if (blockWhitelist.get().contains(block) && distance <= 5) {
                 mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
                 return;

@@ -15,7 +15,7 @@ public class MServerInfo {
     public int playercountMax;
     public String label;
     public long ping;
-    public int protocolVersion = SharedConstants.getGameVersion().getProtocolVersion();
+    public int protocolVersion = SharedConstants.getGameVersion().protocolVersion();
     public String version = null;
     public List<Text> playerListSummary = Collections.emptyList();
     private byte @Nullable [] icon;

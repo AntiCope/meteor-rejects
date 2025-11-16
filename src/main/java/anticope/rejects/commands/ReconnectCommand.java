@@ -19,7 +19,7 @@ public class ReconnectCommand extends Command {
         builder.executes(context -> {
             ServerInfo info = mc.isInSingleplayer() ? null : mc.getCurrentServerEntry();
             if (info != null) {
-                mc.world.disconnect();
+                mc.world.disconnect(net.minecraft.text.Text.literal("Reconnecting"));
                 ConnectScreen.connect(new MultiplayerScreen(new TitleScreen()), mc,
                         ServerAddress.parse(info.address), info, false, null);
             }

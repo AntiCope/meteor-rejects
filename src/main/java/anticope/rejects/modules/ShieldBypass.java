@@ -2,7 +2,7 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.Cancellable;
-import meteordevelopment.meteorclient.events.meteor.MouseButtonEvent;
+import meteordevelopment.meteorclient.events.meteor.MouseClickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
@@ -38,9 +38,9 @@ public class ShieldBypass extends Module {
     }
 
     @EventHandler
-    private void onMouseButton(MouseButtonEvent event) {
+    private void onMouseButton(MouseClickEvent event) {
         if (Modules.get().isActive(KillAura.class)) return;
-        if (mc.currentScreen == null && !mc.player.isUsingItem() && event.action == KeyAction.Press && event.button == GLFW_MOUSE_BUTTON_LEFT) {
+        if (mc.currentScreen == null && !mc.player.isUsingItem() && event.action == KeyAction.Press && event.button() == GLFW_MOUSE_BUTTON_LEFT) {
             if (mc.crosshairTarget instanceof EntityHitResult result) {
                 bypass(result.getEntity(), event);
             }
@@ -48,7 +48,8 @@ public class ShieldBypass extends Module {
     }
 
     private boolean isBlocked(Vec3d pos, LivingEntity target) {
-        Vec3d vec3d3 = pos.relativize(target.getPos()).normalize();
+        Vec3d targetPos = new Vec3d(target.getX(), target.getY(), target.getZ());
+        Vec3d vec3d3 = pos.relativize(targetPos).normalize();
         return new Vec3d(vec3d3.x, 0.0d, vec3d3.z).dotProduct(target.getRotationVec(1.0f)) >= 0.0d;
     }
 
@@ -57,10 +58,12 @@ public class ShieldBypass extends Module {
             if (ignoreAxe.get() && InvUtils.testInMainHand(i -> i.getItem() instanceof AxeItem)) return;
 
             // Shield check
-            if (isBlocked(mc.player.getPos(), e)) return;
+            Vec3d playerPos = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ());
+            if (isBlocked(playerPos, e)) return;
 
             Vec3d offset = Vec3d.fromPolar(0, mc.player.getYaw()).normalize().multiply(2);
-            Vec3d newPos = e.getPos().add(offset);
+            Vec3d ePos = new Vec3d(e.getX(), e.getY(), e.getZ());
+            Vec3d newPos = ePos.add(offset);
 
             // Move up to prevent tping into blocks
             boolean inside = false;

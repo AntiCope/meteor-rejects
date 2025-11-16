@@ -102,7 +102,7 @@ public class CleanUpScreen extends WindowScreen {
     }
 
     private boolean isSameProtocol(ServerInfo server) {
-        return server.protocolVersion == SharedConstants.getGameVersion().getProtocolVersion();
+        return server.protocolVersion == net.minecraft.SharedConstants.getGameVersion().protocolVersion();
     }
 
     private boolean isFailedPing(ServerInfo server) {

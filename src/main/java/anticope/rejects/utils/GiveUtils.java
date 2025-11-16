@@ -84,7 +84,10 @@ public class GiveUtils {
                 if (preview) preset.getMiddle().getDefaultStack();
                 ItemStack item = preset.getMiddle().getDefaultStack();
                 try {
-                    item.set(DataComponentTypes.ENTITY_DATA, NbtComponent.of(StringNbtReader.parse(preset.getRight())));
+                    NbtCompound compound = StringNbtReader.readCompound(preset.getRight());
+                    String entityId = compound.getString("id").orElse("minecraft:pig");
+                    net.minecraft.entity.EntityType<?> entityType = Registries.ENTITY_TYPE.get(Identifier.of(entityId));
+                    item.set(DataComponentTypes.ENTITY_DATA, net.minecraft.entity.TypedEntityData.create(entityType, compound));
                 } catch (CommandSyntaxException e) { }
                 item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(toName(preset.getLeft())));
                 return item;
@@ -96,7 +99,10 @@ public class GiveUtils {
                 if (preview) preset.getMiddle().getDefaultStack();
                 ItemStack item = preset.getMiddle().getDefaultStack();
                 try {
-                    item.set(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.of(StringNbtReader.parse(preset.getRight())));
+                    NbtCompound compound = StringNbtReader.readCompound(preset.getRight());
+                    String blockEntityId = compound.getString("id").orElse("minecraft:spawner");
+                    net.minecraft.block.entity.BlockEntityType<?> blockEntityType = Registries.BLOCK_ENTITY_TYPE.get(Identifier.of(blockEntityId));
+                    item.set(DataComponentTypes.BLOCK_ENTITY_DATA, net.minecraft.entity.TypedEntityData.create(blockEntityType, compound));
                 } catch (CommandSyntaxException e) { }
                 item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(toName(preset.getLeft())));
                 return item;
@@ -110,7 +116,8 @@ public class GiveUtils {
             String nick = mc.player.getName().getString();
 
             try {
-                item.set(DataComponentTypes.ENTITY_DATA, NbtComponent.of(StringNbtReader.parse("{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}")));
+                NbtCompound compound = StringNbtReader.readCompound("{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}");
+                item.set(DataComponentTypes.ENTITY_DATA, net.minecraft.entity.TypedEntityData.create(net.minecraft.entity.EntityType.FALLING_BLOCK, compound));
             } catch (CommandSyntaxException e) { }
             item.set(DataComponentTypes.CUSTOM_NAME, Text.of("Force OP"));
             return item;
@@ -197,11 +204,11 @@ public class GiveUtils {
                 ItemStack egg = Items.PIG_SPAWN_EGG.getDefaultStack();
 
                 NbtCompound entityTag = new NbtCompound();
-                entityTag.putString("id", id.toString());
+                net.minecraft.entity.EntityType<?> entityType = Registries.ENTITY_TYPE.get(id);
 
                 var changes = ComponentChanges.builder()
                         .add(DataComponentTypes.CUSTOM_NAME, Text.literal(String.format("%s", toName(id.getPath()))))
-                        .add(DataComponentTypes.ENTITY_DATA, NbtComponent.of(entityTag))
+                        .add(DataComponentTypes.ENTITY_DATA, net.minecraft.entity.TypedEntityData.create(entityType, entityTag))
                         .build();
 
                 egg.applyChanges(changes);

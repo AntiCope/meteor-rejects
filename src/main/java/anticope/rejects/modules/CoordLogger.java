@@ -104,8 +104,8 @@ public class CoordLogger extends Module {
                 // Player teleport
                 if (entity.getType().equals(EntityType.PLAYER) && players.get()) {
                     Vec3d packetPosition = packet.change().position();
-                    Vec3d playerPosition = entity.getPos();
-                    
+                    Vec3d playerPosition = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
+
                     if (playerPosition.distanceTo(packetPosition) >= minDistance.get()) {
                         info(formatMessage("Player '" + entity.getNameForScoreboard() + "' has teleported to ", packetPosition));
                     }
@@ -114,10 +114,10 @@ public class CoordLogger extends Module {
                 // World teleport
                 else if (entity.getType().equals(EntityType.WOLF) && wolves.get()) {
                     Vec3d packetPosition = packet.change().position();
-                    Vec3d wolfPosition = entity.getPos();
-                    
-                    UUID ownerUuid = ((TameableEntity) entity).getOwnerUuid();
-                    
+                    Vec3d wolfPosition = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
+
+                    UUID ownerUuid = ((TameableEntity) entity).getOwner() != null ? ((TameableEntity) entity).getOwner().getUuid() : null;
+
                     if (ownerUuid != null && wolfPosition.distanceTo(packetPosition) >= minDistance.get()) {
                         info(formatMessage("Wolf has teleported to ", packetPosition));
                     }

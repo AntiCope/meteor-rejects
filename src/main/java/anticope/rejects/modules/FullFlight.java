@@ -5,8 +5,6 @@ import anticope.rejects.utils.RejectsUtils;
 import com.google.common.collect.Streams;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
-import meteordevelopment.meteorclient.mixin.ClientPlayerEntityAccessor;
-import meteordevelopment.meteorclient.mixin.PlayerMoveC2SPacketAccessor;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
@@ -64,7 +62,7 @@ public class FullFlight extends Module {
 
     // Copied from ServerPlayNetworkHandler#isEntityOnAir
     private boolean isEntityOnAir(Entity entity) {
-        return entity.getWorld().getStatesInBox(entity.getBoundingBox().expand(0.0625).stretch(0.0, -0.55, 0.0)).allMatch(AbstractBlock.AbstractBlockState::isAir);
+        return mc.world.getStatesInBox(entity.getBoundingBox().expand(0.0625).stretch(0.0, -0.55, 0.0)).allMatch(AbstractBlock.AbstractBlockState::isAir);
     }
 
     private int delayLeft = 20;
@@ -76,21 +74,43 @@ public class FullFlight extends Module {
         } else return lastY - currentY < 0.03130D;
     }
 
-    private void antiKickPacket(PlayerMoveC2SPacket packet, double currentY) {
+    private PlayerMoveC2SPacket antiKickPacket(PlayerMoveC2SPacket packet, double currentY) {
         // maximum time we can be "floating" is 80 ticks, so 4 seconds max
         if (this.delayLeft <= 0 && this.lastPacketY != Double.MAX_VALUE &&
                 shouldFlyDown(currentY, this.lastPacketY) && isEntityOnAir(mc.player)) {
             // actual check is for >= -0.03125D, but we have to do a bit more than that
             // due to the fact that it's a bigger or *equal* to, and not just a bigger than
-            ((PlayerMoveC2SPacketAccessor) packet).setY(lastPacketY - 0.03130D);
-            lastPacketY -= 0.03130D;
+            double newY = lastPacketY - 0.03130D;
+            lastPacketY = newY;
             delayLeft = 20;
+
+            // Create a new packet with the modified Y value
+            if (packet.changesLook()) {
+                return new PlayerMoveC2SPacket.Full(
+                    packet.getX(0),
+                    newY,
+                    packet.getZ(0),
+                    packet.getYaw(0),
+                    packet.getPitch(0),
+                    packet.isOnGround(),
+                    packet.horizontalCollision()
+                );
+            } else {
+                return new PlayerMoveC2SPacket.PositionAndOnGround(
+                    packet.getX(0),
+                    newY,
+                    packet.getZ(0),
+                    packet.isOnGround(),
+                    packet.horizontalCollision()
+                );
+            }
         } else {
             lastPacketY = currentY;
             if (!isEntityOnAir(mc.player))
                 delayLeft = 20;
         }
         if (delayLeft > 0) delayLeft--;
+        return packet;
     }
 
     @EventHandler
@@ -99,8 +119,10 @@ public class FullFlight extends Module {
             return;
 
         double currentY = packet.getY(Double.MAX_VALUE);
+        PlayerMoveC2SPacket modifiedPacket;
+
         if (currentY != Double.MAX_VALUE) {
-            antiKickPacket(packet, currentY);
+            modifiedPacket = antiKickPacket(packet, currentY);
         } else {
             // if the packet is a LookAndOnGround packet or an OnGroundOnly packet then we need to
             // make it a Full packet or a PositionAndOnGround packet respectively, so it has a Y value
@@ -124,9 +146,13 @@ public class FullFlight extends Module {
                         packet.horizontalCollision()
                 );
             }
+            modifiedPacket = antiKickPacket(fullPacket, mc.player.getY());
+        }
+
+        // Only cancel and resend if the packet was actually modified
+        if (modifiedPacket != packet) {
             event.cancel();
-            antiKickPacket(fullPacket, mc.player.getY());
-            mc.getNetworkHandler().sendPacket(fullPacket);
+            mc.getNetworkHandler().sendPacket(modifiedPacket);
         }
     }
 
@@ -135,8 +161,9 @@ public class FullFlight extends Module {
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) {
         if (antiKickMode.get() == AntiKickMode.PaperNew) {
+            // TODO: Fix for 1.21.10 - ClientPlayerEntityAccessor.setTicksSinceLastPositionPacketSent() may have changed
             // Resend movement packets
-            ((ClientPlayerEntityAccessor) mc.player).setTicksSinceLastPositionPacketSent(20);
+            // ((ClientPlayerEntityAccessor) mc.player).setTicksSinceLastPositionPacketSent(20);
         }
         if (floatingTicks >= 20) {
             switch (antiKickMode.get()) {

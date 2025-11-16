@@ -10,14 +10,14 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.component.type.ProfileComponent;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 
@@ -45,7 +45,9 @@ public class GiveCommand extends Command {
                 ct.putInt("Time", 1);
                 ct.putString("id", "minecraft:falling_block");
                 ct.put("BlockState", new NbtCompound());
-                ct.getCompound("BlockState").putString("Name", Registries.ITEM.getId(inHand.getItem()).toString());
+                ct.getCompound("BlockState").ifPresent(compound ->
+                    compound.put("Name", net.minecraft.nbt.NbtString.of(Registries.ITEM.getId(inHand.getItem()).toString()))
+                );
 
             } else {
                 ct.putString("id", "minecraft:item");
@@ -79,7 +81,6 @@ public class GiveCommand extends Command {
             pos.add(NbtDouble.of(mc.player.getY()));
             pos.add(NbtDouble.of(mc.player.getZ()));
 
-            tag.putString("id", "minecraft:armor_stand");
             tag.put("Pos", pos);
             tag.putBoolean("Invisible", true);
             tag.putBoolean("Invulnerable", true);
@@ -88,7 +89,7 @@ public class GiveCommand extends Command {
 
             var changes = ComponentChanges.builder()
                     .add(DataComponentTypes.CUSTOM_NAME, Text.literal(message))
-                    .add(DataComponentTypes.ENTITY_DATA, NbtComponent.of(tag))
+                    .add(DataComponentTypes.ENTITY_DATA, TypedEntityData.create(EntityType.ARMOR_STAND, tag))
                     .build();
 
             stack.applyChanges(changes);
@@ -104,11 +105,10 @@ public class GiveCommand extends Command {
             tag.putBoolean("NoAI", true);
             tag.putBoolean("Silent", true);
             tag.putBoolean("PersistenceRequired", true);
-            tag.put("id", NbtString.of("minecraft:wither"));
 
             var changes = ComponentChanges.builder()
                     .add(DataComponentTypes.CUSTOM_NAME, Text.literal(message))
-                    .add(DataComponentTypes.ENTITY_DATA, NbtComponent.of(tag))
+                    .add(DataComponentTypes.ENTITY_DATA, TypedEntityData.create(EntityType.WITHER, tag))
                     .build();
             stack.applyChanges(changes);
 
@@ -122,7 +122,7 @@ public class GiveCommand extends Command {
             ItemStack itemStack = new ItemStack(Items.PLAYER_HEAD);
 
             var changes = ComponentChanges.builder()
-                    .add(DataComponentTypes.PROFILE, new ProfileComponent(new GameProfile(getUUID(playerName), playerName)))
+                    .add(DataComponentTypes.PROFILE, net.minecraft.component.type.ProfileComponent.ofStatic(new GameProfile(getUUID(playerName), playerName)))
                     .build();
 
             itemStack.applyChanges(changes);
