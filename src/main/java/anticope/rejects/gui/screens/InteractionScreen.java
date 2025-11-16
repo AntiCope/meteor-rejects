@@ -179,10 +179,14 @@ public class InteractionScreen extends Screen {
             } catch (NullPointerException ex) {
             }
         }
-        // Note: Saddleable interface was removed in Minecraft 1.21.10
-        // Saddles are now stored as entity components (SaddledComponent)
-        // TODO: Implement check using entity.getComponents() if needed
+        // Check for saddle in body slot (horses, pigs, striders, etc.)
         LivingEntity a = (LivingEntity) e;
+        ItemStack bodyStack = a.getEquippedStack(net.minecraft.entity.EquipmentSlot.BODY);
+        if (bodyStack != null && !bodyStack.isEmpty()) {
+            stack[index[0]] = bodyStack;
+            index[0]++;
+        }
+
         // Hand items
         for (net.minecraft.entity.EquipmentSlot slot : new net.minecraft.entity.EquipmentSlot[]{net.minecraft.entity.EquipmentSlot.MAINHAND, net.minecraft.entity.EquipmentSlot.OFFHAND}) {
             ItemStack itemStack = a.getEquippedStack(slot);

@@ -59,9 +59,13 @@ public class SkeletonESP extends Module {
 
     @EventHandler
     private void onRender(Render3DEvent event) {
-        // TODO: Fix rendering for 1.21.10 - RenderSystem API has changed significantly
+        // NOTE: Rendering in 1.21.10 has been completely reworked to use OrderedRenderCommandQueue
+        // This module requires a full rewrite to use the new rendering pipeline
+        // The old BufferBuilder/RenderSystem API used here is no longer available
+        // See: https://fabricmc.net/2025/09/23/1219.html for migration guide
         return;
-        /*
+
+        /* Old rendering code - kept for reference during future rewrite
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
 
@@ -182,8 +186,7 @@ public class SkeletonESP extends Module {
             bufferBuilder.vertex(matrix4f, 0, -0.55f, 0).color(skeletonColor.r, skeletonColor.g, skeletonColor.b, skeletonColor.a);
             matrixStack.pop();
 
-            tessellator.clear();
-            net.minecraft.client.render.BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
+            BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
             if (swimming) matrixStack.translate(0, 0.95f, 0);
             if (swimming || flying)

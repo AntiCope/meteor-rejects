@@ -160,11 +160,6 @@ public class FullFlight extends Module {
 
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) {
-        if (antiKickMode.get() == AntiKickMode.PaperNew) {
-            // TODO: Fix for 1.21.10 - ClientPlayerEntityAccessor.setTicksSinceLastPositionPacketSent() may have changed
-            // Resend movement packets
-            // ((ClientPlayerEntityAccessor) mc.player).setTicksSinceLastPositionPacketSent(20);
-        }
         if (floatingTicks >= 20) {
             switch (antiKickMode.get()) {
                 case New -> {

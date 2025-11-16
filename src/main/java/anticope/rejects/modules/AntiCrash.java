@@ -31,7 +31,6 @@ public class AntiCrash extends Module {
     private void onPacketReceive(PacketEvent.Receive event) {
         if (event.packet instanceof ExplosionS2CPacket packet) {
             Vec3d explodePos = packet.center();
-            // TODO: 1.21.3
             Vec3d playerKnockback = new Vec3d(0, 0, 0);
             if(packet.playerKnockback().isPresent()) {
                 playerKnockback = packet.playerKnockback().get();
