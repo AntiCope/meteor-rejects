@@ -1,10 +1,17 @@
 plugins {
-	id 'fabric-loom' version '1.13-SNAPSHOT'
+	id 'java'
+	id 'fabric-loom' version '1.14-SNAPSHOT'
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
 
-archivesBaseName = project.archives_base_name
+base {
+	archivesName = project.archives_base_name
+}
 version = project.mod_version
 group = project.maven_group
 
@@ -77,7 +84,7 @@ jar {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 }
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

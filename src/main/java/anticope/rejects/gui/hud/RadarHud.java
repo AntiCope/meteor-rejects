@@ -93,7 +93,7 @@ public class RadarHud extends HudElement {
             double height = getHeight();
             Renderer2D.COLOR.begin();
             Renderer2D.COLOR.quad(x, y, width, height, backgroundColor.get());
-            Renderer2D.COLOR.render(null);
+            Renderer2D.COLOR.render();
             if (mc.world != null) {
                 for (Entity entity : mc.world.getEntities()) {
                     if (!entities.get().contains(entity.getType())) return;
@@ -121,7 +121,7 @@ public class RadarHud extends HudElement {
                     renderer.text(icon, xPos + x, yPos + y, waypoint.color.get(), false);
                 }
             }
-            Renderer2D.COLOR.render(null);
+            Renderer2D.COLOR.render();
         });
         
     }

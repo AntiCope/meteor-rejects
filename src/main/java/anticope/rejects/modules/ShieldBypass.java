@@ -88,7 +88,7 @@ public class ShieldBypass extends Module {
 
             mc.getNetworkHandler().sendPacket(PlayerInteractEntityC2SPacket.attack(e, mc.player.isSneaking()));
             mc.getNetworkHandler().sendPacket(new HandSwingC2SPacket(mc.player.getActiveHand()));
-            mc.player.resetLastAttackedTicks();
+            mc.player.resetTicksSinceLastAttack();
 
             mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true, mc.player.horizontalCollision));
         }

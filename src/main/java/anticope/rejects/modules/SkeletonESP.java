@@ -220,15 +220,15 @@ public class SkeletonESP extends Module {
     }
 
     private Vec3d getEntityRenderPosition(Entity entity, double partial) {
-        double x = entity.lastX + ((entity.getX() - entity.lastX) * partial) - mc.getEntityRenderDispatcher().camera.getPos().x;
-        double y = entity.lastY + ((entity.getY() - entity.lastY) * partial) - mc.getEntityRenderDispatcher().camera.getPos().y;
-        double z = entity.lastZ + ((entity.getZ() - entity.lastZ) * partial) - mc.getEntityRenderDispatcher().camera.getPos().z;
+        double x = entity.lastX + ((entity.getX() - entity.lastX) * partial) - mc.getEntityRenderDispatcher().camera.getCameraPos().x;
+        double y = entity.lastY + ((entity.getY() - entity.lastY) * partial) - mc.getEntityRenderDispatcher().camera.getCameraPos().y;
+        double z = entity.lastZ + ((entity.getZ() - entity.lastZ) * partial) - mc.getEntityRenderDispatcher().camera.getCameraPos().z;
         return new Vec3d(x, y, z);
     }
 
     private Color getColorFromDistance(Entity entity) {
         Vec3d entityPos = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
-        double distance = mc.gameRenderer.getCamera().getPos().distanceTo(entityPos);
+        double distance = mc.gameRenderer.getCamera().getCameraPos().distanceTo(entityPos);
         double percent = distance / 60;
 
         if (percent < 0 || percent > 1) {

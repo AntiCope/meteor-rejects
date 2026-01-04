@@ -283,7 +283,12 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
 
     @Override
     public WWidget module(Module module) {
-        return w(new WMeteorModule(module));
+        return w(new WMeteorModule(module, module.title));
+    }
+
+    @Override
+    public WWidget module(Module module, String title) {
+        return w(new WMeteorModule(module, title));
     }
 
     @Override
