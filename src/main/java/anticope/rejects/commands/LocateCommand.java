@@ -11,11 +11,11 @@ import com.seedfinding.mccore.version.MCVersion;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.phys.Vec3;
 import cubitect.Cubiomes;
 import cubitect.Cubiomes.Pos;
 
@@ -23,11 +23,11 @@ public class LocateCommand extends Command {
 
 	private final static DynamicCommandExceptionType NOT_FOUND = new DynamicCommandExceptionType(o -> {
 		if (o instanceof Cubiomes.StructureType) {
-			return Text.literal(String.format(
+			return Component.literal(String.format(
 					"%s not found.",
 					Utils.nameToTitle(o.toString().replaceAll("_", "-"))));
 		}
-		return Text.literal("Not found.");
+		return Component.literal("Not found.");
 	});
 
 	public LocateCommand() {
@@ -35,11 +35,11 @@ public class LocateCommand extends Command {
 	}
 
 	@Override
-	public void build(LiteralArgumentBuilder<CommandSource> builder) {
+	public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
 		builder.then(literal("feature")
 				.then(argument("feature", EnumArgumentType.enumArgument(Cubiomes.StructureType.Village)).executes(ctx -> {
 					Cubiomes.StructureType feature = EnumArgumentType.getEnum(ctx, "feature", Cubiomes.StructureType.Village);
-					BlockPos playerPos = mc.player.getBlockPos();
+					BlockPos playerPos = mc.player.blockPosition();
 					long seed = Seeds.get().getSeed().seed;
 					MCVersion version = Seeds.get().getSeed().version;
 					Cubiomes.MCVersion cubiomesVersion = null;
@@ -76,10 +76,10 @@ public class LocateCommand extends Command {
 					if (pos != null) {
 						// Calculate distance
 						int distance = (int) Math.hypot(pos.x - playerPos.getX(), pos.z - playerPos.getZ());
-						MutableText text = Text.literal(String.format(
+						MutableComponent text = Component.literal(String.format(
 								"%s located at ",
 								Utils.nameToTitle(feature.toString().replaceAll("_", "-"))));
-						Vec3d coords = new Vec3d(pos.x, 0, pos.z);
+						Vec3 coords = new Vec3(pos.x, 0, pos.z);
 						text.append(ChatUtils.formatCoords(coords));
 						text.append(".");
 						if (distance > 0) {

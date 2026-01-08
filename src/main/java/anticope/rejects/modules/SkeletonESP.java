@@ -2,6 +2,8 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.ColorSetting;
@@ -16,20 +18,9 @@ import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -205,30 +196,30 @@ public class SkeletonESP extends Module {
         */
     }
 
-    private void rotate(MatrixStack matrix, ModelPart modelPart) {
-        if (modelPart.roll != 0.0F) {
-            matrix.multiply(RotationAxis.POSITIVE_Z.rotation(modelPart.roll));
+    private void rotate(PoseStack matrix, ModelPart modelPart) {
+        if (modelPart.zRot != 0.0F) {
+            matrix.mulPose(Axis.ZP.rotation(modelPart.zRot));
         }
 
-        if (modelPart.yaw != 0.0F) {
-            matrix.multiply(RotationAxis.NEGATIVE_Y.rotation(modelPart.yaw));
+        if (modelPart.yRot != 0.0F) {
+            matrix.mulPose(Axis.YN.rotation(modelPart.yRot));
         }
 
-        if (modelPart.pitch != 0.0F) {
-            matrix.multiply(RotationAxis.NEGATIVE_X.rotation(modelPart.pitch));
+        if (modelPart.xRot != 0.0F) {
+            matrix.mulPose(Axis.XN.rotation(modelPart.xRot));
         }
     }
 
-    private Vec3d getEntityRenderPosition(Entity entity, double partial) {
-        double x = entity.lastX + ((entity.getX() - entity.lastX) * partial) - mc.getEntityRenderDispatcher().camera.getCameraPos().x;
-        double y = entity.lastY + ((entity.getY() - entity.lastY) * partial) - mc.getEntityRenderDispatcher().camera.getCameraPos().y;
-        double z = entity.lastZ + ((entity.getZ() - entity.lastZ) * partial) - mc.getEntityRenderDispatcher().camera.getCameraPos().z;
-        return new Vec3d(x, y, z);
+    private Vec3 getEntityRenderPosition(Entity entity, double partial) {
+        double x = entity.xo + ((entity.getX() - entity.xo) * partial) - mc.getEntityRenderDispatcher().camera.position().x;
+        double y = entity.yo + ((entity.getY() - entity.yo) * partial) - mc.getEntityRenderDispatcher().camera.position().y;
+        double z = entity.zo + ((entity.getZ() - entity.zo) * partial) - mc.getEntityRenderDispatcher().camera.position().z;
+        return new Vec3(x, y, z);
     }
 
     private Color getColorFromDistance(Entity entity) {
-        Vec3d entityPos = new Vec3d(entity.getX(), entity.getY(), entity.getZ());
-        double distance = mc.gameRenderer.getCamera().getCameraPos().distanceTo(entityPos);
+        Vec3 entityPos = new Vec3(entity.getX(), entity.getY(), entity.getZ());
+        double distance = mc.gameRenderer.getMainCamera().position().distanceTo(entityPos);
         double percent = distance / 60;
 
         if (percent < 0 || percent > 1) {

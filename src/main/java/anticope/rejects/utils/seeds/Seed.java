@@ -1,12 +1,14 @@
 package anticope.rejects.utils.seeds;
 
 import com.seedfinding.mccore.version.MCVersion;
-
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtLong;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 
 public class Seed {
     public final Long seed;
@@ -19,25 +21,25 @@ public class Seed {
         this.version = version;
     }
 
-    public NbtCompound toTag() {
-        NbtCompound tag = new NbtCompound();
-        tag.put("seed", NbtLong.of(seed));
-        tag.put("version", NbtString.of(version.name));
+    public CompoundTag toTag() {
+        CompoundTag tag = new CompoundTag();
+        tag.put("seed", LongTag.valueOf(seed));
+        tag.put("version", StringTag.valueOf(version.name));
         return tag;
     }
 
-    public static Seed fromTag(NbtCompound tag) {
+    public static Seed fromTag(CompoundTag tag) {
         return new Seed(
             tag.getLong("seed").orElse(0L),
             MCVersion.fromString(tag.getString("version").orElse(""))
         );
     }
 
-    public Text toText() {
-        MutableText text = Text.literal(String.format("[%s%s%s] (%s)",
-            Formatting.GREEN,
+    public Component toText() {
+        MutableComponent text = Component.literal(String.format("[%s%s%s] (%s)",
+            ChatFormatting.GREEN,
             seed.toString(),
-            Formatting.WHITE,
+            ChatFormatting.WHITE,
             version.toString()
         ));
         text.setStyle(text.getStyle()
@@ -45,7 +47,7 @@ public class Seed {
                 seed.toString()
             ))
             .withHoverEvent(new HoverEvent.ShowText(
-                Text.literal("Copy to clipboard")
+                Component.literal("Copy to clipboard")
             ))
         );
         return text;

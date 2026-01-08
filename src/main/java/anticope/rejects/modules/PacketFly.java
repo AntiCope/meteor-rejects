@@ -8,16 +8,15 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.EntityPosition;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.c2s.play.TeleportConfirmC2SPacket;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.network.protocol.game.ServerboundAcceptTeleportationPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.phys.Vec3;
 import java.util.HashSet;
 
 public class PacketFly extends Module {
-    private final HashSet<PlayerMoveC2SPacket> packets = new HashSet<>();
+    private final HashSet<ServerboundMovePlayerPacket> packets = new HashSet<>();
     private final SettingGroup sgMovement = settings.createGroup("movement");
     private final SettingGroup sgClient = settings.createGroup("client");
     private final SettingGroup sgBypass = settings.createGroup("bypass");
@@ -124,53 +123,53 @@ public class PacketFly extends Module {
 
     @EventHandler
     public void onSendMovementPackets(SendMovementPacketsEvent.Pre event) {
-        mc.player.setVelocity(0.0,0.0,0.0);
+        mc.player.setDeltaMovement(0.0,0.0,0.0);
         double speed = 0.0;
         boolean checkCollisionBoxes = checkHitBoxes();
 
-        speed = mc.player.input.playerInput.jump() && (checkCollisionBoxes || !(mc.player.input.getMovementInput().y != 0.0 || mc.player.input.getMovementInput().x != 0.0)) ? (antiKick.get() && !checkCollisionBoxes ? (resetCounter(downDelayFlying.get()) ? -0.032 : verticalSpeed.get()/20) : verticalSpeed.get()/20) : (mc.player.input.playerInput.sneak() ? verticalSpeed.get()/-20 : (!checkCollisionBoxes ? (resetCounter(downDelay.get()) ? (antiKick.get() ? -0.04 : 0.0) : 0.0) : 0.0));
+        speed = mc.player.input.keyPresses.jump() && (checkCollisionBoxes || !(mc.player.input.getMoveVector().y != 0.0 || mc.player.input.getMoveVector().x != 0.0)) ? (antiKick.get() && !checkCollisionBoxes ? (resetCounter(downDelayFlying.get()) ? -0.032 : verticalSpeed.get()/20) : verticalSpeed.get()/20) : (mc.player.input.keyPresses.shift() ? verticalSpeed.get()/-20 : (!checkCollisionBoxes ? (resetCounter(downDelay.get()) ? (antiKick.get() ? -0.04 : 0.0) : 0.0) : 0.0));
 
-        Vec3d horizontal = PlayerUtils.getHorizontalVelocity(horizontalSpeed.get());
+        Vec3 horizontal = PlayerUtils.getHorizontalVelocity(horizontalSpeed.get());
 
-        mc.player.setVelocity(horizontal.x, speed, horizontal.z);
-        sendPackets(mc.player.getVelocity().x, mc.player.getVelocity().y, mc.player.getVelocity().z, sendTeleport.get());
+        mc.player.setDeltaMovement(horizontal.x, speed, horizontal.z);
+        sendPackets(mc.player.getDeltaMovement().x, mc.player.getDeltaMovement().y, mc.player.getDeltaMovement().z, sendTeleport.get());
     }
 
     @EventHandler
     public void onMove (PlayerMoveEvent event) {
         if (setMove.get() && flightCounter != 0) {
-            event.movement = new Vec3d(mc.player.getVelocity().x, mc.player.getVelocity().y, mc.player.getVelocity().z);
+            event.movement = new Vec3(mc.player.getDeltaMovement().x, mc.player.getDeltaMovement().y, mc.player.getDeltaMovement().z);
         }
     }
 
     @EventHandler
     public void onPacketSent(PacketEvent.Send event) {
-        if (event.packet instanceof PlayerMoveC2SPacket && !packets.remove((PlayerMoveC2SPacket) event.packet)) {
+        if (event.packet instanceof ServerboundMovePlayerPacket && !packets.remove((ServerboundMovePlayerPacket) event.packet)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onPacketReceive(PacketEvent.Receive event) {
-        if (event.packet instanceof PlayerPositionLookS2CPacket && !(mc.player == null || mc.world == null)) {
-            PlayerPositionLookS2CPacket packet = (PlayerPositionLookS2CPacket) event.packet;
-            EntityPosition oldPos = packet.change();
+        if (event.packet instanceof ClientboundPlayerPositionPacket && !(mc.player == null || mc.level == null)) {
+            ClientboundPlayerPositionPacket packet = (ClientboundPlayerPositionPacket) event.packet;
+            PositionMoveRotation oldPos = packet.change();
             if (setYaw.get()) {
-                EntityPosition newPos = new EntityPosition(oldPos.position(), oldPos.deltaMovement(), mc.player.getYaw(), mc.player.getPitch());
-                event.packet = PlayerPositionLookS2CPacket.of(
-                        packet.teleportId(),
+                PositionMoveRotation newPos = new PositionMoveRotation(oldPos.position(), oldPos.deltaMovement(), mc.player.getYRot(), mc.player.getXRot());
+                event.packet = ClientboundPlayerPositionPacket.of(
+                        packet.id(),
                         newPos,
                         packet.relatives()
                 );
             }
             if (setID.get()) {
-                teleportID = packet.teleportId();
+                teleportID = packet.id();
             }
         }
     }
 
     private boolean checkHitBoxes() {
-        return !mc.world.getBlockCollisions(mc.player, mc.player.getBoundingBox().stretch(-0.0625,-0.0625,-0.0625)).iterator().hasNext();
+        return !mc.level.getBlockCollisions(mc.player, mc.player.getBoundingBox().expandTowards(-0.0625,-0.0625,-0.0625)).iterator().hasNext();
     }
 
     private boolean resetCounter(int counter) {
@@ -182,32 +181,32 @@ public class PacketFly extends Module {
     }
 
     private void sendPackets(double x, double y, double z, boolean teleport) {
-        Vec3d vec = new Vec3d(x, y, z);
-        Vec3d playerPos = new Vec3d(mc.player.getX(), mc.player.getY(), mc.player.getZ());
-        Vec3d position = playerPos.add(vec);
-        Vec3d outOfBoundsVec = outOfBoundsVec(vec, position);
-        packetSender(new PlayerMoveC2SPacket.PositionAndOnGround(position.x, position.y, position.z, mc.player.isOnGround(), mc.player.horizontalCollision));
+        Vec3 vec = new Vec3(x, y, z);
+        Vec3 playerPos = new Vec3(mc.player.getX(), mc.player.getY(), mc.player.getZ());
+        Vec3 position = playerPos.add(vec);
+        Vec3 outOfBoundsVec = outOfBoundsVec(vec, position);
+        packetSender(new ServerboundMovePlayerPacket.Pos(position.x, position.y, position.z, mc.player.onGround(), mc.player.horizontalCollision));
         if (invalidPacket.get()) {
-            packetSender(new PlayerMoveC2SPacket.PositionAndOnGround(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, mc.player.isOnGround(), mc.player.horizontalCollision));
+            packetSender(new ServerboundMovePlayerPacket.Pos(outOfBoundsVec.x, outOfBoundsVec.y, outOfBoundsVec.z, mc.player.onGround(), mc.player.horizontalCollision));
         }
         if (setPos.get()) {
-            mc.player.setPos(position.x, position.y, position.z);
+            mc.player.setPosRaw(position.x, position.y, position.z);
         }
         teleportPacket(position, teleport);
     }
 
-    private void teleportPacket(Vec3d pos, boolean shouldTeleport) {
+    private void teleportPacket(Vec3 pos, boolean shouldTeleport) {
         if (shouldTeleport) {
-            mc.player.networkHandler.sendPacket(new TeleportConfirmC2SPacket(++teleportID));
+            mc.player.connection.send(new ServerboundAcceptTeleportationPacket(++teleportID));
         }
     }
 
-    private Vec3d outOfBoundsVec(Vec3d offset, Vec3d position) {
+    private Vec3 outOfBoundsVec(Vec3 offset, Vec3 position) {
         return position.add(0.0, 1500.0, 0.0);
     }
 
-    private void packetSender(PlayerMoveC2SPacket packet) {
+    private void packetSender(ServerboundMovePlayerPacket packet) {
         packets.add(packet);
-        mc.player.networkHandler.sendPacket(packet);
+        mc.player.connection.send(packet);
     }
 }

@@ -5,11 +5,10 @@ import meteordevelopment.meteorclient.systems.System;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.render.prompts.OkPrompt;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
-
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,29 +63,29 @@ public class RejectsConfig extends System<RejectsConfig> {
     }
 
     @Override
-    public NbtCompound toTag() {
-        NbtCompound tag = new NbtCompound();
+    public CompoundTag toTag() {
+        CompoundTag tag = new CompoundTag();
         tag.putString("httpAllowed", httpAllowed.toString());
         tag.putString("httpUserAgent", httpUserAgent);
         tag.putBoolean("loadSystemFonts", loadSystemFonts);
         tag.putBoolean("duplicateModuleNames", duplicateModuleNames);
 
-        NbtList modulesTag = new NbtList();
-        for (String module : hiddenModules) modulesTag.add(NbtString.of(module));
+        ListTag modulesTag = new ListTag();
+        for (String module : hiddenModules) modulesTag.add(StringTag.valueOf(module));
         tag.put("hiddenModules", modulesTag);
 
         return tag;
     }
 
     @Override
-    public RejectsConfig fromTag(NbtCompound tag) {
+    public RejectsConfig fromTag(CompoundTag tag) {
         tag.getString("httpAllowed").ifPresent(s -> httpAllowed = HttpAllowed.valueOf(s));
         httpUserAgent = tag.getString("httpUserAgent").orElse(httpUserAgent);
         loadSystemFonts = tag.getBoolean("loadSystemFonts").orElse(loadSystemFonts);
         duplicateModuleNames = tag.getBoolean("duplicateModuleNames").orElse(duplicateModuleNames);
 
         tag.getList("hiddenModules").ifPresent(valueTag -> {
-            for (NbtElement tagI : valueTag) {
+            for (Tag tagI : valueTag) {
                 tagI.asString().ifPresent(hiddenModules::add);
             }
         });

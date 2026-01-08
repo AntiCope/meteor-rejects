@@ -8,11 +8,11 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class ArrowDmg extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -43,19 +43,19 @@ public class ArrowDmg extends Module {
         if (!isValidItem(event.itemStack.getItem()))
             return;
 
-        ClientPlayerEntity p = mc.player;
+        LocalPlayer p = mc.player;
 
-        p.networkHandler.sendPacket(
-                new ClientCommandC2SPacket(p, ClientCommandC2SPacket.Mode.START_SPRINTING));
+        p.connection.send(
+                new ServerboundPlayerCommandPacket(p, ServerboundPlayerCommandPacket.Action.START_SPRINTING));
 
         double x = p.getX();
         double y = p.getY();
         double z = p.getZ();
 
         for (int i = 0; i < packets.get() / 2; i++) {
-            p.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(x,
+            p.connection.send(new ServerboundMovePlayerPacket.Pos(x,
                     y - 1e-10, z, true, mc.player.horizontalCollision));
-            p.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(x,
+            p.connection.send(new ServerboundMovePlayerPacket.Pos(x,
                     y + 1e-10, z, false, mc.player.horizontalCollision));
         }
     }

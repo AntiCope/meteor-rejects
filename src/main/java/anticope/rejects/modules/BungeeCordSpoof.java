@@ -9,9 +9,8 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.c2s.handshake.ConnectionIntent;
-import net.minecraft.network.packet.c2s.handshake.HandshakeC2SPacket;
-
+import net.minecraft.network.protocol.handshake.ClientIntent;
+import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
 import java.util.List;
 
 public class BungeeCordSpoof extends Module {
@@ -54,11 +53,11 @@ public class BungeeCordSpoof extends Module {
 
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
-        if (event.packet instanceof HandshakeC2SPacket packet && packet.intendedState() == ConnectionIntent.LOGIN) {
+        if (event.packet instanceof ClientIntentionPacket packet && packet.intention() == ClientIntent.LOGIN) {
             if (whitelist.get() && !whitelistedServers.get().contains(Utils.getWorldName())) return;
-            String address = packet.address() + "\0" + forwardedIP + "\0" + mc.getSession().getUuidOrNull().toString().replace("-", "")
+            String address = packet.hostName() + "\0" + forwardedIP + "\0" + mc.getUser().getProfileId().toString().replace("-", "")
                     + (spoofProfile.get() ? getProperty() : "");
-            ((HandshakeC2SPacketAccessor) (Object) packet).setAddress(address);
+            ((HandshakeC2SPacketAccessor) (Object) packet).setHostName(address);
         }
     }
 

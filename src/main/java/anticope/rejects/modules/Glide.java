@@ -8,9 +8,9 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 
 public class Glide extends Module {
@@ -49,19 +49,19 @@ public class Glide extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        ClientPlayerEntity player = mc.player;
-        Vec3d v = player.getVelocity();
+        LocalPlayer player = mc.player;
+        Vec3 v = player.getDeltaMovement();
 
-        if (player.isOnGround() || player.isTouchingWater() || player.isInLava() || player.isClimbing() || v.y >= 0)
+        if (player.onGround() || player.isInWater() || player.isInLava() || player.onClimbable() || v.y >= 0)
             return;
 
         if (minHeight.get() > 0) {
-            Box box = player.getBoundingBox();
-            box = box.union(box.offset(0, -minHeight.get(), 0));
-            if (!mc.world.isSpaceEmpty(box)) return;
+            AABB box = player.getBoundingBox();
+            box = box.minmax(box.move(0, -minHeight.get(), 0));
+            if (!mc.level.noCollision(box)) return;
         }
 
-        player.setVelocity(v.x, Math.max(v.y, -fallSpeed.get()), v.z);
+        player.setDeltaMovement(v.x, Math.max(v.y, -fallSpeed.get()), v.z);
     }
 
     @EventHandler

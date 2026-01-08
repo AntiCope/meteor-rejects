@@ -2,12 +2,12 @@ package anticope.rejects.commands;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.network.ServerAddress;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.command.CommandSource;
+import net.minecraft.client.gui.screens.ConnectScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.resolver.ServerAddress;
+import net.minecraft.commands.SharedSuggestionProvider;
 
 public class ReconnectCommand extends Command {
     public ReconnectCommand() {
@@ -15,13 +15,13 @@ public class ReconnectCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.executes(context -> {
-            ServerInfo info = mc.isInSingleplayer() ? null : mc.getCurrentServerEntry();
+            ServerData info = mc.isLocalServer() ? null : mc.getCurrentServer();
             if (info != null) {
-                mc.world.disconnect(net.minecraft.text.Text.literal("Reconnecting"));
-                ConnectScreen.connect(new MultiplayerScreen(new TitleScreen()), mc,
-                        ServerAddress.parse(info.address), info, false, null);
+                mc.level.disconnect(net.minecraft.network.chat.Component.literal("Reconnecting"));
+                ConnectScreen.startConnecting(new JoinMultiplayerScreen(new TitleScreen()), mc,
+                        ServerAddress.parseString(info.ip), info, false, null);
             }
             return SINGLE_SUCCESS;
         });

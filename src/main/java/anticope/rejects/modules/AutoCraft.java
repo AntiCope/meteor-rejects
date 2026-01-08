@@ -9,15 +9,14 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.gui.screen.recipebook.RecipeResultCollection;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeDisplayEntry;
-import net.minecraft.recipe.display.RecipeDisplay;
-import net.minecraft.recipe.display.SlotDisplayContexts;
-import net.minecraft.screen.CraftingScreenHandler;
-import net.minecraft.screen.slot.SlotActionType;
-
+import net.minecraft.client.gui.screens.recipebook.RecipeCollection;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.CraftingMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import java.util.Arrays;
 import java.util.List;
 
@@ -59,33 +58,33 @@ public class AutoCraft extends Module {
     
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        if (!Utils.canUpdate() || mc.interactionManager == null) return;
+        if (!Utils.canUpdate() || mc.gameMode == null) return;
 
         if (items.get().isEmpty()) return;
 
-        if (!(mc.player.currentScreenHandler instanceof CraftingScreenHandler)) return;
+        if (!(mc.player.containerMenu instanceof CraftingMenu)) return;
 
         if (antiDesync.get()) 
-            mc.player.getInventory().updateItems();
+            mc.player.getInventory().tick();
 
         // Danke schön GhostTypes
         // https://github.com/GhostTypes/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java
-        CraftingScreenHandler currentScreenHandler = (CraftingScreenHandler) mc.player.currentScreenHandler;
+        CraftingMenu currentScreenHandler = (CraftingMenu) mc.player.containerMenu;
         List<Item> itemList = items.get();
-        List<RecipeResultCollection> recipeResultCollectionList  = mc.player.getRecipeBook().getOrderedResults();
-        for (RecipeResultCollection recipeResultCollection : recipeResultCollectionList) {
+        List<RecipeCollection> recipeResultCollectionList  = mc.player.getRecipeBook().getCollections();
+        for (RecipeCollection recipeResultCollection : recipeResultCollectionList) {
             // Get craftable recipes only
-            List<RecipeDisplayEntry> craftRecipes = recipeResultCollection.filter(RecipeResultCollection.RecipeFilterMode.CRAFTABLE);
+            List<RecipeDisplayEntry> craftRecipes = recipeResultCollection.getSelectedRecipes(RecipeCollection.CraftableStatus.CRAFTABLE);
             for (RecipeDisplayEntry recipe : craftRecipes) {
                 RecipeDisplay recipeDisplay = recipe.display();
-                List<ItemStack> resultStacks = recipeDisplay.result().getStacks(SlotDisplayContexts.createParameters(mc.world));
+                List<ItemStack> resultStacks = recipeDisplay.result().resolveForStacks(SlotDisplayContext.fromLevel(mc.level));
                 for (ItemStack resultStack : resultStacks) {
                     // Check if the result item is in the item list
                     if (!itemList.contains(resultStack.getItem())) continue;
 
-                    mc.interactionManager.clickRecipe(currentScreenHandler.syncId, recipe.id(), craftAll.get());
-                    mc.interactionManager.clickSlot(currentScreenHandler.syncId, 0, 1,
-                            drop.get() ? SlotActionType.THROW : SlotActionType.QUICK_MOVE, mc.player);
+                    mc.gameMode.handlePlaceRecipe(currentScreenHandler.containerId, recipe.id(), craftAll.get());
+                    mc.gameMode.handleInventoryMouseClick(currentScreenHandler.containerId, 0, 1,
+                            drop.get() ? ClickType.THROW : ClickType.QUICK_MOVE, mc.player);
                 }
             }
         }

@@ -3,13 +3,12 @@ package anticope.rejects.utils;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,19 +34,19 @@ public class WorldUtils {
         double d = pos1.getX() - pos2.getX();
         double e = pos1.getY() - pos2.getY();
         double f = pos1.getZ() - pos2.getZ();
-        return MathHelper.sqrt((float) (d * d + e * e + f * f));
+        return Mth.sqrt((float) (d * d + e * e + f * f));
     }
 
     public static boolean interact(BlockPos pos, FindItemResult findItemResult, boolean rotate) {
         if (!findItemResult.found()) return false;
         Runnable action = () -> {
-            boolean wasSneaking = mc.player.isSneaking();
-            mc.player.setSneaking(false);
+            boolean wasSneaking = mc.player.isShiftKeyDown();
+            mc.player.setShiftKeyDown(false);
             InvUtils.swap(findItemResult.slot(), true);
-            mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Vec3d.ofCenter(pos), Direction.UP, pos, false));
-            mc.player.swingHand(Hand.MAIN_HAND);
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
+            mc.player.swing(InteractionHand.MAIN_HAND);
             InvUtils.swapBack();
-            mc.player.setSneaking(wasSneaking);
+            mc.player.setShiftKeyDown(wasSneaking);
         };
         if (rotate) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), -100, action);
         else action.run();

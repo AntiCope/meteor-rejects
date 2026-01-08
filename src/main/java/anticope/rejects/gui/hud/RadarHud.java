@@ -12,11 +12,10 @@ import meteordevelopment.meteorclient.systems.waypoints.Waypoint;
 import meteordevelopment.meteorclient.systems.waypoints.Waypoints;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.phys.Vec3;
 import java.util.Set;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -94,15 +93,15 @@ public class RadarHud extends HudElement {
             Renderer2D.COLOR.begin();
             Renderer2D.COLOR.quad(x, y, width, height, backgroundColor.get());
             Renderer2D.COLOR.render();
-            if (mc.world != null) {
-                for (Entity entity : mc.world.getEntities()) {
+            if (mc.level != null) {
+                for (Entity entity : mc.level.entitiesForRendering()) {
                     if (!entities.get().contains(entity.getType())) return;
                     double xPos = ((entity.getX() - mc.player.getX()) * scale.get() * zoom.get() + width/2);
                     double yPos = ((entity.getZ() - mc.player.getZ()) * scale.get() * zoom.get()  + height/2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
                     String icon = "*";
                     if (letters.get()) 
-                        icon = entity.getType().getUntranslatedName().substring(0,1).toUpperCase();
+                        icon = entity.getType().toShortString().substring(0,1).toUpperCase();
                     Color c = esp.getColor(entity);
                     if (c == null) c = Color.WHITE;
                     renderer.text(icon, xPos + x, yPos + y, c, false);
@@ -111,9 +110,9 @@ public class RadarHud extends HudElement {
             if (showWaypoints.get()) {
                 for (Waypoint waypoint : Waypoints.get()) {
                     BlockPos blockPos = waypoint.getPos();
-                    Vec3d coords = new Vec3d(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
-                    double xPos = ((coords.getX() - mc.player.getX()) * scale.get() * zoom.get() + width / 2);
-                    double yPos = ((coords.getZ() - mc.player.getZ()) * scale.get() * zoom.get() + height / 2);
+                    Vec3 coords = new Vec3(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
+                    double xPos = ((coords.x() - mc.player.getX()) * scale.get() * zoom.get() + width / 2);
+                    double yPos = ((coords.z() - mc.player.getZ()) * scale.get() * zoom.get() + height / 2);
                     if (xPos < 0 || yPos < 0 || xPos > width - scale.get() || yPos > height - scale.get()) continue;
                     String icon = "*";
                     if (letters.get() && !waypoint.name.get().isEmpty())

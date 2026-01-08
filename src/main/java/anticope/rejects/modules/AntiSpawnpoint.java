@@ -7,14 +7,14 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Blocks;
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.attribute.BedRule;
 import net.minecraft.world.attribute.EnvironmentAttributeMap;
 import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Blocks;
 
 public class AntiSpawnpoint extends Module {
 
@@ -33,25 +33,25 @@ public class AntiSpawnpoint extends Module {
 
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
-        if (mc.world == null) return;
-        if(!(event.packet instanceof PlayerInteractBlockC2SPacket)) return;
+        if (mc.level == null) return;
+        if(!(event.packet instanceof ServerboundUseItemOnPacket)) return;
 
 
-        BlockPos blockPos = ((PlayerInteractBlockC2SPacket) event.packet).getBlockHitResult().getBlockPos();
-        EnvironmentAttributeMap attributes = mc.world.getDimension().attributes();
-        boolean IsOverWorld = attributes.apply(EnvironmentAttributes.BED_RULE_GAMEPLAY, BedRule.OVERWORLD) != BedRule.OVERWORLD;
-        boolean IsNetherWorld = attributes.apply(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS_GAMEPLAY, false);
-        boolean BlockIsBed = mc.world.getBlockState(blockPos).getBlock() instanceof BedBlock;
-        boolean BlockIsAnchor = mc.world.getBlockState(blockPos).getBlock().equals(Blocks.RESPAWN_ANCHOR);
+        BlockPos blockPos = ((ServerboundUseItemOnPacket) event.packet).getHitResult().getBlockPos();
+        EnvironmentAttributeMap attributes = mc.level.dimensionType().attributes();
+        boolean IsOverWorld = attributes.applyModifier(EnvironmentAttributes.BED_RULE, BedRule.CAN_SLEEP_WHEN_DARK) != BedRule.CAN_SLEEP_WHEN_DARK;
+        boolean IsNetherWorld = attributes.applyModifier(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false);
+        boolean BlockIsBed = mc.level.getBlockState(blockPos).getBlock() instanceof BedBlock;
+        boolean BlockIsAnchor = mc.level.getBlockState(blockPos).getBlock().equals(Blocks.RESPAWN_ANCHOR);
 
         assert mc.player != null;
         if (fakeUse.get()) {
             if (BlockIsBed && IsOverWorld) {
-                mc.player.swingHand(Hand.MAIN_HAND);
-                mc.player.updatePosition(blockPos.getX(),blockPos.up().getY(),blockPos.getZ());
+                mc.player.swing(InteractionHand.MAIN_HAND);
+                mc.player.absSnapTo(blockPos.getX(),blockPos.above().getY(),blockPos.getZ());
             }
             else if (BlockIsAnchor && IsNetherWorld) {
-                mc.player.swingHand(Hand.MAIN_HAND);
+                mc.player.swing(InteractionHand.MAIN_HAND);
             }
         }
 

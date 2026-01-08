@@ -7,14 +7,13 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -26,8 +25,8 @@ import java.util.*;
 */
 public class ServerCommand extends Command {
 
-    private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(Text.literal("Couldn't obtain server address"));
-    private final static SimpleCommandExceptionType INVALID_RANGE = new SimpleCommandExceptionType(Text.literal("Invalid range"));
+    private final static SimpleCommandExceptionType ADDRESS_ERROR = new SimpleCommandExceptionType(Component.literal("Couldn't obtain server address"));
+    private final static SimpleCommandExceptionType INVALID_RANGE = new SimpleCommandExceptionType(Component.literal("Invalid range"));
 
     private final static HashMap<Integer, String> ports = new HashMap<>();
 
@@ -49,7 +48,7 @@ public class ServerCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.then(literal("ports").executes(ctx -> {
             scanKnownPorts(getAddress());
             return SINGLE_SUCCESS;
@@ -66,17 +65,17 @@ public class ServerCommand extends Command {
     }
 
     private InetAddress getAddress() throws CommandSyntaxException {
-        if (mc.isIntegratedServerRunning()) {
+        if (mc.hasSingleplayerServer()) {
             try {
                 return InetAddress.getLocalHost();
             } catch (UnknownHostException e) {
                 throw ADDRESS_ERROR.create();
             }
         } else {
-            ServerInfo server = mc.getCurrentServerEntry();
+            ServerData server = mc.getCurrentServer();
             if (server == null) throw ADDRESS_ERROR.create();
             try {
-                return InetAddress.getByName(server.address);
+                return InetAddress.getByName(server.ip);
             } catch (UnknownHostException e) {
                 throw ADDRESS_ERROR.create();
             }
@@ -110,8 +109,8 @@ public class ServerCommand extends Command {
         scanPorts(address, port_list);
     }
 
-    private MutableText formatPort(int port, InetAddress address) {
-        MutableText text = Text.literal(String.format("- %s%d%s ", Formatting.GREEN, port, Formatting.GRAY));
+    private MutableComponent formatPort(int port, InetAddress address) {
+        MutableComponent text = Component.literal(String.format("- %s%d%s ", ChatFormatting.GREEN, port, ChatFormatting.GRAY));
         if (ports.containsKey(port)) {
             text.append(ports.get(port));
             if (ports.get(port).startsWith("HTTP") || ports.get(port).startsWith("FTP")) {
@@ -120,7 +119,7 @@ public class ServerCommand extends Command {
                                 URI.create(String.format("%s://%s:%d", ports.get(port).toLowerCase(), address.getHostAddress(), port))
                         ))
                         .withHoverEvent(new HoverEvent.ShowText(
-                                Text.literal("Open in browser")
+                                Component.literal("Open in browser")
                         ))
                 );
             } else if (Objects.equals(ports.get(port), "DynMap")) {
@@ -129,7 +128,7 @@ public class ServerCommand extends Command {
                                 URI.create(String.format("http://%s:%d", address.getHostAddress(), port))
                         ))
                         .withHoverEvent(new HoverEvent.ShowText(
-                                Text.literal("Open in browser")
+                                Component.literal("Open in browser")
                         ))
                 );
             } else {
@@ -138,7 +137,7 @@ public class ServerCommand extends Command {
                                 String.format("%s:%d", address.getHostAddress(), port)
                         ))
                         .withHoverEvent(new HoverEvent.ShowText(
-                                Text.literal("Copy")
+                                Component.literal("Copy")
                         ))
                 );
             }
@@ -148,7 +147,7 @@ public class ServerCommand extends Command {
                             String.format("%s:%d", address.getHostAddress(), port)
                     ))
                     .withHoverEvent(new HoverEvent.ShowText(
-                            Text.literal("Copy")
+                            Component.literal("Copy")
                     ))
             );
         }

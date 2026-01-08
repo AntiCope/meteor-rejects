@@ -15,20 +15,19 @@ import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.player.SlotUtils;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.EventPriority;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,26 +107,26 @@ public class ChestAura extends Module {
             }
         }
 
-        if (timer > 0 && mc.currentScreen != null) return;
+        if (timer > 0 && mc.screen != null) return;
 
         for (BlockEntity block : Utils.blockEntities()) {
             if (!blocks.get().contains(block.getType())) continue;
-            if (mc.player.getEyePos().distanceTo(Vec3d.ofCenter(block.getPos())) >= range.get()) continue;
+            if (mc.player.getEyePosition().distanceTo(Vec3.atCenterOf(block.getBlockPos())) >= range.get()) continue;
 
-            BlockPos pos = block.getPos();
+            BlockPos pos = block.getBlockPos();
             if (openedBlocks.containsKey(pos)) continue;
 
-            Runnable click = () -> mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
+            Runnable click = () -> mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, false));
             if (rotate.get()) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), click);
             else click.run();
 
             // Double chest compatibility
-            BlockState state = block.getCachedState();
-            if (state.contains(ChestBlock.CHEST_TYPE)) {
-                Direction direction = state.get(ChestBlock.FACING);
-                switch (state.get(ChestBlock.CHEST_TYPE)) {
-                    case LEFT -> openedBlocks.put(pos.offset(direction.rotateYClockwise()), 0);
-                    case RIGHT -> openedBlocks.put(pos.offset(direction.rotateYCounterclockwise()), 0);
+            BlockState state = block.getBlockState();
+            if (state.hasProperty(ChestBlock.TYPE)) {
+                Direction direction = state.getValue(ChestBlock.FACING);
+                switch (state.getValue(ChestBlock.TYPE)) {
+                    case LEFT -> openedBlocks.put(pos.relative(direction.getClockWise()), 0);
+                    case RIGHT -> openedBlocks.put(pos.relative(direction.getCounterClockWise()), 0);
                 }
             }
 
@@ -142,17 +141,17 @@ public class ChestAura extends Module {
     public class CloseListener {
         @EventHandler(priority = EventPriority.HIGH)
         private void onInventory(InventoryEvent event) {
-            ScreenHandler handler = mc.player.currentScreenHandler;
-            if (event.packet.syncId() == handler.syncId) {
+            AbstractContainerMenu handler = mc.player.containerMenu;
+            if (event.packet.containerId() == handler.containerId) {
                 switch (closeCondition.get()) {
                     case IfEmpty -> {
-                        DefaultedList<ItemStack> stacks = DefaultedList.of();
-                        IntStream.range(0, SlotUtils.indexToId(SlotUtils.MAIN_START)).mapToObj(handler.slots::get).map(Slot::getStack).forEach(stacks::add);
-                        if (stacks.stream().allMatch(ItemStack::isEmpty)) mc.player.closeHandledScreen();
+                        NonNullList<ItemStack> stacks = NonNullList.create();
+                        IntStream.range(0, SlotUtils.indexToId(SlotUtils.MAIN_START)).mapToObj(handler.slots::get).map(Slot::getItem).forEach(stacks::add);
+                        if (stacks.stream().allMatch(ItemStack::isEmpty)) mc.player.closeContainer();
                     }
-                    case Always -> mc.player.closeHandledScreen();
+                    case Always -> mc.player.closeContainer();
                     case AfterSteal ->
-                            ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).stealCallback(() -> mc.player.closeHandledScreen());
+                            ((IInventoryTweaks) Modules.get().get(InventoryTweaks.class)).stealCallback(() -> mc.player.closeContainer());
                 }
             }
             MeteorClient.EVENT_BUS.unsubscribe(this);

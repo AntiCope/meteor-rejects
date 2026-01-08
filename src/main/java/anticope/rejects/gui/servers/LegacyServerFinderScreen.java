@@ -9,16 +9,15 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
 import meteordevelopment.meteorclient.gui.widgets.input.WIntEdit;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.network.ServerInfo;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.multiplayer.ServerData;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class LegacyServerFinderScreen extends WindowScreen {
-    private final MultiplayerScreen multiplayerScreen;
+    private final JoinMultiplayerScreen multiplayerScreen;
     private final WTextBox ipBox;
     private final WIntEdit maxThreadsBox;
     private final WButton searchButton;
@@ -30,7 +29,7 @@ public class LegacyServerFinderScreen extends WindowScreen {
     private int checked;
     private int working;
 
-    public LegacyServerFinderScreen(GuiTheme theme, MultiplayerScreen multiplayerScreen, Screen parent) {
+    public LegacyServerFinderScreen(GuiTheme theme, JoinMultiplayerScreen multiplayerScreen, Screen parent) {
         super(theme, "Legacy Server Discovery");
         this.multiplayerScreen = multiplayerScreen;
         this.parent = parent;
@@ -139,8 +138,8 @@ public class LegacyServerFinderScreen extends WindowScreen {
     }
 
     private boolean isServerInList(String ip) {
-        for (int i = 0; i < multiplayerScreen.getServerList().size(); i++)
-            if (multiplayerScreen.getServerList().get(i).address.equals(ip))
+        for (int i = 0; i < multiplayerScreen.getServers().size(); i++)
+            if (multiplayerScreen.getServers().get(i).ip.equals(ip))
                 return true;
 
         return false;
@@ -154,14 +153,14 @@ public class LegacyServerFinderScreen extends WindowScreen {
                     working++;
 
                     if (!isServerInList(pingers.get(i).getServerIP())) {
-                        multiplayerScreen.getServerList()
-                                .add(new ServerInfo("Server discovery " + working,
-                                        pingers.get(i).getServerIP(), ServerInfo.ServerType.OTHER), false);
-                        multiplayerScreen.getServerList().saveFile();
+                        multiplayerScreen.getServers()
+                                .add(new ServerData("Server discovery " + working,
+                                        pingers.get(i).getServerIP(), ServerData.Type.OTHER), false);
+                        multiplayerScreen.getServers().save();
                         ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget()
                                 .setSelected(null);
                         ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget()
-                                .setServers(multiplayerScreen.getServerList());
+                                .updateOnlineServers(multiplayerScreen.getServers());
                     }
                 }
                 pingers.remove(i);
@@ -169,9 +168,9 @@ public class LegacyServerFinderScreen extends WindowScreen {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         state = ServerFinderState.CANCELLED;
-        super.close();
+        super.onClose();
     }
 
     enum ServerFinderState {

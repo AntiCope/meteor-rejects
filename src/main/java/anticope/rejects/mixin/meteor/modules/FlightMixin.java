@@ -6,13 +6,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import net.minecraft.util.math.Vec3d;
-
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.movement.Flight;
+import net.minecraft.world.phys.Vec3;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
@@ -38,11 +36,11 @@ public class FlightMixin {
     private void onDeactivate(CallbackInfo ci) {
         if (mc.player == null || stopMomentum == null || !stopMomentum.get()) return;
 
-        mc.options.forwardKey.setPressed(false);
-        mc.options.leftKey.setPressed(false);
-        mc.options.backKey.setPressed(false);
-        mc.options.rightKey.setPressed(false);
+        mc.options.keyUp.setDown(false);
+        mc.options.keyLeft.setDown(false);
+        mc.options.keyDown.setDown(false);
+        mc.options.keyRight.setDown(false);
 
-        mc.player.setVelocity(Vec3d.ZERO);
+        mc.player.setDeltaMovement(Vec3.ZERO);
     }
 }

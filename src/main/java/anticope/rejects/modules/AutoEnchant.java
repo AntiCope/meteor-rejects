@@ -8,13 +8,12 @@ import meteordevelopment.meteorclient.utils.network.MeteorExecutor;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.EnchantmentScreenHandler;
-import net.minecraft.screen.ScreenHandler;
-
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.EnchantmentMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +50,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
             .name("item-whitelist")
             .description("Item that require enchantment.")
             .defaultValue()
-            .filter(item -> item.equals(Items.BOOK) || new ItemStack(item).isDamageable())
+            .filter(item -> item.equals(Items.BOOK) || new ItemStack(item).isDamageableItem())
             .build()
     );
 
@@ -61,24 +60,24 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
 
     @EventHandler
     private void onOpenScreen(OpenScreenEvent event) {
-        if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler))
+        if (!(Objects.requireNonNull(mc.player).containerMenu instanceof EnchantmentMenu))
             return;
         MeteorExecutor.execute(this::autoEnchant);
     }
 
     private void autoEnchant() {
-        if (!(Objects.requireNonNull(mc.player).currentScreenHandler instanceof EnchantmentScreenHandler handler))
+        if (!(Objects.requireNonNull(mc.player).containerMenu instanceof EnchantmentMenu handler))
             return;
         if (mc.player.experienceLevel < 30) {
             info("You don't have enough experience levels");
             return;
         }
         while (getEmptySlotCount(handler) > 2 || drop.get()) {
-            if (!(mc.player.currentScreenHandler instanceof EnchantmentScreenHandler)) {
+            if (!(mc.player.containerMenu instanceof EnchantmentMenu)) {
                 info("Enchanting table is closed.");
                 break;
             }
-            if (handler.getLapisCount() < level.get() && !fillLapisItem()) {
+            if (handler.getGoldCount() < level.get() && !fillLapisItem()) {
                 info("Lapis lazuli is not found.");
                 break;
             }
@@ -86,10 +85,10 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
                 info("No items found to enchant.");
                 break;
             }
-            Objects.requireNonNull(mc.interactionManager).clickButton(handler.syncId, level.get() - 1);
+            Objects.requireNonNull(mc.gameMode).handleInventoryButtonClick(handler.containerId, level.get() - 1);
             if (getEmptySlotCount(handler) > 2) {
                 InvUtils.shiftClick().slotId(0);
-            } else if (drop.get() && handler.getSlot(0).hasStack()) {
+            } else if (drop.get() && handler.getSlot(0).hasItem()) {
                 // I don't know why an exception LegacyRandomSource is thrown here,
                 // so I used the main thread to drop items.
                 mc.execute(() -> InvUtils.drop().slotId(0));
@@ -110,7 +109,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
     }
 
     private boolean fillCanEnchantItem() {
-        FindItemResult res = InvUtils.find(stack -> itemWhitelist.get().contains(stack.getItem()) && EnchantmentHelper.canHaveEnchantments(stack));
+        FindItemResult res = InvUtils.find(stack -> itemWhitelist.get().contains(stack.getItem()) && EnchantmentHelper.canStoreEnchantments(stack));
         if (!res.found()) return false;
         InvUtils.shiftClick().slot(res.slot());
         return true;
@@ -123,10 +122,10 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
         return true;
     }
 
-    private int getEmptySlotCount(ScreenHandler handler) {
+    private int getEmptySlotCount(AbstractContainerMenu handler) {
         int emptySlotCount = 0;
         for (int i = 0; i < handler.slots.size(); i++) {
-            if (!handler.slots.get(i).getStack().getItem().equals(Items.AIR))
+            if (!handler.slots.get(i).getItem().getItem().equals(Items.AIR))
                 continue;
             emptySlotCount++;
         }

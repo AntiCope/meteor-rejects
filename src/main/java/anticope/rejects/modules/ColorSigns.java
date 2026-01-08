@@ -7,9 +7,9 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.c2s.play.BookUpdateC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
-import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
+import net.minecraft.network.protocol.game.ClientboundLoginPacket;
+import net.minecraft.network.protocol.game.ServerboundEditBookPacket;
+import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.List;
@@ -38,23 +38,23 @@ public class ColorSigns extends Module {
 
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
-        if (event.packet instanceof GameJoinS2CPacket) {
+        if (event.packet instanceof ClientboundLoginPacket) {
             checkWarning();
             return;
         }
-        if (signs.get() && event.packet instanceof UpdateSignC2SPacket packet) {
-            for (int line = 0; line < packet.getText().length; line++) {
-                packet.getText()[line] = packet.getText()[line]
+        if (signs.get() && event.packet instanceof ServerboundSignUpdatePacket packet) {
+            for (int line = 0; line < packet.getLines().length; line++) {
+                packet.getLines()[line] = packet.getLines()[line]
                         .replaceAll("(?i)(?:&|(?<!§)§)([0-9A-Z])", "§§$1$1");
             }
         }
-        if (books.get() && event.packet instanceof BookUpdateC2SPacket packet) {
+        if (books.get() && event.packet instanceof ServerboundEditBookPacket packet) {
             List<String> newPages = packet.pages().stream().map(text ->
                     text.replaceAll("(?i)&([0-9A-Z])", "§$1")).toList();
             // BookUpdateC2SPacket.pages is final, so we need to create a new packet
             if (!packet.pages().equals(newPages)) {
-                assert mc.getNetworkHandler() != null;
-                mc.getNetworkHandler().sendPacket(new BookUpdateC2SPacket(
+                assert mc.getConnection() != null;
+                mc.getConnection().send(new ServerboundEditBookPacket(
                         packet.slot(), newPages, packet.title()));
                 event.cancel();
             }
@@ -69,7 +69,7 @@ public class ColorSigns extends Module {
 
     private void checkWarning() {
         assert mc.player != null;
-        MinecraftServer server = mc.player.getEntityWorld().getServer();
+        MinecraftServer server = mc.player.level().getServer();
         if (server == null) return;
         String brand = server.getServerModName();
         if (brand == null) return;

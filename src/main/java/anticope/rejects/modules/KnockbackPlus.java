@@ -10,10 +10,13 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public class KnockbackPlus extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -31,13 +34,26 @@ public class KnockbackPlus extends Module {
 
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
-        if (event.packet instanceof IPlayerInteractEntityC2SPacket packet && packet.meteor$getType() == PlayerInteractEntityC2SPacket.InteractType.ATTACK) {
-            Entity entity = packet.meteor$getEntity();
+        if (event.packet instanceof ServerboundInteractPacket packet) {
+            packet.dispatch(new ServerboundInteractPacket.Handler() {
+                @Override
+                public void onInteraction(@NonNull InteractionHand interactionHand) {
+                }
 
-            if (!(entity instanceof LivingEntity) || (entity != Modules.get().get(KillAura.class).getTarget() && ka.get()))
-                return;
+                @Override
+                public void onInteraction(@NonNull InteractionHand interactionHand, @NonNull Vec3 vec3) {
+                }
 
-            mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_SPRINTING));
+                @Override
+                public void onAttack() {
+                    Entity entity = ((IPlayerInteractEntityC2SPacket) packet).meteor$getEntity();
+                    if (!(entity instanceof LivingEntity) || (entity != Modules.get().get(KillAura.class).getTarget() && ka.get()))
+                        return;
+
+                    assert mc.player != null;
+                    mc.player.connection.send(new ServerboundPlayerCommandPacket(mc.player, ServerboundPlayerCommandPacket.Action.START_SPRINTING));
+                }
+            });
         }
     }
 }
