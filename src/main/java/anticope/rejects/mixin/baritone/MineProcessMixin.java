@@ -31,7 +31,7 @@ public class MineProcessMixin {
     }
 
     @Redirect(method = "a(Lbaritone/pathing/movement/CalculationContext;Lbaritone/api/utils/BlockOptionalMetaLookup;Ljava/util/List;Lnet/minecraft/core/BlockPos;)Z",
-            at= @At(value = "INVOKE", target = "Lbaritone/api/utils/BlockOptionalMetaLookup;has(Lnet/minecraft/block/BlockState;)Z"))
+            at= @At(value = "INVOKE", target = "Lbaritone/api/utils/BlockOptionalMetaLookup;has(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
     private static boolean onPruneStream(BlockOptionalMetaLookup instance, BlockState blockState) {
         OreSim oreSim = Modules.get().get(OreSim.class);
         if (oreSim == null || !oreSim.baritone())
