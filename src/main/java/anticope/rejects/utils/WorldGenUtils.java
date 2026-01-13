@@ -16,21 +16,26 @@ import com.seedfinding.mccore.version.MCVersion;
 import com.seedfinding.mcterrain.TerrainGenerator;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.MapDecorationsComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.*;
-import net.minecraft.entity.passive.IronGolemEntity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.vehicle.ChestMinecartEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.monster.Blaze;
+import net.minecraft.world.entity.monster.ElderGuardian;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.monster.Slime;
+import net.minecraft.world.entity.monster.illager.Evoker;
+import net.minecraft.world.entity.monster.piglin.PiglinBrute;
+import net.minecraft.world.entity.monster.skeleton.WitherSkeleton;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.entity.vehicle.minecart.MinecartChest;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.MapDecorations;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -87,31 +92,31 @@ public class WorldGenUtils {
 
     private static final HashMap<Feature, List<Class<? extends Entity>>> FEATURE_ENTITIES = new HashMap<>(){{
        put(Feature.ocean_monument, Arrays.asList(
-           ElderGuardianEntity.class,
-           GuardianEntity.class
+           ElderGuardian.class,
+           Guardian.class
        ));
        put(Feature.nether_fortress, Arrays.asList(
-          BlazeEntity.class,
-          WitherSkeletonEntity.class
+          Blaze.class,
+          WitherSkeleton.class
        ));
        put(Feature.mansion, Collections.singletonList(
-           EvokerEntity.class
+           Evoker.class
        ));
        put(Feature.slime_chunk, Collections.singletonList(
-           SlimeEntity.class
+           Slime.class
        ));
        put(Feature.bastion_remnant, Collections.singletonList(
-          PiglinBruteEntity.class
+          PiglinBrute.class
        ));
        put(Feature.end_city, Collections.singletonList(
-           ShulkerEntity.class
+           Shulker.class
        ));
        put(Feature.village, Arrays.asList(
-           VillagerEntity.class,
-           IronGolemEntity.class
+           Villager.class,
+           IronGolem.class
        ));
        put(Feature.mineshaft, Collections.singletonList(
-           ChestMinecartEntity.class
+           MinecartChest.class
        ));
     }};
 
@@ -157,9 +162,9 @@ public class WorldGenUtils {
             if (pos != null) return pos;
         }
         if (mc.player != null) {
-            ItemStack stack = mc.player.getStackInHand(Hand.MAIN_HAND);
+            ItemStack stack = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
             if (stack.getItem() != Items.FILLED_MAP)
-                stack = mc.player.getStackInHand(Hand.OFF_HAND);
+                stack = mc.player.getItemInHand(InteractionHand.OFF_HAND);
             if (stack.getItem() == Items.FILLED_MAP) {
                 try {
                     pos = locateFeatureMap(feature, stack);
@@ -210,11 +215,11 @@ public class WorldGenUtils {
     private static BlockPos locateFeatureEntities(Feature feature) {
         List<Class<? extends Entity>> entities = FEATURE_ENTITIES.get(feature);
         if (entities == null) return null;
-        if (mc.world == null) return null;
-        for (Entity e: mc.world.getEntities()) {
+        if (mc.level == null) return null;
+        for (Entity e: mc.level.entitiesForRendering()) {
             for (Class<? extends Entity> clazz: entities) {
                 if (clazz.isInstance(e))
-                    return e.getBlockPos();
+                    return e.blockPosition();
             }
         }
         return null;
@@ -349,8 +354,8 @@ public class WorldGenUtils {
     // TODO: check this lmao
     private static boolean isValidMap(Feature feature, ItemStack stack) {
         if (stack.getComponents().isEmpty()) return false;
-        if (!stack.getComponents().contains(DataComponentTypes.MAP_DECORATIONS)) return false;
-        MapDecorationsComponent displayTag = stack.getDefaultComponents().get(DataComponentTypes.MAP_DECORATIONS);
+        if (!stack.getComponents().has(DataComponents.MAP_DECORATIONS)) return false;
+        MapDecorations displayTag = stack.getPrototype().get(DataComponents.MAP_DECORATIONS);
 
         if (!displayTag.toString().contains("Name")) return false;
         String nameTag = String.valueOf(displayTag.decorations().get("Name"));
@@ -368,11 +373,11 @@ public class WorldGenUtils {
 
     private static BlockPos getMapMarker(ItemStack stack) {
         if (stack.getComponents().isEmpty()) return null;
-        if (!stack.getDefaultComponents().contains(DataComponentTypes.MAP_DECORATIONS)) return null;
+        if (!stack.getPrototype().has(DataComponents.MAP_DECORATIONS)) return null;
 
-        MapDecorationsComponent decorationsTag = stack.get(DataComponentTypes.MAP_DECORATIONS);
+        MapDecorations decorationsTag = stack.get(DataComponents.MAP_DECORATIONS);
         if (decorationsTag.decorations().isEmpty()) return null;
-        MapDecorationsComponent.Decoration iconTag = decorationsTag.decorations().get(0);
+        MapDecorations.Entry iconTag = decorationsTag.decorations().get(0);
         // check this
         return new BlockPos(
             (int)iconTag.x(),

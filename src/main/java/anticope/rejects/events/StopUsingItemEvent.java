@@ -1,6 +1,6 @@
 package anticope.rejects.events;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class StopUsingItemEvent {
     private static final StopUsingItemEvent INSTANCE = new StopUsingItemEvent();

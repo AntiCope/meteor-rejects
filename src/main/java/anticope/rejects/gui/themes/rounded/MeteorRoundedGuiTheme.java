@@ -50,7 +50,7 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
             .sliderMax(4)
             .onSliderRelease()
             .onChanged(aDouble -> {
-                if (mc.currentScreen instanceof WidgetScreen) ((WidgetScreen) mc.currentScreen).invalidate();
+                if (mc.screen instanceof WidgetScreen) ((WidgetScreen) mc.screen).invalidate();
             })
             .build()
     );
@@ -74,7 +74,7 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
             .description("Hide HUD when in GUI.")
             .defaultValue(false)
             .onChanged(v -> {
-                if (mc.currentScreen instanceof WidgetScreen) mc.options.hudHidden = v;
+                if (mc.screen instanceof WidgetScreen) mc.options.hideGui = v;
             })
             .build()
     );
@@ -217,8 +217,18 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
     }
 
     @Override
+    protected WConfirmedButton confirmedButton(String s, String s1, GuiTexture guiTexture) {
+        return null;
+    }
+
+    @Override
     public WMinus minus() {
         return w(new WMeteorMinus());
+    }
+
+    @Override
+    public WConfirmedMinus confirmedMinus() {
+        return null;
     }
 
     @Override
@@ -273,7 +283,12 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
 
     @Override
     public WWidget module(Module module) {
-        return w(new WMeteorModule(module));
+        return w(new WMeteorModule(module, module.title));
+    }
+
+    @Override
+    public WWidget module(Module module, String title) {
+        return w(new WMeteorModule(module, title));
     }
 
     @Override

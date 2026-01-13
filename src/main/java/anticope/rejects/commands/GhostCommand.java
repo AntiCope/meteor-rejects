@@ -3,11 +3,11 @@ package anticope.rejects.commands;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.command.CommandSource;
-import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 
 public class GhostCommand extends Command {
     public GhostCommand() {
@@ -15,7 +15,7 @@ public class GhostCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.executes(ctx -> {
             execute(4);
             return SINGLE_SUCCESS;
@@ -28,17 +28,17 @@ public class GhostCommand extends Command {
     }
 
     private void execute(int radius) {
-        ClientPlayNetworkHandler conn = mc.getNetworkHandler();
+        ClientPacketListener conn = mc.getConnection();
         if (conn == null)
             return;
-        BlockPos pos = mc.player.getBlockPos();
+        BlockPos pos = mc.player.blockPosition();
         for (int dx = -radius; dx <= radius; dx++)
             for (int dy = -radius; dy <= radius; dy++)
                 for (int dz = -radius; dz <= radius; dz++) {
-                    PlayerActionC2SPacket packet = new PlayerActionC2SPacket(
-                            PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK,
+                    ServerboundPlayerActionPacket packet = new ServerboundPlayerActionPacket(
+                            ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK,
                             new BlockPos(pos.getX() + dx, pos.getY() + dy, pos.getZ() + dz), Direction.UP);
-                    conn.sendPacket(packet);
+                    conn.send(packet);
                 }
     }
 }

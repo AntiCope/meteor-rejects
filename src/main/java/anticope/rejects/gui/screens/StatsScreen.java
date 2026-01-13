@@ -1,13 +1,12 @@
 package anticope.rejects.gui.screens;
 
-import net.minecraft.client.resource.language.TranslationStorage;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectUtil;
-import net.minecraft.util.Language;
-import net.minecraft.util.math.Box;
-
 import meteordevelopment.orbit.EventHandler;
+import net.minecraft.client.resources.language.ClientLanguage;
+import net.minecraft.locale.Language;
+import net.minecraft.world.effect.MobEffectUtil;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.utils.world.TickRate;
@@ -37,42 +36,42 @@ public class StatsScreen extends WindowScreen {
     private void updateData() {
         clear();
         GuiTheme theme = GuiThemes.get();
-        Language lang = TranslationStorage.getInstance();
-        add(theme.label(String.format("Type: %s", lang.get(entity.getType().getTranslationKey()))));
-        add(theme.label(String.format("Age: %d", entity.age)));
-        add(theme.label(String.format("UUID: %s", entity.getUuidAsString())));
+        Language lang = ClientLanguage.getInstance();
+        add(theme.label(String.format("Type: %s", lang.getOrDefault(entity.getType().getDescriptionId()))));
+        add(theme.label(String.format("Age: %d", entity.tickCount)));
+        add(theme.label(String.format("UUID: %s", entity.getStringUUID())));
         if (entity instanceof LivingEntity liv) {
             add(theme.label(String.format("Health: %.2f/%.2f", liv.getHealth(), liv.getMaxHealth())));
-            add(theme.label(String.format("Armor: %d/20", liv.getArmor())));
+            add(theme.label(String.format("Armor: %d/20", liv.getArmorValue())));
 
             WSection effectList = add(theme.section("Status Effects", effectListExpanded)).expandX().widget();
             effectList.action = () -> effectListExpanded = effectList.isExpanded();
-            liv.getActiveStatusEffects().forEach((effect, instance) -> {
-                String status = lang.get(effect.value().getTranslationKey());
+            liv.getActiveEffectsMap().forEach((effect, instance) -> {
+                String status = lang.getOrDefault(effect.value().getDescriptionId());
                 float tps = TickRate.INSTANCE.getTickRate();
                 if (instance.getAmplifier() != 0) {
-                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, StatusEffectUtil.getDurationText(instance, 1, tps)));
+                    status += (String.format(" %d (%s)", instance.getAmplifier()+1, MobEffectUtil.formatDuration(instance, 1, tps)));
                 } else {
-                    status += (String.format(" (%s)", StatusEffectUtil.getDurationText(instance, 1, tps)));
+                    status += (String.format(" (%s)", MobEffectUtil.formatDuration(instance, 1, tps)));
                 }
                 effectList.add(theme.label(status)).expandX();
             });
-            if (liv.getActiveStatusEffects().isEmpty()) {
+            if (liv.getActiveEffectsMap().isEmpty()) {
                 effectList.add(theme.label("No effects")).expandX();
             }
 
             WSection attribList = add(theme.section("Attributes", attribListExpanded)).expandX().widget();
             attribList.action = () -> attribListExpanded = attribList.isExpanded();
-            liv.getAttributes().getTracked().forEach((attrib) -> attribList.add(theme.label(String.format("%s: %.2f",
-                lang.get(attrib.getAttribute().value().getTranslationKey()),
+            liv.getAttributes().getAttributesToSync().forEach((attrib) -> attribList.add(theme.label(String.format("%s: %.2f",
+                lang.getOrDefault(attrib.getAttribute().value().getDescriptionId()),
                 attrib.getValue()
             ))).expandX());
         }
         WSection dimension = add(theme.section("Dimensions", dimensionExpanded)).expandX().widget();
         dimension.action = () -> dimensionExpanded = dimension.isExpanded();
         dimension.add(theme.label(String.format("Position: %.2f, %.2f, %.2f", entity.getX(), entity.getY(), entity.getZ()))).expandX();
-        dimension.add(theme.label(String.format("Yaw: %.2f, Pitch: %.2f", entity.getYaw(), entity.getPitch()))).expandX();
-        Box box = entity.getBoundingBox();
+        dimension.add(theme.label(String.format("Yaw: %.2f, Pitch: %.2f", entity.getYRot(), entity.getXRot()))).expandX();
+        AABB box = entity.getBoundingBox();
         dimension.add(theme.label(String.format("Bounding Box: %.2f, %.2f, %.2f",
             box.maxX-box.minX, box.maxY-box.minY, box.maxZ-box.minZ
         ))).expandX();

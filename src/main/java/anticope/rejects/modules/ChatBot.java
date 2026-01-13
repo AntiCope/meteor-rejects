@@ -12,10 +12,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
-import meteordevelopment.starscript.Script;
-import meteordevelopment.starscript.compiler.Compiler;
-import meteordevelopment.starscript.compiler.Parser;
-import meteordevelopment.starscript.utils.StarscriptError;
+import org.meteordev.starscript.Script;
+import org.meteordev.starscript.compiler.Compiler;
+import org.meteordev.starscript.compiler.Parser;
+import org.meteordev.starscript.utils.StarscriptError;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

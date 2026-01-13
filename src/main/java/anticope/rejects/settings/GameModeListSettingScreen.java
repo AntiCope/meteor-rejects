@@ -5,8 +5,7 @@ import meteordevelopment.meteorclient.gui.WindowScreen;
 import meteordevelopment.meteorclient.gui.widgets.containers.WTable;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
 import meteordevelopment.meteorclient.utils.Utils;
-import net.minecraft.world.GameMode;
-
+import net.minecraft.world.level.GameType;
 import java.util.List;
 
 public class GameModeListSettingScreen extends WindowScreen {
@@ -21,8 +20,8 @@ public class GameModeListSettingScreen extends WindowScreen {
 
     @Override
     public void initWidgets() {
-        List<GameMode> gms = setting.get();
-        for (GameMode gameMode : GameMode.values()) {
+        List<GameType> gms = setting.get();
+        for (GameType gameMode : GameType.values()) {
             table.add(theme.label(Utils.nameToTitle(gameMode.getName()))).expandCellX();
 
             boolean contains = setting.get().contains(gameMode);

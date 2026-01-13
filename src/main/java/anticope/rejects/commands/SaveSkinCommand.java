@@ -9,8 +9,8 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.commands.arguments.PlayerListEntryArgumentType;
 import meteordevelopment.meteorclient.utils.network.Http;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.codec.binary.Base64;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class SaveSkinCommand extends Command {
 
-    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An exception occurred"));
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Component.literal("An exception occurred"));
 
     private final PointerBuffer filters;
     private final Gson GSON = new Gson();
@@ -42,9 +42,9 @@ public class SaveSkinCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.then(argument("player", PlayerListEntryArgumentType.create()).executes(ctx -> {
-            UUID id = PlayerListEntryArgumentType.get(ctx).getProfile().getId();
+            UUID id = PlayerListEntryArgumentType.get(ctx).getProfile().id();
             String path = TinyFileDialogs.tinyfd_saveFileDialog("Save image", null, filters, null);
             if (path == null) IO_EXCEPTION.create();
             if (path != null) {

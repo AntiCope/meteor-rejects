@@ -11,10 +11,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.util.Hand;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 
 public class BoatGlitch extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -61,7 +61,7 @@ public class BoatGlitch extends Module {
     @Override
     public void onDeactivate() {
         if (boat != null) {
-            boat.noClip = false;
+            boat.noPhysics = false;
             boat = null;
         }
         if (boatPhaseEnabled && !(Modules.get().isActive(BoatPhase.class))) {
@@ -74,7 +74,7 @@ public class BoatGlitch extends Module {
         if (dismountTicks == 0 && !dontPhase) {
             if (boat != event.boat) {
                 if (boat != null) {
-                    boat.noClip = false;
+                    boat.noPhysics = false;
                 }
                 if (mc.player.getVehicle() != null && event.boat == mc.player.getVehicle()) {
                     boat = event.boat;
@@ -84,7 +84,7 @@ public class BoatGlitch extends Module {
                 }
             }
             if (boat != null) {
-                boat.noClip = true;
+                boat.noPhysics = true;
                 //boat.pushSpeedReduction = 1;
                 dismountTicks = 5;
             }
@@ -97,7 +97,7 @@ public class BoatGlitch extends Module {
             dismountTicks--;
             if (dismountTicks == 0) {
                 if (boat != null) {
-                    boat.noClip = false;
+                    boat.noPhysics = false;
                     if (toggleAfter.get() && !remount.get()) {
                         toggle();
                     }
@@ -111,7 +111,7 @@ public class BoatGlitch extends Module {
         if (remountTicks > 0) {
             remountTicks--;
             if (remountTicks == 0) {
-                mc.getNetworkHandler().sendPacket( PlayerInteractEntityC2SPacket.interact(boat, false, Hand.MAIN_HAND));
+                mc.getConnection().send( ServerboundInteractPacket.createInteractionPacket(boat, false, InteractionHand.MAIN_HAND));
                 if (toggleAfter.get()) {
                     toggle();
                 }
@@ -120,8 +120,8 @@ public class BoatGlitch extends Module {
     }
     @EventHandler
     private void onKey(KeyEvent event) {
-        if (event.key == mc.options.sneakKey.getDefaultKey().getCode() && event.action == KeyAction.Press) {
-            if (mc.player.getVehicle() != null && mc.player.getVehicle() instanceof BoatEntity) {
+        if (event.key() == mc.options.keyShift.getDefaultKey().getValue() && event.action == KeyAction.Press) {
+            if (mc.player.getVehicle() != null && mc.player.getVehicle() instanceof Boat) {
                 dontPhase = false;
                 boat = null;
             }

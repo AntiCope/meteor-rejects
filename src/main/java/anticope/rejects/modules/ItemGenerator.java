@@ -8,12 +8,12 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class ItemGenerator extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -37,7 +37,7 @@ public class ItemGenerator extends Module {
             .build()
     );
 
-    private final Random random = Random.create();
+    private final RandomSource random = RandomSource.create();
 
     public ItemGenerator() {
         super(MeteorRejectsAddon.CATEGORY, "item-generator", "Generates random items and drops them on the ground. Creative mode only.");
@@ -45,7 +45,7 @@ public class ItemGenerator extends Module {
 
     @Override
     public void onActivate() {
-        if(!mc.player.getAbilities().creativeMode) {
+        if(!mc.player.getAbilities().instabuild) {
             error("Creative mode only.");
             this.toggle();
         }
@@ -56,7 +56,7 @@ public class ItemGenerator extends Module {
         int stacks = speed.get();
         int size = stackSize.get();
         for(int i = 9; i < 9 + stacks; i++) {
-            mc.player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(i, new ItemStack(Registries.ITEM.getRandom(random).map(RegistryEntry::value).orElse(Items.DIRT), size)));
+            mc.player.connection.send(new ServerboundSetCreativeModeSlotPacket(i, new ItemStack(BuiltInRegistries.ITEM.getRandom(random).map(Holder::value).orElse(Items.DIRT), size)));
         }
 
         for(int i = 9; i < 9 + stacks; i++) {

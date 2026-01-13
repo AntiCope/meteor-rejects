@@ -12,17 +12,16 @@ import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.world.CardinalDirection;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SaplingBlock;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.phys.BlockHitResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -81,11 +80,11 @@ public class TreeAura extends Module {
     }
 
     private FindItemResult findSapling() {
-        return InvUtils.findInHotbar(itemStack -> Block.getBlockFromItem(itemStack.getItem()) instanceof SaplingBlock);
+        return InvUtils.findInHotbar(itemStack -> Block.byItem(itemStack.getItem()) instanceof SaplingBlock);
     }
 
     private boolean isSapling(BlockPos pos) {
-        return mc.world.getBlockState(pos).getBlock() instanceof SaplingBlock;
+        return mc.level.getBlockState(pos).getBlock() instanceof SaplingBlock;
     }
 
     private void doPlant(BlockPos plantPos) {
@@ -97,9 +96,9 @@ public class TreeAura extends Module {
         }
         InvUtils.swap(sapling.slot(), false);
         if (rotation.get())
-            Rotations.rotate(Rotations.getYaw(plantPos), Rotations.getPitch(plantPos), () -> mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(plantPos), Direction.UP, plantPos, false), 0)));
+            Rotations.rotate(Rotations.getYaw(plantPos), Rotations.getPitch(plantPos), () -> mc.player.connection.send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(plantPos), Direction.UP, plantPos, false), 0)));
         else
-            mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(plantPos), Direction.UP, plantPos, false), 0));
+            mc.player.connection.send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(plantPos), Direction.UP, plantPos, false), 0));
     }
 
     private void doBonemeal(BlockPos sapling) {
@@ -111,25 +110,25 @@ public class TreeAura extends Module {
         }
         InvUtils.swap(bonemeal.slot(), false);
         if (rotation.get())
-            Rotations.rotate(Rotations.getYaw(sapling), Rotations.getPitch(sapling), () -> mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(sapling), Direction.UP, sapling, false), 0)));
+            Rotations.rotate(Rotations.getYaw(sapling), Rotations.getPitch(sapling), () -> mc.player.connection.send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(sapling), Direction.UP, sapling, false), 0)));
         else
-            mc.player.networkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(sapling), Direction.UP, sapling, false), 0));
+            mc.player.connection.send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(sapling), Direction.UP, sapling, false), 0));
     }
 
     private boolean canPlant(BlockPos pos) {
-        Block b = mc.world.getBlockState(pos).getBlock();
+        Block b = mc.level.getBlockState(pos).getBlock();
         if (b.equals(Blocks.SHORT_GRASS) || b.equals(Blocks.GRASS_BLOCK) || b.equals(Blocks.DIRT) || b.equals(Blocks.COARSE_DIRT)) {
             final AtomicBoolean plant = new AtomicBoolean(true);
             IntStream.rangeClosed(1, 5).forEach(i -> {
                 // Check above
-                BlockPos check = pos.up(i);
-                if (!mc.world.getBlockState(check).getBlock().equals(Blocks.AIR)) {
+                BlockPos check = pos.above(i);
+                if (!mc.level.getBlockState(check).getBlock().equals(Blocks.AIR)) {
                     plant.set(false);
                     return;
                 }
                 // Check around
                 for (CardinalDirection dir : CardinalDirection.values()) {
-                    if (!mc.world.getBlockState(check.offset(dir.toDirection(), i)).getBlock().equals(Blocks.AIR)) {
+                    if (!mc.level.getBlockState(check.relative(dir.toDirection(), i)).getBlock().equals(Blocks.AIR)) {
                         plant.set(false);
                         return;
                     }
@@ -148,7 +147,7 @@ public class TreeAura extends Module {
     }
 
     private BlockPos findPlantedSapling() {
-        List<BlockPos> saplings = findSaplings(mc.player.getBlockPos(), rRange.get(), yRange.get());
+        List<BlockPos> saplings = findSaplings(mc.player.blockPosition(), rRange.get(), yRange.get());
         if (saplings.isEmpty()) return null;
         saplings.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
         if (sortMode.get().equals(SortMode.Farthest)) Collections.reverse(saplings);
@@ -163,7 +162,7 @@ public class TreeAura extends Module {
     }
 
     private BlockPos findPlantLocation() {
-        List<BlockPos> nearby = getPlantLocations(mc.player.getBlockPos(), rRange.get(), yRange.get());
+        List<BlockPos> nearby = getPlantLocations(mc.player.blockPosition(), rRange.get(), yRange.get());
         if (nearby.isEmpty()) return null;
         nearby.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
         if (sortMode.get().equals(SortMode.Farthest)) Collections.reverse(nearby);
@@ -174,7 +173,7 @@ public class TreeAura extends Module {
         double d = pos1.getX() - pos2.getX();
         double e = pos1.getY() - pos2.getY();
         double f = pos1.getZ() - pos2.getZ();
-        return MathHelper.sqrt((float) (d * d + e * e + f * f));
+        return Mth.sqrt((float) (d * d + e * e + f * f));
     }
 
     public enum SortMode {Closest, Farthest}

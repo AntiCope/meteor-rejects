@@ -17,12 +17,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.c2s.play.CommandExecutionC2SPacket;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
 import java.util.*;
 
 public class AutoLogin extends Module {
@@ -66,8 +64,8 @@ public class AutoLogin extends Module {
         WButton btn = l.add(theme.button("Random generate password")).widget();
         btn.action = () -> {
             String password = RejectsUtils.getRandomPassword(16);
-            MutableText text = Text.literal(Formatting.BOLD + "Click here to register securely.");
-            text.setStyle(text.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/register %s %s", password, password))));
+            MutableComponent text = Component.literal(ChatFormatting.BOLD + "Click here to register securely.");
+            text.setStyle(text.getStyle().withClickEvent(new net.minecraft.network.chat.ClickEvent.RunCommand(String.format("/register %s %s", password, password))));
             info(text);
         };
         return l;
@@ -91,7 +89,7 @@ public class AutoLogin extends Module {
     private void onPacketSent(PacketEvent.Send event) {
         if (!smart.get()) return;
 
-        if (event.packet instanceof CommandExecutionC2SPacket packet) {
+        if (event.packet instanceof ServerboundChatCommandPacket packet) {
             String command = packet.command();
             List<String> hint = Arrays.asList("reg", "register", "l", "login", "log");
             String[] cmds = command.split(" ");

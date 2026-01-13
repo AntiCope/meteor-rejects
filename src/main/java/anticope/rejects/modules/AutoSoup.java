@@ -8,21 +8,20 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.CraftingTableBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.npc.villager.Villager;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CraftingTableBlock;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import java.util.List;
 
 public class AutoSoup extends Module {
@@ -56,12 +55,12 @@ public class AutoSoup extends Module {
         // sort empty bowls
         for (int i = 0; i < 36; i++) {
             // filter out non-bowl items and empty bowl slot
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.getInventory().getItem(i);
             if (stack == null || stack.getItem() != Items.BOWL || i == 9)
                 continue;
 
             // check if empty bowl slot contains a non-bowl item
-            ItemStack emptyBowlStack = mc.player.getInventory().getStack(9);
+            ItemStack emptyBowlStack = mc.player.getInventory().getItem(9);
             boolean swap = !emptyBowlStack.isEmpty()
                     && emptyBowlStack.getItem() != Items.BOWL;
 
@@ -87,14 +86,14 @@ public class AutoSoup extends Module {
 
             // save old slot
             if (oldSlot == -1)
-                oldSlot = mc.player.getInventory().selectedSlot;
+                oldSlot = mc.player.getInventory().getSelectedSlot();
 
             // set slot
-            mc.player.getInventory().selectedSlot = soupInHotbar;
+            mc.player.getInventory().setSelectedSlot(soupInHotbar);
 
             // eat soup
-            mc.options.useKey.setPressed(true);
-            mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+            mc.options.keyUse.setDown(true);
+            mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
 
             return;
         }
@@ -113,7 +112,7 @@ public class AutoSoup extends Module {
         List<Item> stews = List.of(Items.RABBIT_STEW, Items.MUSHROOM_STEW, Items.BEETROOT_SOUP);
 
         for (int i = startSlot; i < endSlot; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.getInventory().getItem(i);
 
             if (stack != null && stews.contains(stack.getItem()))
                 return i;
@@ -128,7 +127,7 @@ public class AutoSoup extends Module {
             return false;
 
         // check for clickable objects
-        return !isClickable(mc.crosshairTarget);
+        return !isClickable(mc.hitResult);
     }
 
     private boolean isClickable(HitResult hitResult) {
@@ -137,17 +136,17 @@ public class AutoSoup extends Module {
                 return false;
             }
             case EntityHitResult entityHitResult -> {
-                Entity entity = ((EntityHitResult) mc.crosshairTarget).getEntity();
-                return entity instanceof VillagerEntity
-                        || entity instanceof TameableEntity;
+                Entity entity = ((EntityHitResult) mc.hitResult).getEntity();
+                return entity instanceof Villager
+                        || entity instanceof TamableAnimal;
             }
             case BlockHitResult blockHitResult -> {
-                BlockPos pos = ((BlockHitResult) mc.crosshairTarget).getBlockPos();
+                BlockPos pos = ((BlockHitResult) mc.hitResult).getBlockPos();
                 if (pos == null)
                     return false;
 
-                Block block = mc.world.getBlockState(pos).getBlock();
-                return block instanceof BlockWithEntity
+                Block block = mc.level.getBlockState(pos).getBlock();
+                return block instanceof BaseEntityBlock
                         || block instanceof CraftingTableBlock;
             }
             default -> {
@@ -163,10 +162,10 @@ public class AutoSoup extends Module {
             return;
 
         // stop eating
-        mc.options.useKey.setPressed(false);
+        mc.options.keyUse.setDown(false);
 
         // reset slot
-        mc.player.getInventory().selectedSlot = oldSlot;
+        mc.player.getInventory().setSelectedSlot(oldSlot);
         oldSlot = -1;
     }
 

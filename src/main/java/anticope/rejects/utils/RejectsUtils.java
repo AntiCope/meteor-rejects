@@ -10,9 +10,8 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.PostInit;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import java.util.Random;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
@@ -57,8 +56,8 @@ public class RejectsUtils {
     public static boolean inFov(Entity entity, double fov) {
         if (fov >= 360) return true;
         float[] angle = PlayerUtils.calculateAngle(entity.getBoundingBox().getCenter());
-        double xDist = MathHelper.angleBetween(angle[0], mc.player.getYaw());
-        double yDist = MathHelper.angleBetween(angle[1], mc.player.getPitch());
+        double xDist = Mth.degreesDifferenceAbs(angle[0], mc.player.getYRot());
+        double yDist = Mth.degreesDifferenceAbs(angle[1], mc.player.getXRot());
         double angleDistance = Math.hypot(xDist, yDist);
         return angleDistance <= fov;
     }
@@ -77,9 +76,9 @@ public class RejectsUtils {
 
         float ySpeed = 0;
 
-        if (mc.options.jumpKey.isPressed())
+        if (mc.options.keyJump.isDown())
             ySpeed += speed;
-        if (mc.options.sneakKey.isPressed())
+        if (mc.options.keyShift.isDown())
             ySpeed -= speed;
         ((IVec3d) event.movement).meteor$setY(verticalSpeedMatch ? ySpeed : ySpeed / 2);
 
@@ -90,12 +89,12 @@ public class RejectsUtils {
         double dir = 0;
 
         if (Utils.canUpdate()) {
-            dir = mc.player.getYaw() + ((mc.player.forwardSpeed < 0) ? 180 : 0);
+            dir = mc.player.getYRot() + ((mc.player.zza < 0) ? 180 : 0);
 
-            if (mc.player.sidewaysSpeed > 0) {
-                dir += -90F * ((mc.player.forwardSpeed < 0) ? -0.5F : ((mc.player.forwardSpeed > 0) ? 0.5F : 1F));
-            } else if (mc.player.sidewaysSpeed < 0) {
-                dir += 90F * ((mc.player.forwardSpeed < 0) ? -0.5F : ((mc.player.forwardSpeed > 0) ? 0.5F : 1F));
+            if (mc.player.xxa > 0) {
+                dir += -90F * ((mc.player.zza < 0) ? -0.5F : ((mc.player.zza > 0) ? 0.5F : 1F));
+            } else if (mc.player.xxa < 0) {
+                dir += 90F * ((mc.player.zza < 0) ? -0.5F : ((mc.player.zza > 0) ? 0.5F : 1F));
             }
         }
         return dir;

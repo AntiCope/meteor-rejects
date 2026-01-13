@@ -11,7 +11,7 @@ import anticope.rejects.gui.themes.rounded.MeteorWidget;
 import meteordevelopment.meteorclient.gui.utils.AlignmentX;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
@@ -19,6 +19,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
 
 public class WMeteorModule extends WPressable implements MeteorWidget {
     private final Module module;
+    private final String title;
 
     private double titleWidth;
 
@@ -26,8 +27,9 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
 
     private double animationProgress2;
 
-    public WMeteorModule(Module module) {
+    public WMeteorModule(Module module, String title) {
         this.module = module;
+        this.title = title;
         this.tooltip = module.description;
 
         if (module.isActive()) {
@@ -48,7 +50,7 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
     protected void onCalculateSize() {
         double pad = pad();
 
-        if (titleWidth == 0) titleWidth = theme.textWidth(module.title);
+        if (titleWidth == 0) titleWidth = theme.textWidth(title);
 
         width = pad + titleWidth + pad;
         height = pad + theme.textHeight() + pad;
@@ -66,10 +68,10 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
         double pad = pad();
 
         animationProgress1 += delta * 4 * ((module.isActive() || mouseOver) ? 1 : -1);
-        animationProgress1 = MathHelper.clamp(animationProgress1, 0, 1);
+        animationProgress1 = Mth.clamp(animationProgress1, 0, 1);
 
         animationProgress2 += delta * 6 * (module.isActive() ? 1 : -1);
-        animationProgress2 = MathHelper.clamp(animationProgress2, 0, 1);
+        animationProgress2 = Mth.clamp(animationProgress2, 0, 1);
 
         if (animationProgress1 > 0) {
             renderer.quad(x, y, width * animationProgress1, height, theme.moduleBackground.get());
@@ -88,6 +90,6 @@ public class WMeteorModule extends WPressable implements MeteorWidget {
             x += w - titleWidth;
         }
 
-        renderer.text(module.title, x, y + pad, theme.textColor.get(), false);
+        renderer.text(title, x, y + pad, theme.textColor.get(), false);
     }
 }

@@ -11,13 +11,13 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.FallingBlock;
-import net.minecraft.entity.MovementType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.phys.Vec3;
 
 public class BlockIn extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -57,7 +57,7 @@ public class BlockIn extends Module {
             .build()
     );
     
-    private final BlockPos.Mutable bp = new BlockPos.Mutable();
+    private final BlockPos.MutableBlockPos bp = new BlockPos.MutableBlockPos();
     private boolean return_;
     private double sY;
     
@@ -67,21 +67,21 @@ public class BlockIn extends Module {
     
     @Override
     public void onActivate() {
-        sY = mc.player.getPos().getY();
+        sY = mc.player.getY();
     }
     
     @EventHandler
     private void onPreTick(TickEvent.Pre event) {
-        if (mc.player.isOnGround() && mc.player.getY()>Math.floor(mc.player.getY()+0.2)) mc.options.sneakKey.setPressed(true);
-        if (return_ && mc.options.sneakKey.isPressed()) mc.options.sneakKey.setPressed(false);
+        if (mc.player.onGround() && mc.player.getY()>Math.floor(mc.player.getY()+0.2)) mc.options.keyShift.setDown(true);
+        if (return_ && mc.options.keyShift.isDown()) mc.options.keyShift.setDown(false);
         if (center.get()) {
             if (!onlyOnGround.get()) {
-                mc.player.setVelocity(0,0,0);
-                mc.player.move(MovementType.SELF, new Vec3d(0, -(sY-Math.floor(sY)), 0));
+                mc.player.setDeltaMovement(0,0,0);
+                mc.player.move(MoverType.SELF, new Vec3(0, -(sY-Math.floor(sY)), 0));
             }
             PlayerUtils.centerPlayer();
         }
-        if (onlyOnGround.get() && !mc.player.isOnGround()) return;
+        if (onlyOnGround.get() && !mc.player.onGround()) return;
         
         return_ = false;
         
@@ -156,7 +156,7 @@ public class BlockIn extends Module {
         if (!(itemStack.getItem() instanceof BlockItem)) return false;
         Block block = ((BlockItem) itemStack.getItem()).getBlock();
         
-        if (!Block.isShapeFullCube(block.getDefaultState().getCollisionShape(mc.world, pos))) return false;
-        return !(block instanceof FallingBlock) || !FallingBlock.canFallThrough(mc.world.getBlockState(pos));
+        if (!Block.isShapeFullBlock(block.defaultBlockState().getCollisionShape(mc.level, pos))) return false;
+        return !(block instanceof FallingBlock) || !FallingBlock.isFree(mc.level.getBlockState(pos));
     }
 }

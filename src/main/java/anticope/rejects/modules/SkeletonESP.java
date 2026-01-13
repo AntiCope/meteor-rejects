@@ -2,6 +2,8 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.ColorSetting;
@@ -16,21 +18,9 @@ import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderProgramKeys;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
@@ -60,6 +50,13 @@ public class SkeletonESP extends Module {
 
     @EventHandler
     private void onRender(Render3DEvent event) {
+        // NOTE: Rendering in 1.21.10 has been completely reworked to use OrderedRenderCommandQueue
+        // This module requires a full rewrite to use the new rendering pipeline
+        // The old BufferBuilder/RenderSystem API used here is no longer available
+        // See: https://fabricmc.net/2025/09/23/1219.html for migration guide
+        return;
+
+        /* Old rendering code - kept for reference during future rewrite
         MatrixStack matrixStack = event.matrices;
         float g = event.tickDelta;
 
@@ -67,7 +64,7 @@ public class SkeletonESP extends Module {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(MinecraftClient.isFancyGraphicsOrBetter());
+        RenderSystem.depthMask(MinecraftClient.getInstance().options.getGraphicsMode().getValue().getId() >= 1);
         RenderSystem.enableCull();
 
         mc.world.getEntities().forEach(entity -> {
@@ -81,26 +78,26 @@ public class SkeletonESP extends Module {
             PlayerEntity playerEntity = (PlayerEntity) entity;
 
             Vec3d footPos = getEntityRenderPosition(playerEntity, g);
-            PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer) (LivingEntityRenderer<?, ?, ?>) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
-            PlayerEntityModel playerEntityModel = livingEntityRenderer.getModel();
+            PlayerEntityRenderer livingEntityRenderer = (PlayerEntityRenderer) (LivingEntityRenderer<?, ?>) mc.getEntityRenderDispatcher().getRenderer(playerEntity);
+            PlayerEntityModel<?> playerEntityModel = livingEntityRenderer.getModel();
 
-            float h = MathHelper.lerpAngleDegrees(g, playerEntity.prevBodyYaw, playerEntity.bodyYaw);
+            float h = MathHelper.lerpAngleDegrees(g, playerEntity.lastBodyYaw, playerEntity.bodyYaw);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) h = Rotations.serverYaw;
-            float j = MathHelper.lerpAngleDegrees(g, playerEntity.prevHeadYaw, playerEntity.headYaw);
+            float j = MathHelper.lerpAngleDegrees(g, playerEntity.lastHeadYaw, playerEntity.headYaw);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) j = Rotations.serverYaw;
 
-            float q = playerEntity.limbAnimator.getPos() - playerEntity.limbAnimator.getSpeed() * (1.0F - g);
-            float p = playerEntity.limbAnimator.getSpeed(g);
+            float q = playerEntity.limbAnimator.getAnimationProgress() - playerEntity.limbAnimator.getSpeed() * (1.0F - g);
+            float p = playerEntity.limbAnimator.getAmplitude(g);
             float o = (float) playerEntity.age + g;
             float k = j - h;
             float m = playerEntity.getPitch(g);
             if (mc.player == entity && Rotations.rotationTimer < rotationHoldTicks) m = Rotations.serverPitch;
 
             PlayerEntityRenderState renderState = new PlayerEntityRenderState();
-            renderState.limbFrequency = q;
-            renderState.limbAmplitudeMultiplier = p;
+            renderState.limbSwingAnimationProgress = q;
+            renderState.limbSwingAmplitude = p;
             renderState.age = o;
-            renderState.yawDegrees = k;
+            renderState.relativeHeadYaw = k;
             renderState.pitch = m;
             playerEntityModel.setAngles(renderState);
 
@@ -123,7 +120,7 @@ public class SkeletonESP extends Module {
             if (swimming) matrixStack.translate(0, -0.95f, 0);
 
             Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
+            BufferBuilder bufferBuilder = tessellator.begin(net.minecraft.client.render.VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 
             Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
             bufferBuilder.vertex(matrix4f, 0, sneaking ? 0.6f : 0.7f, sneaking ? 0.23f : 0).color(skeletonColor.r, skeletonColor.g, skeletonColor.b, skeletonColor.a);
@@ -180,7 +177,6 @@ public class SkeletonESP extends Module {
             bufferBuilder.vertex(matrix4f, 0, -0.55f, 0).color(skeletonColor.r, skeletonColor.g, skeletonColor.b, skeletonColor.a);
             matrixStack.pop();
 
-            tessellator.clear();
             BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
 
             if (swimming) matrixStack.translate(0, 0.95f, 0);
@@ -197,31 +193,33 @@ public class SkeletonESP extends Module {
         RenderSystem.enableDepthTest();
         RenderSystem.depthMask(true);
         RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR);
+        */
     }
 
-    private void rotate(MatrixStack matrix, ModelPart modelPart) {
-        if (modelPart.roll != 0.0F) {
-            matrix.multiply(RotationAxis.POSITIVE_Z.rotation(modelPart.roll));
+    private void rotate(PoseStack matrix, ModelPart modelPart) {
+        if (modelPart.zRot != 0.0F) {
+            matrix.mulPose(Axis.ZP.rotation(modelPart.zRot));
         }
 
-        if (modelPart.yaw != 0.0F) {
-            matrix.multiply(RotationAxis.NEGATIVE_Y.rotation(modelPart.yaw));
+        if (modelPart.yRot != 0.0F) {
+            matrix.mulPose(Axis.YN.rotation(modelPart.yRot));
         }
 
-        if (modelPart.pitch != 0.0F) {
-            matrix.multiply(RotationAxis.NEGATIVE_X.rotation(modelPart.pitch));
+        if (modelPart.xRot != 0.0F) {
+            matrix.mulPose(Axis.XN.rotation(modelPart.xRot));
         }
     }
 
-    private Vec3d getEntityRenderPosition(Entity entity, double partial) {
-        double x = entity.prevX + ((entity.getX() - entity.prevX) * partial) - mc.getEntityRenderDispatcher().camera.getPos().x;
-        double y = entity.prevY + ((entity.getY() - entity.prevY) * partial) - mc.getEntityRenderDispatcher().camera.getPos().y;
-        double z = entity.prevZ + ((entity.getZ() - entity.prevZ) * partial) - mc.getEntityRenderDispatcher().camera.getPos().z;
-        return new Vec3d(x, y, z);
+    private Vec3 getEntityRenderPosition(Entity entity, double partial) {
+        double x = entity.xo + ((entity.getX() - entity.xo) * partial) - mc.getEntityRenderDispatcher().camera.position().x;
+        double y = entity.yo + ((entity.getY() - entity.yo) * partial) - mc.getEntityRenderDispatcher().camera.position().y;
+        double z = entity.zo + ((entity.getZ() - entity.zo) * partial) - mc.getEntityRenderDispatcher().camera.position().z;
+        return new Vec3(x, y, z);
     }
 
     private Color getColorFromDistance(Entity entity) {
-        double distance = mc.gameRenderer.getCamera().getPos().distanceTo(entity.getPos());
+        Vec3 entityPos = new Vec3(entity.getX(), entity.getY(), entity.getZ());
+        double distance = mc.gameRenderer.getMainCamera().position().distanceTo(entityPos);
         double percent = distance / 60;
 
         if (percent < 0 || percent > 1) {

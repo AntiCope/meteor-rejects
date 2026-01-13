@@ -7,17 +7,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
-
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 
 public class EnumStringArgumentType implements ArgumentType<String> {
 
     private  Collection<String> EXAMPLES;
     private static final DynamicCommandExceptionType INVALID_OPTION = new DynamicCommandExceptionType(name ->
-            Text.literal(name + " is not a valid option."));
+            Component.literal(name + " is not a valid option."));
     public EnumStringArgumentType(Collection<String> examples) {
         this.EXAMPLES = examples;
     }
@@ -45,7 +44,7 @@ public class EnumStringArgumentType implements ArgumentType<String> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(EXAMPLES, builder);
+        return SharedSuggestionProvider.suggest(EXAMPLES, builder);
     }
     
 }

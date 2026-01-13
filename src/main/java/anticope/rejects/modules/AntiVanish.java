@@ -11,9 +11,8 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WVerticalList;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.packet.c2s.play.RequestCommandCompletionsC2SPacket;
-import net.minecraft.network.packet.s2c.play.CommandSuggestionsS2CPacket;
-
+import net.minecraft.network.protocol.game.ClientboundCommandSuggestionsPacket;
+import net.minecraft.network.protocol.game.ServerboundCommandSuggestionPacket;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -74,11 +73,11 @@ public class AntiVanish extends Module {
 
     @EventHandler
     private void onPacket(PacketEvent.Receive event) {
-        if (mode.get() == Mode.RealJoinMessage && event.packet instanceof CommandSuggestionsS2CPacket packet) {
+        if (mode.get() == Mode.RealJoinMessage && event.packet instanceof ClientboundCommandSuggestionsPacket packet) {
             if (completionIDs.contains(packet.id())) {
                 var lastUsernames = completionPlayerCache.stream().toList();
 
-                completionPlayerCache = packet.getSuggestions().getList().stream()
+                completionPlayerCache = packet.toSuggestions().getList().stream()
                         .map(Suggestion::getText)
                         .toList();
 
@@ -123,7 +122,7 @@ public class AntiVanish extends Module {
         switch (mode.get()) {
             case LeaveMessage -> {
                 Map<UUID, String> oldPlayers = Map.copyOf(playerCache);
-                playerCache = mc.getNetworkHandler().getPlayerList().stream().collect(Collectors.toMap(e -> e.getProfile().getId(), e -> e.getProfile().getName()));
+                playerCache = mc.getConnection().getOnlinePlayers().stream().collect(Collectors.toMap(e -> e.getProfile().id(), e -> e.getProfile().name()));
 
                 for (UUID uuid : oldPlayers.keySet()) {
                     if (playerCache.containsKey(uuid)) continue;
@@ -138,7 +137,7 @@ public class AntiVanish extends Module {
             case RealJoinMessage -> {
                 int id = random.nextInt(200);
                 completionIDs.add(id);
-                mc.getNetworkHandler().sendPacket(new RequestCommandCompletionsC2SPacket(id, command.get() + " "));
+                mc.getConnection().send(new ServerboundCommandSuggestionPacket(id, command.get() + " "));
             }
         }
         timer = 0;

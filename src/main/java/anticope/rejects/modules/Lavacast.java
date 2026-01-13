@@ -13,16 +13,16 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.RaycastContext;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 
 public class Lavacast extends Module {
@@ -98,14 +98,14 @@ public class Lavacast extends Module {
 
     @Override
     public void onActivate() {
-        if (mc.player == null || mc.world == null) toggle();
+        if (mc.player == null || mc.level == null) toggle();
         tick = 0;
         stage = Stage.None;
         placeFluidPos = getTargetBlockPos();
         if (placeFluidPos == null) {
-            placeFluidPos = mc.player.getBlockPos().down(2);
+            placeFluidPos = mc.player.blockPosition().below(2);
         } else {
-            placeFluidPos = placeFluidPos.up();
+            placeFluidPos = placeFluidPos.above();
         }
         dist=-1;
         getDistance(new Vec3i(1,0,0));
@@ -122,7 +122,7 @@ public class Lavacast extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.player == null || mc.world == null) return;
+        if (mc.player == null || mc.level == null) return;
         tick++;
         if (shouldBreakOnTick()) return;
         if (dist < distMin.get()) toggle();
@@ -170,7 +170,7 @@ public class Lavacast extends Module {
     }
 
     private boolean checkMineBlock() {
-        if (stage == Stage.None && mc.world.getBlockState(placeFluidPos).getBlock() != Blocks.AIR) {
+        if (stage == Stage.None && mc.level.getBlockState(placeFluidPos).getBlock() != Blocks.AIR) {
             Rotations.rotate(Rotations.getYaw(placeFluidPos), Rotations.getPitch(placeFluidPos), 100, this::updateBlockBreakingProgress);
             return true;
         }
@@ -205,10 +205,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = findItemResult.slot();
-        mc.interactionManager.interactItem(mc.player,Hand.MAIN_HAND);
-        mc.player.getInventory().selectedSlot = prevSlot;
+        int prevSlot = mc.player.getInventory().getSelectedSlot();
+        mc.player.getInventory().setSelectedSlot(findItemResult.slot());
+        mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
+        mc.player.getInventory().setSelectedSlot(prevSlot);
     }
 
     private void placeWater() {
@@ -218,10 +218,10 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = findItemResult.slot();
-        mc.interactionManager.interactItem(mc.player,Hand.MAIN_HAND);
-        mc.player.getInventory().selectedSlot = prevSlot;
+        int prevSlot = mc.player.getInventory().getSelectedSlot();
+        mc.player.getInventory().setSelectedSlot(findItemResult.slot());
+        mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
+        mc.player.getInventory().setSelectedSlot(prevSlot);
     }
 
     private void pickupLiquid() {
@@ -231,18 +231,18 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().selectedSlot;
-        mc.player.getInventory().selectedSlot = findItemResult.slot();
-        mc.interactionManager.interactItem(mc.player,Hand.MAIN_HAND);
-        mc.player.getInventory().selectedSlot = prevSlot;
+        int prevSlot = mc.player.getInventory().getSelectedSlot();
+        mc.player.getInventory().setSelectedSlot(findItemResult.slot());
+        mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
+        mc.player.getInventory().setSelectedSlot(prevSlot);
     }
 
     private void updateBlockBreakingProgress() {
-        mc.interactionManager.updateBlockBreakingProgress(placeFluidPos,Direction.UP);
+        mc.gameMode.continueDestroyBlock(placeFluidPos,Direction.UP);
     }
 
     private BlockPos getTargetBlockPos() {
-        HitResult blockHit = mc.crosshairTarget;
+        HitResult blockHit = mc.hitResult;
         if (blockHit.getType() != HitResult.Type.BLOCK) {
             return null;
         }
@@ -250,10 +250,10 @@ public class Lavacast extends Module {
     }
 
     private void getDistance(Vec3i offset) {
-        BlockPos pos = placeFluidPos.down().add(offset);
+        BlockPos pos = placeFluidPos.below().offset(offset);
         int new_dist;
-        final BlockHitResult result = mc.world.raycast(new RaycastContext(
-                Vec3d.ofCenter(pos), Vec3d.ofCenter(pos.down(250)), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player
+        final BlockHitResult result = mc.level.clip(new ClipContext(
+                Vec3.atCenterOf(pos), Vec3.atCenterOf(pos.below(250)), ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, mc.player
         ));
         if (result == null || result.getType() != HitResult.Type.BLOCK) {
             return;

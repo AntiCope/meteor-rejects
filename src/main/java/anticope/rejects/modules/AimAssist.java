@@ -14,10 +14,10 @@ import meteordevelopment.meteorclient.utils.entity.Target;
 import meteordevelopment.meteorclient.utils.entity.TargetUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3d;
 
 import java.util.Set;
@@ -105,7 +105,7 @@ public class AimAssist extends Module {
             if (!PlayerUtils.isWithin(entity, range.get())) return false;
             if (!ignoreWalls.get() && !PlayerUtils.canSeeEntity(entity)) return false;
             if (entity == mc.player || !entities.get().contains(entity.getType())) return false;
-            if (entity instanceof PlayerEntity && !Friends.get().shouldAttack((PlayerEntity) entity)) return false;
+            if (entity instanceof Player && !Friends.get().shouldAttack((Player) entity)) return false;
             return RejectsUtils.inFov(entity, fov.get());
         }, priority.get());
     }
@@ -133,13 +133,13 @@ public class AimAssist extends Module {
         double toRotate;
 
         if (instant) {
-            mc.player.setYaw((float) angle);
+            mc.player.setYRot((float) angle);
         } else {
-            deltaAngle = MathHelper.wrapDegrees(angle - mc.player.getYaw());
+            deltaAngle = Mth.wrapDegrees(angle - mc.player.getYRot());
             toRotate = speed.get() * (deltaAngle >= 0 ? 1 : -1) * delta;
             if ((toRotate >= 0 && toRotate > deltaAngle) || (toRotate < 0 && toRotate < deltaAngle))
                 toRotate = deltaAngle;
-            mc.player.setYaw(mc.player.getYaw() + (float) toRotate);
+            mc.player.setYRot(mc.player.getYRot() + (float) toRotate);
         }
 
         // Pitch
@@ -147,13 +147,13 @@ public class AimAssist extends Module {
         angle = -Math.toDegrees(Math.atan2(deltaY, idk));
 
         if (instant) {
-            mc.player.setPitch((float) angle);
+            mc.player.setXRot((float) angle);
         } else {
-            deltaAngle = MathHelper.wrapDegrees(angle - mc.player.getPitch());
+            deltaAngle = Mth.wrapDegrees(angle - mc.player.getXRot());
             toRotate = speed.get() * (deltaAngle >= 0 ? 1 : -1) * delta;
             if ((toRotate >= 0 && toRotate > deltaAngle) || (toRotate < 0 && toRotate < deltaAngle))
                 toRotate = deltaAngle;
-            mc.player.setPitch(mc.player.getPitch() + (float) toRotate);
+            mc.player.setXRot(mc.player.getXRot() + (float) toRotate);
         }
     }
 

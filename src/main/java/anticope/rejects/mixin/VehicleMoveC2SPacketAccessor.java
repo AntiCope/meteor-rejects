@@ -1,18 +1,18 @@
 package anticope.rejects.mixin;
 
-import net.minecraft.network.packet.c2s.play.VehicleMoveC2SPacket;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.protocol.game.ServerboundMoveVehiclePacket;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(VehicleMoveC2SPacket.class)
+@Mixin(ServerboundMoveVehiclePacket.class)
 public interface VehicleMoveC2SPacketAccessor {
     @Accessor("position")
-    Vec3d getPosition();
+    Vec3 getPosition();
 
     @Invoker("<init>")
-    static VehicleMoveC2SPacket create(Vec3d position, float yaw, float pitch, boolean onGround) {
+    static ServerboundMoveVehiclePacket create(Vec3 position, float yaw, float pitch, boolean onGround) {
         throw new AssertionError();
     }
 }

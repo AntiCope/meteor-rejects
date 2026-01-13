@@ -2,26 +2,29 @@ package anticope.rejects.utils;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.*;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import java.util.*;
 import java.util.function.Function;
 
@@ -37,17 +40,17 @@ public class GiveUtils {
 
     public static final Map<String, Function<Boolean, ItemStack>> PRESETS = new HashMap<>();
 
-    private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(Text.literal("You must be in creative mode to use this."));
-    private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(Text.literal("No space in hotbar."));
+    private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(Component.literal("You must be in creative mode to use this."));
+    private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(Component.literal("No space in hotbar."));
 
     private static final List<Identifier> HIDDEN_ENTITIES = Arrays.asList(
-        Identifier.of("giant"),
-        Identifier.of("ender_dragon"),
-        Identifier.of("wither"),
-        Identifier.of("iron_golem"),
-        Identifier.of("ender_dragon"),
-        Identifier.of("tnt_minecart"),
-        Identifier.of("lightning_bolt"));
+        Identifier.parse("giant"),
+        Identifier.parse("ender_dragon"),
+        Identifier.parse("wither"),
+        Identifier.parse("iron_golem"),
+        Identifier.parse("ender_dragon"),
+        Identifier.parse("tnt_minecart"),
+        Identifier.parse("lightning_bolt"));
 
     // Some ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/command/commands/CmdGive.java
     private static final List<Triple<String, Item, String>> ENTITY_PRESETS = Arrays.asList(
@@ -71,9 +74,9 @@ public class GiveUtils {
     private static Registry<Enchantment> enchantmentRegistry;
 
     public static void giveItem(ItemStack item) throws CommandSyntaxException {
-        if (!mc.player.getAbilities().creativeMode) throw NOT_IN_CREATIVE.create();
+        if (!mc.player.getAbilities().instabuild) throw NOT_IN_CREATIVE.create();
 
-        if (!mc.player.getInventory().insertStack(item)) {
+        if (!mc.player.getInventory().add(item)) {
             throw NO_SPACE.create();
         }
     }
@@ -81,130 +84,137 @@ public class GiveUtils {
     static {
         ENTITY_PRESETS.forEach((preset) -> {
             PRESETS.put(preset.getLeft(), (preview) -> {
-                if (preview) preset.getMiddle().getDefaultStack();
-                ItemStack item = preset.getMiddle().getDefaultStack();
+                if (preview) preset.getMiddle().getDefaultInstance();
+                ItemStack item = preset.getMiddle().getDefaultInstance();
                 try {
-                    item.set(DataComponentTypes.ENTITY_DATA, NbtComponent.of(StringNbtReader.parse(preset.getRight())));
+                    CompoundTag compound = TagParser.parseCompoundFully(preset.getRight());
+                    String entityId = compound.getString("id").orElse("minecraft:pig");
+                    net.minecraft.world.entity.EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(entityId));
+                    item.set(DataComponents.ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(entityType, compound));
                 } catch (CommandSyntaxException e) { }
-                item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(toName(preset.getLeft())));
+                item.set(DataComponents.CUSTOM_NAME, Component.literal(toName(preset.getLeft())));
                 return item;
             });
         });
 
         BLOCK_PRESETS.forEach((preset) -> {
             PRESETS.put(preset.getLeft(), (preview) -> {
-                if (preview) preset.getMiddle().getDefaultStack();
-                ItemStack item = preset.getMiddle().getDefaultStack();
+                if (preview) preset.getMiddle().getDefaultInstance();
+                ItemStack item = preset.getMiddle().getDefaultInstance();
                 try {
-                    item.set(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.of(StringNbtReader.parse(preset.getRight())));
+                    CompoundTag compound = TagParser.parseCompoundFully(preset.getRight());
+                    String blockEntityId = compound.getString("id").orElse("minecraft:spawner");
+                    net.minecraft.world.level.block.entity.BlockEntityType<?> blockEntityType = BuiltInRegistries.BLOCK_ENTITY_TYPE.getValue(Identifier.parse(blockEntityId));
+                    item.set(DataComponents.BLOCK_ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(blockEntityType, compound));
                 } catch (CommandSyntaxException e) { }
-                item.set(DataComponentTypes.CUSTOM_NAME, Text.literal(toName(preset.getLeft())));
+                item.set(DataComponents.CUSTOM_NAME, Component.literal(toName(preset.getLeft())));
                 return item;
             });
         });
 
         // TODO update
         PRESETS.put("force_op", (preview) -> {
-            if (preview) Items.SPIDER_SPAWN_EGG.getDefaultStack();
-            ItemStack item = Items.SPIDER_SPAWN_EGG.getDefaultStack();
+            if (preview) Items.SPIDER_SPAWN_EGG.getDefaultInstance();
+            ItemStack item = Items.SPIDER_SPAWN_EGG.getDefaultInstance();
             String nick = mc.player.getName().getString();
 
             try {
-                item.set(DataComponentTypes.ENTITY_DATA, NbtComponent.of(StringNbtReader.parse("{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}")));
+                CompoundTag compound = TagParser.parseCompoundFully("{Time:1,BlockState:{Name:\"minecraft:spawner\"},id:\"minecraft:falling_block\",TileEntityData:{SpawnCount:20,SpawnData:{id:\"minecraft:villager\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:redstone_block\"},id:\"minecraft:falling_block\",Passengers:[{id:\"minecraft:fox\",Passengers:[{Time:1,BlockState:{Name:\"minecraft:activator_rail\"},id:\"minecraft:falling_block\",Passengers:[{Command:\"execute as @e run op "+nick+"\",id:\"minecraft:command_block_minecart\"}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]}]}],NoAI:1b,Health:1.0f,ActiveEffects:[{Duration:1000,Id:20b,Amplifier:4b}]},MaxSpawnDelay:100,SpawnRange:10,Delay:1,MinSpawnDelay:100}}");
+                item.set(DataComponents.ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(net.minecraft.world.entity.EntityType.FALLING_BLOCK, compound));
             } catch (CommandSyntaxException e) { }
-            item.set(DataComponentTypes.CUSTOM_NAME, Text.of("Force OP"));
+            item.set(DataComponents.CUSTOM_NAME, Component.nullToEmpty("Force OP"));
             return item;
         });
 
         // Thanks wurst !
         PRESETS.put("troll_potion", (preview) -> {
-            if (preview) Items.LINGERING_POTION.getDefaultStack();
-            ItemStack stack = Items.LINGERING_POTION.getDefaultStack();
-            ArrayList<StatusEffectInstance> effects = new ArrayList<>();
+            if (preview) Items.LINGERING_POTION.getDefaultInstance();
+            ItemStack stack = Items.LINGERING_POTION.getDefaultInstance();
+            ArrayList<MobEffectInstance> effects = new ArrayList<>();
             for(int i = 1; i <= 31; i++)
             {
-                StatusEffect effect =
-                        Registries.STATUS_EFFECT.getEntry(i).get().value();
-                RegistryEntry<StatusEffect> entry =
-                        Registries.STATUS_EFFECT.getEntry(effect);
-                effects.add(new StatusEffectInstance(entry, Integer.MAX_VALUE,
+                MobEffect effect =
+                        BuiltInRegistries.MOB_EFFECT.get(i).get().value();
+                Holder<MobEffect> entry =
+                        BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
+                effects.add(new MobEffectInstance(entry, Integer.MAX_VALUE,
                         Integer.MAX_VALUE));
             }
 
-            stack.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(Optional.empty(), Optional.empty(),
+            stack.set(DataComponents.POTION_CONTENTS, new PotionContents(Optional.empty(), Optional.empty(),
                     effects, Optional.empty()));
-            stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Lingering Potion of Trolling"));
+            stack.set(DataComponents.CUSTOM_NAME, Component.literal("Lingering Potion of Trolling"));
             return stack;
         });
 
         PRESETS.put("32k", (preview) -> {
-            enchantmentRegistry = mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT);
+            enchantmentRegistry = mc.level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
 
-            if (preview || enchantmentRegistry == null) return Items.DIAMOND_SWORD.getDefaultStack();
-            ItemStack stack = Items.DIAMOND_SWORD.getDefaultStack();
+            if (preview || enchantmentRegistry == null) return Items.DIAMOND_SWORD.getDefaultInstance();
+            ItemStack stack = Items.DIAMOND_SWORD.getDefaultInstance();
 
-            stack.apply(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT, component -> {
-                ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(component);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.SHARPNESS), 255);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.KNOCKBACK), 255);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.FIRE_ASPECT), 255);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.LOOTING), 10);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.SWEEPING_EDGE), 3);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.UNBREAKING), 255);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.MENDING), 1);
-                builder.add(enchantmentRegistry.getOrThrow(Enchantments.VANISHING_CURSE), 1);
-                return builder.build();
+            stack.update(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY, component -> {
+                ItemEnchantments.Mutable builder = new ItemEnchantments.Mutable(component);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.SHARPNESS), 255);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.KNOCKBACK), 255);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.FIRE_ASPECT), 255);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.LOOTING), 10);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.SWEEPING_EDGE), 3);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.UNBREAKING), 255);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.MENDING), 1);
+                builder.upgrade(enchantmentRegistry.getOrThrow(Enchantments.VANISHING_CURSE), 1);
+                return builder.toImmutable();
             });
 
-            stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Bonk"));
+            stack.set(DataComponents.CUSTOM_NAME, Component.literal("Bonk"));
             return stack;
         });
 
         PRESETS.put("crash_chest", (preview) -> {
-            if (preview) return Items.CHEST.getDefaultStack();
-            ItemStack stack = Items.CHEST.getDefaultStack();
-            NbtCompound nbtCompound = new NbtCompound();
-            NbtList nbtList = new NbtList();
+            if (preview) return Items.CHEST.getDefaultInstance();
+            ItemStack stack = Items.CHEST.getDefaultInstance();
+            CompoundTag nbtCompound = new CompoundTag();
+            ListTag nbtList = new ListTag();
             for(int i = 0; i < 40000; i++)
-                nbtList.add(new NbtList());
+                nbtList.add(new ListTag());
             nbtCompound.put("nothingsuspicioushere", nbtList);
-            stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbtCompound));
-            stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal("Copy Me"));
+            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbtCompound));
+            stack.set(DataComponents.CUSTOM_NAME, Component.literal("Copy Me"));
             return stack;
         });
 
         PRESETS.put("firework", (preview) -> {
-            if (preview) return Items.FIREWORK_ROCKET.getDefaultStack();
+            if (preview) return Items.FIREWORK_ROCKET.getDefaultInstance();
             ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
             IntList colors = new IntArrayList(new int[]{1973019,11743532,3887386,5320730,2437522,8073150,2651799,11250603,4408131,14188952,4312372,14602026,6719955,12801229,15435844,15790320});
-            ArrayList<FireworkExplosionComponent> explosions = new ArrayList<>();
+            ArrayList<FireworkExplosion> explosions = new ArrayList<>();
             for(int i = 0; i < 200; i++) {
-                explosions.add(new FireworkExplosionComponent(FireworkExplosionComponent.Type.byId(random.nextInt(5)), colors, colors, true, true));
+                explosions.add(new FireworkExplosion(FireworkExplosion.Shape.byId(random.nextInt(5)), colors, colors, true, true));
             }
 
-            var changes = ComponentChanges.builder()
-                    .add(DataComponentTypes.FIREWORKS, new FireworksComponent(1, explosions))
+            var changes = DataComponentPatch.builder()
+                    .set(DataComponents.FIREWORKS, new Fireworks(1, explosions))
                     .build();
 
-            firework.applyChanges(changes);
+            firework.applyComponentsAndValidate(changes);
 
             return firework;
         });
 
         HIDDEN_ENTITIES.forEach((id) -> {
             PRESETS.put(id.getPath()+"_spawn_egg", (preview) -> {
-                if (preview) return Items.PIG_SPAWN_EGG.getDefaultStack();
-                ItemStack egg = Items.PIG_SPAWN_EGG.getDefaultStack();
+                if (preview) return Items.PIG_SPAWN_EGG.getDefaultInstance();
+                ItemStack egg = Items.PIG_SPAWN_EGG.getDefaultInstance();
 
-                NbtCompound entityTag = new NbtCompound();
-                entityTag.putString("id", id.toString());
+                CompoundTag entityTag = new CompoundTag();
+                net.minecraft.world.entity.EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(id);
 
-                var changes = ComponentChanges.builder()
-                        .add(DataComponentTypes.CUSTOM_NAME, Text.literal(String.format("%s", toName(id.getPath()))))
-                        .add(DataComponentTypes.ENTITY_DATA, NbtComponent.of(entityTag))
+                var changes = DataComponentPatch.builder()
+                        .set(DataComponents.CUSTOM_NAME, Component.literal(String.format("%s", toName(id.getPath()))))
+                        .set(DataComponents.ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(entityType, entityTag))
                         .build();
 
-                egg.applyChanges(changes);
+                egg.applyComponentsAndValidate(changes);
                 return egg;
             });
         });

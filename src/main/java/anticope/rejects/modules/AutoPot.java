@@ -16,16 +16,15 @@ import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
-
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +34,12 @@ public class AutoPot extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
-    private final Setting<List<StatusEffect>> usablePotions = sgGeneral.add(new StatusEffectListSetting.Builder()
+    private final Setting<List<MobEffect>> usablePotions = sgGeneral.add(new StatusEffectListSetting.Builder()
             .name("potions-to-use")
             .description("The potions to use.")
             .defaultValue(
-                StatusEffects.INSTANT_HEALTH.value(),
-                StatusEffects.STRENGTH.value()
+                MobEffects.INSTANT_HEALTH.value(),
+                MobEffects.STRENGTH.value()
             )
             .build()
     );
@@ -101,15 +100,15 @@ public class AutoPot extends Module {
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (mc.player.isUsingItem()) return;
-        for (StatusEffect statusEffect : usablePotions.get()) {
-            RegistryEntry<StatusEffect> registryEntry = Registries.STATUS_EFFECT.getEntry(statusEffect);
-            if (!mc.player.hasStatusEffect(registryEntry)) {
+        for (MobEffect statusEffect : usablePotions.get()) {
+            Holder<MobEffect> registryEntry = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(statusEffect);
+            if (!mc.player.hasEffect(registryEntry)) {
                 slot = potionSlot(statusEffect);
                 if (slot != -1) {
-                    if (registryEntry == StatusEffects.INSTANT_HEALTH && ShouldDrinkHealth()) {
+                    if (registryEntry == MobEffects.INSTANT_HEALTH && ShouldDrinkHealth()) {
                         startPotionUse();
                         return;
-                    } else if (registryEntry == StatusEffects.INSTANT_HEALTH) {
+                    } else if (registryEntry == MobEffects.INSTANT_HEALTH) {
                         return;
                     }
                     startPotionUse();
@@ -124,7 +123,7 @@ public class AutoPot extends Module {
     }
 
     private void setPressed(boolean pressed) {
-        mc.options.useKey.setPressed(pressed);
+        mc.options.keyUse.setDown(pressed);
     }
 
     private void drink() {
@@ -167,20 +166,20 @@ public class AutoPot extends Module {
     }
 
     private void changeSlot(int slot) {
-        mc.player.getInventory().selectedSlot = slot;
+        mc.player.getInventory().setSelectedSlot(slot);
         this.slot = slot;
     }
 
     //Sunk 7 hours into these checks, if i die blame checks
-    private int potionSlot(StatusEffect statusEffect) {
+    private int potionSlot(MobEffect statusEffect) {
         int slot = -1;
         for (int i = 0; i < 9; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
+            ItemStack stack = mc.player.getInventory().getItem(i);
             if (stack.isEmpty()) continue;
             if (stack.getItem() == Items.POTION || (stack.getItem() == Items.SPLASH_POTION && useSplashPots.get())) {
-                PotionContentsComponent effects = stack.getComponents().getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT);
-                for (StatusEffectInstance effectInstance : effects.getEffects()) {
-                    if (effectInstance.getTranslationKey().equals(statusEffect.getTranslationKey())) {
+                PotionContents effects = stack.getComponents().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+                for (MobEffectInstance effectInstance : effects.getAllEffects()) {
+                    if (effectInstance.getDescriptionId().equals(statusEffect.getDescriptionId())) {
                         slot = i;
                         break;
                     }
@@ -191,11 +190,11 @@ public class AutoPot extends Module {
     }
 
     private void startPotionUse() {
-        prevSlot = mc.player.getInventory().selectedSlot;
+        prevSlot = mc.player.getInventory().getSelectedSlot();
 
         if (useSplashPots.get()) {
             if (lookDown.get()) {
-                Rotations.rotate(mc.player.getYaw(), 90);
+                Rotations.rotate(mc.player.getYRot(), 90);
                 splash();
             } else {
                 splash();

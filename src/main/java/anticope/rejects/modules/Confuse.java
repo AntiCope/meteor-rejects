@@ -10,14 +10,13 @@ import meteordevelopment.meteorclient.utils.entity.TargetUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RaycastContext;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import java.util.Random;
 
 // Too much much spaghetti!
@@ -125,8 +124,8 @@ public class Confuse extends Module {
 
         if (target == null) return;
 
-        Vec3d entityPos = target.getPos();
-        Vec3d playerPos = mc.player.getPos();
+        Vec3 entityPos = target.position();
+        Vec3 playerPos = mc.player.position();
         Random r = new Random();
         BlockHitResult hit;
         int halfRange = range.get() / 2;
@@ -136,33 +135,33 @@ public class Confuse extends Module {
                 double x = r.nextDouble() * range.get() - halfRange;
                 double y = 0;
                 double z = r.nextDouble() * range.get() - halfRange;
-                Vec3d addend = new Vec3d(x, y, z);
-                Vec3d goal = entityPos.add(addend);
-                if (mc.world.getBlockState(BlockPos.ofFloored(goal.x, goal.y, goal.z)).getBlock() != Blocks.AIR) {
-                    goal = new Vec3d(x, playerPos.y, z);
+                Vec3 addend = new Vec3(x, y, z);
+                Vec3 goal = entityPos.add(addend);
+                if (mc.level.getBlockState(BlockPos.containing(goal.x, goal.y, goal.z)).getBlock() != Blocks.AIR) {
+                    goal = new Vec3(x, playerPos.y, z);
                 }
-                if (mc.world.getBlockState(BlockPos.ofFloored(goal.x, goal.y, goal.z)).getBlock() == Blocks.AIR) {
-                    hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
-                    if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
+                if (mc.level.getBlockState(BlockPos.containing(goal.x, goal.y, goal.z)).getBlock() == Blocks.AIR) {
+                    hit = mc.level.clip(new ClipContext(mc.player.position(), goal, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, mc.player));
+                    if (!moveThroughBlocks.get() && hit.isInside()) {
                         delayWaited = delay.get() - 1;
                         break;
                     }
-                    mc.player.updatePosition(goal.x, goal.y, goal.z);
+                    mc.player.absSnapTo(goal.x, goal.y, goal.z);
                 } else {
                     delayWaited = delay.get() - 1;
                 }
                 break;
 
             case Switch:
-                Vec3d diff = entityPos.subtract(playerPos);
-                Vec3d diff1 = new Vec3d(MathHelper.clamp(diff.x, -halfRange, halfRange), MathHelper.clamp(diff.y, -halfRange, halfRange), MathHelper.clamp(diff.z, -halfRange, halfRange));
-                Vec3d goal2 = entityPos.add(diff1);
-                hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), goal2, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
-                if (!moveThroughBlocks.get() && hit.isInsideBlock()) {
+                Vec3 diff = entityPos.subtract(playerPos);
+                Vec3 diff1 = new Vec3(Mth.clamp(diff.x, -halfRange, halfRange), Mth.clamp(diff.y, -halfRange, halfRange), Mth.clamp(diff.z, -halfRange, halfRange));
+                Vec3 goal2 = entityPos.add(diff1);
+                hit = mc.level.clip(new ClipContext(mc.player.position(), goal2, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, mc.player));
+                if (!moveThroughBlocks.get() && hit.isInside()) {
                     delayWaited = delay.get() - 1;
                     break;
                 }
-                mc.player.updatePosition(goal2.x, goal2.y, goal2.z);
+                mc.player.absSnapTo(goal2.x, goal2.y, goal2.z);
                 break;
 
             case Circle:
@@ -172,11 +171,11 @@ public class Confuse extends Module {
                 double rad = Math.toRadians(circleProgress);
                 double sin = Math.sin(rad) * 3;
                 double cos = Math.cos(rad) * 3;
-                Vec3d current = new Vec3d(entityPos.x + sin, playerPos.y, entityPos.z + cos);
-                hit = mc.world.raycast(new RaycastContext(mc.player.getPos(), current, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, mc.player));
-                if (!moveThroughBlocks.get() && hit.isInsideBlock())
+                Vec3 current = new Vec3(entityPos.x + sin, playerPos.y, entityPos.z + cos);
+                hit = mc.level.clip(new ClipContext(mc.player.position(), current, ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, mc.player));
+                if (!moveThroughBlocks.get() && hit.isInside())
                     break;
-                mc.player.updatePosition(current.x, current.y, current.z);
+                mc.player.absSnapTo(current.x, current.y, current.z);
                 break;
         }
     }
@@ -186,7 +185,7 @@ public class Confuse extends Module {
         if (target == null) return;
 
         boolean flag = budgetGraphics.get();
-        Vec3d last = null;
+        Vec3 last = null;
         addition += flag ? 0 : 1.0;
         if (addition > 360) addition = 0;
         for (int i = 0; i < 360; i += flag ? 7 : 1) {
@@ -201,11 +200,11 @@ public class Confuse extends Module {
                 double blue = seed == 2 ? current : (seed == 0 ? Math.abs(current - 255) : 0);
                 c1 = new Color((int) red, (int) green, (int) blue);
             }
-            Vec3d tp = target.getPos();
+            Vec3 tp = target.position();
             double rad = Math.toRadians(i);
             double sin = Math.sin(rad) * 3;
             double cos = Math.cos(rad) * 3;
-            Vec3d c = new Vec3d(tp.x + sin, tp.y + target.getHeight() / 2, tp.z + cos);
+            Vec3 c = new Vec3(tp.x + sin, tp.y + target.getBbHeight() / 2, tp.z + cos);
             if (last != null) event.renderer.line(last.x, last.y, last.z, c.x, c.y, c.z, c1);
             last = c;
         }

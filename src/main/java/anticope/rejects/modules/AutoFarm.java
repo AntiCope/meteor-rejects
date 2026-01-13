@@ -13,18 +13,30 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.*;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.WorldView;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.AzaleaBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CocoaBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.MushroomBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
+import net.minecraft.world.level.block.PitcherCropBlock;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.SoulSandBlock;
+import net.minecraft.world.level.block.StemBlock;
+import net.minecraft.world.level.block.SweetBerryBushBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import java.util.*;
 
 public class AutoFarm extends Module {
@@ -126,8 +138,8 @@ public class AutoFarm extends Module {
             .build()
     );
 
-    private final Pool<BlockPos.Mutable> blockPosPool = new Pool<>(BlockPos.Mutable::new);
-    private final List<BlockPos.Mutable> blocks = new ArrayList<>();
+    private final Pool<BlockPos.MutableBlockPos> blockPosPool = new Pool<>(BlockPos.MutableBlockPos::new);
+    private final List<BlockPos.MutableBlockPos> blocks = new ArrayList<>();
 
     int actions = 0;
 
@@ -142,7 +154,7 @@ public class AutoFarm extends Module {
 
     @EventHandler
     private void onBreakBlock(BreakBlockEvent event) {
-        BlockState state = mc.world.getBlockState(event.blockPos);
+        BlockState state = mc.level.getBlockState(event.blockPos);
         Block block = state.getBlock();
         if (onlyReplant.get()) {
             Item item = null;
@@ -161,22 +173,22 @@ public class AutoFarm extends Module {
     private void onTick(TickEvent.Pre event) {
         actions = 0;
         BlockIterator.register(range.get(), range.get(), (pos, state) -> {
-            if (mc.player.getEyePos().distanceTo(Vec3d.ofCenter(pos)) <= range.get())
+            if (mc.player.getEyePosition().distanceTo(Vec3.atCenterOf(pos)) <= range.get())
                 blocks.add(blockPosPool.get().set(pos));
         });
 
         BlockIterator.after(() -> {
-            blocks.sort(Comparator.comparingDouble(value -> mc.player.getEyePos().distanceTo(Vec3d.ofCenter(value))));
+            blocks.sort(Comparator.comparingDouble(value -> mc.player.getEyePosition().distanceTo(Vec3.atCenterOf(value))));
 
             for (BlockPos pos : blocks) {
-                BlockState state = mc.world.getBlockState(pos);
+                BlockState state = mc.level.getBlockState(pos);
                 Block block = state.getBlock();
                 if (till(pos, block) || harvest(pos, state, block) || plant(pos, block) || bonemeal(pos, state, block))
                     actions++;
                 if (actions >= bpt.get()) break;
             }
 
-            for (BlockPos.Mutable blockPos : blocks) blockPosPool.free(blockPos);
+            for (BlockPos.MutableBlockPos blockPos : blocks) blockPosPool.free(blockPos);
             blocks.clear();
 
         });
@@ -184,13 +196,13 @@ public class AutoFarm extends Module {
 
     private boolean till(BlockPos pos, Block block) {
         if (!till.get()) return false;
-        boolean moist = !this.moist.get() || isWaterNearby(mc.world, pos);
+        boolean moist = !this.moist.get() || isWaterNearby(mc.level, pos);
         boolean tillable = block == Blocks.GRASS_BLOCK ||
                 block == Blocks.DIRT_PATH ||
                 block == Blocks.DIRT ||
                 block == Blocks.COARSE_DIRT ||
                 block == Blocks.ROOTED_DIRT;
-        if (moist && tillable && mc.world.getBlockState(pos.up()).isAir()) {
+        if (moist && tillable && mc.level.getBlockState(pos.above()).isAir()) {
             FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
             return WorldUtils.interact(pos, hoe, rotate.get());
         }
@@ -202,26 +214,26 @@ public class AutoFarm extends Module {
         if (!harvestBlocks.get().contains(block)) return false;
         if (!isMature(state, block)) return false;
         if (block instanceof SweetBerryBushBlock)
-            mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
         else {
-            mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
+            mc.gameMode.continueDestroyBlock(pos, Direction.UP);
         }
         return true;
     }
 
     private boolean plant(BlockPos pos, Block block) {
         if (!plant.get()) return false;
-        if (!mc.world.isAir(pos.up())) return false;
+        if (!mc.level.isEmptyBlock(pos.above())) return false;
         FindItemResult findItemResult = null;
         if (onlyReplant.get()) {
             for (BlockPos replantPos : replantMap.keySet()) {
-                if (replantPos.equals(pos.up())) {
+                if (replantPos.equals(pos.above())) {
                     findItemResult = InvUtils.find(replantMap.get(replantPos));
                     replantMap.remove(replantPos);
                     break;
                 }
             }
-        } else if (block instanceof FarmlandBlock) {
+        } else if (block instanceof FarmBlock) {
             findItemResult = InvUtils.find(itemStack -> {
                 Item item = itemStack.getItem();
                 return item != Items.NETHER_WART && plantItems.get().contains(item);
@@ -233,7 +245,7 @@ public class AutoFarm extends Module {
             });
         }
         if (findItemResult != null && findItemResult.found()) {
-            BlockUtils.place(pos.up(), findItemResult, rotate.get(), -100, false);
+            BlockUtils.place(pos.above(), findItemResult, rotate.get(), -100, false);
             return true;
         }
         return false;
@@ -248,26 +260,26 @@ public class AutoFarm extends Module {
         return WorldUtils.interact(pos, bonemeal, rotate.get());
     }
 
-    private boolean isWaterNearby(WorldView world, BlockPos pos) {
-        for (BlockPos blockPos : BlockPos.iterate(pos.add(-4, 0, -4), pos.add(4, 1, 4))) {
-            if (world.getFluidState(blockPos).isIn(FluidTags.WATER)) return true;
+    private boolean isWaterNearby(LevelReader world, BlockPos pos) {
+        for (BlockPos blockPos : BlockPos.betweenClosed(pos.offset(-4, 0, -4), pos.offset(4, 1, 4))) {
+            if (world.getFluidState(blockPos).is(FluidTags.WATER)) return true;
         }
         return false;
     }
 
     private boolean isMature(BlockState state, Block block) {
         if (block instanceof CropBlock cropBlock) {
-            return cropBlock.isMature(state);
+            return cropBlock.isMaxAge(state);
         } else if (block instanceof CocoaBlock cocoaBlock) {
-            return state.get(cocoaBlock.AGE) >= 2;
+            return state.getValue(cocoaBlock.AGE) >= 2;
         } else if (block instanceof StemBlock) {
-            return state.get(StemBlock.AGE) == StemBlock.MAX_AGE;
+            return state.getValue(StemBlock.AGE) == StemBlock.MAX_AGE;
         } else if (block instanceof SweetBerryBushBlock sweetBerryBushBlock) {
-            return state.get(sweetBerryBushBlock.AGE) >= 2;
+            return state.getValue(sweetBerryBushBlock.AGE) >= 2;
         } else if (block instanceof NetherWartBlock netherWartBlock) {
-            return state.get(netherWartBlock.AGE) >= 3;
+            return state.getValue(netherWartBlock.AGE) >= 3;
         } else if (block instanceof PitcherCropBlock pitcherCropBlock) {
-            return state.get(pitcherCropBlock.AGE) >= 4;
+            return state.getValue(pitcherCropBlock.AGE) >= 4;
         }
         return true;
     }
@@ -275,7 +287,7 @@ public class AutoFarm extends Module {
     private boolean bonemealFilter(Block block) {
         return block instanceof CropBlock ||
                 block instanceof StemBlock ||
-                block instanceof MushroomPlantBlock ||
+                block instanceof MushroomBlock ||
                 block instanceof AzaleaBlock ||
                 block instanceof SaplingBlock ||
                 block == Blocks.COCOA ||

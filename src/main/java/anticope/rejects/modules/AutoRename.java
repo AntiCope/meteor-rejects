@@ -6,18 +6,16 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.client.gui.screen.ingame.AnvilScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.screen.AnvilScreenHandler;
-
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AnvilScreen;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
 import java.util.List;
 
 public class AutoRename extends Module {
@@ -67,9 +65,9 @@ public class AutoRename extends Module {
     private int delayLeft = 0;
     @EventHandler
     private void onTick(TickEvent.Post ignoredEvent) {
-        if (mc.interactionManager == null) return;
+        if (mc.gameMode == null) return;
         if (items.get().isEmpty()) return;
-        if (!(mc.player.currentScreenHandler instanceof AnvilScreenHandler)) return;
+        if (!(mc.player.containerMenu instanceof AnvilMenu)) return;
 
         if (delayLeft > 0) {
             delayLeft--;
@@ -78,14 +76,14 @@ public class AutoRename extends Module {
             delayLeft = delay.get();
         }
 
-        var slot0 = mc.player.currentScreenHandler.getSlot(0);
-        var slot1 = mc.player.currentScreenHandler.getSlot(1);
-        var slot2 = mc.player.currentScreenHandler.getSlot(2);
-        if (slot1.hasStack()) {
+        var slot0 = mc.player.containerMenu.getSlot(0);
+        var slot1 = mc.player.containerMenu.getSlot(1);
+        var slot2 = mc.player.containerMenu.getSlot(2);
+        if (slot1.hasItem()) {
 //            info("Slot 1 occupied");
             return; // touching anything
         }
-        if (slot2.hasStack()) {
+        if (slot2.hasItem()) {
             if (mc.player.experienceLevel < 1) {
 //                info("No exp");
             } else {
@@ -93,9 +91,9 @@ public class AutoRename extends Module {
                 extractNamed();
             }
         } else {
-            if (slot0.hasStack()) {
+            if (slot0.hasItem()) {
 //                info("Renaming");
-                renameItem(slot0.getStack());
+                renameItem(slot0.getItem());
             } else {
 //                info("Populating");
                 populateAnvil();
@@ -111,14 +109,14 @@ public class AutoRename extends Module {
             setname = name.get();
         }
 //        info("Renaming");
-        if (mc.currentScreen == null || !(mc.currentScreen instanceof AnvilScreen)) {
+        if (mc.screen == null || !(mc.screen instanceof AnvilScreen)) {
             error("Not anvil screen");
             toggle();
             return;
         }
-        var widgets = mc.currentScreen.children();
-        var input = (TextFieldWidget)widgets.get(0);
-        input.setText(setname);
+        var widgets = mc.screen.children();
+        var input = (EditBox)widgets.get(0);
+        input.setValue(setname);
     }
 
     private String getFirstItemName(ItemStack stack) {
@@ -126,23 +124,23 @@ public class AutoRename extends Module {
         if (!(item instanceof BlockItem && ((BlockItem) item).getBlock() instanceof ShulkerBoxBlock)) {
             return "";
         }
-        NbtCompound compound = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+        CompoundTag compound = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (compound == null) {
             return "";
         }
-        compound = compound.getCompound("BlockEntityTag");
+        compound = compound.getCompound("BlockEntityTag").get();
         if (compound == null) {
             return "";
         }
-        var list = compound.getList("Items", NbtElement.COMPOUND_TYPE);
+        var list = compound.getList("Items").get();
         if (list == null) {
             return "";
         }
         var minslot = Byte.MAX_VALUE;
         var name = "";
         for (int i = 0; i < list.size(); i++) {
-            var invItem = list.getCompound(i);
-            var invSlot = invItem.getByte("Slot");
+            var invItem = list.getCompound(i).get();
+            var invSlot = invItem.getByte("Slot").get();
             if (minslot < invSlot) {
                 continue;
             }
@@ -158,10 +156,10 @@ public class AutoRename extends Module {
 
     private void extractNamed() {
         var to = -1;
-        var inv = mc.player.currentScreenHandler;
+        var inv = mc.player.containerMenu;
         for (int i = 3; i < 38; i++) {
             var sl = inv.getSlot(i);
-            if (sl.hasStack()) {
+            if (sl.hasItem()) {
                 to = i;
                 break;
             }
@@ -178,14 +176,14 @@ public class AutoRename extends Module {
     private void populateAnvil() {
         var gItems = items.get();
         var from = -1;
-        var inv = mc.player.currentScreenHandler;
+        var inv = mc.player.containerMenu;
         for (int i = 3; i < 38; i++) {
             var sl = inv.getSlot(i);
-            if (!sl.hasStack()) {
+            if (!sl.hasItem()) {
                 continue;
             }
-            var st = sl.getStack();
-            if (gItems.contains(st.getItem()) && !st.getComponents().contains(DataComponentTypes.CUSTOM_NAME)) {
+            var st = sl.getItem();
+            if (gItems.contains(st.getItem()) && !st.getComponents().has(DataComponents.CUSTOM_NAME)) {
                 from = i;
                 break;
             }

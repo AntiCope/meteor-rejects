@@ -10,12 +10,11 @@ import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,8 +54,8 @@ public class AutoBedTrap extends Module {
         .build()
     );
 
-    private final Pool<BlockPos.Mutable> blockPosPool = new Pool<>(BlockPos.Mutable::new);
-    private final List<BlockPos.Mutable> blocks = new ArrayList<>();
+    private final Pool<BlockPos.MutableBlockPos> blockPosPool = new Pool<>(BlockPos.MutableBlockPos::new);
+    private final List<BlockPos.MutableBlockPos> blocks = new ArrayList<>();
 
     int cap = 0;
 
@@ -66,7 +65,7 @@ public class AutoBedTrap extends Module {
 
     @Override
     public void onDeactivate() {
-        for (BlockPos.Mutable blockPos : blocks) blockPosPool.free(blockPos);
+        for (BlockPos.MutableBlockPos blockPos : blocks) blockPosPool.free(blockPos);
         blocks.clear();
     }
 
@@ -97,16 +96,16 @@ public class AutoBedTrap extends Module {
 
     public boolean placeTickAround(BlockPos block) {
         for (BlockPos b : new BlockPos[]{
-                block.up(), block.west(),
+                block.above(), block.west(),
                 block.north(), block.south(),
-                block.east(), block.down()}) {
+                block.east(), block.below()}) {
 
             if (cap >= bpt.get()) {
                 cap = 0;
                 return true;
             }
 
-            if (blockTypes.get().contains(mc.world.getBlockState(b).getBlock())) return true;
+            if (blockTypes.get().contains(mc.level.getBlockState(b).getBlock())) return true;
 
             FindItemResult findBlock = InvUtils.findInHotbar((item) -> {
                 if (!(item.getItem() instanceof BlockItem)) return false;

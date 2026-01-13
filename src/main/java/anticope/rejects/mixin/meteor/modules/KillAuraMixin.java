@@ -9,7 +9,7 @@ import meteordevelopment.meteorclient.systems.modules.Category;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
-import net.minecraft.entity.Entity;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -113,7 +113,7 @@ public class KillAuraMixin extends Module {
     @Inject(method = "onTick", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void onTick(TickEvent.Pre event, CallbackInfo ci, Entity primary) {
         if (randomTeleport.get() && !onlyOnLook.get()) {
-            mc.player.setPosition(primary.getX() + randomOffset(), primary.getY(), primary.getZ() + randomOffset());
+            mc.player.setPos(primary.getX() + randomOffset(), primary.getY(), primary.getZ() + randomOffset());
         }
     }
 
@@ -123,7 +123,7 @@ public class KillAuraMixin extends Module {
         hitTimer -= random.nextInt(randomDelayMax.get());
     }
 
-    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;attackEntity(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;)V"), cancellable = true)
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;attack(Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/entity/Entity;)V"), cancellable = true)
     private void onHit(Entity target, CallbackInfo info) {
         ShieldBypass shieldBypass = Modules.get().get(ShieldBypass.class);
         if (shieldBypass.isActive()) {

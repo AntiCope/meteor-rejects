@@ -9,19 +9,19 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.seedfinding.mccore.version.MCVersion;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.Utils;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class SeedCommand extends Command {
-    private final static SimpleCommandExceptionType NO_SEED = new SimpleCommandExceptionType(Text.literal("No seed for current world saved."));
+    private final static SimpleCommandExceptionType NO_SEED = new SimpleCommandExceptionType(Component.literal("No seed for current world saved."));
 
     public SeedCommand() {
         super("seed", "Get or set seed for the current world.");
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.executes(ctx -> {
             Seed seed = Seeds.get().getSeed();
             if (seed == null) throw NO_SEED.create();
@@ -31,7 +31,7 @@ public class SeedCommand extends Command {
 
         builder.then(literal("list").executes(ctx -> {
             Seeds.get().seeds.forEach((name, seed) -> {
-                MutableText text = Text.literal(name + " ");
+                MutableComponent text = Component.literal(name + " ");
                 text.append(seed.toText());
                 info(text);
             });
@@ -41,7 +41,7 @@ public class SeedCommand extends Command {
         builder.then(literal("delete").executes(ctx -> {
             Seed seed = Seeds.get().getSeed();
             if (seed != null) {
-                MutableText text = Text.literal("Deleted ");
+                MutableComponent text = Component.literal("Deleted ");
                 text.append(seed.toText());
                 info(text);
             }

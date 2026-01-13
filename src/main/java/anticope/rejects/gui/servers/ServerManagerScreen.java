@@ -10,13 +10,13 @@ import meteordevelopment.meteorclient.gui.widgets.containers.WContainer;
 import meteordevelopment.meteorclient.gui.widgets.containers.WHorizontalList;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.utils.misc.IGetter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.option.ServerList;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.multiplayer.ServerList;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -41,9 +41,9 @@ public class ServerManagerScreen extends WindowScreen {
         saveFileFilters.rewind();
     }
 
-    private final MultiplayerScreen multiplayerScreen;
+    private final JoinMultiplayerScreen multiplayerScreen;
 
-    public ServerManagerScreen(GuiTheme theme, MultiplayerScreen multiplayerScreen) {
+    public ServerManagerScreen(GuiTheme theme, JoinMultiplayerScreen multiplayerScreen) {
         super(theme, "Manage Servers");
         this.parent = multiplayerScreen;
         this.multiplayerScreen = multiplayerScreen;
@@ -82,10 +82,10 @@ public class ServerManagerScreen extends WindowScreen {
                 }
             }
 
-            ServerList servers = multiplayerScreen.getServerList();
+            ServerList servers = multiplayerScreen.getServers();
             for (int i = 0; i < servers.size(); i++) {
-                ServerInfo info = servers.get(i);
-                IPAddress addr = IPAddress.fromText(info.address);
+                ServerData info = servers.get(i);
+                IPAddress addr = IPAddress.fromText(info.ip);
                 if (addr != null && hashedIPs.add(addr))
                     newIPs++;
             }
@@ -114,19 +114,19 @@ public class ServerManagerScreen extends WindowScreen {
             Path filePath = Path.of(targetPath);
             if (!Files.exists(filePath)) return;
 
-            List<ServerInfo> servers = ((ServerListAccessor) multiplayerScreen.getServerList()).getServers();
+            List<ServerData> servers = ((ServerListAccessor) multiplayerScreen.getServers()).getServerList();
             Set<String> presentAddresses = new HashSet<>();
             int newIPs = 0;
-            for (ServerInfo server : servers) presentAddresses.add(server.address);
-            for (String addr : MinecraftClient.getInstance().keyboard.getClipboard().split("[\r\n]+")) {
+            for (ServerData server : servers) presentAddresses.add(server.ip);
+            for (String addr : Minecraft.getInstance().keyboardHandler.getClipboard().split("[\r\n]+")) {
                 if (presentAddresses.add(addr = addr.split(" ")[0])) {
-                    servers.add(new ServerInfo("Server discovery #" + presentAddresses.size(), addr, ServerInfo.ServerType.OTHER));
+                    servers.add(new ServerData("Server discovery #" + presentAddresses.size(), addr, ServerData.Type.OTHER));
                     newIPs++;
                 }
             }
-            multiplayerScreen.getServerList().saveFile();
+            multiplayerScreen.getServers().save();
             ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setSelected(null);
-            ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setServers(multiplayerScreen.getServerList());
+            ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().updateOnlineServers(multiplayerScreen.getServers());
             toast("Success!", newIPs == 1 ? "Loaded %s new IP" : "Loaded %s new IPs", newIPs);
         }, e -> {
             MeteorRejectsAddon.LOG.error("Could not load IPs");
@@ -135,12 +135,12 @@ public class ServerManagerScreen extends WindowScreen {
     }
 
     private void toast(String titleKey, String descriptionKey, Object... params) {
-        SystemToast.add(client.getToastManager(), SystemToast.Type.WORLD_BACKUP, Text.literal(titleKey), Text.translatable(descriptionKey, params));
+        SystemToast.add(minecraft.getToastManager(), SystemToast.SystemToastId.WORLD_BACKUP, Component.literal(titleKey), Component.translatable(descriptionKey, params));
     }
 
     private void addButton(WContainer c, String text, IGetter<Screen> action) {
         WButton button = c.add(theme.button(text)).expandX().widget();
-        button.action = () -> client.setScreen(action.get());
+        button.action = () -> minecraft.setScreen(action.get());
     }
 
     public interface ThrowingRunnable<TEx extends Throwable> {

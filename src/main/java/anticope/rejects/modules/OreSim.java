@@ -17,25 +17,28 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.Utils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.random.ChunkRandom;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.ChunkStatus;
-
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.phys.Vec3;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class OreSim extends Module {
 
-    private final Map<Long, Map<Ore, Set<Vec3d>>> chunkRenderers = new ConcurrentHashMap<>();
+    private final Map<Long, Map<Ore, Set<Vec3>>> chunkRenderers = new ConcurrentHashMap<>();
     private Seed worldSeed = null;
-    private Map<RegistryKey<Biome>, List<Ore>> oreConfig;
+    private Map<ResourceKey<Biome>, List<Ore>> oreConfig;
     public List<BlockPos> oreGoals = new ArrayList<>();
 
     public enum AirCheck {
@@ -86,8 +89,8 @@ public class OreSim extends Module {
             return;
         }
         if (Seeds.get().getSeed() != null) {
-            int chunkX = mc.player.getChunkPos().x;
-            int chunkZ = mc.player.getChunkPos().z;
+            int chunkX = mc.player.chunkPosition().x;
+            int chunkZ = mc.player.chunkPosition().z;
 
             int rangeVal = horizontalRadius.get();
             for (int range = 0; range <= rangeVal; range++) {
@@ -103,14 +106,14 @@ public class OreSim extends Module {
     }
 
     private void renderChunk(int x, int z, Render3DEvent event) {
-        long chunkKey = ChunkPos.toLong(x,z);
+        long chunkKey = ChunkPos.asLong(x,z);
 
         if (chunkRenderers.containsKey(chunkKey)) {
-            Map<Ore, Set<Vec3d>> chunk = chunkRenderers.get(chunkKey);
+            Map<Ore, Set<Vec3>> chunk = chunkRenderers.get(chunkKey);
 
-            for (Map.Entry<Ore, Set<Vec3d>> oreRenders : chunk.entrySet()) {
+            for (Map.Entry<Ore, Set<Vec3>> oreRenders : chunk.entrySet()) {
                 if (oreRenders.getKey().active.get()) {
-                    for (Vec3d pos : oreRenders.getValue()) {
+                    for (Vec3 pos : oreRenders.getValue()) {
                         event.renderer.boxLines(pos.x, pos.y, pos.z, pos.x + 1, pos.y + 1, pos.z + 1, oreRenders.getKey().color, 0);
                     }
                 }
@@ -120,11 +123,11 @@ public class OreSim extends Module {
 
     @EventHandler
     private void onBlockUpdate(BlockUpdateEvent event) {
-        if (airCheck.get() != AirCheck.RECHECK || event.newState.isOpaque()) return;
+        if (airCheck.get() != AirCheck.RECHECK || event.newState.canOcclude()) return;
 
-        long chunkKey = ChunkPos.toLong(event.pos);
+        long chunkKey = ChunkPos.asLong(event.pos);
         if (chunkRenderers.containsKey(chunkKey)) {
-            Vec3d pos = Vec3d.of(event.pos);
+            Vec3 pos = Vec3.atLowerCornerOf(event.pos);
             for (var ore : chunkRenderers.get(chunkKey).values()) {
                 ore.remove(pos);
             }
@@ -133,11 +136,11 @@ public class OreSim extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.player == null || mc.world == null || oreConfig == null) return;
+        if (mc.player == null || mc.level == null || oreConfig == null) return;
 
         if (baritone() && BaritoneAPI.getProvider().getPrimaryBaritone().getMineProcess().isActive()) {
             oreGoals.clear();
-            var chunkPos = mc.player.getChunkPos();
+            var chunkPos = mc.player.chunkPosition();
             int rangeVal = 4;
             for (int range = 0; range <= rangeVal; ++range) {
                 for (int x = -range + chunkPos.x; x <= range + chunkPos.x; ++x) {
@@ -152,12 +155,12 @@ public class OreSim extends Module {
 
     private ArrayList<BlockPos> addToBaritone(int chunkX, int chunkZ) {
         ArrayList<BlockPos> baritoneGoals = new ArrayList<>();
-        long chunkKey = ChunkPos.toLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
         if (this.chunkRenderers.containsKey(chunkKey)) {
             this.chunkRenderers.get(chunkKey).entrySet().stream()
                     .filter(entry -> entry.getKey().active.get())
                     .flatMap(entry -> entry.getValue().stream())
-                    .map(BlockPos::ofFloored)
+                    .map(BlockPos::containing)
                     .forEach(baritoneGoals::add);
         }
         return baritoneGoals;
@@ -193,7 +196,7 @@ public class OreSim extends Module {
             return;
         }
 
-        for (Chunk chunk : Utils.chunks(false)) {
+        for (ChunkAccess chunk : Utils.chunks(false)) {
             doMathOnChunk(chunk);
         }
     }
@@ -205,7 +208,7 @@ public class OreSim extends Module {
         oreConfig = Ore.getRegistry(PlayerUtils.getDimension());
 
         chunkRenderers.clear();
-        if (mc.world != null && worldSeed != null) {
+        if (mc.level != null && worldSeed != null) {
             loadVisibleChunks();
         }
     }
@@ -215,42 +218,42 @@ public class OreSim extends Module {
         doMathOnChunk(event.chunk());
     }
 
-    private void doMathOnChunk(Chunk chunk) {
+    private void doMathOnChunk(ChunkAccess chunk) {
 
         var chunkPos = chunk.getPos();
         long chunkKey = chunkPos.toLong();
 
-        ClientWorld world = mc.world;
+        ClientLevel world = mc.level;
 
         if (chunkRenderers.containsKey(chunkKey) || world == null) {
             return;
         }
 
-        Set<RegistryKey<Biome>> biomes = new HashSet<>();
-        ChunkPos.stream(chunkPos, 1).forEach(chunkPosx -> {
-            Chunk chunkxx = world.getChunk(chunkPosx.x, chunkPosx.z, ChunkStatus.BIOMES, false);
+        Set<ResourceKey<Biome>> biomes = new HashSet<>();
+        ChunkPos.rangeClosed(chunkPos, 1).forEach(chunkPosx -> {
+            ChunkAccess chunkxx = world.getChunk(chunkPosx.x, chunkPosx.z, ChunkStatus.BIOMES, false);
             if (chunkxx == null) return;
 
-            for(ChunkSection chunkSection : chunkxx.getSectionArray()) {
-                chunkSection.getBiomeContainer().forEachValue(entry -> biomes.add(entry.getKey().get()));
+            for(LevelChunkSection chunkSection : chunkxx.getSections()) {
+                chunkSection.getBiomes().getAll(entry -> biomes.add(entry.unwrapKey().get()));
             }
         });
         Set<Ore> oreSet = biomes.stream().flatMap(b -> getDefaultOres(b).stream()).collect(Collectors.toSet());
 
         int chunkX = chunkPos.x << 4;
         int chunkZ = chunkPos.z << 4;
-        ChunkRandom random = new ChunkRandom(ChunkRandom.RandomProvider.XOROSHIRO.create(0));
+        WorldgenRandom random = new WorldgenRandom(WorldgenRandom.Algorithm.XOROSHIRO.newInstance(0));
 
-        long populationSeed = random.setPopulationSeed(worldSeed.seed, chunkX, chunkZ);
-        HashMap<Ore, Set<Vec3d>> h = new HashMap<>();
+        long populationSeed = random.setDecorationSeed(worldSeed.seed, chunkX, chunkZ);
+        HashMap<Ore, Set<Vec3>> h = new HashMap<>();
 
         for (Ore ore : oreSet) {
 
-            HashSet<Vec3d> ores = new HashSet<>();
+            HashSet<Vec3> ores = new HashSet<>();
 
-            random.setDecoratorSeed(populationSeed, ore.index, ore.step);
+            random.setFeatureSeed(populationSeed, ore.index, ore.step);
 
-            int repeat = ore.count.get(random);
+            int repeat = ore.count.sample(random);
 
             for (int i = 0; i < repeat; i++) {
 
@@ -260,10 +263,10 @@ public class OreSim extends Module {
 
                 int x = random.nextInt(16) + chunkX;
                 int z = random.nextInt(16) + chunkZ;
-                int y = ore.heightProvider.get(random, ore.heightContext);
+                int y = ore.heightProvider.sample(random, ore.heightContext);
                 BlockPos origin = new BlockPos(x,y,z);
 
-                RegistryKey<Biome> biome = chunk.getBiomeForNoiseGen(x,y,z).getKey().get();
+                ResourceKey<Biome> biome = chunk.getNoiseBiome(x,y,z).unwrapKey().get();
 
                 if (!getDefaultOres(biome).contains(ore)) {
                     continue;
@@ -282,7 +285,7 @@ public class OreSim extends Module {
         chunkRenderers.put(chunkKey, h);
     }
 
-    private List<Ore> getDefaultOres(RegistryKey<Biome> biomeRegistryKey) {
+    private List<Ore> getDefaultOres(ResourceKey<Biome> biomeRegistryKey) {
         if (oreConfig.containsKey(biomeRegistryKey)) {
             return oreConfig.get(biomeRegistryKey);
         } else {
@@ -294,25 +297,25 @@ public class OreSim extends Module {
     // Mojang code
     // ====================================
 
-    private ArrayList<Vec3d> generateNormal(ClientWorld world, ChunkRandom random, BlockPos blockPos, int veinSize, float discardOnAir) {
+    private ArrayList<Vec3> generateNormal(ClientLevel world, WorldgenRandom random, BlockPos blockPos, int veinSize, float discardOnAir) {
         float f = random.nextFloat() * 3.1415927F;
         float g = (float) veinSize / 8.0F;
-        int i = MathHelper.ceil(((float) veinSize / 16.0F * 2.0F + 1.0F) / 2.0F);
+        int i = Mth.ceil(((float) veinSize / 16.0F * 2.0F + 1.0F) / 2.0F);
         double d = (double) blockPos.getX() + Math.sin(f) * (double) g;
         double e = (double) blockPos.getX() - Math.sin(f) * (double) g;
         double h = (double) blockPos.getZ() + Math.cos(f) * (double) g;
         double j = (double) blockPos.getZ() - Math.cos(f) * (double) g;
         double l = (blockPos.getY() + random.nextInt(3) - 2);
         double m = (blockPos.getY() + random.nextInt(3) - 2);
-        int n = blockPos.getX() - MathHelper.ceil(g) - i;
+        int n = blockPos.getX() - Mth.ceil(g) - i;
         int o = blockPos.getY() - 2 - i;
-        int p = blockPos.getZ() - MathHelper.ceil(g) - i;
-        int q = 2 * (MathHelper.ceil(g) + i);
+        int p = blockPos.getZ() - Mth.ceil(g) - i;
+        int q = 2 * (Mth.ceil(g) + i);
         int r = 2 * (2 + i);
 
         for (int s = n; s <= n + q; ++s) {
             for (int t = p; t <= p + q; ++t) {
-                if (o <= world.getTopY(Heightmap.Type.MOTION_BLOCKING, s, t)) {
+                if (o <= world.getHeight(Heightmap.Types.MOTION_BLOCKING, s, t)) {
                     return this.generateVeinPart(world, random, veinSize, d, e, h, j, l, m, n, o, p, q, r, discardOnAir);
                 }
             }
@@ -321,13 +324,13 @@ public class OreSim extends Module {
         return new ArrayList<>();
     }
 
-    private ArrayList<Vec3d> generateVeinPart(ClientWorld world, ChunkRandom random, int veinSize, double startX, double endX, double startZ, double endZ, double startY, double endY, int x, int y, int z, int size, int i, float discardOnAir) {
+    private ArrayList<Vec3> generateVeinPart(ClientLevel world, WorldgenRandom random, int veinSize, double startX, double endX, double startZ, double endZ, double startY, double endY, int x, int y, int z, int size, int i, float discardOnAir) {
 
         BitSet bitSet = new BitSet(size * i * size);
-        BlockPos.Mutable mutable = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         double[] ds = new double[veinSize * 4];
 
-        ArrayList<Vec3d> poses = new ArrayList<>();
+        ArrayList<Vec3> poses = new ArrayList<>();
 
         int n;
         double p;
@@ -336,11 +339,11 @@ public class OreSim extends Module {
         double s;
         for (n = 0; n < veinSize; ++n) {
             float f = (float) n / (float) veinSize;
-            p = MathHelper.lerp(f, startX, endX);
-            q = MathHelper.lerp(f, startY, endY);
-            r = MathHelper.lerp(f, startZ, endZ);
+            p = Mth.lerp(f, startX, endX);
+            q = Mth.lerp(f, startY, endY);
+            r = Mth.lerp(f, startZ, endZ);
             s = random.nextDouble() * (double) veinSize / 16.0D;
-            double m = ((double) (MathHelper.sin(3.1415927F * f) + 1.0F) * s + 1.0D) / 2.0D;
+            double m = ((double) (Mth.sin(3.1415927F * f) + 1.0F) * s + 1.0D) / 2.0D;
             ds[n * 4] = p;
             ds[n * 4 + 1] = q;
             ds[n * 4 + 2] = r;
@@ -373,12 +376,12 @@ public class OreSim extends Module {
                 double v = ds[n * 4];
                 double w = ds[n * 4 + 1];
                 double aa = ds[n * 4 + 2];
-                int ab = Math.max(MathHelper.floor(v - u), x);
-                int ac = Math.max(MathHelper.floor(w - u), y);
-                int ad = Math.max(MathHelper.floor(aa - u), z);
-                int ae = Math.max(MathHelper.floor(v + u), ab);
-                int af = Math.max(MathHelper.floor(w + u), ac);
-                int ag = Math.max(MathHelper.floor(aa + u), ad);
+                int ab = Math.max(Mth.floor(v - u), x);
+                int ac = Math.max(Mth.floor(w - u), y);
+                int ad = Math.max(Mth.floor(aa - u), z);
+                int ae = Math.max(Mth.floor(v + u), ab);
+                int af = Math.max(Mth.floor(w + u), ac);
+                int ag = Math.max(Mth.floor(aa + u), ad);
 
                 for (int ah = ab; ah <= ae; ++ah) {
                     double ai = ((double) ah + 0.5D - v) / u;
@@ -393,9 +396,9 @@ public class OreSim extends Module {
                                         if (!bitSet.get(an)) {
                                             bitSet.set(an);
                                             mutable.set(ah, aj, al);
-                                            if (aj >= -64 && aj < 320 && (airCheck.get() == AirCheck.OFF || world.getBlockState(mutable).isOpaque())) {
+                                            if (aj >= -64 && aj < 320 && (airCheck.get() == AirCheck.OFF || world.getBlockState(mutable).canOcclude())) {
                                                 if (shouldPlace(world, mutable, discardOnAir, random)) {
-                                                    poses.add(new Vec3d(ah, aj, al));
+                                                    poses.add(new Vec3(ah, aj, al));
                                                 }
                                             }
                                         }
@@ -411,22 +414,22 @@ public class OreSim extends Module {
         return poses;
     }
 
-    private boolean shouldPlace(ClientWorld world, BlockPos orePos, float discardOnAir, ChunkRandom random) {
+    private boolean shouldPlace(ClientLevel world, BlockPos orePos, float discardOnAir, WorldgenRandom random) {
         if (discardOnAir == 0F || (discardOnAir != 1F && random.nextFloat() >= discardOnAir)) {
             return true;
         }
 
         for (Direction direction : Direction.values()) {
-            if (!world.getBlockState(orePos.add(direction.getVector())).isOpaque() && discardOnAir != 1F) {
+            if (!world.getBlockState(orePos.offset(direction.getUnitVec3i())).canOcclude() && discardOnAir != 1F) {
                 return false;
             }
         }
         return true;
     }
 
-    private ArrayList<Vec3d> generateHidden(ClientWorld world, ChunkRandom random, BlockPos blockPos, int size) {
+    private ArrayList<Vec3> generateHidden(ClientLevel world, WorldgenRandom random, BlockPos blockPos, int size) {
 
-        ArrayList<Vec3d> poses = new ArrayList<>();
+        ArrayList<Vec3> poses = new ArrayList<>();
 
         int i = random.nextInt(size + 1);
 
@@ -435,9 +438,9 @@ public class OreSim extends Module {
             int x = this.randomCoord(random, size) + blockPos.getX();
             int y = this.randomCoord(random, size) + blockPos.getY();
             int z = this.randomCoord(random, size) + blockPos.getZ();
-            if (airCheck.get() == AirCheck.OFF || world.getBlockState(new BlockPos(x, y, z)).isOpaque()) {
+            if (airCheck.get() == AirCheck.OFF || world.getBlockState(new BlockPos(x, y, z)).canOcclude()) {
                 if (shouldPlace(world, new BlockPos(x, y, z), 1F, random)) {
-                    poses.add(new Vec3d(x, y, z));
+                    poses.add(new Vec3(x, y, z));
                 }
             }
         }
@@ -445,7 +448,7 @@ public class OreSim extends Module {
         return poses;
     }
 
-    private int randomCoord(ChunkRandom random, int size) {
+    private int randomCoord(WorldgenRandom random, int size) {
         return Math.round((random.nextFloat() - random.nextFloat()) * (float) size);
     }
 }
