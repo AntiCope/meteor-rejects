@@ -5,7 +5,6 @@ import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerStatusPinger;
-import net.minecraft.server.network.EventLoopGroupHolder;
 
 public class LegacyServerPinger {
     private static final AtomicInteger threadNumber = new AtomicInteger(0);
@@ -29,7 +28,7 @@ public class LegacyServerPinger {
         MeteorRejectsAddon.LOG.info("Pinging {}:{}...", ip, port);
 
         try {
-            pinger.pingServer(server, () -> {}, () -> {}, EventLoopGroupHolder.remote(false));
+            pinger.pingServer(server, () -> {}, () -> {});
             MeteorRejectsAddon.LOG.info("Ping successful: {}:{}", ip, port);
 
         } catch (UnknownHostException e) {

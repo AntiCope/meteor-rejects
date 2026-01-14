@@ -10,9 +10,6 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.attribute.BedRule;
-import net.minecraft.world.attribute.EnvironmentAttributeMap;
-import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 
@@ -38,24 +35,23 @@ public class AntiSpawnpoint extends Module {
 
 
         BlockPos blockPos = ((ServerboundUseItemOnPacket) event.packet).getHitResult().getBlockPos();
-        EnvironmentAttributeMap attributes = mc.level.dimensionType().attributes();
-        boolean IsOverWorld = attributes.applyModifier(EnvironmentAttributes.BED_RULE, BedRule.CAN_SLEEP_WHEN_DARK) != BedRule.CAN_SLEEP_WHEN_DARK;
-        boolean IsNetherWorld = attributes.applyModifier(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false);
+        boolean bedDangerous = !mc.level.dimensionType().bedWorks();
+        boolean anchorWorks = mc.level.dimensionType().respawnAnchorWorks();
         boolean BlockIsBed = mc.level.getBlockState(blockPos).getBlock() instanceof BedBlock;
         boolean BlockIsAnchor = mc.level.getBlockState(blockPos).getBlock().equals(Blocks.RESPAWN_ANCHOR);
 
         assert mc.player != null;
         if (fakeUse.get()) {
-            if (BlockIsBed && IsOverWorld) {
+            if (BlockIsBed && bedDangerous) {
                 mc.player.swing(InteractionHand.MAIN_HAND);
                 mc.player.absSnapTo(blockPos.getX(),blockPos.above().getY(),blockPos.getZ());
             }
-            else if (BlockIsAnchor && IsNetherWorld) {
+            else if (BlockIsAnchor && anchorWorks) {
                 mc.player.swing(InteractionHand.MAIN_HAND);
             }
         }
 
-        if((BlockIsBed && IsOverWorld)||(BlockIsAnchor && IsNetherWorld)) {
+        if((BlockIsBed && bedDangerous)||(BlockIsAnchor && anchorWorks)) {
             event.cancel();
         }
     }

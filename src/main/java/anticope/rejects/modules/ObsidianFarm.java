@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class ObsidianFarm extends Module {
         if (mc.player == null) return;
         if (mc.level == null) return;
         if (mc.gameMode == null) return;
-        if (mc.level.dimensionType().attributes().applyModifier(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false)) {
+        if (mc.level.dimensionType().respawnAnchorWorks()) {
             allowBreakAgain = true;
             return;
         }

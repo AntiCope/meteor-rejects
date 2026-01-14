@@ -15,9 +15,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.attribute.EnvironmentAttributes;
+// import net.minecraft.world.attribute.EnvironmentAttributes; // Removed
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -83,7 +83,7 @@ public class AutoExtinguish extends Module {
     private BlockPos blockPos = null;
     private boolean doesWaterBucketWork = true;
 
-    private static final MobEffect FIRE_RESISTANCE = BuiltInRegistries.MOB_EFFECT.getValue(Identifier.parse("fire_resistance"));
+    private static final MobEffect FIRE_RESISTANCE = BuiltInRegistries.MOB_EFFECT.get(net.minecraft.resources.ResourceLocation.parse("fire_resistance")).get().value();
 
     public AutoExtinguish() {
         super(MeteorRejectsAddon.CATEGORY, "auto-extinguish", "Automatically extinguishes fire around you");
@@ -91,7 +91,7 @@ public class AutoExtinguish extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.level.dimensionType().attributes().applyModifier(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false)) {
+        if (mc.level.dimensionType().respawnAnchorWorks()) {
             if (doesWaterBucketWork) {
                 warning("Water Buckets don't work in this dimension!");
                 doesWaterBucketWork = false;
@@ -118,8 +118,8 @@ public class AutoExtinguish extends Module {
                 blockPos = mc.player.blockPosition();
                 final int slot = findSlot(Items.WATER_BUCKET);
                 if (mc.level.getBlockState(blockPos).getBlock() == Blocks.FIRE || mc.level.getBlockState(blockPos).getBlock() == Blocks.SOUL_FIRE) {
-                    float yaw = mc.gameRenderer.getMainCamera().yRot() % 360;
-                    float pitch = mc.gameRenderer.getMainCamera().xRot() % 360;
+                    float yaw = mc.gameRenderer.getMainCamera().getYRot() % 360;
+                    float pitch = mc.gameRenderer.getMainCamera().getXRot() % 360;
                     if (center.get()) {
                         PlayerUtils.centerPlayer();
                     }
@@ -155,8 +155,8 @@ public class AutoExtinguish extends Module {
                 PlayerUtils.centerPlayer();
             }
             mc.player.getInventory().setSelectedSlot(slot);
-            float yaw = mc.gameRenderer.getMainCamera().yRot() % 360;
-            float pitch = mc.gameRenderer.getMainCamera().xRot() % 360;
+            float yaw = mc.gameRenderer.getMainCamera().getYRot() % 360;
+            float pitch = mc.gameRenderer.getMainCamera().getXRot() % 360;
 
             Rotations.rotate(yaw, 90);
             mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);

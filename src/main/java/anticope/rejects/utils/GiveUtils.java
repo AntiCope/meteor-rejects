@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Item;
@@ -43,14 +43,14 @@ public class GiveUtils {
     private final static SimpleCommandExceptionType NOT_IN_CREATIVE = new SimpleCommandExceptionType(Component.literal("You must be in creative mode to use this."));
     private final static SimpleCommandExceptionType NO_SPACE = new SimpleCommandExceptionType(Component.literal("No space in hotbar."));
 
-    private static final List<Identifier> HIDDEN_ENTITIES = Arrays.asList(
-        Identifier.parse("giant"),
-        Identifier.parse("ender_dragon"),
-        Identifier.parse("wither"),
-        Identifier.parse("iron_golem"),
-        Identifier.parse("ender_dragon"),
-        Identifier.parse("tnt_minecart"),
-        Identifier.parse("lightning_bolt"));
+    private static final List<ResourceLocation> HIDDEN_ENTITIES = Arrays.asList(
+        ResourceLocation.parse("giant"),
+        ResourceLocation.parse("ender_dragon"),
+        ResourceLocation.parse("wither"),
+        ResourceLocation.parse("iron_golem"),
+        ResourceLocation.parse("ender_dragon"),
+        ResourceLocation.parse("tnt_minecart"),
+        ResourceLocation.parse("lightning_bolt"));
 
     // Some ported from: https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.16/src/main/java/bleach/hack/command/commands/CmdGive.java
     private static final List<Triple<String, Item, String>> ENTITY_PRESETS = Arrays.asList(
@@ -89,7 +89,7 @@ public class GiveUtils {
                 try {
                     CompoundTag compound = TagParser.parseCompoundFully(preset.getRight());
                     String entityId = compound.getString("id").orElse("minecraft:pig");
-                    net.minecraft.world.entity.EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.parse(entityId));
+                    net.minecraft.world.entity.EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.parse(entityId));
                     item.set(DataComponents.ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(entityType, compound));
                 } catch (CommandSyntaxException e) { }
                 item.set(DataComponents.CUSTOM_NAME, Component.literal(toName(preset.getLeft())));
@@ -104,7 +104,7 @@ public class GiveUtils {
                 try {
                     CompoundTag compound = TagParser.parseCompoundFully(preset.getRight());
                     String blockEntityId = compound.getString("id").orElse("minecraft:spawner");
-                    net.minecraft.world.level.block.entity.BlockEntityType<?> blockEntityType = BuiltInRegistries.BLOCK_ENTITY_TYPE.getValue(Identifier.parse(blockEntityId));
+                    net.minecraft.world.level.block.entity.BlockEntityType<?> blockEntityType = BuiltInRegistries.BLOCK_ENTITY_TYPE.getValue(ResourceLocation.parse(blockEntityId));
                     item.set(DataComponents.BLOCK_ENTITY_DATA, net.minecraft.world.item.component.TypedEntityData.of(blockEntityType, compound));
                 } catch (CommandSyntaxException e) { }
                 item.set(DataComponents.CUSTOM_NAME, Component.literal(toName(preset.getLeft())));

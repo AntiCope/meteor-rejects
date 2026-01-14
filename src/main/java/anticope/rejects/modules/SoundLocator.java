@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+
 public class SoundLocator extends Module {
 
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -113,7 +115,7 @@ public class SoundLocator extends Module {
         if(whitelist.get()) {
             // Whitelist ON
             for (SoundEvent sound : sounds.get()) {
-                if (sound.location().equals(event.sound.getIdentifier())) {
+                if (BuiltInRegistries.SOUND_EVENT.getKey(sound).equals(event.sound.getLocation())) {
                     printSound(event.sound);
                     break;
                 }
@@ -125,7 +127,7 @@ public class SoundLocator extends Module {
     }
 
     private void printSound(SoundInstance sound) {
-        WeighedSoundEvents soundSet = mc.getSoundManager().getSoundEvent(sound.getIdentifier());
+        WeighedSoundEvents soundSet = mc.getSoundManager().getSoundEvent(sound.getLocation());
 
         Vec3 pos = new Vec3(sound.getX() - 0.5, sound.getY() - 0.5, sound.getZ() - 0.5);
         if(!renderPos.contains(pos)) {
@@ -135,7 +137,7 @@ public class SoundLocator extends Module {
             if(chatActive.get()) {
                 MutableComponent text;
                 if (soundSet == null || soundSet.getSubtitle() == null) {
-                    text = Component.literal(sound.getIdentifier().toString());
+                    text = Component.literal(sound.getLocation().toString());
                 } else {
                     text = soundSet.getSubtitle().copy();
                 }

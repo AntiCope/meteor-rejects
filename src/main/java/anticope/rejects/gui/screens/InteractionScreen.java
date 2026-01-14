@@ -23,10 +23,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.minecart.AbstractMinecartContainer;
+import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.meteordev.starscript.compiler.Compiler;
@@ -56,7 +56,7 @@ public class InteractionScreen extends Screen {
     private final Map<String, Consumer<Entity>> functions;
     private final Map<String, String> msgs;
 
-    private final net.minecraft.resources.Identifier GUI_ICONS_TEXTURE = net.minecraft.resources.Identifier.parse("textures/gui/icons.png");
+    private final net.minecraft.resources.ResourceLocation GUI_ICONS_TEXTURE = net.minecraft.resources.ResourceLocation.parse("textures/gui/icons.png");
 
     private final StaticListener shiftListener = new StaticListener();
 

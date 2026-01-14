@@ -88,7 +88,7 @@ public class ShieldBypass extends Module {
 
             mc.getConnection().send(ServerboundInteractPacket.createAttackPacket(e, mc.player.isShiftKeyDown()));
             mc.getConnection().send(new ServerboundSwingPacket(mc.player.getUsedItemHand()));
-            mc.player.resetOnlyAttackStrengthTicker();
+            mc.player.resetAttackStrengthTicker();
 
             mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true, mc.player.horizontalCollision));
         }

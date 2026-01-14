@@ -8,7 +8,7 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import net.minecraft.client.renderer.LevelTargetBundle;
 import net.minecraft.client.renderer.PostChain;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class Rendering extends Module {
 
@@ -89,7 +89,7 @@ public class Rendering extends Module {
             return;
         }
 
-        Identifier shaderID = Identifier.withDefaultNamespace(name);
+        ResourceLocation shaderID = ResourceLocation.withDefaultNamespace(name);
         this.shader = mc.getShaderManager().getPostChain(shaderID, LevelTargetBundle.MAIN_TARGETS);
     }
 

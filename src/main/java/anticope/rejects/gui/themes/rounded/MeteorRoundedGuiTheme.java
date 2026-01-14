@@ -286,7 +286,6 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
         return w(new WMeteorModule(module, module.title));
     }
 
-    @Override
     public WWidget module(Module module, String title) {
         return w(new WMeteorModule(module, title));
     }
@@ -387,7 +386,6 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
         return categoryIcons.get();
     }
 
-    @Override
     public boolean hideHUD() {
         return hideHUD.get();
     }

@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.NonNull;
+
 
 public class KnockbackPlus extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -37,11 +37,11 @@ public class KnockbackPlus extends Module {
         if (event.packet instanceof ServerboundInteractPacket packet) {
             packet.dispatch(new ServerboundInteractPacket.Handler() {
                 @Override
-                public void onInteraction(@NonNull InteractionHand interactionHand) {
+                public void onInteraction(InteractionHand interactionHand) {
                 }
 
                 @Override
-                public void onInteraction(@NonNull InteractionHand interactionHand, @NonNull Vec3 vec3) {
+                public void onInteraction(InteractionHand interactionHand, Vec3 vec3) {
                 }
 
                 @Override
