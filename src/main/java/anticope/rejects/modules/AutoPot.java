@@ -4,6 +4,8 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import baritone.api.BaritoneAPI;
+import java.util.ArrayList;
+import java.util.List;
 import meteordevelopment.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
@@ -25,8 +27,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AutoPot extends Module {
     @SuppressWarnings("unchecked")
@@ -39,7 +39,8 @@ public class AutoPot extends Module {
             .description("The potions to use.")
             .defaultValue(
                 MobEffects.INSTANT_HEALTH.value(),
-                MobEffects.STRENGTH.value()
+                MobEffects.STRENGTH.value(),
+                MobEffects.BAD_OMEN.value()
             )
             .build()
     );
@@ -176,15 +177,26 @@ public class AutoPot extends Module {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = mc.player.getInventory().getItem(i);
             if (stack.isEmpty()) continue;
-            if (stack.getItem() == Items.POTION || (stack.getItem() == Items.SPLASH_POTION && useSplashPots.get())) {
-                PotionContents effects = stack.getComponents().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
-                for (MobEffectInstance effectInstance : effects.getAllEffects()) {
-                    if (effectInstance.getDescriptionId().equals(statusEffect.getDescriptionId())) {
-                        slot = i;
-                        break;
-                    }
+            if (isOminousBottle(stack)) {
+                if (statusEffect == MobEffects.BAD_OMEN.value()) {
+                    slot = i;
+                    break;
+                }
+                continue;
+            }
+
+            boolean isPotion = stack.getItem() == Items.POTION;
+            boolean isSplashPotion = stack.getItem() == Items.SPLASH_POTION;
+            if (!isPotion && !(isSplashPotion && useSplashPots.get())) continue;
+
+            PotionContents effects = stack.getComponents().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+            for (MobEffectInstance effectInstance : effects.getAllEffects()) {
+                if (effectInstance.getDescriptionId().equals(statusEffect.getDescriptionId())) {
+                    slot = i;
+                    break;
                 }
             }
+            if (slot != -1) break;
         }
         return slot;
     }
@@ -192,7 +204,9 @@ public class AutoPot extends Module {
     private void startPotionUse() {
         prevSlot = mc.player.getInventory().getSelectedSlot();
 
-        if (useSplashPots.get()) {
+        ItemStack stack = mc.player.getInventory().getItem(slot);
+        boolean isSplashPotion = stack.getItem() == Items.SPLASH_POTION;
+        if (isSplashPotion && useSplashPots.get()) {
             if (lookDown.get()) {
                 Rotations.rotate(mc.player.getYRot(), 90);
                 splash();
@@ -218,6 +232,10 @@ public class AutoPot extends Module {
             wasBaritone = true;
             BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
         }
+    }
+
+    private boolean isOminousBottle(ItemStack stack) {
+        return stack.getItem() == Items.OMINOUS_BOTTLE;
     }
 
     private boolean ShouldDrinkHealth() {
