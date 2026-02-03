@@ -1,8 +1,8 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
+import anticope.rejects.mixin.LivingEntityAccessor;
 import meteordevelopment.meteorclient.events.world.TickEvent;
-import meteordevelopment.meteorclient.mixin.LivingEntityAccessor;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.meteorclient.systems.modules.Module;
 
@@ -14,6 +14,7 @@ public class NoJumpDelay extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
-        ((LivingEntityAccessor) mc.player).setJumpCooldown(0);
+        if (mc.player == null) return;
+        ((LivingEntityAccessor) mc.player).setJumpingCooldown(0);
     }
 }

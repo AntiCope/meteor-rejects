@@ -64,7 +64,6 @@
 - Gamemode notifier
 - Ghost Mode (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1932))
 - Glide (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
-- Insta Mine (Removed from Meteor in [62cd0](https://github.com/MeteorDevelopment/meteor-client/commit/62cd0461e48a6c50f040bf48de25be1fa4eba77e))
 - Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Jetpack
@@ -107,6 +106,7 @@
 ## Commands
 - `.center`
 - `.clear-chat` (Removed from meteor in [9aebf](https://github.com/MeteorDevelopment/meteor-client/commit/9aebf6a0e4ffa739d901c8b8d7f48d07af2fe839))
+- `.fill`
 - `.ghost` (Ported from [AntiGhost](https://github.com/gbl/AntiGhost/blob/fabric_1_16/src/main/java/de/guntram/mcmod/antighost/AntiGhost.java))
 - `.save-skin`
 - `.heads`

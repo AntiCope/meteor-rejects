@@ -1,11 +1,11 @@
 package anticope.rejects.mixin;
 
-import net.minecraft.util.math.intprovider.IntProvider;
-import net.minecraft.world.gen.placementmodifier.CountPlacementModifier;
+import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(CountPlacementModifier.class)
+@Mixin(CountPlacement.class)
 public interface CountPlacementModifierAccessor {
     @Accessor
     IntProvider getCount();

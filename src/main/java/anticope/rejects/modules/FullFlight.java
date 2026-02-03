@@ -5,17 +5,14 @@ import anticope.rejects.utils.RejectsUtils;
 import com.google.common.collect.Streams;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
-import meteordevelopment.meteorclient.mixin.ClientPlayerEntityAccessor;
-import meteordevelopment.meteorclient.mixin.PlayerMoveC2SPacketAccessor;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.shape.VoxelShape;
-
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.stream.Stream;
 
 public class FullFlight extends Module {
@@ -51,10 +48,10 @@ public class FullFlight extends Module {
 
     private double calculateGround() {
         for (double ground = mc.player.getY(); ground > 0D; ground -= 0.05) {
-            Box box = mc.player.getBoundingBox();
-            Box adjustedBox = box.offset(0, ground - mc.player.getY(), 0);
+            AABB box = mc.player.getBoundingBox();
+            AABB adjustedBox = box.move(0, ground - mc.player.getY(), 0);
 
-            Stream<VoxelShape> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, adjustedBox));
+            Stream<VoxelShape> blockCollisions = Streams.stream(mc.level.getBlockCollisions(mc.player, adjustedBox));
 
             if (blockCollisions.findAny().isPresent()) return ground + 0.05;
         }
@@ -64,7 +61,7 @@ public class FullFlight extends Module {
 
     // Copied from ServerPlayNetworkHandler#isEntityOnAir
     private boolean isEntityOnAir(Entity entity) {
-        return entity.getWorld().getStatesInBox(entity.getBoundingBox().expand(0.0625).stretch(0.0, -0.55, 0.0)).allMatch(AbstractBlock.AbstractBlockState::isAir);
+        return mc.level.getBlockStates(entity.getBoundingBox().inflate(0.0625).expandTowards(0.0, -0.55, 0.0)).allMatch(BlockBehaviour.BlockStateBase::isAir);
     }
 
     private int delayLeft = 20;
@@ -76,47 +73,71 @@ public class FullFlight extends Module {
         } else return lastY - currentY < 0.03130D;
     }
 
-    private void antiKickPacket(PlayerMoveC2SPacket packet, double currentY) {
+    private ServerboundMovePlayerPacket antiKickPacket(ServerboundMovePlayerPacket packet, double currentY) {
         // maximum time we can be "floating" is 80 ticks, so 4 seconds max
         if (this.delayLeft <= 0 && this.lastPacketY != Double.MAX_VALUE &&
                 shouldFlyDown(currentY, this.lastPacketY) && isEntityOnAir(mc.player)) {
             // actual check is for >= -0.03125D, but we have to do a bit more than that
             // due to the fact that it's a bigger or *equal* to, and not just a bigger than
-            ((PlayerMoveC2SPacketAccessor) packet).setY(lastPacketY - 0.03130D);
-            lastPacketY -= 0.03130D;
+            double newY = lastPacketY - 0.03130D;
+            lastPacketY = newY;
             delayLeft = 20;
+
+            // Create a new packet with the modified Y value
+            if (packet.hasRotation()) {
+                return new ServerboundMovePlayerPacket.PosRot(
+                    packet.getX(0),
+                    newY,
+                    packet.getZ(0),
+                    packet.getYRot(0),
+                    packet.getXRot(0),
+                    packet.isOnGround(),
+                    packet.horizontalCollision()
+                );
+            } else {
+                return new ServerboundMovePlayerPacket.Pos(
+                    packet.getX(0),
+                    newY,
+                    packet.getZ(0),
+                    packet.isOnGround(),
+                    packet.horizontalCollision()
+                );
+            }
         } else {
             lastPacketY = currentY;
             if (!isEntityOnAir(mc.player))
                 delayLeft = 20;
         }
         if (delayLeft > 0) delayLeft--;
+        return packet;
     }
 
     @EventHandler
     private void onSendPacket(PacketEvent.Send event) {
-        if (mc.player.getVehicle() == null || !(event.packet instanceof PlayerMoveC2SPacket packet) || antiKickMode.get() != AntiKickMode.PaperNew)
+        if (mc.player.getVehicle() == null || !(event.packet instanceof ServerboundMovePlayerPacket packet) || antiKickMode.get() != AntiKickMode.PaperNew)
             return;
 
         double currentY = packet.getY(Double.MAX_VALUE);
+        ServerboundMovePlayerPacket modifiedPacket;
+
         if (currentY != Double.MAX_VALUE) {
-            antiKickPacket(packet, currentY);
+            modifiedPacket = antiKickPacket(packet, currentY);
         } else {
             // if the packet is a LookAndOnGround packet or an OnGroundOnly packet then we need to
             // make it a Full packet or a PositionAndOnGround packet respectively, so it has a Y value
-            PlayerMoveC2SPacket fullPacket;
-            if (packet.changesLook()) {
-                fullPacket = new PlayerMoveC2SPacket.Full(
+            ServerboundMovePlayerPacket fullPacket;
+            if (packet.hasRotation()) {
+                fullPacket = new ServerboundMovePlayerPacket.PosRot(
                         mc.player.getX(),
                         mc.player.getY(),
                         mc.player.getZ(),
-                        packet.getYaw(0),
-                        packet.getPitch(0),
+                        packet.getYRot(0),
+                        packet.getXRot(0),
                         packet.isOnGround(),
                         packet.horizontalCollision()
                 );
             } else {
-                fullPacket = new PlayerMoveC2SPacket.PositionAndOnGround(
+                fullPacket = new ServerboundMovePlayerPacket.Pos(
                         mc.player.getX(),
                         mc.player.getY(),
                         mc.player.getZ(),
@@ -124,9 +145,13 @@ public class FullFlight extends Module {
                         packet.horizontalCollision()
                 );
             }
+            modifiedPacket = antiKickPacket(fullPacket, mc.player.getY());
+        }
+
+        // Only cancel and resend if the packet was actually modified
+        if (modifiedPacket != packet) {
             event.cancel();
-            antiKickPacket(fullPacket, mc.player.getY());
-            mc.getNetworkHandler().sendPacket(fullPacket);
+            mc.getConnection().send(modifiedPacket);
         }
     }
 
@@ -134,28 +159,24 @@ public class FullFlight extends Module {
 
     @EventHandler
     private void onPlayerMove(PlayerMoveEvent event) {
-        if (antiKickMode.get() == AntiKickMode.PaperNew) {
-            // Resend movement packets
-            ((ClientPlayerEntityAccessor) mc.player).setTicksSinceLastPositionPacketSent(20);
-        }
         if (floatingTicks >= 20) {
             switch (antiKickMode.get()) {
                 case New -> {
-                    Box box = mc.player.getBoundingBox();
-                    Box adjustedBox = box.offset(0, -0.4, 0);
+                    AABB box = mc.player.getBoundingBox();
+                    AABB adjustedBox = box.move(0, -0.4, 0);
 
-                    Stream<VoxelShape> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, adjustedBox));
+                    Stream<VoxelShape> blockCollisions = Streams.stream(mc.level.getBlockCollisions(mc.player, adjustedBox));
 
                     if (blockCollisions.findAny().isPresent()) break;
 
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY() - 0.4, mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+                    mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY() - 0.4, mc.player.getZ(), mc.player.onGround(), mc.player.horizontalCollision));
+                    mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.onGround(), mc.player.horizontalCollision));
                 }
                 case Old -> {
-                    Box box = mc.player.getBoundingBox();
-                    Box adjustedBox = box.offset(0, -0.4, 0);
+                    AABB box = mc.player.getBoundingBox();
+                    AABB adjustedBox = box.move(0, -0.4, 0);
 
-                    Stream<VoxelShape> blockCollisions = Streams.stream(mc.world.getBlockCollisions(mc.player, adjustedBox));
+                    Stream<VoxelShape> blockCollisions = Streams.stream(mc.level.getBlockCollisions(mc.player, adjustedBox));
 
                     if (blockCollisions.findAny().isPresent()) break;
 
@@ -163,20 +184,20 @@ public class FullFlight extends Module {
                     double groundExtra = ground + 0.1D;
 
                     for (double posY = mc.player.getY(); posY > groundExtra; posY -= 4D) {
-                        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), true, mc.player.horizontalCollision));
+                        mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), posY, mc.player.getZ(), true, mc.player.horizontalCollision));
 
                         if (posY - 4D < groundExtra) break; // Prevent next step
                     }
 
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), groundExtra, mc.player.getZ(), true, mc.player.horizontalCollision));
+                    mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), groundExtra, mc.player.getZ(), true, mc.player.horizontalCollision));
 
                     for (double posY = groundExtra; posY < mc.player.getY(); posY += 4D) {
-                        mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), posY, mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+                        mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), posY, mc.player.getZ(), mc.player.onGround(), mc.player.horizontalCollision));
 
                         if (posY + 4D > mc.player.getY()) break; // Prevent next step
                     }
 
-                    mc.getNetworkHandler().sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.isOnGround(), mc.player.horizontalCollision));
+                    mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY(), mc.player.getZ(), mc.player.onGround(), mc.player.horizontalCollision));
 
                 }
             }

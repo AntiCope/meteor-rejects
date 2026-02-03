@@ -16,12 +16,13 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.debug.DebugRenderer;
 import net.minecraft.item.Items;
+import net.minecraft.world.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MeteorRejectsAddon extends MeteorAddon {
     public static final Logger LOG = LoggerFactory.getLogger("Rejects");
-    public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultStack());
+    public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultInstance());
     public static final HudGroup HUD_GROUP = new HudGroup("Rejects");
     public static DebugRenderer DEBUG_RENDERER;
 
@@ -92,6 +93,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         // Commands
         Commands.add(new CenterCommand());
         Commands.add(new ClearChatCommand());
+        Commands.add(new FillCommand());
         Commands.add(new GhostCommand());
         Commands.add(new GiveCommand());
         Commands.add(new HeadsCommand());

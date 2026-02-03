@@ -28,14 +28,14 @@ public class Jetpack extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.options.jumpKey.isPressed()) {
-            ((IVec3d) mc.player.getVelocity()).meteor$setY(jetpackSpeed.get());
+        if (mc.options.keyJump.isDown()) {
+            ((IVec3d) mc.player.getDeltaMovement()).meteor$setY(jetpackSpeed.get());
         }
     }
 
     @EventHandler
     private void onOffGroundSpeed(OffGroundSpeedEvent event) {
-        event.speed = mc.player.getMovementSpeed() * jetpackSpeed.get().floatValue();
+        event.speed = mc.player.getSpeed() * jetpackSpeed.get().floatValue();
     }
 }
 

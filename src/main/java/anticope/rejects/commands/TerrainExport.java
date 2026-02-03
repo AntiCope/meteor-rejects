@@ -4,9 +4,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.command.CommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryUtil;
@@ -18,7 +18,7 @@ import java.nio.ByteBuffer;
 
 public class TerrainExport extends Command {
 
-    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Text.literal("An IOException occurred"));
+    private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Component.literal("An IOException occurred"));
     private final PointerBuffer filters;
 
     public TerrainExport() {
@@ -33,7 +33,7 @@ public class TerrainExport extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.then(argument("distance", IntegerArgumentType.integer(1)).executes(context -> {
             int distance = IntegerArgumentType.getInteger(context, "distance");
 
@@ -41,8 +41,8 @@ public class TerrainExport extends Command {
             for (int x = -distance; x <= distance; x++) {
                 for (int z = -distance; z <= distance; z++) {
                     for (int y = distance; y >= -distance; y--) {
-                        BlockPos pos = mc.player.getBlockPos().add(x, y, z);
-                        if (mc.world.getBlockState(pos).isFullCube(mc.world, pos)) {
+                        BlockPos pos = mc.player.blockPosition().offset(x, y, z);
+                        if (mc.level.getBlockState(pos).isCollisionShapeFullBlock(mc.level, pos)) {
                             stringBuilder.append(String.format("%d, %d, %d\n", x + distance, y + distance, z + distance));
                         }
                     }

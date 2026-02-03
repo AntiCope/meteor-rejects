@@ -9,7 +9,7 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.client.gui.screen.DeathScreen;
+import net.minecraft.client.gui.screens.DeathScreen;
 
 public class GhostMode extends Module {
 
@@ -33,8 +33,8 @@ public class GhostMode extends Module {
         super.onDeactivate();
         active = false;
         warning("You are no longer in a ghost mode!");
-        if (mc.player != null && mc.player.networkHandler != null) {
-            mc.player.requestRespawn();
+        if (mc.player != null && mc.player.connection != null) {
+            mc.player.respawn();
             info("Respawn request has been sent to the server.");
         }
     }
@@ -48,8 +48,8 @@ public class GhostMode extends Module {
     private void onTick(TickEvent.Pre event) {
         if (!active) return;
         if (mc.player.getHealth() < 1f) mc.player.setHealth(20f);
-        if (fullFood.get() && mc.player.getHungerManager().getFoodLevel() < 20) {
-            mc.player.getHungerManager().setFoodLevel(20);
+        if (fullFood.get() && mc.player.getFoodData().getFoodLevel() < 20) {
+            mc.player.getFoodData().setFoodLevel(20);
         }
     }
 

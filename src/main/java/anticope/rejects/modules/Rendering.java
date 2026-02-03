@@ -6,9 +6,9 @@ import meteordevelopment.meteorclient.settings.EnumSetting;
 import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
-import net.minecraft.client.gl.PostEffectProcessor;
-import net.minecraft.client.render.DefaultFramebufferSet;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.LevelTargetBundle;
+import net.minecraft.client.renderer.PostChain;
+import net.minecraft.resources.Identifier;
 
 public class Rendering extends Module {
 
@@ -29,7 +29,7 @@ public class Rendering extends Module {
 			.defaultValue(true)
             .onChanged(onChanged -> {
                 if(this.isActive()) {
-                    mc.worldRenderer.reload();
+                    mc.levelRenderer.allChanged();
                 }
             })
 			.build()
@@ -64,7 +64,7 @@ public class Rendering extends Module {
 			.build()
 	);
     
-    private PostEffectProcessor shader = null;
+    private PostChain shader = null;
     
     public Rendering() {
         super(MeteorRejectsAddon.CATEGORY, "rendering", "Various Render Tweaks");
@@ -72,16 +72,16 @@ public class Rendering extends Module {
 
     @Override
     public void onActivate() {
-        mc.worldRenderer.reload();
+        mc.levelRenderer.allChanged();
     }
 
     @Override
     public void onDeactivate() {
-        mc.worldRenderer.reload();
+        mc.levelRenderer.allChanged();
     }
 
     public void onChanged(Shader s) {
-        if (mc.world == null) return;
+        if (mc.level == null) return;
         String name = s.toString().toLowerCase();
 
         if (name.equals("none")) {
@@ -89,15 +89,15 @@ public class Rendering extends Module {
             return;
         }
 
-        Identifier shaderID = Identifier.ofVanilla(name);
-        this.shader = mc.getShaderLoader().loadPostEffect(shaderID, DefaultFramebufferSet.MAIN_ONLY);
+        Identifier shaderID = Identifier.withDefaultNamespace(name);
+        this.shader = mc.getShaderManager().getPostChain(shaderID, LevelTargetBundle.MAIN_TARGETS);
     }
 
     public boolean renderStructureVoid() {
         return this.isActive() && structureVoid.get();
     }
 
-    public PostEffectProcessor getShaderEffect() {
+    public PostChain getShaderEffect() {
         if (!this.isActive()) return null;
         return shader;
     }

@@ -15,12 +15,11 @@ import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.meteorclient.utils.world.BlockUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.item.Items;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -139,7 +138,7 @@ public class AutoWither extends Module {
             
             // Register
             BlockIterator.register(horizontalRadius.get(), verticalRadius.get(), (blockPos, blockState) -> {
-                Direction dir = Direction.fromHorizontalDegrees(Rotations.getYaw(blockPos)).getOpposite();
+                Direction dir = Direction.fromYRot(Rotations.getYaw(blockPos)).getOpposite();
                 if (isValidSpawn(blockPos, dir)) withers.add(witherPool.get().set(blockPos, dir));
             });
         }
@@ -193,14 +192,14 @@ public class AutoWither extends Module {
             
             // Body
             BlockUtils.place(wither.foot, findSoulSand, rotate.get(), -50);
-            BlockUtils.place(wither.foot.up(), findSoulSand, rotate.get(), -50);
-            BlockUtils.place(wither.foot.up().offset(wither.axis, -1), findSoulSand, rotate.get(), -50);
-            BlockUtils.place(wither.foot.up().offset(wither.axis, 1), findSoulSand, rotate.get(), -50);
+            BlockUtils.place(wither.foot.above(), findSoulSand, rotate.get(), -50);
+            BlockUtils.place(wither.foot.above().relative(wither.axis, -1), findSoulSand, rotate.get(), -50);
+            BlockUtils.place(wither.foot.above().relative(wither.axis, 1), findSoulSand, rotate.get(), -50);
             
             // Head
-            BlockUtils.place(wither.foot.up().up(), findWitherSkull, rotate.get(), -50);
-            BlockUtils.place(wither.foot.up().up().offset(wither.axis, -1), findWitherSkull, rotate.get(), -50);
-            BlockUtils.place(wither.foot.up().up().offset(wither.axis, 1), findWitherSkull, rotate.get(), -50);
+            BlockUtils.place(wither.foot.above().above(), findWitherSkull, rotate.get(), -50);
+            BlockUtils.place(wither.foot.above().above().relative(wither.axis, -1), findWitherSkull, rotate.get(), -50);
+            BlockUtils.place(wither.foot.above().above().relative(wither.axis, 1), findWitherSkull, rotate.get(), -50);
             
             
             // Auto turnoff
@@ -221,22 +220,22 @@ public class AutoWither extends Module {
                     if (BlockUtils.place(wither.foot, findSoulSand, rotate.get(), -50)) wither.stage++;
                     break;
                 case 1:
-                    if (BlockUtils.place(wither.foot.up(), findSoulSand, rotate.get(), -50)) wither.stage++;
+                    if (BlockUtils.place(wither.foot.above(), findSoulSand, rotate.get(), -50)) wither.stage++;
                     break;
                 case 2:
-                    if (BlockUtils.place(wither.foot.up().offset(wither.axis, -1), findSoulSand, rotate.get(), -50)) wither.stage++;
+                    if (BlockUtils.place(wither.foot.above().relative(wither.axis, -1), findSoulSand, rotate.get(), -50)) wither.stage++;
                     break;
                 case 3:
-                    if (BlockUtils.place(wither.foot.up().offset(wither.axis, 1), findSoulSand, rotate.get(), -50)) wither.stage++;
+                    if (BlockUtils.place(wither.foot.above().relative(wither.axis, 1), findSoulSand, rotate.get(), -50)) wither.stage++;
                     break;
                 case 4:
-                    if (BlockUtils.place(wither.foot.up().up(), findWitherSkull, rotate.get(), -50)) wither.stage++;
+                    if (BlockUtils.place(wither.foot.above().above(), findWitherSkull, rotate.get(), -50)) wither.stage++;
                     break;
                 case 5:
-                    if (BlockUtils.place(wither.foot.up().up().offset(wither.axis, -1), findWitherSkull, rotate.get(), -50)) wither.stage++;
+                    if (BlockUtils.place(wither.foot.above().above().relative(wither.axis, -1), findWitherSkull, rotate.get(), -50)) wither.stage++;
                     break;
                 case 6:
-                    if (BlockUtils.place(wither.foot.up().up().offset(wither.axis, 1), findWitherSkull, rotate.get(), -50)) wither.stage++;
+                    if (BlockUtils.place(wither.foot.above().above().relative(wither.axis, 1), findWitherSkull, rotate.get(), -50)) wither.stage++;
                     break;
                 case 7:
                     // Auto turnoff
@@ -258,14 +257,14 @@ public class AutoWither extends Module {
         
         // Body
         event.renderer.box(wither.foot, sideColor.get(), lineColor.get(), shapeMode.get(), 0);
-        event.renderer.box(wither.foot.up(), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
-        event.renderer.box(wither.foot.up().offset(wither.axis, -1), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
-        event.renderer.box(wither.foot.up().offset(wither.axis, 1), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        event.renderer.box(wither.foot.above(), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        event.renderer.box(wither.foot.above().relative(wither.axis, -1), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
+        event.renderer.box(wither.foot.above().relative(wither.axis, 1), sideColor.get(), lineColor.get(), shapeMode.get(), 0);
         
         // Head
-        BlockPos midHead = wither.foot.up().up();
-        BlockPos leftHead = wither.foot.up().up().offset(wither.axis, -1);
-        BlockPos rightHead = wither.foot.up().up().offset(wither.axis, 1);
+        BlockPos midHead = wither.foot.above().above();
+        BlockPos leftHead = wither.foot.above().above().relative(wither.axis, -1);
+        BlockPos rightHead = wither.foot.above().above().relative(wither.axis, 1);
         
         event.renderer.box((double) midHead.getX() + 0.2, midHead.getX(), (double) midHead.getX() + 0.2,
                 (double) midHead.getX() + 0.8, (double) midHead.getX() + 0.7, (double) midHead.getX() + 0.8,
@@ -296,13 +295,13 @@ public class AutoWither extends Module {
         
         
         // Check for non air blocks and entities
-        BlockPos.Mutable bp = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos bp = new BlockPos.MutableBlockPos();
         for (int x = blockPos.getX() - widthX; x <= blockPos.getX() + widthX; x++) {
             for (int z = blockPos.getZ() - widthZ; z <= blockPos.getZ(); z++) {
                 for (int y = blockPos.getY(); y <= blockPos.getY() + 2; y++) {
                     bp.set(x, y, z);
-                    if (!mc.world.getBlockState(bp).isReplaceable()) return false;
-                    if (!mc.world.canPlace(Blocks.STONE.getDefaultState(), bp, ShapeContext.absent())) return false;
+                    if (!mc.level.getBlockState(bp).canBeReplaced()) return false;
+                    if (!mc.level.isUnobstructed(Blocks.STONE.defaultBlockState(), bp, CollisionContext.empty())) return false;
                 }
             }
         }
@@ -326,7 +325,7 @@ public class AutoWither extends Module {
         // 5 = left head
         // 6 = right head
         // 7 = end
-        public BlockPos.Mutable foot = new BlockPos.Mutable();
+        public BlockPos.MutableBlockPos foot = new BlockPos.MutableBlockPos();
         public Direction facing;
         public Direction.Axis axis;
         

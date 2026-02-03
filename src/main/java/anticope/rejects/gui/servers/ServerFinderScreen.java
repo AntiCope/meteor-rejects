@@ -13,10 +13,9 @@ import meteordevelopment.meteorclient.gui.widgets.input.WIntEdit;
 import meteordevelopment.meteorclient.gui.widgets.input.WTextBox;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WCheckbox;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
-import net.minecraft.client.network.ServerInfo;
-
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.multiplayer.ServerData;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.Stack;
 public class ServerFinderScreen extends WindowScreen implements IServerFinderDoneListener {
     public static ServerFinderScreen instance = null;
     private static int searchNumber = 0;
-    private final MultiplayerScreen multiplayerScreen;
+    private final JoinMultiplayerScreen multiplayerScreen;
     private final WTextBox ipBox;
     private final WTextBox versionBox;
     private final WIntEdit maxThreadsBox;
@@ -45,7 +44,7 @@ public class ServerFinderScreen extends WindowScreen implements IServerFinderDon
     private ArrayList<String> versionFilters = new ArrayList<>();
     private int playerCountFilter = 0;
 
-    public ServerFinderScreen(GuiTheme theme, MultiplayerScreen multiplayerScreen, Screen parent) {
+    public ServerFinderScreen(GuiTheme theme, JoinMultiplayerScreen multiplayerScreen, Screen parent) {
         super(theme, "Server Discovery");
         this.multiplayerScreen = multiplayerScreen;
         this.parent = parent;
@@ -203,17 +202,17 @@ public class ServerFinderScreen extends WindowScreen implements IServerFinderDon
     }
 
     private boolean isServerInList(String ip) {
-        for (int i = 0; i < multiplayerScreen.getServerList().size(); i++)
-            if (multiplayerScreen.getServerList().get(i).address.equals(ip))
+        for (int i = 0; i < multiplayerScreen.getServers().size(); i++)
+            if (multiplayerScreen.getServers().get(i).ip.equals(ip))
                 return true;
 
         return false;
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         state = ServerFinderState.CANCELLED;
-        super.close();
+        super.onClose();
     }
 
     private boolean filterPass(MServerInfo info) {
@@ -241,10 +240,10 @@ public class ServerFinderScreen extends WindowScreen implements IServerFinderDon
             if (!isServerInList(pinger.getServerIP()) && filterPass(pinger.getServerInfo())) {
                 synchronized (serverFinderLock) {
                     working++;
-                    multiplayerScreen.getServerList().add(new ServerInfo("Server discovery #" + working, pinger.getServerIP(), ServerInfo.ServerType.OTHER), false);
-                    multiplayerScreen.getServerList().saveFile();
+                    multiplayerScreen.getServers().add(new ServerData("Server discovery #" + working, pinger.getServerIP(), ServerData.Type.OTHER), false);
+                    multiplayerScreen.getServers().save();
                     ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setSelected(null);
-                    ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setServers(multiplayerScreen.getServerList());
+                    ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().updateOnlineServers(multiplayerScreen.getServers());
                 }
             }
         }

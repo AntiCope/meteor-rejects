@@ -16,7 +16,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo;
 import com.mojang.authlib.yggdrasil.response.MinecraftTexturesPayload;
 import com.mojang.util.UUIDTypeAdapter;
 import meteordevelopment.meteorclient.utils.network.Http;
-import net.minecraft.client.session.Session;
+import net.minecraft.client.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,9 +27,9 @@ import java.util.*;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class CustomYggdrasilLogin {
-    public static Environment localYggdrasilApi = new Environment("/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
+    public static Environment localYggdrasilApi = new Environment("/authserver", "/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
 
-    public static Session login(String name, String password, String server) throws AuthenticationException {
+    public static User login(String name, String password, String server) throws AuthenticationException {
         try {
             String url = server + "/authserver/authenticate";
             JsonObject agent = new JsonObject();
@@ -49,7 +49,7 @@ public class CustomYggdrasilLogin {
             String token = json.get("accessToken").getAsString();
             UUID uuid = UUID.fromString(json.get("selectedProfile").getAsJsonObject().get("id").getAsString());
             String username = json.get("selectedProfile").getAsJsonObject().get("name").getAsString();
-            return new Session(username, uuid, token, Optional.empty(), Optional.empty(), Session.AccountType.MOJANG);
+            return new User(username, uuid, token, Optional.empty(), Optional.empty());
         } catch (Exception e) {
             throw new AuthenticationException(e);
         }
@@ -61,7 +61,7 @@ public class CustomYggdrasilLogin {
         private final Gson gson = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
 
         public LocalYggdrasilMinecraftSessionService(YggdrasilAuthenticationService service, String serverUrl) {
-            super(service.getServicesKeySet(), mc.getNetworkProxy(), localYggdrasilApi);
+            super(service.getServicesKeySet(), mc.getProxy(), localYggdrasilApi);
             String data = Http.get(serverUrl).sendString();
             JsonObject json = JsonParser.parseString(data).getAsJsonObject();
             this.publicKey = getPublicKey(json.get("signaturePublickey").getAsString());

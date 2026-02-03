@@ -16,6 +16,7 @@
     "HandshakeC2SPacketAccessor",
     "HeightContextMixin",
     "HeightRangePlacementModifierAccessor",
+    "LivingEntityAccessor",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
     "MobEntityAccessor",

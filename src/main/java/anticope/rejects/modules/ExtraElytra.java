@@ -7,12 +7,12 @@ import meteordevelopment.meteorclient.settings.Setting;
 import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 
 public class ExtraElytra extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -67,12 +67,12 @@ public class ExtraElytra extends Module {
         if (jumpTimer > 0)
             jumpTimer--;
 
-        ItemStack chest = mc.player.getEquippedStack(EquipmentSlot.CHEST);
+        ItemStack chest = mc.player.getItemBySlot(EquipmentSlot.CHEST);
         if (chest.getItem() != Items.ELYTRA)
             return;
 
-        if (mc.player.isGliding()) {
-            if (stopInWater.get() && mc.player.isTouchingWater()) {
+        if (mc.player.isFallFlying()) {
+            if (stopInWater.get() && mc.player.isInWater()) {
                 sendStartStopPacket();
                 return;
             }
@@ -81,42 +81,42 @@ public class ExtraElytra extends Module {
             return;
         }
 
-        if (chest.getDamage() < chest.getMaxDamage() - 1 && mc.options.jumpKey.isPressed())
+        if (chest.getDamageValue() < chest.getMaxDamage() - 1 && mc.options.keyJump.isDown())
             doInstantFly();
     }
 
     private void sendStartStopPacket() {
-        ClientCommandC2SPacket packet = new ClientCommandC2SPacket(mc.player,
-                ClientCommandC2SPacket.Mode.START_FALL_FLYING);
-        mc.player.networkHandler.sendPacket(packet);
+        ServerboundPlayerCommandPacket packet = new ServerboundPlayerCommandPacket(mc.player,
+                ServerboundPlayerCommandPacket.Action.START_FALL_FLYING);
+        mc.player.connection.send(packet);
     }
 
     private void controlHeight() {
         if (!heightCtrl.get())
             return;
 
-        Vec3d v = mc.player.getVelocity();
+        Vec3 v = mc.player.getDeltaMovement();
 
-        if (mc.options.jumpKey.isPressed())
-            mc.player.setVelocity(v.x, v.y + 0.08, v.z);
-        else if (mc.options.sneakKey.isPressed())
-            mc.player.setVelocity(v.x, v.y - 0.04, v.z);
+        if (mc.options.keyJump.isDown())
+            mc.player.setDeltaMovement(v.x, v.y + 0.08, v.z);
+        else if (mc.options.keyShift.isDown())
+            mc.player.setDeltaMovement(v.x, v.y - 0.04, v.z);
     }
 
     private void controlSpeed() {
         if (!speedCtrl.get())
             return;
 
-        float yaw = (float) Math.toRadians(mc.player.getYaw());
-        Vec3d forward = new Vec3d(-MathHelper.sin(yaw) * 0.05, 0,
-                MathHelper.cos(yaw) * 0.05);
+        float yaw = (float) Math.toRadians(mc.player.getYRot());
+        Vec3 forward = new Vec3(-Mth.sin(yaw) * 0.05, 0,
+                Mth.cos(yaw) * 0.05);
 
-        Vec3d v = mc.player.getVelocity();
+        Vec3 v = mc.player.getDeltaMovement();
 
-        if (mc.options.forwardKey.isPressed())
-            mc.player.setVelocity(v.add(forward));
-        else if (mc.options.backKey.isPressed())
-            mc.player.setVelocity(v.subtract(forward));
+        if (mc.options.keyUp.isDown())
+            mc.player.setDeltaMovement(v.add(forward));
+        else if (mc.options.keyDown.isDown())
+            mc.player.setDeltaMovement(v.subtract(forward));
     }
 
     private void doInstantFly() {
@@ -127,7 +127,7 @@ public class ExtraElytra extends Module {
             jumpTimer = 20;
             mc.player.setJumping(false);
             mc.player.setSprinting(true);
-            mc.player.jump();
+            mc.player.jumpFromGround();
         }
 
         sendStartStopPacket();

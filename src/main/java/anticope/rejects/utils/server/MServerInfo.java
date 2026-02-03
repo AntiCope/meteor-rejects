@@ -1,7 +1,7 @@
 package anticope.rejects.utils.server;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -15,9 +15,9 @@ public class MServerInfo {
     public int playercountMax;
     public String label;
     public long ping;
-    public int protocolVersion = SharedConstants.getGameVersion().getProtocolVersion();
+    public int protocolVersion = SharedConstants.getCurrentVersion().protocolVersion();
     public String version = null;
-    public List<Text> playerListSummary = Collections.emptyList();
+    public List<Component> playerListSummary = Collections.emptyList();
     private byte @Nullable [] icon;
 
     public MServerInfo(String name, String address) {

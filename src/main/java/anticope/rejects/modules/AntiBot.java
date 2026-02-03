@@ -8,8 +8,8 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.entity.EntityUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 
 public class AntiBot extends Module {
@@ -65,23 +65,23 @@ public class AntiBot extends Module {
 
     @EventHandler
     public void onTick(TickEvent.Post tickEvent) {
-        for (Entity entity : mc.world.getEntities()) {
-            if (!(entity instanceof PlayerEntity playerEntity)) continue;
+        for (Entity entity : mc.level.entitiesForRendering()) {
+            if (!(entity instanceof Player playerEntity)) continue;
             if (removeInvisible.get() && !entity.isInvisible()) continue;
 
             if (isBot(playerEntity)) entity.remove(Entity.RemovalReason.DISCARDED);
         }
     }
 
-    private boolean isBot(PlayerEntity entity) {
+    private boolean isBot(Player entity) {
         try {
             if (gameMode.get() && EntityUtils.getGameMode(entity) == null) return true;
             if (api.get() &&
-                    mc.getNetworkHandler().getPlayerListEntry(entity.getUuid()) == null) return true;
+                    mc.getConnection().getPlayerInfo(entity.getUUID()) == null) return true;
             if (profile.get() &&
-                    mc.getNetworkHandler().getPlayerListEntry(entity.getUuid()).getProfile() == null) return true;
+                    mc.getConnection().getPlayerInfo(entity.getUUID()).getProfile() == null) return true;
             if (latency.get() &&
-                    mc.getNetworkHandler().getPlayerListEntry(entity.getUuid()).getLatency() > 1) return true;
+                    mc.getConnection().getPlayerInfo(entity.getUUID()).getLatency() > 1) return true;
         } catch (NullPointerException e) {
             if (nullException.get()) return true;
         }

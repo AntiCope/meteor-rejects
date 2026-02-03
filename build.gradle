@@ -1,10 +1,17 @@
 plugins {
-	id 'fabric-loom' version '1.9-SNAPSHOT'
+	id 'java'
+	id 'fabric-loom' version '1.14-SNAPSHOT'
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_21
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
 
-archivesBaseName = project.archives_base_name
+base {
+	archivesName = project.archives_base_name
+}
 version = project.mod_version
 group = project.maven_group
 
@@ -36,7 +43,7 @@ dependencies {
 	extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_version}:v2"
+	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	modImplementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
@@ -71,13 +78,13 @@ processResources {
 
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}" }
+		rename { "${it}_${base.archivesName}" }
 	}
 	from {
 		configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
 	}
 }
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

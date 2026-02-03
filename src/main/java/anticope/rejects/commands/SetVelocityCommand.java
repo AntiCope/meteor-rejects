@@ -3,7 +3,7 @@ package anticope.rejects.commands;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.SharedSuggestionProvider;
 
 public class SetVelocityCommand extends Command {
     public SetVelocityCommand() {
@@ -11,17 +11,17 @@ public class SetVelocityCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.then(argument("y", DoubleArgumentType.doubleArg()).executes(ctx -> {
-            var currentVelocity = mc.player.getVelocity();
-            mc.player.setVelocity(currentVelocity.x, DoubleArgumentType.getDouble(ctx, "y"), currentVelocity.z);
+            var currentVelocity = mc.player.getDeltaMovement();
+            mc.player.setDeltaMovement(currentVelocity.x, DoubleArgumentType.getDouble(ctx, "y"), currentVelocity.z);
             return SINGLE_SUCCESS;
         }));
 
         builder.then(argument("x", DoubleArgumentType.doubleArg()).then(argument("z", DoubleArgumentType.doubleArg()).executes(ctx -> {
             double x = DoubleArgumentType.getDouble(ctx, "x");
             double z = DoubleArgumentType.getDouble(ctx, "z");
-            mc.player.setVelocity(x, mc.player.getVelocity().y, z);
+            mc.player.setDeltaMovement(x, mc.player.getDeltaMovement().y, z);
             return SINGLE_SUCCESS;
         })));
 
@@ -29,7 +29,7 @@ public class SetVelocityCommand extends Command {
             double x = DoubleArgumentType.getDouble(ctx, "x");
             double y = DoubleArgumentType.getDouble(ctx, "y");
             double z = DoubleArgumentType.getDouble(ctx, "z");
-            mc.player.setVelocity(x, y, z);
+            mc.player.setDeltaMovement(x, y, z);
             return SINGLE_SUCCESS;
         }))));
     }

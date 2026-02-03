@@ -7,8 +7,8 @@ import meteordevelopment.meteorclient.mixin.MinecraftClientAccessor;
 import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.accounts.AccountType;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
-import net.minecraft.client.session.Session;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.client.User;
+import net.minecraft.nbt.CompoundTag;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
@@ -24,10 +24,10 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
     @Override
     public boolean fetchInfo() {
         try {
-            Session session = CustomYggdrasilLogin.login(name, password, server);
+            User session = CustomYggdrasilLogin.login(name, password, server);
 
-            cache.username = session.getUsername();
-            cache.uuid = session.getUuidOrNull().toString();
+            cache.username = session.getName();
+            cache.uuid = session.getProfileId().toString();
 
             return true;
         } catch (AuthenticationException e) {
@@ -38,13 +38,13 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
     @Override
     public boolean login() {
         try {
-            CustomYggdrasilLogin.LocalYggdrasilAuthenticationService service = new CustomYggdrasilLogin.LocalYggdrasilAuthenticationService(((MinecraftClientAccessor) mc).getProxy(), server);
+            CustomYggdrasilLogin.LocalYggdrasilAuthenticationService service = new CustomYggdrasilLogin.LocalYggdrasilAuthenticationService(java.net.Proxy.NO_PROXY, server);
             MinecraftSessionService sessService = new CustomYggdrasilLogin.LocalYggdrasilMinecraftSessionService(service, service.server);
-            applyLoginEnvironment(service, sessService);
+            applyLoginEnvironment(service);
 
-            Session session = CustomYggdrasilLogin.login(name, password, server);
+            User session = CustomYggdrasilLogin.login(name, password, server);
             setSession(session);
-            cache.username = session.getUsername();
+            cache.username = session.getName();
             cache.loadHead();
             return true;
         } catch (AuthenticationException e) {
@@ -56,8 +56,8 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
     }
 
     @Override
-    public NbtCompound toTag() {
-        NbtCompound tag = super.toTag();
+    public CompoundTag toTag() {
+        CompoundTag tag = super.toTag();
 
         tag.putString("password", password);
         tag.putString("server", server);
@@ -66,12 +66,12 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
     }
 
     @Override
-    public CustomYggdrasilAccount fromTag(NbtCompound tag) {
+    public CustomYggdrasilAccount fromTag(CompoundTag tag) {
         super.fromTag(tag);
         if (!tag.contains("password")) throw new NbtException();
 
-        password = tag.getString("password");
-        server = tag.getString("server");
+        password = tag.getString("password").orElse("");
+        server = tag.getString("server").orElse("");
 
         return this;
     }

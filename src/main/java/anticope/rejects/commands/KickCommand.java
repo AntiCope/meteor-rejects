@@ -1,14 +1,14 @@
 package anticope.rejects.commands;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.utils.player.ChatUtils;
-import net.minecraft.client.util.GlfwUtil;
-import net.minecraft.command.CommandSource;
-import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.network.packet.s2c.common.DisconnectS2CPacket;
-import net.minecraft.text.Text;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.ClientboundDisconnectPacket;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import org.apache.commons.lang3.SystemUtils;
 
 public class KickCommand extends Command {
@@ -38,17 +38,17 @@ public class KickCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<CommandSource> builder) {
+    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
         builder.then(literal("disconnect").executes(ctx -> {
-            mc.player.networkHandler.onDisconnect(new DisconnectS2CPacket(Text.literal("Disconnected via .kick command")));
+            mc.player.connection.handleDisconnect(new ClientboundDisconnectPacket(Component.literal("Disconnected via .kick command")));
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("pos").executes(ctx -> {
-            mc.player.networkHandler.sendPacket(new PlayerMoveC2SPacket.PositionAndOnGround(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !mc.player.isOnGround(), mc.player.horizontalCollision));
+            mc.player.connection.send(new ServerboundMovePlayerPacket.Pos(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, !mc.player.onGround(), mc.player.horizontalCollision));
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("hurt").executes(ctx -> {
-            mc.player.networkHandler.sendPacket(PlayerInteractEntityC2SPacket.attack(mc.player, mc.player.isSneaking()));
+            mc.player.connection.send(ServerboundInteractPacket.createAttackPacket(mc.player, mc.player.isShiftKeyDown()));
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("chat").executes(ctx -> {
@@ -64,7 +64,7 @@ public class KickCommand extends Command {
             return SINGLE_SUCCESS;
         }));
         builder.then(literal("crash").executes(ctx -> {
-            GlfwUtil.makeJvmCrash();
+            Blaze3D.youJustLostTheGame();
             return SINGLE_SUCCESS;
         }));
     }

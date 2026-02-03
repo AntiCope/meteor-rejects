@@ -2,18 +2,22 @@ package anticope.rejects.mixin;
 
 import anticope.rejects.modules.Rendering;
 import meteordevelopment.meteorclient.systems.modules.Modules;
-import net.minecraft.client.render.TexturedRenderLayers;
+import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(TexturedRenderLayers.class)
+@Mixin(ChestRenderer.class)
 public class TexturedRenderLayersMixin {
-    @ModifyVariable(method = "getChestTextureId(Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/block/enums/ChestType;Z)Lnet/minecraft/client/util/SpriteIdentifier;", at = @At("LOAD"), ordinal = 0)
-    private static boolean chrsitmas(boolean christmas) {
-        Rendering rendering = Modules.get().get(Rendering.class);
-        if (rendering != null && rendering.chistmas())
-            return true;
-        return christmas;
+    @Inject(method = "xmasTextures", at = @At("HEAD"), cancellable = true)
+    private static void onIsAroundChristmas(CallbackInfoReturnable<Boolean> cir) {
+        // Check if Modules system is initialized
+        if (Modules.get() != null) {
+            Rendering rendering = Modules.get().get(Rendering.class);
+            if (rendering != null && rendering.chistmas()) {
+                cir.setReturnValue(true);
+            }
+        }
     }
 }
