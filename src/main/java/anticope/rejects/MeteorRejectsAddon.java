@@ -89,6 +89,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         // Commands
         Commands.add(new CenterCommand());
         Commands.add(new ClearChatCommand());
+        Commands.add(new FillCommand());
         Commands.add(new GhostCommand());
         Commands.add(new GiveCommand());
         Commands.add(new HeadsCommand());
