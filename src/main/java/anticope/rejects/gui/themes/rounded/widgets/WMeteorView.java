@@ -10,10 +10,13 @@ import anticope.rejects.gui.themes.rounded.MeteorWidget;
 import meteordevelopment.meteorclient.gui.widgets.containers.WView;
 
 public class WMeteorView extends WView implements MeteorWidget {
+    protected boolean handlePressed;
+
     @Override
     protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
         if (canScroll && hasScrollBar) {
-            renderer.quad(handleX(), handleY(), handleWidth(), handleHeight(), theme().scrollbarColor.get(handlePressed, handleMouseOver));
+            renderer.quad(handleX(), handleY(), handleWidth(), handleHeight(),
+                    theme().scrollbarColor.get(handlePressed, handleMouseOver));
         }
     }
 }

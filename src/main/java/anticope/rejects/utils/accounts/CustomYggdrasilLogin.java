@@ -27,10 +27,13 @@ import java.util.*;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class CustomYggdrasilLogin {
-    public static Environment localYggdrasilApi = new Environment("/authserver", "/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
+    public static Environment localYggdrasilApi = new Environment("/authserver", "/sessionserver", "/minecraftservices",
+            "Custom-Yggdrasil");
 
     public static User login(String name, String password, String server) throws AuthenticationException {
         try {
+            if (!server.startsWith("https://"))
+                throw new AuthenticationException("Server URL must start with https://");
             String url = server + "/authserver/authenticate";
             JsonObject agent = new JsonObject();
             agent.addProperty("name", "Minecraft");
@@ -91,7 +94,7 @@ public class CustomYggdrasilLogin {
         @Override
         public MinecraftProfileTextures unpackTextures(final Property packedTextures) {
             final String value = packedTextures.value();
-            final SignatureState signatureState =  getPropertySignatureState(packedTextures);
+            final SignatureState signatureState = getPropertySignatureState(packedTextures);
 
             final MinecraftTexturesPayload result;
             try {
@@ -112,8 +115,7 @@ public class CustomYggdrasilLogin {
                     textures.get(MinecraftProfileTexture.Type.SKIN),
                     textures.get(MinecraftProfileTexture.Type.CAPE),
                     textures.get(MinecraftProfileTexture.Type.ELYTRA),
-                    signatureState
-            );
+                    signatureState);
         }
     }
 
