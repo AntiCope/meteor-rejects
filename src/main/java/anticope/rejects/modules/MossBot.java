@@ -14,8 +14,10 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Items;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -73,19 +75,18 @@ public class MossBot extends Module {
     }
 
     private int getMossSpots(BlockPos pos) {
-        if (mc.level.getBlockState(pos).getBlock() != Blocks.MOSS_BLOCK
+        Block block = mc.level.getBlockState(pos).getBlock();
+        if ((block != Blocks.MOSS_BLOCK && block != Blocks.PALE_MOSS_BLOCK)
                 || mc.level.getBlockState(pos.above()).getDestroySpeed(mc.level, pos) != 0f) {
             return 0;
         }
 
         return (int) BlockPos.withinManhattanStream(pos, 3, 4, 3)
-                .filter(b -> isMossGrowableOn(mc.level.getBlockState(b).getBlock()) && mc.level.isEmptyBlock(b.above()))
+                .filter(b -> isMossGrowableOn(mc.level.getBlockState(b)) && mc.level.isEmptyBlock(b.above()))
                 .count();
     }
 
-    private boolean isMossGrowableOn(Block block) {
-        return block == Blocks.STONE || block == Blocks.GRANITE || block == Blocks.ANDESITE || block == Blocks.DIORITE
-                || block == Blocks.DIRT || block == Blocks.COARSE_DIRT || block == Blocks.MYCELIUM || block == Blocks.GRASS_BLOCK
-                || block == Blocks.PODZOL || block == Blocks.ROOTED_DIRT;
+    private boolean isMossGrowableOn(BlockState state) {
+        return state.is(BlockTags.MOSS_REPLACEABLE);
     }
 }

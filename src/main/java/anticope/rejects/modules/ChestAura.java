@@ -2,7 +2,6 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.mixininterface.IInventoryTweaks;
-import com.mojang.blaze3d.systems.RenderSystem;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.packets.InventoryEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;

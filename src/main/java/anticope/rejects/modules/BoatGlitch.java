@@ -14,7 +14,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 
 public class BoatGlitch extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -85,7 +85,6 @@ public class BoatGlitch extends Module {
             }
             if (boat != null) {
                 boat.noPhysics = true;
-                //boat.pushSpeedReduction = 1;
                 dismountTicks = 5;
             }
         }
@@ -121,7 +120,7 @@ public class BoatGlitch extends Module {
     @EventHandler
     private void onKey(KeyEvent event) {
         if (event.key() == mc.options.keyShift.getDefaultKey().getValue() && event.action == KeyAction.Press) {
-            if (mc.player.getVehicle() != null && mc.player.getVehicle() instanceof Boat) {
+            if (mc.player.getVehicle() instanceof AbstractBoat) {
                 dontPhase = false;
                 boat = null;
             }

@@ -15,7 +15,6 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -167,13 +166,6 @@ public class TreeAura extends Module {
         nearby.sort(Comparator.comparingDouble(PlayerUtils::distanceTo));
         if (sortMode.get().equals(SortMode.Farthest)) Collections.reverse(nearby);
         return nearby.get(0);
-    }
-
-    private double distanceBetween(BlockPos pos1, BlockPos pos2) {
-        double d = pos1.getX() - pos2.getX();
-        double e = pos1.getY() - pos2.getY();
-        double f = pos1.getZ() - pos2.getZ();
-        return Mth.sqrt((float) (d * d + e * e + f * f));
     }
 
     public enum SortMode {Closest, Farthest}

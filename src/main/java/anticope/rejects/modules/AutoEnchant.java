@@ -13,7 +13,7 @@ import net.minecraft.world.inventory.EnchantmentMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -50,7 +50,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
             .name("item-whitelist")
             .description("Item that require enchantment.")
             .defaultValue()
-            .filter(item -> item.equals(Items.BOOK) || new ItemStack(item).isDamageableItem())
+            .filter(item -> item.equals(Items.BOOK) || new ItemStack(item).isEnchantable())
             .build()
     );
 
@@ -109,7 +109,7 @@ public class AutoEnchant extends meteordevelopment.meteorclient.systems.modules.
     }
 
     private boolean fillCanEnchantItem() {
-        FindItemResult res = InvUtils.find(stack -> itemWhitelist.get().contains(stack.getItem()) && EnchantmentHelper.canStoreEnchantments(stack));
+        FindItemResult res = InvUtils.find(stack -> itemWhitelist.get().contains(stack.getItem()));
         if (!res.found()) return false;
         InvUtils.shiftClick().slot(res.slot());
         return true;

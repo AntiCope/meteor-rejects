@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 @Mixin(ClientCommonPacketListenerImpl.class)
-public class ClientCommonNetwokHandlerMixin {
+public class ClientCommonNetworkHandlerMixin {
 	@Inject(method = "onDisconnect", at = @At("HEAD"), cancellable = true)
 	private void onDisconnected(DisconnectionDetails info, CallbackInfo ci) {
 		if (Modules.get().isActive(SilentDisconnect.class) && mc.level != null && mc.player != null) {

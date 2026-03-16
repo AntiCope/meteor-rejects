@@ -3,14 +3,11 @@ package anticope.rejects.utils.accounts;
 import anticope.rejects.MeteorRejectsAddon;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
-import meteordevelopment.meteorclient.mixin.MinecraftClientAccessor;
 import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.accounts.AccountType;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
 import net.minecraft.client.User;
 import net.minecraft.nbt.CompoundTag;
-
-import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
     private String password, server;

@@ -9,7 +9,7 @@ import meteordevelopment.meteorclient.settings.SettingGroup;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
 import net.minecraft.world.phys.EntityHitResult;
 
@@ -25,19 +25,24 @@ public class VehicleOneHit extends Module {
             .build()
     );
 
+    private boolean sending = false;
+
     public VehicleOneHit() {
         super(MeteorRejectsAddon.CATEGORY, "vehicle-one-hit", "Destroy vehicles with one hit.");
     }
 
     @EventHandler
     private void onPacketSend(PacketEvent.Send event) {
+        if (sending) return;
         if (!(event.packet instanceof ServerboundInteractPacket)
             || !(mc.hitResult instanceof EntityHitResult ehr)
-            || (!(ehr.getEntity() instanceof AbstractMinecart) && !(ehr.getEntity() instanceof Boat))
+            || (!(ehr.getEntity() instanceof AbstractMinecart) && !(ehr.getEntity() instanceof AbstractBoat))
         ) return;
 
+        sending = true;
         for (int i = 0; i < amount.get() - 1; i++) {
             mc.player.connection.getConnection().send(event.packet, null);
         }
+        sending = false;
     }
 }
