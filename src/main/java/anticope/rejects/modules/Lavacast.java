@@ -56,7 +56,7 @@ public class Lavacast extends Module {
     );
     private final Setting<Integer> lavaDownMult = sgShape.add(new IntSetting.Builder()
             .name("lava-down-mulipiler")
-            .description("Controlls the shape of the cast")
+            .description("Controls the shape of the cast")
             .defaultValue(40)
             .min(1)
             .sliderMax(100)
@@ -64,7 +64,7 @@ public class Lavacast extends Module {
     );
     private final Setting<Integer> lavaUpMult = sgShape.add(new IntSetting.Builder()
             .name("lava-up-mulipiler")
-            .description("Controlls the shape of the cast")
+            .description("Controls the shape of the cast")
             .defaultValue(8)
             .min(1)
             .sliderMax(100)
@@ -72,7 +72,7 @@ public class Lavacast extends Module {
     );
     private final Setting<Integer> waterDownMult = sgShape.add(new IntSetting.Builder()
             .name("water-down-mulipiler")
-            .description("Controlls the shape of the cast")
+            .description("Controls the shape of the cast")
             .defaultValue(4)
             .min(1)
             .sliderMax(100)
@@ -80,7 +80,7 @@ public class Lavacast extends Module {
     );
     private final Setting<Integer> waterUpMult = sgShape.add(new IntSetting.Builder()
             .name("water-up-mulipiler")
-            .description("Controlls the shape of the cast")
+            .description("Controls the shape of the cast")
             .defaultValue(1)
             .min(1)
             .sliderMax(100)
@@ -111,7 +111,7 @@ public class Lavacast extends Module {
         getDistance(new Vec3i(1,0,0));
         getDistance(new Vec3i(-1,0,0));
         getDistance(new Vec3i(0,0,1));
-        getDistance(new Vec3i(1,0,-1));
+        getDistance(new Vec3i(0,0,-1));
         if (dist<1) {
             error("Couldn't locate bottom.");
             toggle();
@@ -187,15 +187,14 @@ public class Lavacast extends Module {
         double y2 = y1+1;
         double z2 = z1+1;
 
-        SettingColor color = new SettingColor(128, 128, 128);
-        if (stage == Stage.LavaDown) color = new SettingColor(255, 180, 10);
-        if (stage == Stage.LavaUp) color = new SettingColor(255, 180, 128);
-        if (stage == Stage.WaterDown) color = new SettingColor(10, 10, 255);
-        if (stage == Stage.WaterUp) color = new SettingColor(128, 128, 255);
-        SettingColor color1 = color;
-        color1.a = 75;
+        SettingColor lineColor = new SettingColor(128, 128, 128);
+        if (stage == Stage.LavaDown) lineColor = new SettingColor(255, 180, 10);
+        if (stage == Stage.LavaUp) lineColor = new SettingColor(255, 180, 128);
+        if (stage == Stage.WaterDown) lineColor = new SettingColor(10, 10, 255);
+        if (stage == Stage.WaterUp) lineColor = new SettingColor(128, 128, 255);
+        SettingColor sideColor = new SettingColor(lineColor.r, lineColor.g, lineColor.b, 75);
 
-        event.renderer.box(x1, y1, z1, x2, y2, z2, color1, color, ShapeMode.Both, 0);
+        event.renderer.box(x1, y1, z1, x2, y2, z2, sideColor, lineColor, ShapeMode.Both, 0);
     }
 
     private void placeLava() {
@@ -205,10 +204,9 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().getSelectedSlot();
-        mc.player.getInventory().setSelectedSlot(findItemResult.slot());
-        mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
-        mc.player.getInventory().setSelectedSlot(prevSlot);
+        InvUtils.swap(findItemResult.slot(), true);
+        mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
+        InvUtils.swapBack();
     }
 
     private void placeWater() {
@@ -218,10 +216,9 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().getSelectedSlot();
-        mc.player.getInventory().setSelectedSlot(findItemResult.slot());
-        mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
-        mc.player.getInventory().setSelectedSlot(prevSlot);
+        InvUtils.swap(findItemResult.slot(), true);
+        mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
+        InvUtils.swapBack();
     }
 
     private void pickupLiquid() {
@@ -231,10 +228,9 @@ public class Lavacast extends Module {
             toggle();
             return;
         }
-        int prevSlot = mc.player.getInventory().getSelectedSlot();
-        mc.player.getInventory().setSelectedSlot(findItemResult.slot());
-        mc.gameMode.useItem(mc.player,InteractionHand.MAIN_HAND);
-        mc.player.getInventory().setSelectedSlot(prevSlot);
+        InvUtils.swap(findItemResult.slot(), true);
+        mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);
+        InvUtils.swapBack();
     }
 
     private void updateBlockBreakingProgress() {

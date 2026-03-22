@@ -216,7 +216,7 @@ public class AutoFarm extends Module {
         if (block instanceof SweetBerryBushBlock)
             mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
         else {
-            mc.gameMode.continueDestroyBlock(pos, Direction.UP);
+            BlockUtils.breakBlock(pos, true);
         }
         return true;
     }
@@ -280,6 +280,8 @@ public class AutoFarm extends Module {
             return state.getValue(netherWartBlock.AGE) >= 3;
         } else if (block instanceof PitcherCropBlock pitcherCropBlock) {
             return state.getValue(pitcherCropBlock.AGE) >= 4;
+        } else if (block instanceof SaplingBlock) {
+            return false;
         }
         return true;
     }

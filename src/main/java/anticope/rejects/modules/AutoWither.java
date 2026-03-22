@@ -202,12 +202,9 @@ public class AutoWither extends Module {
             BlockUtils.place(wither.foot.above().above().relative(wither.axis, 1), findWitherSkull, rotate.get(), -50);
             
             
-            // Auto turnoff
-            if (turnOff.get()) {
-                wither = null;
-                toggle();
-            }
-            
+            wither = null;
+            if (turnOff.get()) toggle();
+
         } else {
             // Delay
             if (blockTicksWaited < blockDelay.get() - 1) {
@@ -238,16 +235,13 @@ public class AutoWither extends Module {
                     if (BlockUtils.place(wither.foot.above().above().relative(wither.axis, 1), findWitherSkull, rotate.get(), -50)) wither.stage++;
                     break;
                 case 7:
-                    // Auto turnoff
-                    if (turnOff.get()) {
-                        wither = null;
-                        toggle();
-                    }
+                    wither = null;
+                    blockTicksWaited = 0;
+                    if (turnOff.get()) toggle();
                     break;
             }
         }
-        
-        
+
         witherTicksWaited = 0;
     }
     

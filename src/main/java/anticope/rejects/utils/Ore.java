@@ -43,7 +43,7 @@ public class Ore {
     private static final Setting<Boolean> redstone    = new BoolSetting.Builder().name("Redstone").build();
     private static final Setting<Boolean> diamond     = new BoolSetting.Builder().name("Diamond").build();
     private static final Setting<Boolean> lapis       = new BoolSetting.Builder().name("Lapis").build();
-    private static final Setting<Boolean> copper      = new BoolSetting.Builder().name("Kappa").build();
+    private static final Setting<Boolean> copper      = new BoolSetting.Builder().name("Copper").build();
     private static final Setting<Boolean> emerald     = new BoolSetting.Builder().name("Emerald").build();
     private static final Setting<Boolean> quartz      = new BoolSetting.Builder().name("Quartz").build();
     private static final Setting<Boolean> debris      = new BoolSetting.Builder().name("Ancient Debris").build();

@@ -56,7 +56,7 @@ public class ChatBot extends Module {
     }
 
     @EventHandler
-    private void onMessageRecieve(ReceiveMessageEvent event) {
+    private void onMessageReceive(ReceiveMessageEvent event) {
         String msg = event.getMessage().getString();
         if (help.get() && msg.endsWith(prefix.get() + "help")) {
             ChatUtils.sendPlayerMsg("Available commands: " + String.join(", ", commands.get().keySet()));
