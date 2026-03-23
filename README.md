@@ -103,6 +103,8 @@
   - `Random Teleport, Hit Chance, Random Delay` (Removed from Meteor in [8722e](https://github.com/MeteorDevelopment/meteor-client/commit/8722ef565afa02ca4b6d9710a20fc9fcfd97bf05))
 - Alts
   -  `Yggdrasil Login`
+- ServerSpoof
+  -  `Translation Key, Fingerprint, and Local HTTP Request prevention` ([ExploitPreventer](https://github.com/NikOverflow/ExploitPreventer))
 
 ## Commands
 - `.center`
