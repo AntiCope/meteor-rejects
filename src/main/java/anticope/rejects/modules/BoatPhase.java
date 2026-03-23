@@ -11,7 +11,7 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.phys.Vec3;
 
 public class BoatPhase extends Module {
@@ -73,7 +73,7 @@ public class BoatPhase extends Module {
             .build()
     );
 
-    private Boat boat = null;
+    private AbstractBoat boat = null;
 
     public BoatPhase() {
         super(MeteorRejectsAddon.CATEGORY, "boat-phase", "Phase through blocks using a boat.");
@@ -94,12 +94,12 @@ public class BoatPhase extends Module {
 
     @EventHandler
     private void onBoatMove(BoatMoveEvent event) {
-        if (mc.player.getVehicle() != null && mc.player.getVehicle() instanceof Boat) {
+        if (mc.player.getVehicle() instanceof AbstractBoat) {
             if (boat != mc.player.getVehicle()) {
                 if (boat != null) {
                     boat.noPhysics = false;
                 }
-                boat = (Boat) mc.player.getVehicle();
+                boat = (AbstractBoat) mc.player.getVehicle();
             }
         } else boat = null;
 

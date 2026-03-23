@@ -17,11 +17,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,7 +91,7 @@ public class AutoExtinguish extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.level.dimensionType().attributes().applyModifier(EnvironmentAttributes.RESPAWN_ANCHOR_WORKS, false)) {
+        if (mc.level.dimension() == Level.NETHER) {
             if (doesWaterBucketWork) {
                 warning("Water Buckets don't work in this dimension!");
                 doesWaterBucketWork = false;
