@@ -59,6 +59,7 @@
 - Confuse
 - Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/misc/CoordFinder.java))
 - Custom Packets
+- DebugRender
 - Extra Elytra (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
 - Gamemode notifier
