@@ -6,8 +6,8 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -61,8 +61,8 @@ public class AutoDrop extends Module {
         int startSlot = dropHotbar.get() ? 0 : 9;
 
         for (int i = startSlot; i < 36; i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
-            if (stack.isEmpty() || !items.get().contains(stack.getItem())) continue;
+            ItemStack stack = mc.player.getInventory().getItem(i);
+            if (stack == null || stack.isEmpty() || !items.get().contains(stack.getItem())) continue;
 
             InvUtils.drop().slot(i);
             return;
