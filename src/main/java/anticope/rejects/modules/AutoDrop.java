@@ -58,7 +58,6 @@ public class AutoDrop extends Module {
         }
         timer = delay.get();
 
-        // Inventory indices: 0-8 hotbar, 9-35 main inventory
         int startSlot = dropHotbar.get() ? 0 : 9;
 
         for (int i = startSlot; i < 36; i++) {
@@ -66,7 +65,7 @@ public class AutoDrop extends Module {
             if (stack.isEmpty() || !items.get().contains(stack.getItem())) continue;
 
             InvUtils.drop().slot(i);
-            return; // one drop per cycle to avoid anti-cheat flags
+            return;
         }
     }
 }
