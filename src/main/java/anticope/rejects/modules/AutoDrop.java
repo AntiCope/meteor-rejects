@@ -4,10 +4,10 @@ import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.SlotActionType;
 
 import java.util.List;
 
@@ -16,61 +16,57 @@ public class AutoDrop extends Module {
 
     private final Setting<List<Item>> items = sgGeneral.add(new ItemListSetting.Builder()
         .name("items")
-        .description("Trash list.")
+        .description("Items to automatically drop from your inventory.")
         .defaultValue(List.of())
         .build()
     );
 
-    private final Setting<Boolean> hotbar = sgGeneral.add(new BoolSetting.Builder()
-        .name("include-hotbar")
-        .description("Toss from hotbar too.")
+    private final Setting<Boolean> dropHotbar = sgGeneral.add(new BoolSetting.Builder()
+        .name("drop-hotbar")
+        .description("Also drop matching items from your hotbar.")
         .defaultValue(false)
         .build()
     );
 
     private final Setting<Integer> delay = sgGeneral.add(new IntSetting.Builder()
         .name("delay")
-        .description("Ticks between drops.")
-        .defaultValue(1)
-        .min(0)
-        .sliderMax(20)
+        .description("Delay in ticks between each drop check.")
+        .defaultValue(10)
+        .min(1)
+        .sliderMax(40)
         .build()
     );
 
-    private int ticks;
+    private int timer = 0;
 
     public AutoDrop() {
-        super(MeteorRejectsAddon.CATEGORY, "auto-drop", "Dumps trash.");
+        super(MeteorRejectsAddon.CATEGORY, "auto-drop", "Automatically drops selected items from your inventory.");
     }
 
     @Override
     public void onActivate() {
-        ticks = 0;
+        timer = 0;
     }
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
         if (mc.player == null) return;
 
-        if (ticks > 0) {
-            ticks--;
+        if (timer > 0) {
+            timer--;
             return;
         }
+        timer = delay.get();
 
-        int start = hotbar.get() ? 0 : 9;
+        // Inventory indices: 0-8 hotbar, 9-35 main inventory
+        int startSlot = dropHotbar.get() ? 0 : 9;
 
-        for (int i = start; i < 36; i++) {
+        for (int i = startSlot; i < 36; i++) {
             ItemStack stack = mc.player.getInventory().getStack(i);
-            
             if (stack.isEmpty() || !items.get().contains(stack.getItem())) continue;
 
-            // Map inv to screen handler IDs
-            int slot = i < 9 ? i + 36 : i;
-
-            mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, slot, 1, SlotActionType.THROW, mc.player);
-            
-            ticks = delay.get();
-            return; // drop one per cycle
+            InvUtils.drop().slot(i);
+            return; // one drop per cycle to avoid anti-cheat flags
         }
     }
 }
