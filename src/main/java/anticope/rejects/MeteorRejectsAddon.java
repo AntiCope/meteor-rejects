@@ -35,6 +35,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new AntiSpawnpoint());
         modules.add(new AntiVanish());
         modules.add(new ArrowDmg());
+        modules.add(new AutoDrop());
         modules.add(new AutoBedTrap());
         modules.add(new AutoCraft());
         modules.add(new AutoExtinguish());
@@ -57,6 +58,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         modules.add(new Confuse());
         modules.add(new CoordLogger());
         modules.add(new CustomPackets());
+        modules.add(new DebugRender());
         modules.add(new ExtraElytra());
         modules.add(new FullFlight());
         modules.add(new GamemodeNotifier());
@@ -89,6 +91,7 @@ public class MeteorRejectsAddon extends MeteorAddon {
         // Commands
         Commands.add(new CenterCommand());
         Commands.add(new ClearChatCommand());
+        Commands.add(new FillCommand());
         Commands.add(new GhostCommand());
         Commands.add(new GiveCommand());
         Commands.add(new HeadsCommand());

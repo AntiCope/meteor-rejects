@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import meteordevelopment.meteorclient.events.entity.player.ItemUseCrosshairTargetEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
+import meteordevelopment.meteorclient.pathing.BaritoneUtils;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
@@ -93,6 +94,7 @@ public class AutoPot extends Module {
 
     // TODO : Add option to scan whole inv - then either swap item to hotbar if full or just place in first empty slot
     // Note, Sometimes two or multiple splash pots are thrown - since the effect is not instant, the second pot is thrown before the effect of first is applied
+    // Need to use the splash bool that is assigned but never used
     @Override
     public void onDeactivate() {
         stopPotionUsage();
@@ -228,9 +230,11 @@ public class AutoPot extends Module {
             }
         }
         wasBaritone = false;
-        if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
-            wasBaritone = true;
-            BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
+        if (BaritoneUtils.IS_AVAILABLE) {
+            if (pauseBaritone.get() && BaritoneAPI.getProvider().getPrimaryBaritone().getPathingBehavior().isPathing()) {
+                wasBaritone = true;
+                BaritoneAPI.getProvider().getPrimaryBaritone().getCommandManager().execute("pause");
+            }
         }
     }
 

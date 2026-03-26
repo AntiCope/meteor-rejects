@@ -11,6 +11,7 @@ import meteordevelopment.meteorclient.utils.misc.Pool;
 import meteordevelopment.meteorclient.utils.player.FindItemResult;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.meteorclient.utils.player.PlayerUtils;
+import meteordevelopment.meteorclient.utils.player.Rotations;
 import meteordevelopment.meteorclient.utils.world.BlockIterator;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,6 @@ public class AutoTNT extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
 
     // General
-
     private final Setting<Boolean> ignite = sgGeneral.add(new BoolSetting.Builder()
             .name("ignite")
             .description("Whether to ignite tnt.")
@@ -64,6 +64,17 @@ public class AutoTNT extends Module {
             .description("Whether to save flint and steel from breaking.")
             .defaultValue(true)
             .visible(ignite::get)
+            .build()
+    );
+
+    private final Setting<Integer> durability = sgGeneral.add(new IntSetting.Builder()
+            .name("durability")
+            .description("Decides the amount of durability to leave on the flint and steel")
+            .min(1)
+            .max(63)
+            .sliderMax(63)
+            .defaultValue(10)
+            .visible(antiBreak::get)
             .build()
     );
 
@@ -120,7 +131,7 @@ public class AutoTNT extends Module {
                 // Ignition
                 FindItemResult itemResult = InvUtils.findInHotbar(item -> {
                     if (item.getItem() instanceof FlintAndSteelItem) {
-                        return (antiBreak.get() && (item.getMaxDamage() - item.getDamageValue()) > 10);
+                        return !antiBreak.get() || (item.getMaxDamage() - item.getDamageValue()) > durability.get();
                     }
                     else if (item.getItem() instanceof FireChargeItem) {
                         return fireCharge.get();
@@ -128,7 +139,7 @@ public class AutoTNT extends Module {
                     return false;
                 });
                 if (!itemResult.found()) {
-                    error("No flint and steel in hotbar");
+                    error("No flint and steel in hotbar or durability too low.");
                     toggle();
                     return;
                 }
@@ -142,10 +153,13 @@ public class AutoTNT extends Module {
     }
 
     private void ignite(BlockPos pos, FindItemResult item) {
-        InvUtils.swap(item.slot(), true);
-
-        mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
-
-        InvUtils.swapBack();
+        Runnable action = () -> {
+            InvUtils.swap(item.slot(), true);
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.UP, pos, true));
+            InvUtils.swapBack();
+        };
+        // rotation is very snappy and only for the interaction, TODO improve in future
+        if (rotate.get()) Rotations.rotate(Rotations.getYaw(pos), Rotations.getPitch(pos), action);
+        else action.run();
     }
 }

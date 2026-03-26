@@ -58,14 +58,14 @@ public class Rendering extends Module {
 	);
 
     private final Setting<Boolean> christmas = sgFun.add(new BoolSetting.Builder()
-			.name("chrismas")
+			.name("christmas")
 			.description("Chistmas chest anytime")
 			.defaultValue(false)
 			.build()
 	);
-    
+
     private PostChain shader = null;
-    
+
     public Rendering() {
         super(MeteorRejectsAddon.CATEGORY, "rendering", "Various Render Tweaks");
     }

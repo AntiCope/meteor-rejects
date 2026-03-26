@@ -7,8 +7,8 @@
   <!-- Fancy badges -->
   <a href="https://anticope.ml/pages/MeteorAddons.html"><img src="https://img.shields.io/badge/Verified%20Addon-Yes-blueviolet" alt="Verified Addon"></a>
   <a href="https://github.com/AntiCope/meteor-rejects/releases"><img src="https://img.shields.io/badge/Version-v0.1-orange" alt="Version"></a>
-  <img src="https://img.shields.io/badge/spaghetti%20code-yes-success?logo=java" alt="Spagetti code: yes">
-  <img src="https://img.shields.io/badge/Minecraft%20Version-1.20.6-blue" alt="Minecraft Version">
+  <img src="https://img.shields.io/badge/spaghetti%20code-yes-success?logo=java" alt="Spaghetti code: yes">
+  <img src="https://img.shields.io/badge/Minecraft%20Version-1.21.11-blue" alt="Minecraft Version">
   <a href="https://github.com/AntiCope/meteor-rejects/commits/master"><img src="https://img.shields.io/github/last-commit/AntiCope/meteor-rejects?logo=git" alt="Last commit"></a>
   <img src="https://img.shields.io/github/workflow/status/AntiCope/meteor-rejects/Java%20CI%20with%20Gradle?logo=github" alt="build status">
   <img src="https://img.shields.io/github/languages/code-size/AntiCope/meteor-rejects" alt="Code Size">
@@ -27,7 +27,7 @@
 - Download the latest [release](/../../releases) of the mod from the releases tab.
 - Put it in your `.minecraft/mods` folder where you have installed Meteor.
 
-*Note: It is recommended to use the [latest dev build](https://meteorclient.com/download?devBuild=latest) of meteor while using rejects*
+*Note: It is recommended to use the [latest build](https://meteorclient.com/) of meteor while using rejects*
 
 # Features
 ## Modules
@@ -39,6 +39,7 @@
 - ArrowDmg (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
+- AutoDrop
 - AutoEnchant
 - AutoExtinguish
 - AutoFarm
@@ -59,12 +60,12 @@
 - Confuse
 - Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/misc/CoordFinder.java))
 - Custom Packets
+- DebugRender
 - Extra Elytra (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
 - Gamemode notifier
 - Ghost Mode (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1932))
 - Glide (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
-- Insta Mine (Removed from Meteor in [62cd0](https://github.com/MeteorDevelopment/meteor-client/commit/62cd0461e48a6c50f040bf48de25be1fa4eba77e))
 - Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Jetpack
@@ -103,10 +104,13 @@
   - `Random Teleport, Hit Chance, Random Delay` (Removed from Meteor in [8722e](https://github.com/MeteorDevelopment/meteor-client/commit/8722ef565afa02ca4b6d9710a20fc9fcfd97bf05))
 - Alts
   -  `Yggdrasil Login`
+- ServerSpoof
+  -  `Translation Key, Fingerprint, and Local HTTP Request prevention` ([ExploitPreventer](https://github.com/NikOverflow/ExploitPreventer))
 
 ## Commands
 - `.center`
 - `.clear-chat` (Removed from meteor in [9aebf](https://github.com/MeteorDevelopment/meteor-client/commit/9aebf6a0e4ffa739d901c8b8d7f48d07af2fe839))
+- `.fill`
 - `.ghost` (Ported from [AntiGhost](https://github.com/gbl/AntiGhost/blob/fabric_1_16/src/main/java/de/guntram/mcmod/antighost/AntiGhost.java))
 - `.save-skin`
 - `.heads`

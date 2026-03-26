@@ -5,19 +5,23 @@ import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(ChestRenderer.class)
 public class TexturedRenderLayersMixin {
-    @Inject(method = "xmasTextures", at = @At("HEAD"), cancellable = true)
-    private static void onIsAroundChristmas(CallbackInfoReturnable<Boolean> cir) {
-        // Check if Modules system is initialized
+    @ModifyArg(
+        method = "extractRenderState",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/renderer/blockentity/ChestRenderer;getChestMaterial(Lnet/minecraft/world/level/block/entity/BlockEntity;Z)Lnet/minecraft/client/renderer/blockentity/state/ChestRenderState$ChestMaterialType;"
+        ),
+        index = 1
+    )
+    private boolean modifyXmasTexturesArg(boolean original) {
         if (Modules.get() != null) {
             Rendering rendering = Modules.get().get(Rendering.class);
-            if (rendering != null && rendering.chistmas()) {
-                cir.setReturnValue(true);
-            }
+            if (rendering != null && rendering.chistmas()) return true;
         }
+        return original;
     }
 }

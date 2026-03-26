@@ -2,7 +2,6 @@ package anticope.rejects.mixin;
 
 import anticope.rejects.modules.Rendering;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,13 +19,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
 
-    @Inject(method = "setupRotations", at = @At(value = "TAIL"))
+    @Inject(method = "setupRotations", at = @At("HEAD"))
     private void dinnerboneEntities(S state, PoseStack matrices, float animationProgress, float bodyYaw, CallbackInfo ci) {
+        if (state instanceof AvatarRenderState) return;
+        if (Modules.get() == null) return;
         Rendering renderingModule = Modules.get().get(Rendering.class);
-        if (renderingModule == null) return;
-        if ((!(state instanceof AvatarRenderState)) && renderingModule.dinnerboneEnabled()) {
-            matrices.translate(0.0D, state.boundingBoxHeight + 0.1F, 0.0D);
-            matrices.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        if (renderingModule != null && renderingModule.dinnerboneEnabled()) {
+            state.isUpsideDown = true;
         }
     }
 
