@@ -33,7 +33,7 @@ public class ServerSpoofMixin extends Module {
         translationKey = sgExploitPreventer.add(new BoolSetting.Builder()
             .name("translation-key-prevention")
             .description("Prevents the server from detecting installed mods via translation keys.")
-            .defaultValue(false)
+            .defaultValue(true)
             .onChanged(val -> {
                 if (!EP_LOADED) { if (val) warning("ExploitPreventer is not installed."); return; }
                 ExploitPreventerCompat.applyTranslationKey(val);
@@ -44,7 +44,7 @@ public class ServerSpoofMixin extends Module {
         fingerprinting = sgExploitPreventer.add(new BoolSetting.Builder()
             .name("fingerprint-prevention")
             .description("Stops servers from using resource packs to uniquely identify your client.")
-            .defaultValue(false)
+            .defaultValue(true)
             .onChanged(val -> {
                 if (!EP_LOADED) { if (val) warning("ExploitPreventer is not installed."); return; }
                 ExploitPreventerCompat.applyFingerprinting(val);
@@ -55,7 +55,7 @@ public class ServerSpoofMixin extends Module {
         localHTTPRequest = sgExploitPreventer.add(new BoolSetting.Builder()
             .name("local-HTTP-request-prevention")
             .description("Blocks resource pack URLs that point to local IP addresses, prevents detection of locally running services.")
-            .defaultValue(false)
+            .defaultValue(true)
             .onChanged(val -> {
                 if (!EP_LOADED) { if (val) warning("ExploitPreventer is not installed."); return; }
                 ExploitPreventerCompat.applyLocalHTTPRequest(val);
