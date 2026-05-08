@@ -2,7 +2,7 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.entity.BoatMoveEvent;
-import meteordevelopment.meteorclient.events.meteor.KeyEvent;
+import meteordevelopment.meteorclient.events.meteor.KeyInputEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -11,10 +11,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.phys.EntityHitResult;
 
 public class BoatGlitch extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -110,7 +110,8 @@ public class BoatGlitch extends Module {
         if (remountTicks > 0) {
             remountTicks--;
             if (remountTicks == 0) {
-                mc.getConnection().send( ServerboundInteractPacket.createInteractionPacket(boat, false, InteractionHand.MAIN_HAND));
+            	EntityHitResult location = new EntityHitResult(boat, boat.getBoundingBox().getCenter());
+            	mc.gameMode.interact(mc.player, boat, location, InteractionHand.MAIN_HAND);
                 if (toggleAfter.get()) {
                     toggle();
                 }
@@ -118,7 +119,7 @@ public class BoatGlitch extends Module {
         }
     }
     @EventHandler
-    private void onKey(KeyEvent event) {
+    private void onKey(KeyInputEvent event) {
         if (event.key() == mc.options.keyShift.getDefaultKey().getValue() && event.action == KeyAction.Press) {
             if (mc.player.getVehicle() instanceof AbstractBoat) {
                 dontPhase = false;

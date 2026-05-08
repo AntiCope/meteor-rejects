@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class MeteorRejectsAddon extends MeteorAddon {
     public static final Logger LOG = LoggerFactory.getLogger("Rejects");
-    public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultInstance());
+    public static final Category CATEGORY = new Category("Rejects", () -> Items.BARRIER.getDefaultInstance());
     public static final HudGroup HUD_GROUP = new HudGroup("Rejects");
 
     @Override
@@ -113,6 +113,8 @@ public class MeteorRejectsAddon extends MeteorAddon {
 
         // Themes
         GuiThemes.add(new MeteorRoundedGuiTheme());
+        
+        LOG.info("Rejects version: {}", getVersion());
     }
 
     @Override
@@ -129,17 +131,11 @@ public class MeteorRejectsAddon extends MeteorAddon {
     public GithubRepo getRepo() {
         return new GithubRepo("AntiCope", "meteor-rejects");
     }
-
-    @Override
-    public String getCommit() {
-        String commit = FabricLoader
-                .getInstance()
-                .getModContainer("meteor-rejects")
-                .get().getMetadata()
-                .getCustomValue("github:sha")
-                .getAsString();
-        LOG.info("Rejects version: {}", commit);
-        return commit.isEmpty() ? null : commit.trim();
+    
+    public String getVersion() {
+        return FabricLoader.getInstance()
+                .getModContainer("meteor-rejects").get()
+                .getMetadata().getVersion().getFriendlyString();
     }
 
     public String getPackage() {

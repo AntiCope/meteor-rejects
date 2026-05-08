@@ -9,7 +9,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -86,7 +86,7 @@ public class LawnBot extends Module {
             if (grassInvSlot == -1)
                 return;
 
-            mc.gameMode.handleInventoryMouseClick(mc.player.containerMenu.containerId, grassInvSlot < 9 ? grassInvSlot + 36 : grassInvSlot, 8, ClickType.SWAP, mc.player);
+            mc.gameMode.handleContainerInput(mc.player.containerMenu.containerId, grassInvSlot < 9 ? grassInvSlot + 36 : grassInvSlot, 8, ContainerInput.SWAP, mc.player);
             return;
         }
 

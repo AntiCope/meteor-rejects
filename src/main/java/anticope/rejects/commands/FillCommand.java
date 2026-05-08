@@ -3,7 +3,7 @@ package anticope.rejects.commands;
 import anticope.rejects.arguments.ClientPosArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,7 @@ public class FillCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
+    public void build(LiteralArgumentBuilder<ClientSuggestionProvider> builder) {
         builder.then(argument("from-pos", ClientPosArgumentType.pos()).then(argument("to-pos", ClientPosArgumentType.pos()).then(argument("block", BlockStateArgument.block(REGISTRY_ACCESS)).executes(ctx -> {
             Vec3 fromPos = ClientPosArgumentType.getPos(ctx, "from-pos");
             Vec3 toPos = ClientPosArgumentType.getPos(ctx, "to-pos");

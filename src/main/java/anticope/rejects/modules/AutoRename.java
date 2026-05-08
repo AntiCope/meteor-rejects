@@ -12,6 +12,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
 import java.util.List;
@@ -129,15 +130,15 @@ public class AutoRename extends Module {
     private String getFirstItemName(ItemStack stack) {
         ItemContainerContents container = stack.get(DataComponents.CONTAINER);
         if (container != null) {
-            for (ItemStack item : container.nonEmptyItems()) {
-                return item.getHoverName().getString();
+            for (ItemStackTemplate item : container.nonEmptyItems()) {
+            	return item.create().getHoverName().getString();
             }
         }
 
         BundleContents bundle = stack.get(DataComponents.BUNDLE_CONTENTS);
         if (bundle != null) {
-            for (ItemStack item : bundle.items()) {
-                return item.getHoverName().getString();
+            for (ItemStackTemplate item : bundle.items()) {
+            	return item.create().getHoverName().getString();
             }
         }
         return "";
@@ -146,13 +147,12 @@ public class AutoRename extends Module {
     private void extractNamed() {
         var inv = mc.player.containerMenu;
         for (int i = 3; i < 38; i++) {
-            if (inv.getSlot(i).hasItem()) {
+            if (!inv.getSlot(i).hasItem()) {
                 InvUtils.shiftClick().fromId(2).toId(i);
                 return;
             }
         }
     }
-
     private void populateAnvil() {
         var inv = mc.player.containerMenu;
         for (int i = 3; i < 38; i++) {
