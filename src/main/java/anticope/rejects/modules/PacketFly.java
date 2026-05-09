@@ -1,7 +1,6 @@
 package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
-import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
 import meteordevelopment.meteorclient.events.entity.player.SendMovementPacketsEvent;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
@@ -121,7 +120,7 @@ public class PacketFly extends Module {
     public PacketFly() {
         super(MeteorRejectsAddon.CATEGORY, "packet-fly", "Fly using packets.");
     }
-   
+    
     @EventHandler
     public void onSendMovementPackets(SendMovementPacketsEvent.Pre event) {
         mc.player.setDeltaMovement(0.0,0.0,0.0);
