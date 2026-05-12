@@ -145,13 +145,7 @@ public class AutoRename extends Module {
     }
 
     private void extractNamed() {
-        var inv = mc.player.containerMenu;
-        for (int i = 3; i < 38; i++) {
-            if (!inv.getSlot(i).hasItem()) {
-                InvUtils.shiftClick().fromId(2).toId(i);
-                return;
-            }
-        }
+        InvUtils.shiftClick().slotId(2);
     }
     private void populateAnvil() {
         var inv = mc.player.containerMenu;
