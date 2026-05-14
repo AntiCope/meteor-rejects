@@ -76,7 +76,7 @@ public class BoatPhase extends Module {
     private AbstractBoat boat = null;
 
     public BoatPhase() {
-        super(MeteorRejectsAddon.CATEGORY, "boat-phase", "Phase through blocks using a boat.");
+        super(MeteorRejectsAddon.CATEGORY, "boat-phase", "Phase through blocks using a boat. ONLY works on Paper servers without Anticheat");
     }
 
     @Override
