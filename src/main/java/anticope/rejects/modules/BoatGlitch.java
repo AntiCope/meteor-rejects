@@ -2,7 +2,7 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.entity.BoatMoveEvent;
-import meteordevelopment.meteorclient.events.meteor.KeyEvent;
+import meteordevelopment.meteorclient.events.meteor.KeyInputEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -11,10 +11,10 @@ import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.phys.EntityHitResult;
 
 public class BoatGlitch extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -36,7 +36,7 @@ public class BoatGlitch extends Module {
     private Entity boat = null;
     private int dismountTicks = 0;
     private int remountTicks = 0;
-    private boolean dontPhase = true;
+    private boolean waitingForDismount = false;
     private boolean boatPhaseEnabled;
 
     public BoatGlitch() {
@@ -45,7 +45,7 @@ public class BoatGlitch extends Module {
 
     @Override
     public void onActivate() {
-        dontPhase = true;
+    	waitingForDismount = false;
         dismountTicks = 0;
         remountTicks = 0;
         boat = null;
@@ -71,17 +71,12 @@ public class BoatGlitch extends Module {
 
     @EventHandler
     private void onBoatMove(BoatMoveEvent event) {
-        if (dismountTicks == 0 && !dontPhase) {
+    	if (waitingForDismount && dismountTicks == 0) {
             if (boat != event.boat) {
                 if (boat != null) {
                     boat.noPhysics = false;
                 }
-                if (mc.player.getVehicle() != null && event.boat == mc.player.getVehicle()) {
                     boat = event.boat;
-                }
-                else {
-                    boat = null;
-                }
             }
             if (boat != null) {
                 boat.noPhysics = true;
@@ -92,6 +87,10 @@ public class BoatGlitch extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Post event) {
+        if (waitingForDismount && mc.player.getVehicle() == null) {
+            waitingForDismount = false;
+        }
+    	
         if (dismountTicks > 0) {
             dismountTicks--;
             if (dismountTicks == 0) {
@@ -104,13 +103,13 @@ public class BoatGlitch extends Module {
                         remountTicks = 5;
                     }
                 }
-                dontPhase = true;
             }
         }
         if (remountTicks > 0) {
             remountTicks--;
             if (remountTicks == 0) {
-                mc.getConnection().send( ServerboundInteractPacket.createInteractionPacket(boat, false, InteractionHand.MAIN_HAND));
+            	EntityHitResult location = new EntityHitResult(boat, boat.getBoundingBox().getCenter());
+            	mc.gameMode.interact(mc.player, boat, location, InteractionHand.MAIN_HAND);
                 if (toggleAfter.get()) {
                     toggle();
                 }
@@ -118,11 +117,11 @@ public class BoatGlitch extends Module {
         }
     }
     @EventHandler
-    private void onKey(KeyEvent event) {
+    private void onKey(KeyInputEvent event) {
         if (event.key() == mc.options.keyShift.getDefaultKey().getValue() && event.action == KeyAction.Press) {
             if (mc.player.getVehicle() instanceof AbstractBoat) {
-                dontPhase = false;
-                boat = null;
+                boat = (Entity) mc.player.getVehicle();
+                waitingForDismount = true;
             }
         }
     }

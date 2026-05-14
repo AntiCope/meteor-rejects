@@ -2,7 +2,7 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.entity.BoatMoveEvent;
-import meteordevelopment.meteorclient.mixininterface.IVec3d;
+import meteordevelopment.meteorclient.mixininterface.IVec3;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.DoubleSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -76,7 +76,7 @@ public class BoatPhase extends Module {
     private AbstractBoat boat = null;
 
     public BoatPhase() {
-        super(MeteorRejectsAddon.CATEGORY, "boat-phase", "Phase through blocks using a boat.");
+        super(MeteorRejectsAddon.CATEGORY, "boat-phase", "Phase through blocks using a boat. ONLY works on Paper servers without Anticheat");
     }
 
     @Override
@@ -130,7 +130,7 @@ public class BoatPhase extends Module {
                 else if (fall.get()) velY -= fallSpeed.get() / 20;
             } else if (fall.get()) velY -= fallSpeed.get() / 20;
 
-            ((IVec3d) boat.getDeltaMovement()).meteor$set(velX,velY,velZ);
+            ((IVec3) boat.getDeltaMovement()).meteor$set(velX,velY,velZ);
         }
     }
 }

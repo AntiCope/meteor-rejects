@@ -120,7 +120,7 @@ public class PacketFly extends Module {
     public PacketFly() {
         super(MeteorRejectsAddon.CATEGORY, "packet-fly", "Fly using packets.");
     }
-
+    
     @EventHandler
     public void onSendMovementPackets(SendMovementPacketsEvent.Pre event) {
         mc.player.setDeltaMovement(0.0,0.0,0.0);

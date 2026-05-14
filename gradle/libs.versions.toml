@@ -1,0 +1,58 @@
+[versions]
+mod-version = "0.4"
+
+# Fabric (https://fabricmc.net/develop)
+jdk = "25"
+minecraft = "26.1.2"
+fabric-loader = "0.19.2"
+fabric-api = "0.146.1+26.1.2"
+
+# Plugins
+# Loom (https://github.com/FabricMC/fabric-loom)
+loom = "1.16-SNAPSHOT"
+
+# Mods
+# Meteor (https://github.com/MeteorDevelopment/meteor-client)
+meteor = "26.1.2-SNAPSHOT"
+# Baritone (https://github.com/MeteorDevelopment/baritone)
+baritone = "26.1-SNAPSHOT"
+# SeedCrackerX (https://github.com/19MisterX98/SeedcrackerX)
+seedcrackerx-api = "2.10.1"
+# ExploitPreventer (https://github.com/NikOverflow/ExploitPreventer)
+exploit-preventer-api = "0.0.1"
+
+# Libraries
+# Cubiomes
+cubiomes = "1.22.5"
+# SeedFinding
+mc-math = "851e9d0577dfdca50154e98f1d334bd31c641326"
+mc-seed = "55f6242001f7eb4226df4ed0d023f1838a54a99d"
+mc-core = "eee662999e9f3fe037476b6940dbd6d5e23cdbb6"
+mc-noise = "dbab3996ea3abff5dd420db53c31d5498afd2fe5"
+mc-biome = "17af8cb1110fdc983b7cb2b887d1fb2060e23ee3"
+mc-terrain = "a03e440ec5b282e399382f2cc5ad0db91b438d2e"
+mc-feature = "919b7e513cc1e87e029a9cd703fc4e2dc8686229"
+
+[libraries]
+# Fabric base
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+
+# Mods
+meteor-client = { module = "meteordevelopment:meteor-client", version.ref = "meteor" }
+baritone = { module = "meteordevelopment:baritone", version.ref = "baritone" }
+seedcrackerx-api = { module = "com.github.19MisterX98.SeedcrackerX:seedcrackerx-api", version.ref = "seedcrackerx-api" }
+exploit-preventer-api = { module = "com.nikoverflow:exploit-preventer-api", version.ref = "exploit-preventer-api" }
+
+# Libraries
+cubiomes = { module = "dev.duti.acheong:cubiomes", version.ref = "cubiomes" }
+mc-math = { module = "com.seedfinding:mc_math", version.ref = "mc-math" }
+mc-seed = { module = "com.seedfinding:mc_seed", version.ref = "mc-seed" }
+mc-core = { module = "com.seedfinding:mc_core", version.ref = "mc-core" }
+mc-noise = { module = "com.seedfinding:mc_noise", version.ref = "mc-noise" }
+mc-biome = { module = "com.seedfinding:mc_biome", version.ref = "mc-biome" }
+mc-terrain = { module = "com.seedfinding:mc_terrain", version.ref = "mc-terrain" }
+mc-feature = { module = "com.seedfinding:mc_feature", version.ref = "mc-feature" }
+
+[plugins]
+fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "loom" }

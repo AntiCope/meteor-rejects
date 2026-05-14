@@ -3,6 +3,7 @@ package anticope.rejects.modules;
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.packets.PacketEvent;
 import meteordevelopment.meteorclient.events.render.Render3DEvent;
+import meteordevelopment.meteorclient.events.world.ChunkDataEvent;
 import meteordevelopment.meteorclient.renderer.ShapeMode;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -11,7 +12,6 @@ import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import net.minecraft.network.protocol.game.ClientboundSectionBlocksUpdatePacket;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -138,66 +138,44 @@ public class NewChunks extends Module {
 	}
 
 	@EventHandler
+	private void onChunkData(ChunkDataEvent event) {
+	    ChunkPos pos = event.chunk().getPos();
+	    if (newChunks.contains(pos) || oldChunks.contains(pos)) return;
+
+	    LevelChunk chunk = event.chunk();
+	    taskExecutor.execute(() -> {
+	        for (int x = chunk.getPos().getMinBlockX(); x <= chunk.getPos().getMaxBlockX(); x++) {
+	            for (int z = chunk.getPos().getMinBlockZ(); z <= chunk.getPos().getMaxBlockZ(); z++) {
+	                for (int y = mc.level.getMinY(); y < mc.level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z); y++) {
+	                    FluidState fluid = chunk.getFluidState(x, y, z);
+	                    if (!fluid.isEmpty() && !fluid.isSource()) {
+	                        oldChunks.add(pos);
+	                        return;
+	                    }
+	                }
+	            }
+	        }
+	    });
+	}
+
+	@EventHandler
 	private void onReadPacket(PacketEvent.Receive event) {
-		if (event.packet instanceof ClientboundSectionBlocksUpdatePacket) {
-			ClientboundSectionBlocksUpdatePacket packet = (ClientboundSectionBlocksUpdatePacket) event.packet;
+	    if (mc.level == null) return;
 
-			packet.runUpdates((pos, state) -> {
-				if (!state.getFluidState().isEmpty() && !state.getFluidState().isSource()) {
-					ChunkPos chunkPos = new ChunkPos(pos);
-
-					for (Direction dir: searchDirs) {
-						if (mc.level.getBlockState(pos.relative(dir)).getFluidState().isSource() && !oldChunks.contains(chunkPos)) {
-							newChunks.add(chunkPos);
-							return;
-						}
-					}
-				}
-			});
-		}
-
-		else if (event.packet instanceof ClientboundBlockUpdatePacket) {
-			ClientboundBlockUpdatePacket packet = (ClientboundBlockUpdatePacket) event.packet;
-
-			if (!packet.getBlockState().getFluidState().isEmpty() && !packet.getBlockState().getFluidState().isSource()) {
-				ChunkPos chunkPos = new ChunkPos(packet.getPos());
-
-				for (Direction dir: searchDirs) {
-					if (mc.level.getBlockState(packet.getPos().relative(dir)).getFluidState().isSource() && !oldChunks.contains(chunkPos)) {
-						newChunks.add(chunkPos);
-						return;
-					}
-				}
-			}
-		}
-
-		else if (event.packet instanceof ClientboundLevelChunkWithLightPacket && mc.level != null) {
-			ClientboundLevelChunkWithLightPacket packet = (ClientboundLevelChunkWithLightPacket) event.packet;
-
-			ChunkPos pos = new ChunkPos(packet.getX(), packet.getZ());
-
-			if (!newChunks.contains(pos) && mc.level.getChunkSource().getChunkForLighting(packet.getX(), packet.getZ()) == null) {
-				LevelChunk chunk = new LevelChunk(mc.level, pos);
-				try {
-					taskExecutor.execute(() -> chunk.replaceWithPacketData(packet.getChunkData().getReadBuffer(), new java.util.HashMap<>(), packet.getChunkData().getBlockEntitiesTagsConsumer(packet.getX(), packet.getZ())));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					return;
-				}
-
-
-				for (int x = 0; x < 16; x++) {
-					for (int z = 0; z < 16; z++) {
-						for (int y = mc.level.getMinY(); y < mc.level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z); y++) {
-							FluidState fluid = chunk.getFluidState(x, y, z);
-
-							if (!fluid.isEmpty() && !fluid.isSource()) {
-								oldChunks.add(pos);
-								return;
-							}
-						}
-					}
-				}
-			}
-		}
+	    if (event.packet instanceof ClientboundSectionBlocksUpdatePacket packet) {
+	        packet.runUpdates((pos, state) -> {
+	            FluidState fluid = state.getFluidState();
+	            if (fluid.isEmpty() || fluid.isSource()) return;
+	            ChunkPos chunkPos = ChunkPos.containing(pos);
+	            if (!newChunks.contains(chunkPos) && !oldChunks.contains(chunkPos))
+	                newChunks.add(chunkPos);
+	        });
+	    } else if (event.packet instanceof ClientboundBlockUpdatePacket packet) {
+	        FluidState fluid = packet.getBlockState().getFluidState();
+	        if (fluid.isEmpty() || fluid.isSource()) return;
+	        ChunkPos chunkPos = ChunkPos.containing(packet.getPos());
+	        if (!newChunks.contains(chunkPos) && !oldChunks.contains(chunkPos))
+	            newChunks.add(chunkPos);
+	    }
 	}
 }

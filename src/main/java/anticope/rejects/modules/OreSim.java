@@ -89,8 +89,8 @@ public class OreSim extends Module {
             return;
         }
         if (Seeds.get().getSeed() != null) {
-            int chunkX = mc.player.chunkPosition().x;
-            int chunkZ = mc.player.chunkPosition().z;
+            int chunkX = mc.player.chunkPosition().x();
+            int chunkZ = mc.player.chunkPosition().z();
 
             int rangeVal = horizontalRadius.get();
             for (int range = 0; range <= rangeVal; range++) {
@@ -106,7 +106,7 @@ public class OreSim extends Module {
     }
 
     private void renderChunk(int x, int z, Render3DEvent event) {
-        long chunkKey = ChunkPos.asLong(x,z);
+        long chunkKey = ChunkPos.pack(x,z);
 
         if (chunkRenderers.containsKey(chunkKey)) {
             Map<Ore, Set<Vec3>> chunk = chunkRenderers.get(chunkKey);
@@ -125,7 +125,7 @@ public class OreSim extends Module {
     private void onBlockUpdate(BlockUpdateEvent event) {
         if (airCheck.get() != AirCheck.RECHECK || event.newState.canOcclude()) return;
 
-        long chunkKey = ChunkPos.asLong(event.pos);
+        long chunkKey = ChunkPos.pack(event.pos);
         if (chunkRenderers.containsKey(chunkKey)) {
             Vec3 pos = Vec3.atLowerCornerOf(event.pos);
             for (var ore : chunkRenderers.get(chunkKey).values()) {
@@ -143,11 +143,11 @@ public class OreSim extends Module {
             var chunkPos = mc.player.chunkPosition();
             int rangeVal = 4;
             for (int range = 0; range <= rangeVal; ++range) {
-                for (int x = -range + chunkPos.x; x <= range + chunkPos.x; ++x) {
-                    oreGoals.addAll(addToBaritone(x, chunkPos.z + range - rangeVal));
+                for (int x = -range + chunkPos.x(); x <= range + chunkPos.x(); ++x) {
+                    oreGoals.addAll(addToBaritone(x, chunkPos.z() + range - rangeVal));
                 }
-                for (int x = -range + 1 + chunkPos.x; x < range + chunkPos.x; ++x) {
-                    oreGoals.addAll(this.addToBaritone(x, chunkPos.z - range + rangeVal + 1));
+                for (int x = -range + 1 + chunkPos.x(); x < range + chunkPos.x(); ++x) {
+                    oreGoals.addAll(this.addToBaritone(x, chunkPos.z() - range + rangeVal + 1));
                 }
             }
         }
@@ -155,7 +155,7 @@ public class OreSim extends Module {
 
     private ArrayList<BlockPos> addToBaritone(int chunkX, int chunkZ) {
         ArrayList<BlockPos> baritoneGoals = new ArrayList<>();
-        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.pack(chunkX, chunkZ);
         if (this.chunkRenderers.containsKey(chunkKey)) {
             this.chunkRenderers.get(chunkKey).entrySet().stream()
                     .filter(entry -> entry.getKey().active.get())
@@ -221,7 +221,7 @@ public class OreSim extends Module {
     private void doMathOnChunk(ChunkAccess chunk) {
 
         var chunkPos = chunk.getPos();
-        long chunkKey = chunkPos.toLong();
+        long chunkKey = chunkPos.pack();
 
         ClientLevel world = mc.level;
 
@@ -231,7 +231,7 @@ public class OreSim extends Module {
 
         Set<ResourceKey<Biome>> biomes = new HashSet<>();
         ChunkPos.rangeClosed(chunkPos, 1).forEach(chunkPosx -> {
-            ChunkAccess chunkxx = world.getChunk(chunkPosx.x, chunkPosx.z, ChunkStatus.BIOMES, false);
+            ChunkAccess chunkxx = world.getChunk(chunkPosx.x(), chunkPosx.z(), ChunkStatus.BIOMES, false);
             if (chunkxx == null) return;
 
             for(LevelChunkSection chunkSection : chunkxx.getSections()) {
@@ -240,8 +240,8 @@ public class OreSim extends Module {
         });
         Set<Ore> oreSet = biomes.stream().flatMap(b -> getDefaultOres(b).stream()).collect(Collectors.toSet());
 
-        int chunkX = chunkPos.x << 4;
-        int chunkZ = chunkPos.z << 4;
+        int chunkX = chunkPos.x() << 4;
+        int chunkZ = chunkPos.z() << 4;
         WorldgenRandom random = new WorldgenRandom(WorldgenRandom.Algorithm.XOROSHIRO.newInstance(0));
 
         long populationSeed = random.setDecorationSeed(worldSeed.seed, chunkX, chunkZ);
@@ -266,7 +266,7 @@ public class OreSim extends Module {
                 int y = ore.heightProvider.sample(random, ore.heightContext);
                 BlockPos origin = new BlockPos(x,y,z);
 
-                ResourceKey<Biome> biome = chunk.getNoiseBiome(x,y,z).unwrapKey().get();
+                ResourceKey<Biome> biome = chunk.getNoiseBiome(x, y, z).unwrapKey().get();
 
                 if (!getDefaultOres(biome).contains(ore)) {
                     continue;
@@ -315,7 +315,7 @@ public class OreSim extends Module {
 
         for (int s = n; s <= n + q; ++s) {
             for (int t = p; t <= p + q; ++t) {
-                if (o <= world.getHeight(Heightmap.Types.MOTION_BLOCKING, s, t)) {
+            	if (o <= world.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, s, t)) {
                     return this.generateVeinPart(world, random, veinSize, d, e, h, j, l, m, n, o, p, q, r, discardOnAir);
                 }
             }
@@ -324,9 +324,9 @@ public class OreSim extends Module {
         return new ArrayList<>();
     }
 
-    private ArrayList<Vec3> generateVeinPart(ClientLevel world, WorldgenRandom random, int veinSize, double startX, double endX, double startZ, double endZ, double startY, double endY, int x, int y, int z, int size, int i, float discardOnAir) {
+    private ArrayList<Vec3> generateVeinPart(ClientLevel world, WorldgenRandom random, int veinSize, double startX, double endX, double startZ, double endZ, double startY, double endY, int x, int y, int z, int size, int sizeY, float discardOnAir) {
 
-        BitSet bitSet = new BitSet(size * i * size);
+    	BitSet bitSet = new BitSet(size * sizeY * size);
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         double[] ds = new double[veinSize * 4];
 
@@ -392,11 +392,11 @@ public class OreSim extends Module {
                                 for (int al = ad; al <= ag; ++al) {
                                     double am = ((double) al + 0.5D - aa) / u;
                                     if (ai * ai + ak * ak + am * am < 1.0D) {
-                                        int an = ah - x + (aj - y) * size + (al - z) * size * i;
+                                    	int an = ah - x + (aj - y) * size + (al - z) * size * sizeY;
                                         if (!bitSet.get(an)) {
                                             bitSet.set(an);
                                             mutable.set(ah, aj, al);
-                                            if (aj >= -64 && aj < 320 && (airCheck.get() == AirCheck.OFF || world.getBlockState(mutable).canOcclude())) {
+                                            if (!world.isOutsideBuildHeight(aj) && (airCheck.get() == AirCheck.OFF || world.getBlockState(mutable).canOcclude())) {
                                                 if (shouldPlace(world, mutable, discardOnAir, random)) {
                                                     poses.add(new Vec3(ah, aj, al));
                                                 }

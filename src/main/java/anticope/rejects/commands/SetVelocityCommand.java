@@ -3,7 +3,7 @@ package anticope.rejects.commands;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 
 public class SetVelocityCommand extends Command {
     public SetVelocityCommand() {
@@ -11,7 +11,7 @@ public class SetVelocityCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
+    public void build(LiteralArgumentBuilder<ClientSuggestionProvider> builder) {
         builder.then(argument("y", DoubleArgumentType.doubleArg()).executes(ctx -> {
             var currentVelocity = mc.player.getDeltaMovement();
             mc.player.setDeltaMovement(currentVelocity.x, DoubleArgumentType.getDouble(ctx, "y"), currentVelocity.z);
