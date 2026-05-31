@@ -89,8 +89,8 @@ public class OreSim extends Module {
             return;
         }
         if (Seeds.get().getSeed() != null) {
-            int chunkX = mc.player.chunkPosition().x;
-            int chunkZ = mc.player.chunkPosition().z;
+            int chunkX = mc.player.chunkPosition().x();
+            int chunkZ = mc.player.chunkPosition().z();
 
             int rangeVal = horizontalRadius.get();
             for (int range = 0; range <= rangeVal; range++) {
@@ -106,7 +106,7 @@ public class OreSim extends Module {
     }
 
     private void renderChunk(int x, int z, Render3DEvent event) {
-        long chunkKey = ChunkPos.asLong(x,z);
+        long chunkKey = ChunkPos.pack(x, z);
 
         if (chunkRenderers.containsKey(chunkKey)) {
             Map<Ore, Set<Vec3>> chunk = chunkRenderers.get(chunkKey);
@@ -125,7 +125,7 @@ public class OreSim extends Module {
     private void onBlockUpdate(BlockUpdateEvent event) {
         if (airCheck.get() != AirCheck.RECHECK || event.newState.canOcclude()) return;
 
-        long chunkKey = ChunkPos.asLong(event.pos);
+        long chunkKey = ChunkPos.pack(event.pos);
         if (chunkRenderers.containsKey(chunkKey)) {
             Vec3 pos = Vec3.atLowerCornerOf(event.pos);
             for (var ore : chunkRenderers.get(chunkKey).values()) {
@@ -143,11 +143,11 @@ public class OreSim extends Module {
             var chunkPos = mc.player.chunkPosition();
             int rangeVal = 4;
             for (int range = 0; range <= rangeVal; ++range) {
-                for (int x = -range + chunkPos.x; x <= range + chunkPos.x; ++x) {
-                    oreGoals.addAll(addToBaritone(x, chunkPos.z + range - rangeVal));
+                for (int x = -range + chunkPos.x(); x <= range + chunkPos.x(); ++x) {
+                    oreGoals.addAll(addToBaritone(x, chunkPos.z() + range - rangeVal));
                 }
-                for (int x = -range + 1 + chunkPos.x; x < range + chunkPos.x; ++x) {
-                    oreGoals.addAll(this.addToBaritone(x, chunkPos.z - range + rangeVal + 1));
+                for (int x = -range + 1 + chunkPos.x(); x < range + chunkPos.x(); ++x) {
+                    oreGoals.addAll(this.addToBaritone(x, chunkPos.z() - range + rangeVal + 1));
                 }
             }
         }
@@ -155,7 +155,7 @@ public class OreSim extends Module {
 
     private ArrayList<BlockPos> addToBaritone(int chunkX, int chunkZ) {
         ArrayList<BlockPos> baritoneGoals = new ArrayList<>();
-        long chunkKey = ChunkPos.asLong(chunkX, chunkZ);
+        long chunkKey = ChunkPos.pack(chunkX, chunkZ);
         if (this.chunkRenderers.containsKey(chunkKey)) {
             this.chunkRenderers.get(chunkKey).entrySet().stream()
                     .filter(entry -> entry.getKey().active.get())
@@ -221,7 +221,7 @@ public class OreSim extends Module {
     private void doMathOnChunk(ChunkAccess chunk) {
 
         var chunkPos = chunk.getPos();
-        long chunkKey = chunkPos.toLong();
+        long chunkKey = chunkPos.pack();
 
         ClientLevel world = mc.level;
 
@@ -231,7 +231,7 @@ public class OreSim extends Module {
 
         Set<ResourceKey<Biome>> biomes = new HashSet<>();
         ChunkPos.rangeClosed(chunkPos, 1).forEach(chunkPosx -> {
-            ChunkAccess chunkxx = world.getChunk(chunkPosx.x, chunkPosx.z, ChunkStatus.BIOMES, false);
+            ChunkAccess chunkxx = world.getChunk(chunkPosx.x(), chunkPosx.z(), ChunkStatus.BIOMES, false);
             if (chunkxx == null) return;
 
             for(LevelChunkSection chunkSection : chunkxx.getSections()) {
@@ -240,8 +240,8 @@ public class OreSim extends Module {
         });
         Set<Ore> oreSet = biomes.stream().flatMap(b -> getDefaultOres(b).stream()).collect(Collectors.toSet());
 
-        int chunkX = chunkPos.x << 4;
-        int chunkZ = chunkPos.z << 4;
+        int chunkX = chunkPos.x() << 4;
+        int chunkZ = chunkPos.z() << 4;
         WorldgenRandom random = new WorldgenRandom(WorldgenRandom.Algorithm.XOROSHIRO.newInstance(0));
 
         long populationSeed = random.setDecorationSeed(worldSeed.seed, chunkX, chunkZ);

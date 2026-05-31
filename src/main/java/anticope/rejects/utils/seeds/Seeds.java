@@ -36,7 +36,7 @@ public class Seeds extends System<Seeds> {
 
     public Seed getSeed() {
         if (mc.hasSingleplayerServer() && mc.getSingleplayerServer() != null) {
-            MCVersion version = MCVersion.fromString(mc.getSingleplayerServer().getServerVersion());
+            MCVersion version = MCVersion.fromString(mc.getLaunchedVersion());
             if (version == null)
                 version = MCVersion.latest();
             return new Seed(mc.getSingleplayerServer().overworld().getSeed(), version);
