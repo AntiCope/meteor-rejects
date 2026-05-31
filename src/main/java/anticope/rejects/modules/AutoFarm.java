@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CocoaBlock;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.MushroomBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.PitcherCropBlock;
@@ -214,7 +214,7 @@ public class AutoFarm extends Module {
         if (!harvestBlocks.get().contains(block)) return false;
         if (!isMature(state, block)) return false;
         if (block instanceof SweetBerryBushBlock)
-            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
         else {
             BlockUtils.breakBlock(pos, true);
         }
@@ -233,7 +233,7 @@ public class AutoFarm extends Module {
                     break;
                 }
             }
-        } else if (block instanceof FarmBlock) {
+        } else if (block instanceof FarmlandBlock) {
             findItemResult = InvUtils.find(itemStack -> {
                 Item item = itemStack.getItem();
                 return item != Items.NETHER_WART && plantItems.get().contains(item);
