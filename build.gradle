@@ -1,11 +1,11 @@
 plugins {
 	id 'java'
-	id 'fabric-loom' version '1.14-SNAPSHOT'
+	id 'net.fabricmc.fabric-loom' version '1.14-SNAPSHOT'
 }
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -43,11 +43,11 @@ dependencies {
 	extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modImplementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
-    modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
+	implementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
+	compileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
 
 	// seed .locate and ore sim
 	extraLibs('com.seedfinding:mc_math:ffd2edcfcc0d18147549c88cc7d8ec6cf21b5b91') { transitive = false }
@@ -63,7 +63,7 @@ dependencies {
 //	implementation (include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:master-SNAPSHOT')) {transitive = false}
 
 	// Exploit Preventer (optional)
-	modCompileOnly("com.nikoverflow:exploit-preventer-api:0.0.1")
+	compileOnly("com.nikoverflow:exploit-preventer-api:0.0.1")
 
 	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
@@ -101,7 +101,7 @@ tasks.withType(JavaCompile).configureEach {
 	// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
 	// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
 	// We'll use that if it's available, but otherwise we'll use the older option.
-	def targetVersion = 21
+	def targetVersion = 25
 	if (JavaVersion.current().isJava9Compatible()) {
 		 it.options.release = targetVersion
 	}

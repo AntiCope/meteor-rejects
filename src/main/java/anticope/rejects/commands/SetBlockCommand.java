@@ -3,7 +3,7 @@ package anticope.rejects.commands;
 import anticope.rejects.arguments.ClientPosArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.commands.arguments.blocks.BlockInput;
 import net.minecraft.commands.arguments.blocks.BlockStateArgument;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,7 @@ public class SetBlockCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
+    public void build(LiteralArgumentBuilder<ClientSuggestionProvider> builder) {
         builder.then(argument("pos", ClientPosArgumentType.pos()).then(argument("block", BlockStateArgument.block(REGISTRY_ACCESS)).executes(ctx -> {
             Vec3 pos = ClientPosArgumentType.getPos(ctx, "pos");
             BlockState blockState = ctx.getArgument("block", BlockInput.class).getState();

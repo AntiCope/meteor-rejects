@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 public class MeteorRejectsAddon extends MeteorAddon {
     public static final Logger LOG = LoggerFactory.getLogger("Rejects");
-    public static final Category CATEGORY = new Category("Rejects", Items.BARRIER.getDefaultInstance());
+    public static final Category CATEGORY = new Category("Rejects", () -> Items.BARRIER.getDefaultInstance());
     public static final HudGroup HUD_GROUP = new HudGroup("Rejects");
 
     @Override
