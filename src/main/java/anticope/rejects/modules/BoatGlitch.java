@@ -2,7 +2,7 @@ package anticope.rejects.modules;
 
 import anticope.rejects.MeteorRejectsAddon;
 import meteordevelopment.meteorclient.events.entity.BoatMoveEvent;
-import meteordevelopment.meteorclient.events.meteor.KeyEvent;
+import meteordevelopment.meteorclient.events.meteor.KeyInputEvent;
 import meteordevelopment.meteorclient.events.world.TickEvent;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -110,7 +110,7 @@ public class BoatGlitch extends Module {
         if (remountTicks > 0) {
             remountTicks--;
             if (remountTicks == 0) {
-                mc.getConnection().send( ServerboundInteractPacket.createInteractionPacket(boat, false, InteractionHand.MAIN_HAND));
+                mc.getConnection().send(new ServerboundInteractPacket(boat.getId(), InteractionHand.MAIN_HAND, boat.position(), false));
                 if (toggleAfter.get()) {
                     toggle();
                 }
@@ -118,7 +118,7 @@ public class BoatGlitch extends Module {
         }
     }
     @EventHandler
-    private void onKey(KeyEvent event) {
+    private void onKey(KeyInputEvent event) {
         if (event.key() == mc.options.keyShift.getDefaultKey().getValue() && event.action == KeyAction.Press) {
             if (mc.player.getVehicle() instanceof AbstractBoat) {
                 dontPhase = false;
