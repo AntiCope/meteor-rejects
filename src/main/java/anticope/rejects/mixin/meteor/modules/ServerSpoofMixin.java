@@ -1,5 +1,6 @@
 package anticope.rejects.mixin.meteor.modules;
 
+import anticope.rejects.mixininterface.IServerSpoof;
 import anticope.rejects.utils.ExploitPreventerCompat;
 import meteordevelopment.meteorclient.settings.BoolSetting;
 import meteordevelopment.meteorclient.settings.Setting;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ServerSpoof.class, remap = false)
-public class ServerSpoofMixin extends Module {
+public class ServerSpoofMixin extends Module implements IServerSpoof {
     private static final boolean EP_LOADED = FabricLoader.getInstance().isModLoaded("exploitpreventer");
 
     private SettingGroup sgExploitPreventer;
@@ -64,14 +65,16 @@ public class ServerSpoofMixin extends Module {
         );
     }
 
-    @Inject(method = "onActivate", at = @At("TAIL"))
-    private void onActivate(CallbackInfo ci) {
+    // ServerSpoof no longer overrides onActivate/onDeactivate, so there is nothing to inject
+    // into here. ModuleMixin calls these when the module is toggled.
+    @Override
+    public void rejects$applyExploitPreventer() {
         if (!EP_LOADED) return;
         ExploitPreventerCompat.applyAll(translationKey.get(), fingerprinting.get(), localHTTPRequest.get());
     }
 
-    @Inject(method = "onDeactivate", at = @At("TAIL"), remap = false)
-    private void onDeactivate(CallbackInfo ci) {
+    @Override
+    public void rejects$disableExploitPreventer() {
         if (!EP_LOADED) return;
         ExploitPreventerCompat.disableAll();
     }

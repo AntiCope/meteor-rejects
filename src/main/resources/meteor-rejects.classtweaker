@@ -1,0 +1,4 @@
+classTweaker	v1	official
+
+# ServerboundInteractPacket$Action no longer exists in 26.1 - attacks are sent as
+# ServerboundAttackPacket and interactions carry their hit location directly.

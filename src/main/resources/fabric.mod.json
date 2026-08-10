@@ -30,13 +30,13 @@
     "meteor-rejects.mixins.json",
     "meteor-rejects-meteor.mixins.json"
   ],
-  "accessWidener": "meteor-rejects.accesswidener",
+  "accessWidener": "meteor-rejects.classtweaker",
   "custom": {
     "meteor-client:color": "227,0,0",
     "github:sha": "${gh_hash}"
   },
   "depends": {
-    "java": ">=21",
+    "java": ">=25",
     "minecraft": "~${mc_version}",
     "meteor-client": "*"
   },

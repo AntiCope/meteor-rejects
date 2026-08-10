@@ -4,20 +4,21 @@ import anticope.rejects.mixin.EntityAccessor;
 import anticope.rejects.modules.InteractionMenu;
 import com.mojang.blaze3d.platform.InputConstants;
 import meteordevelopment.meteorclient.MeteorClient;
-import meteordevelopment.meteorclient.events.meteor.KeyEvent;
+import meteordevelopment.meteorclient.events.meteor.KeyInputEvent;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.misc.MeteorStarscript;
 import meteordevelopment.meteorclient.utils.render.PeekScreen;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -99,12 +100,12 @@ public class InteractionScreen extends Screen {
                     minecraft.player.connection.send(new ServerboundPlayerInputPacket(new net.minecraft.world.entity.player.Input(false, false, false, false, false, true, false)));
 
                 }
-                minecraft.player.connection.send(ServerboundInteractPacket.createInteractionPacket(entity, true, InteractionHand.MAIN_HAND));
+                minecraft.player.connection.send(new ServerboundInteractPacket(entity.getId(), InteractionHand.MAIN_HAND, Vec3.ZERO, true));
                 minecraft.player.setShiftKeyDown(false);
             });
             case AbstractMinecartContainer storageMinecartEntity -> functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
-                minecraft.player.connection.send(ServerboundInteractPacket.createInteractionPacket(entity, true, InteractionHand.MAIN_HAND));
+                minecraft.player.connection.send(new ServerboundInteractPacket(entity.getId(), InteractionHand.MAIN_HAND, Vec3.ZERO, true));
             });
             case null, default -> functions.put("Open Inventory", (Entity e) -> {
                 closeScreen();
@@ -116,7 +117,7 @@ public class InteractionScreen extends Screen {
 
         functions.put("Spectate", (Entity e) -> {
             Minecraft.getInstance().setCameraEntity(e);
-            minecraft.player.displayClientMessage(Component.literal("Sneak to un-spectate."), true);
+            minecraft.player.sendOverlayMessage(Component.literal("Sneak to un-spectate."));
             MeteorClient.EVENT_BUS.subscribe(shiftListener);
             closeScreen();
         });
@@ -246,14 +247,14 @@ public class InteractionScreen extends Screen {
         return false;
     }
 
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         // Draw crosshair icon (simplified - using drawTexture instead)
         // context.drawGuiTexture(GUI_ICONS_TEXTURE, crosshairX - 8, crosshairY - 8, 0, 0, 15, 15);
 
         drawDots(context, (int) (Math.min(height, width) / 2 * 0.75), mouseX, mouseY);
 
         // Draw entity name (without scaling, as Matrix3x2fStack doesn't support push/pop/scale in 3D)
-        context.drawCenteredString(font, entity.getName(), width / 2, 12, 0xFFFFFFFF);
+        context.centeredText(font, entity.getName(), width / 2, 12, 0xFFFFFFFF);
 
         Vector2f mouse = getMouseVecs(mouseX, mouseY);
 
@@ -262,7 +263,7 @@ public class InteractionScreen extends Screen {
 
         minecraft.player.setYRot(yaw + mouse.x / 3);
         minecraft.player.setXRot(Mth.clamp(pitch + mouse.y / 3, -90f, 90f));
-        super.render(context, mouseX, mouseY, delta);
+        super.extractRenderState(context, mouseX, mouseY, delta);
     }
 
     private Vector2f getMouseVecs(int mouseX, int mouseY) {
@@ -281,7 +282,7 @@ public class InteractionScreen extends Screen {
         return mouse;
     }
 
-    private void drawDots(GuiGraphics context, int radius, int mouseX, int mouseY) {
+    private void drawDots(GuiGraphicsExtractor context, int radius, int mouseX, int mouseY) {
         ArrayList<Point> pointList = new ArrayList<Point>();
         String[] cache = new String[functions.size()];
         double lowestDistance = Double.MAX_VALUE;
@@ -316,44 +317,44 @@ public class InteractionScreen extends Screen {
         }
     }
 
-    private void drawRect(GuiGraphics context, int startX, int startY, int width, int height, int colorInner, int colorOuter) {
-        context.hLine(startX, startX + width, startY, colorOuter);
-        context.hLine(startX, startX + width, startY + height, colorOuter);
-        context.vLine(startX, startY, startY + height, colorOuter);
-        context.vLine(startX + width, startY, startY + height, colorOuter);
+    private void drawRect(GuiGraphicsExtractor context, int startX, int startY, int width, int height, int colorInner, int colorOuter) {
+        context.horizontalLine(startX, startX + width, startY, colorOuter);
+        context.horizontalLine(startX, startX + width, startY + height, colorOuter);
+        context.verticalLine(startX, startY, startY + height, colorOuter);
+        context.verticalLine(startX + width, startY, startY + height, colorOuter);
         context.fill(startX + 1, startY + 1, startX + width, startY + height, colorInner);
     }
 
-    private void drawTextField(GuiGraphics context, int x, int y, String key) {
+    private void drawTextField(GuiGraphicsExtractor context, int x, int y, String key) {
         if (x >= width / 2) {
             drawRect(context, x + 10, y - 8, font.width(key) + 3, 15, backgroundColor, borderColor);
-            context.drawString(font, key, x + 12, y - 4, textColor);
+            context.text(font, key, x + 12, y - 4, textColor);
         } else {
             drawRect(context, x - 14 - font.width(key), y - 8, font.width(key) + 3, 15, backgroundColor, borderColor);
-            context.drawString(font, key, x - 12 - font.width(key), y - 4, textColor);
+            context.text(font, key, x - 12 - font.width(key), y - 4, textColor);
         }
     }
 
     // Literally drawing it in code
-    private void drawDot(GuiGraphics context, int startX, int startY, int colorInner) {
+    private void drawDot(GuiGraphicsExtractor context, int startX, int startY, int colorInner) {
         // Draw dot itself
-        context.hLine(startX + 2, startX + 5, startY, borderColor);
-        context.hLine(startX + 1, startX + 6, startY + 1, borderColor);
-        context.hLine(startX + 2, startX + 5, startY + 1, colorInner);
+        context.horizontalLine(startX + 2, startX + 5, startY, borderColor);
+        context.horizontalLine(startX + 1, startX + 6, startY + 1, borderColor);
+        context.horizontalLine(startX + 2, startX + 5, startY + 1, colorInner);
         context.fill(startX, startY + 2, startX + 8, startY + 6, borderColor);
         context.fill(startX + 1, startY + 2, startX + 7, startY + 6, colorInner);
-        context.hLine(startX + 1, startX + 6, startY + 6, borderColor);
-        context.hLine(startX + 2, startX + 5, startY + 6, colorInner);
-        context.hLine(startX + 2, startX + 5, startY + 7, borderColor);
+        context.horizontalLine(startX + 1, startX + 6, startY + 6, borderColor);
+        context.horizontalLine(startX + 2, startX + 5, startY + 6, colorInner);
+        context.horizontalLine(startX + 2, startX + 5, startY + 7, borderColor);
 
         // Draw light overlay
-        context.hLine(startX + 2, startX + 3, startY + 1, 0x80FFFFFF);
-        context.hLine(startX + 1, startX + 1, startY + 2, 0x80FFFFFF);
+        context.horizontalLine(startX + 2, startX + 3, startY + 1, 0x80FFFFFF);
+        context.horizontalLine(startX + 1, startX + 1, startY + 2, 0x80FFFFFF);
     }
 
     private class StaticListener {
         @EventHandler
-        private void onKey(KeyEvent event) {
+        private void onKey(KeyInputEvent event) {
             if (event.key() == minecraft.options.keyShift.getDefaultKey().getValue()) {
                 minecraft.setCameraEntity(minecraft.player);
                 event.cancel();

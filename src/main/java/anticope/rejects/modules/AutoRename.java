@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
 import java.util.List;
+import java.util.Optional;
 
 public class AutoRename extends Module {
     public enum ContainerType {
@@ -127,18 +128,17 @@ public class AutoRename extends Module {
     }
 
     private String getFirstItemName(ItemStack stack) {
+        // Container/bundle contents hold ItemStackTemplates since 26.1; the copy streams give real stacks.
         ItemContainerContents container = stack.get(DataComponents.CONTAINER);
         if (container != null) {
-            for (ItemStack item : container.nonEmptyItems()) {
-                return item.getHoverName().getString();
-            }
+            Optional<ItemStack> first = container.nonEmptyItemCopyStream().findFirst();
+            if (first.isPresent()) return first.get().getHoverName().getString();
         }
 
         BundleContents bundle = stack.get(DataComponents.BUNDLE_CONTENTS);
         if (bundle != null) {
-            for (ItemStack item : bundle.items()) {
-                return item.getHoverName().getString();
-            }
+            Optional<ItemStack> first = bundle.itemCopyStream().findFirst();
+            if (first.isPresent()) return first.get().getHoverName().getString();
         }
         return "";
     }

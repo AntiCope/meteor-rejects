@@ -1,11 +1,11 @@
 plugins {
 	id 'java'
-	id 'fabric-loom' version '1.14-SNAPSHOT'
+	id 'fabric-loom' version '1.17.19'
 }
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -27,7 +27,7 @@ repositories {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/meteor-rejects.accesswidener")
+	accessWidenerPath = file("src/main/resources/meteor-rejects.classtweaker")
 }
 
 configurations {
@@ -42,12 +42,18 @@ dependencies {
 	extraLibs('dev.duti.acheong:cubiomes:1.22.3:osx') { transitive = false }
 	extraLibs('dev.duti.acheong:cubiomes:1.22.3:windows64') { transitive = false }
 	// To change the versions see the gradle.properties file
+	// Minecraft 26.x ships de-obfuscated, so no mappings are declared.
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	// With obfuscation disabled Loom does not register the mod* configurations,
+	// so mod dependencies are declared like ordinary ones.
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
-    modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
+	implementation("meteordevelopment:meteor-client:${project.minecraft_version}-SNAPSHOT")
+    compileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
+
+	// The integrated server implements Fabric API interfaces, so this is needed to compile
+	// against MinecraftServer. Meteor pulls it at runtime, which is not enough for javac.
+	compileOnly "net.fabricmc.fabric-api:fabric-resource-loader-v1:${project.fabric_resource_loader_version}"
 
 	// seed .locate and ore sim
 	extraLibs('com.seedfinding:mc_math:ffd2edcfcc0d18147549c88cc7d8ec6cf21b5b91') { transitive = false }
@@ -63,7 +69,7 @@ dependencies {
 //	implementation (include('com.github.19MisterX98.SeedcrackerX:seedcrackerx-api:master-SNAPSHOT')) {transitive = false}
 
 	// Exploit Preventer (optional)
-	modCompileOnly("com.nikoverflow:exploit-preventer-api:0.0.1")
+	compileOnly("com.nikoverflow:exploit-preventer-api:0.0.1")
 
 	configurations.implementation.extendsFrom(configurations.extraLibs)
 }
@@ -101,7 +107,7 @@ tasks.withType(JavaCompile).configureEach {
 	// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
 	// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
 	// We'll use that if it's available, but otherwise we'll use the older option.
-	def targetVersion = 21
+	def targetVersion = 25
 	if (JavaVersion.current().isJava9Compatible()) {
 		 it.options.release = targetVersion
 	}

@@ -4,7 +4,7 @@ import anticope.rejects.arguments.ClientPosArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.world.phys.Vec3;
 
 public class TeleportCommand extends Command {
@@ -15,7 +15,7 @@ public class TeleportCommand extends Command {
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
+    public void build(LiteralArgumentBuilder<ClientSuggestionProvider> builder) {
         builder.then(argument("pos", ClientPosArgumentType.pos()).executes(ctx -> {
             Vec3 pos = ClientPosArgumentType.getPos(ctx, "pos");
             mc.player.absSnapTo(pos.x(), pos.y(), pos.z());

@@ -1,5 +1,6 @@
 package anticope.rejects.mixin.meteor;
 
+import anticope.rejects.mixininterface.IServerSpoof;
 import anticope.rejects.utils.RejectsConfig;
 import anticope.rejects.utils.RejectsUtils;
 import meteordevelopment.meteorclient.systems.modules.Category;
@@ -24,5 +25,16 @@ public class ModuleMixin {
             this.name = RejectsUtils.getModuleName(name);
             this.title = Utils.nameToTitle(this.name);
         }
+    }
+
+    // ServerSpoof stopped overriding these, so its Exploit Preventer hooks ride along on Module.
+    @Inject(method = "onActivate", at = @At("TAIL"))
+    private void onActivate(CallbackInfo info) {
+        if (this instanceof IServerSpoof spoof) spoof.rejects$applyExploitPreventer();
+    }
+
+    @Inject(method = "onDeactivate", at = @At("TAIL"))
+    private void onDeactivate(CallbackInfo info) {
+        if (this instanceof IServerSpoof spoof) spoof.rejects$disableExploitPreventer();
     }
 }
