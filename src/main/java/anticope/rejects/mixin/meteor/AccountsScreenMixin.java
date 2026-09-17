@@ -27,6 +27,6 @@ public abstract class AccountsScreenMixin extends WindowScreen {
 
     @Inject(method = "initWidgets", at = @At(value = "INVOKE", target = "Lmeteordevelopment/meteorclient/gui/screens/accounts/AccountsScreen;addButton(Lmeteordevelopment/meteorclient/gui/widgets/containers/WContainer;Ljava/lang/String;Ljava/lang/Runnable;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
     private void afterAddCrackedButton(CallbackInfo info, WHorizontalList l) {
-        addButton(l, "Yggdrasil", () -> mc.setScreen(new AddCustomYggdrasilAccountScreen(theme, (AccountsScreen) (Object) this)));
+        addButton(l, "Yggdrasil", () -> mc.gui.setScreen(new AddCustomYggdrasilAccountScreen(theme, (AccountsScreen) (Object) this)));
     }
 }

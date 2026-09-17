@@ -12,6 +12,7 @@ import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import org.meteordev.starscript.value.Value;
 import org.meteordev.starscript.value.ValueMap;
@@ -27,7 +28,7 @@ public class InteractionMenu extends Module {
     private final Setting<Set<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Entities")
-            .defaultValue(EntityType.PLAYER)
+            .defaultValue(EntityTypes.PLAYER)
             .build()
     );
     public final Setting<Keybind> keybind = sgGeneral.add(new KeybindSetting.Builder()
@@ -88,7 +89,7 @@ public class InteractionMenu extends Module {
     }
 
     public void onKey() {
-        if (mc.player == null || mc.screen != null) return;
+        if (mc.player == null || mc.gui.screen() != null) return;
         Entity e = null;
         if (useCrosshairTarget.get()) {
             e = mc.crosshairPickEntity;
@@ -101,7 +102,7 @@ public class InteractionMenu extends Module {
 
         if (e == null) return;
         if (entities.get().contains(e.getType())) {
-            mc.setScreen(new InteractionScreen(e, this));
+            mc.gui.setScreen(new InteractionScreen(e, this));
         }
     }
 

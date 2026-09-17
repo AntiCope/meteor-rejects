@@ -4,7 +4,7 @@ import anticope.rejects.MeteorRejectsAddon;
 import anticope.rejects.utils.seeds.Seeds;
 import meteordevelopment.meteorclient.MeteorClient;
 import meteordevelopment.meteorclient.events.entity.player.PlayerMoveEvent;
-import meteordevelopment.meteorclient.mixininterface.IVec3d;
+import meteordevelopment.meteorclient.mixininterface.IVec3;
 import meteordevelopment.meteorclient.systems.modules.Module;
 import meteordevelopment.meteorclient.systems.modules.Modules;
 import meteordevelopment.meteorclient.utils.PostInit;
@@ -69,9 +69,9 @@ public class RejectsUtils {
             double xDir = Math.cos(Math.toRadians(dir + 90));
             double zDir = Math.sin(Math.toRadians(dir + 90));
 
-            ((IVec3d) event.movement).meteor$setXZ(xDir * speed, zDir * speed);
+            ((IVec3) event.movement).meteor$setXZ(xDir * speed, zDir * speed);
         } else {
-            ((IVec3d) event.movement).meteor$setXZ(0, 0);
+            ((IVec3) event.movement).meteor$setXZ(0, 0);
         }
 
         float ySpeed = 0;
@@ -80,7 +80,7 @@ public class RejectsUtils {
             ySpeed += speed;
         if (mc.options.keyShift.isDown())
             ySpeed -= speed;
-        ((IVec3d) event.movement).meteor$setY(verticalSpeedMatch ? ySpeed : ySpeed / 2);
+        ((IVec3) event.movement).meteor$setY(verticalSpeedMatch ? ySpeed : ySpeed / 2);
 
         return ySpeed;
     }

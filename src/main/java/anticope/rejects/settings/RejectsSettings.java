@@ -32,7 +32,7 @@ public class RejectsSettings {
 
     private void gameModeListW(WTable table, GameModeListSetting setting) {
         WButton button = table.add(theme.button("Select")).expandCellX().widget();
-        button.action = () -> mc.setScreen(new GameModeListSettingScreen(theme, setting));
+        button.action = () -> mc.gui.setScreen(new GameModeListSettingScreen(theme, setting));
 
         WButton reset = table.add(theme.button(GuiRenderer.RESET)).widget();
         reset.action = setting::reset;

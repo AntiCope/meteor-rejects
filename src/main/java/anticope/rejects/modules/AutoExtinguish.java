@@ -118,8 +118,8 @@ public class AutoExtinguish extends Module {
                 blockPos = mc.player.blockPosition();
                 final int slot = findSlot(Items.WATER_BUCKET);
                 if (mc.level.getBlockState(blockPos).getBlock() == Blocks.FIRE || mc.level.getBlockState(blockPos).getBlock() == Blocks.SOUL_FIRE) {
-                    float yaw = mc.gameRenderer.getMainCamera().yRot() % 360;
-                    float pitch = mc.gameRenderer.getMainCamera().xRot() % 360;
+                    float yaw = mc.gameRenderer.mainCamera().yRot() % 360;
+                    float pitch = mc.gameRenderer.mainCamera().xRot() % 360;
                     if (center.get()) {
                         PlayerUtils.centerPlayer();
                     }
@@ -155,8 +155,8 @@ public class AutoExtinguish extends Module {
                 PlayerUtils.centerPlayer();
             }
             mc.player.getInventory().setSelectedSlot(slot);
-            float yaw = mc.gameRenderer.getMainCamera().yRot() % 360;
-            float pitch = mc.gameRenderer.getMainCamera().xRot() % 360;
+            float yaw = mc.gameRenderer.mainCamera().yRot() % 360;
+            float pitch = mc.gameRenderer.mainCamera().xRot() % 360;
 
             Rotations.rotate(yaw, 90);
             mc.gameMode.useItem(mc.player, InteractionHand.MAIN_HAND);

@@ -27,7 +27,7 @@ public class GameRendererMixin {
 
         if (shader != null) {
 //            shader.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
-            shader.process(this.minecraft.getMainRenderTarget(), this.resourcePool);
+            shader.process(this.minecraft.gameRenderer.mainRenderTarget(), this.resourcePool);
         }
     }
 }

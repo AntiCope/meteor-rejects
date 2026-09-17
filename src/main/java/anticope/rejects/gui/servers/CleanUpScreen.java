@@ -82,7 +82,7 @@ public class CleanUpScreen extends WindowScreen {
             }
 
         saveServerList();
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     private boolean shouldRemove(ServerData server, Set<String> knownIPs) {

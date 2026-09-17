@@ -12,7 +12,7 @@ import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundAttackPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.network.protocol.game.ServerboundSwingPacket;
 import net.minecraft.world.entity.Entity;
@@ -40,7 +40,7 @@ public class ShieldBypass extends Module {
     @EventHandler
     private void onMouseButton(MouseClickEvent event) {
         if (Modules.get().isActive(KillAura.class)) return;
-        if (mc.screen == null && !mc.player.isUsingItem() && event.action == KeyAction.Press && event.button() == GLFW_MOUSE_BUTTON_LEFT) {
+        if (mc.gui.screen() == null && !mc.player.isUsingItem() && event.action == KeyAction.Press && event.button() == GLFW_MOUSE_BUTTON_LEFT) {
             if (mc.hitResult instanceof EntityHitResult result) {
                 bypass(result.getEntity(), event);
             }
@@ -86,7 +86,7 @@ public class ShieldBypass extends Module {
 
             mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(newPos.x(), newPos.y(), newPos.z(), true, false));
 
-            mc.getConnection().send(ServerboundInteractPacket.createAttackPacket(e, mc.player.isShiftKeyDown()));
+            mc.getConnection().send(new ServerboundAttackPacket(e.getId()));
             mc.getConnection().send(new ServerboundSwingPacket(mc.player.getUsedItemHand()));
             mc.player.resetOnlyAttackStrengthTicker();
 
