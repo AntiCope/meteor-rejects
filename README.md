@@ -38,7 +38,7 @@
 - AntiVanish
 - ArrowDmg (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
-- AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
+- AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/master/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoDrop
 - AutoEnchant
 - AutoExtinguish
@@ -51,7 +51,7 @@
 - AutoWither (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1070))
 - BlockIn
 - BoatGlitch & BoatPhase (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/814))
-- Boost (Ported from [Cornos](https://github.com/cornos/Cornos/blob/master/src/main/java/me/zeroX150/cornos/features/module/impl/movement/Boost.java))
+- Boost (Ported from [Cornos](https://web.archive.org/web/20211010164717/https://github.com/0x151/Cornos))
 - BungeeCordSpoof (Ported from [LiquidBounce](https://github.com/CCBlueX/LiquidBounce))
 - ChatBot
 - ChestAura
@@ -73,10 +73,10 @@
 - Lavacast
 - LawnBot (Ported from [JexClient](https://github.com/DustinRepo/JexClient/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/world/LawnBot.java))
 - MossBot (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
-- NewChunks (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/blob/master/BleachHack-Fabric-1.17/src/main/java/bleach/hack/module/mods/NewChunks.java))
+- NewChunks (Ported from [BleachHack](https://github.com/BleachDev/BleachHack/blob/1.17.1/src/main/java/org/bleachhack/module/mods/NewChunks.java))
 - NoJumpDelay
-- ObsidianFarm (Taken from [Meteor ObsidianFarm Addon](https://github.com/VoidCyborg/meteor-obsidian-farm))
-- Oresim (Ported from [Atomic](https://gitlab.com/0x151/atomic))
+- ObsidianFarm (Taken from [Meteor ObsidianFarm Addon](https://web.archive.org/web/20230710080202/https://github.com/VoidCyborg/meteor-obsidian-farm))
+- Oresim (Ported from [Atomic](https://web.archive.org/web/20220822080625/https://gitlab.com/0x151/atomic))
 - PacketFly (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/813))
 - Painter
 - Rendering
