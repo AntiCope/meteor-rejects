@@ -36,7 +36,7 @@
 - AntiCrash (Ported from [Anti-ClientCrasher](https://github.com/wagyourtail/Anti-ClientCrasher))
 - AntiSpawnpoint
 - AntiVanish
-- ArrowDmg (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
+- ArrowDmg (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7))
 - AutoBedTrap (Ported from [BleachHack-CupEdition](https://github.com/CUPZYY/BleachHack-CupEdition/blob/master/CupEdition-1.17/src/main/java/bleach/hack/module/mods/AutoBedtrap.java))
 - AutoCraft (More generalized version of [AutoBedCraft](https://github.com/Anticope/orion/blob/main/src/main/java/me/ghosttypes/orion/modules/main/AutoBedCraft.java) from orion)
 - AutoDrop
@@ -46,7 +46,7 @@
 - AutoGrind
 - AutoLogin
 - AutoPot (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/274))
-- AutoSoup (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
+- AutoSoup (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7))
 - AutoTNT
 - AutoWither (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1070))
 - BlockIn
@@ -61,12 +61,12 @@
 - Coord Logger (World events from [JexClient](https://github.com/DustinRepo/JexClient-main/blob/main/src/main/java/me/dustin/jex/feature/mod/impl/misc/CoordFinder.java))
 - Custom Packets
 - DebugRender
-- Extra Elytra (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
+- Extra Elytra (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7))
 - FullFlight (Antikick bypasses by [CCblueX](https://github.com/CCblueX) and [LiveOverflow](https://github.com/LiveOverflow))
 - Gamemode notifier
 - Ghost Mode (Taken from an [unmerged PR](https://github.com/MeteorDevelopment/meteor-client/pull/1932))
-- Glide (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
-- Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7/tree))
+- Glide (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7))
+- Item generator (Ported from [Wurst](https://github.com/Wurst-Imperium/Wurst7))
 - InteractionMenu (Ported from [BleachHack](https://github.com/BleachDrinker420/BleachHack/pull/211))
 - Jetpack
 - KnockbackPlus
