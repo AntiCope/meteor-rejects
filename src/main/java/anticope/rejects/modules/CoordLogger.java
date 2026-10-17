@@ -18,6 +18,7 @@ import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.phys.Vec3;
 import java.util.UUID;
@@ -101,7 +102,7 @@ public class CoordLogger extends Module {
                 Entity entity = mc.level.getEntity(packet.id());
                 
                 // Player teleport
-                if (entity.getType().equals(EntityType.PLAYER) && players.get()) {
+                if (entity.getType().equals(EntityTypes.PLAYER) && players.get()) {
                     Vec3 packetPosition = packet.change().position();
                     Vec3 playerPosition = new Vec3(entity.getX(), entity.getY(), entity.getZ());
 
@@ -111,7 +112,7 @@ public class CoordLogger extends Module {
                 }
 
                 // World teleport
-                else if (entity.getType().equals(EntityType.WOLF) && wolves.get()) {
+                else if (entity.getType().equals(EntityTypes.WOLF) && wolves.get()) {
                     Vec3 packetPosition = packet.change().position();
                     Vec3 wolfPosition = new Vec3(entity.getX(), entity.getY(), entity.getZ());
 

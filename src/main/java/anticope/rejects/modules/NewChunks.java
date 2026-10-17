@@ -144,7 +144,7 @@ public class NewChunks extends Module {
 
 			packet.runUpdates((pos, state) -> {
 				if (!state.getFluidState().isEmpty() && !state.getFluidState().isSource()) {
-					ChunkPos chunkPos = new ChunkPos(pos);
+					ChunkPos chunkPos = ChunkPos.containing(pos);
 
 					for (Direction dir: searchDirs) {
 						if (mc.level.getBlockState(pos.relative(dir)).getFluidState().isSource() && !oldChunks.contains(chunkPos)) {
@@ -160,7 +160,7 @@ public class NewChunks extends Module {
 			ClientboundBlockUpdatePacket packet = (ClientboundBlockUpdatePacket) event.packet;
 
 			if (!packet.getBlockState().getFluidState().isEmpty() && !packet.getBlockState().getFluidState().isSource()) {
-				ChunkPos chunkPos = new ChunkPos(packet.getPos());
+				ChunkPos chunkPos = ChunkPos.containing(packet.getPos());
 
 				for (Direction dir: searchDirs) {
 					if (mc.level.getBlockState(packet.getPos().relative(dir)).getFluidState().isSource() && !oldChunks.contains(chunkPos)) {
@@ -174,12 +174,12 @@ public class NewChunks extends Module {
 		else if (event.packet instanceof ClientboundLevelChunkWithLightPacket && mc.level != null) {
 			ClientboundLevelChunkWithLightPacket packet = (ClientboundLevelChunkWithLightPacket) event.packet;
 
-			ChunkPos pos = new ChunkPos(packet.getX(), packet.getZ());
+			ChunkPos pos = new ChunkPos(packet.x(), packet.z());
 
-			if (!newChunks.contains(pos) && mc.level.getChunkSource().getChunkForLighting(packet.getX(), packet.getZ()) == null) {
+			if (!newChunks.contains(pos) && mc.level.getChunkSource().getChunkForLighting(packet.x(), packet.z()) == null) {
 				LevelChunk chunk = new LevelChunk(mc.level, pos);
 				try {
-					taskExecutor.execute(() -> chunk.replaceWithPacketData(packet.getChunkData().getReadBuffer(), new java.util.HashMap<>(), packet.getChunkData().getBlockEntitiesTagsConsumer(packet.getX(), packet.getZ())));
+					taskExecutor.execute(() -> chunk.replaceWithPacketData(packet.x(), packet.z(), packet.chunkData()));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					return;
 				}

@@ -19,7 +19,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void onInit(CallbackInfo info) {
-        addRenderableWidget(new Button.Builder(Component.literal("Servers"), button -> minecraft.setScreen(new ServerManagerScreen(GuiThemes.get(), (JoinMultiplayerScreen) (Object) this)))
+        addRenderableWidget(new Button.Builder(Component.literal("Servers"), button -> minecraft.gui.setScreen(new ServerManagerScreen(GuiThemes.get(), (JoinMultiplayerScreen) (Object) this)))
                 .size(75, 20)
                 .pos(this.width - 75 - 3 - 75 - 2 - 75 - 2, 3)
                 .build());

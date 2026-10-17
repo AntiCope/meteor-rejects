@@ -44,7 +44,7 @@ public class WorldUtils {
             mc.player.setShiftKeyDown(false);
             InvUtils.swap(findItemResult.slot(), true);
             mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
-            mc.player.swing(InteractionHand.MAIN_HAND);
+            mc.player.swing(InteractionHand.MAIN_HAND, mc.player.getItemInHand(InteractionHand.MAIN_HAND).getInteractAnimation(), false);
             InvUtils.swapBack();
             mc.player.setShiftKeyDown(wasSneaking);
         };

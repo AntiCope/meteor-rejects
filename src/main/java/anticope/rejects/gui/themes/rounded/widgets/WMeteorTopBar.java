@@ -16,9 +16,9 @@ import meteordevelopment.meteorclient.gui.widgets.WTopBar;
 import meteordevelopment.meteorclient.gui.widgets.pressable.WPressable;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import net.minecraft.client.gui.screens.Screen;
+import org.lwjgl.sdl.SDLMouse;
 
 import static meteordevelopment.meteorclient.MeteorClient.mc;
-import static org.lwjgl.glfw.GLFW.glfwSetCursorPos;
 
 public class WMeteorTopBar extends WTopBar implements MeteorWidget {
     @Override
@@ -64,21 +64,21 @@ public class WMeteorTopBar extends WTopBar implements MeteorWidget {
 
         @Override
         protected void onPressed(int button) {
-            Screen screen = mc.screen;
+            Screen screen = mc.gui.screen();
 
             if (!(screen instanceof TabScreen) || ((TabScreen) screen).tab != tab) {
                 double mouseX = mc.mouseHandler.xpos();
                 double mouseY = mc.mouseHandler.ypos();
 
                 tab.openScreen(theme);
-                glfwSetCursorPos(mc.getWindow().handle(), mouseX, mouseY);
+                SDLMouse.SDL_WarpMouseInWindow(mc.getWindow().handle(), (float) mouseX, (float) mouseY);
             }
         }
 
         @Override
         protected void onRender(GuiRenderer renderer, double mouseX, double mouseY, double delta) {
             double pad = pad();
-            Color color = getButtonColor(pressed || (mc.screen instanceof TabScreen && ((TabScreen) mc.screen).tab == tab), mouseOver);
+            Color color = getButtonColor(pressed || (mc.gui.screen() instanceof TabScreen && ((TabScreen) mc.gui.screen()).tab == tab), mouseOver);
 
             //renderer.quad(x, y, width, height, color);
             switch (getState(this)) {

@@ -65,7 +65,7 @@ public class AutoGrind extends Module {
                         e.printStackTrace();
                     }
 
-                    if (mc.screen == null) break;
+                    if (mc.gui.screen() == null) break;
 
                     InvUtils.shiftClick().slot(i);
                     InvUtils.move().fromId(2).to(i);

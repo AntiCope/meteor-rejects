@@ -9,11 +9,13 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTextures;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.yggdrasil.ServicesKeyInfo;
-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService;
-import com.mojang.authlib.yggdrasil.YggdrasilServicesKeyInfo;
-import com.mojang.authlib.yggdrasil.response.MinecraftTexturesPayload;
+import com.mojang.authlib.services.MinecraftServicesDiscoveryService;
+import com.mojang.authlib.services.MinecraftServicesKeyInfo;
+import com.mojang.authlib.services.MinecraftServicesSessionService;
+import com.mojang.authlib.services.ServicesKeyInfo;
+import com.mojang.authlib.services.ServicesKeySet;
+import com.mojang.authlib.services.ServicesKeyType;
+import com.mojang.authlib.services.response.MinecraftTexturesPayload;
 import com.mojang.util.UUIDTypeAdapter;
 import meteordevelopment.meteorclient.utils.network.Http;
 import net.minecraft.client.User;
@@ -27,7 +29,19 @@ import java.util.*;
 import static meteordevelopment.meteorclient.MeteorClient.mc;
 
 public class CustomYggdrasilLogin {
-    public static Environment localYggdrasilApi = new Environment("/authserver", "/sessionserver", "/minecraftservices", "Custom-Yggdrasil");
+    /**
+     * authlib 10 (Minecraft 26.3) dropped the old Yggdrasil classes and resolves every
+     * authentication server through its "Minecraft services" discovery document, so a custom
+     * auth server is now described by an {@link Environment} pointing at that document.
+     * The legacy layout exposed it as the "/minecraftservices" endpoint of the server root.
+     */
+    public static Environment environment(String server) {
+        return new Environment(server + "/minecraftservices", "Custom-Yggdrasil");
+    }
+
+    public static MinecraftServicesDiscoveryService discoveryService(Proxy proxy, String server) {
+        return MinecraftServicesDiscoveryService.create(proxy, true, environment(server));
+    }
 
     public static User login(String name, String password, String server) throws AuthenticationException {
         try {
@@ -55,23 +69,33 @@ public class CustomYggdrasilLogin {
         }
     }
 
-    public static class LocalYggdrasilMinecraftSessionService extends YggdrasilMinecraftSessionService {
+    /** Restricts a service key set to the single profile key published by the custom server. */
+    private static ServicesKeySet keySetOf(ServicesKeyInfo key) {
+        return type -> type == ServicesKeyType.PROFILE_KEY ? List.of(key) : List.of();
+    }
+
+    public static class LocalYggdrasilMinecraftSessionService extends MinecraftServicesSessionService {
         private static final Logger LOGGER = LogManager.getLogger();
         private final ServicesKeyInfo publicKey;
         private final Gson gson = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
 
-        public LocalYggdrasilMinecraftSessionService(YggdrasilAuthenticationService service, String serverUrl) {
-            super(service.getServicesKeySet(), mc.getProxy(), localYggdrasilApi);
-            String data = Http.get(serverUrl).sendString();
-            JsonObject json = JsonParser.parseString(data).getAsJsonObject();
-            this.publicKey = getPublicKey(json.get("signaturePublickey").getAsString());
+        public LocalYggdrasilMinecraftSessionService(MinecraftServicesDiscoveryService service, String serverUrl) {
+            this(service, getPublicKey(serverUrl));
         }
 
-        private static ServicesKeyInfo getPublicKey(String key) {
+        private LocalYggdrasilMinecraftSessionService(MinecraftServicesDiscoveryService service, ServicesKeyInfo publicKey) {
+            super(publicKey == null ? service.getServicesKeySet() : keySetOf(publicKey), mc.getProxy(), service);
+            this.publicKey = publicKey;
+        }
+
+        private static ServicesKeyInfo getPublicKey(String serverUrl) {
+            String data = Http.get(serverUrl).sendString();
+            JsonObject json = JsonParser.parseString(data).getAsJsonObject();
+            String key = json.get("signaturePublickey").getAsString();
             key = key.replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "");
             try {
                 byte[] byteKey = Base64.getDecoder().decode(key.replace("\n", ""));
-                return YggdrasilServicesKeyInfo.parse(byteKey);
+                return MinecraftServicesKeyInfo.parse(byteKey);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
@@ -82,7 +106,7 @@ public class CustomYggdrasilLogin {
             if (!property.hasSignature()) {
                 return SignatureState.UNSIGNED;
             }
-            if (!publicKey.validateProperty(property)) {
+            if (publicKey == null || !publicKey.validateProperty(property)) {
                 return SignatureState.INVALID;
             }
             return SignatureState.SIGNED;
@@ -91,7 +115,7 @@ public class CustomYggdrasilLogin {
         @Override
         public MinecraftProfileTextures unpackTextures(final Property packedTextures) {
             final String value = packedTextures.value();
-            final SignatureState signatureState =  getPropertySignatureState(packedTextures);
+            final SignatureState signatureState = getPropertySignatureState(packedTextures);
 
             final MinecraftTexturesPayload result;
             try {
@@ -114,15 +138,6 @@ public class CustomYggdrasilLogin {
                     textures.get(MinecraftProfileTexture.Type.ELYTRA),
                     signatureState
             );
-        }
-    }
-
-    public static class LocalYggdrasilAuthenticationService extends YggdrasilAuthenticationService {
-        public final String server;
-
-        public LocalYggdrasilAuthenticationService(Proxy proxy, String server) {
-            super(proxy, localYggdrasilApi);
-            this.server = server;
         }
     }
 

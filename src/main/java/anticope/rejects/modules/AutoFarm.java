@@ -16,8 +16,8 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LevelReader;
@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CocoaBlock;
 import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.MushroomBlock;
 import net.minecraft.world.level.block.NetherWartBlock;
 import net.minecraft.world.level.block.PitcherCropBlock;
@@ -203,7 +203,7 @@ public class AutoFarm extends Module {
                 block == Blocks.COARSE_DIRT ||
                 block == Blocks.ROOTED_DIRT;
         if (moist && tillable && mc.level.getBlockState(pos.above()).isAir()) {
-            FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.getItem() instanceof HoeItem);
+            FindItemResult hoe = InvUtils.findInHotbar(itemStack -> itemStack.is(ItemTags.HOES));
             return WorldUtils.interact(pos, hoe, rotate.get());
         }
         return false;
@@ -214,7 +214,7 @@ public class AutoFarm extends Module {
         if (!harvestBlocks.get().contains(block)) return false;
         if (!isMature(state, block)) return false;
         if (block instanceof SweetBerryBushBlock)
-            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3d(pos), Direction.UP, pos, false));
+            mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, new BlockHitResult(Utils.vec3(pos), Direction.UP, pos, false));
         else {
             BlockUtils.breakBlock(pos, true);
         }
@@ -233,7 +233,7 @@ public class AutoFarm extends Module {
                     break;
                 }
             }
-        } else if (block instanceof FarmBlock) {
+        } else if (block instanceof FarmlandBlock) {
             findItemResult = InvUtils.find(itemStack -> {
                 Item item = itemStack.getItem();
                 return item != Items.NETHER_WART && plantItems.get().contains(item);

@@ -43,9 +43,15 @@ public class ColorSigns extends Module {
             return;
         }
         if (signs.get() && event.packet instanceof ServerboundSignUpdatePacket packet) {
-            for (int line = 0; line < packet.getLines().length; line++) {
-                packet.getLines()[line] = packet.getLines()[line]
-                        .replaceAll("(?i)(?:&|(?<!§)§)([0-9A-Z])", "§§$1$1");
+            List<String> newLines = packet.lines().stream()
+                    .map(line -> line.replaceAll("(?i)(?:&|(?<!§)§)([0-9A-Z])", "§§$1$1"))
+                    .toList();
+
+            // SignUpdateC2SPacket.lines is final, so we need to create a new packet
+            if (!packet.lines().equals(newLines)) {
+                assert mc.getConnection() != null;
+                mc.getConnection().send(new ServerboundSignUpdatePacket(packet.pos(), newLines, packet.slot()));
+                event.cancel();
             }
         }
         if (books.get() && event.packet instanceof ServerboundEditBookPacket packet) {

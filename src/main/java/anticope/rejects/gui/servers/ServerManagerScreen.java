@@ -17,10 +17,10 @@ import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.PointerBuffer;
+import org.lwjgl.sdl.SDLDialog;
+import org.lwjgl.sdl.SDL_DialogFileFilter;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,12 +33,14 @@ import java.util.function.Consumer;
 
 public class ServerManagerScreen extends WindowScreen {
 
-    private static final PointerBuffer saveFileFilters;
+    private static final SDL_DialogFileFilter.Buffer saveFileFilters;
 
     static {
-        saveFileFilters = BufferUtils.createPointerBuffer(1);
-        saveFileFilters.put(MemoryUtil.memASCII("*.txt"));
-        saveFileFilters.rewind();
+        // 26.3: GLFW/tinyfd was replaced by SDL. The dialog is asynchronous, so the filter
+        // strings have to stay allocated after this initializer returns.
+        MemoryStack stack = MemoryStack.stackPush();
+        saveFileFilters = SDL_DialogFileFilter.malloc(1, stack);
+        saveFileFilters.name(stack.UTF8("Text Files")).pattern(stack.UTF8("txt"));
     }
 
     private final JoinMultiplayerScreen multiplayerScreen;
@@ -60,8 +62,28 @@ public class ServerManagerScreen extends WindowScreen {
         addButton(l, "Find Servers (legacy)", () -> new LegacyServerFinderScreen(theme, multiplayerScreen, this));
         addButton(l, "Clean Up", () -> new CleanUpScreen(theme, multiplayerScreen, this));
         l = add(theme.horizontalList()).expandX().widget();
-        l.add(theme.button("Save IPs")).expandX().widget().action = tryHandle(() -> {
-            String targetPath = TinyFileDialogs.tinyfd_saveFileDialog("Save IPs", null, saveFileFilters, null);
+        l.add(theme.button("Save IPs")).expandX().widget().action = () -> {
+            SDLDialog.SDL_ShowSaveFileDialog((_, file, _) -> saveIPs(readDialogPath(file)),
+                    minecraft.getWindow().handle(), 0, saveFileFilters, "");
+        };
+        l.add(theme.button("Load IPs")).expandX().widget().action = () -> {
+            SDLDialog.SDL_ShowOpenFileDialog((_, file, _) -> loadIPs(readDialogPath(file)),
+                    minecraft.getWindow().handle(), 0, saveFileFilters, "", false);
+        };
+    }
+
+    private static String readDialogPath(long fileList) {
+        if (fileList == 0) return null;
+
+        long filePointer = MemoryUtil.memGetAddress(fileList);
+        if (filePointer == 0) return null;
+
+        String path = MemoryUtil.memUTF8(filePointer);
+        return path.isBlank() ? null : path;
+    }
+
+    private void saveIPs(String targetPath) {
+        try {
             if (targetPath == null) return;
             if (!targetPath.endsWith(".txt")) targetPath += ".txt";
             Path filePath = Path.of(targetPath);
@@ -104,12 +126,14 @@ public class ServerManagerScreen extends WindowScreen {
             }
 
             toast("Success!", newIPs == 1 ? "Saved %s new IP" : "Saved %s new IPs", newIPs);
-        }, e -> {
+        } catch (Throwable e) {
             MeteorRejectsAddon.LOG.error("Could not save IPs");
             toast("Something went wrong", "The IPs could not be saved, look at the log for details");
-        });
-        l.add(theme.button("Load IPs")).expandX().widget().action = tryHandle(() -> {
-            String targetPath = TinyFileDialogs.tinyfd_openFileDialog("Load IPs", null, saveFileFilters, "", false);
+        }
+    }
+
+    private void loadIPs(String targetPath) {
+        try {
             if (targetPath == null) return;
             Path filePath = Path.of(targetPath);
             if (!Files.exists(filePath)) return;
@@ -128,19 +152,19 @@ public class ServerManagerScreen extends WindowScreen {
             ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().setSelected(null);
             ((MultiplayerScreenAccessor) multiplayerScreen).getServerListWidget().updateOnlineServers(multiplayerScreen.getServers());
             toast("Success!", newIPs == 1 ? "Loaded %s new IP" : "Loaded %s new IPs", newIPs);
-        }, e -> {
+        } catch (Throwable e) {
             MeteorRejectsAddon.LOG.error("Could not load IPs");
             toast("Something went wrong", "The IPs could not be loaded, look at the log for details");
-        });
+        }
     }
 
     private void toast(String titleKey, String descriptionKey, Object... params) {
-        SystemToast.add(minecraft.getToastManager(), SystemToast.SystemToastId.WORLD_BACKUP, Component.literal(titleKey), Component.translatable(descriptionKey, params));
+        SystemToast.add(minecraft.gui.toastManager(), SystemToast.SystemToastId.WORLD_BACKUP, Component.literal(titleKey), Component.translatable(descriptionKey, params));
     }
 
     private void addButton(WContainer c, String text, IGetter<Screen> action) {
         WButton button = c.add(theme.button(text)).expandX().widget();
-        button.action = () -> minecraft.setScreen(action.get());
+        button.action = () -> minecraft.gui.setScreen(action.get());
     }
 
     public interface ThrowingRunnable<TEx extends Throwable> {

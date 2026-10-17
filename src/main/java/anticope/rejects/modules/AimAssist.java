@@ -17,6 +17,7 @@ import meteordevelopment.orbit.EventHandler;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3d;
 
@@ -31,7 +32,7 @@ public class AimAssist extends Module {
     private final Setting<Set<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Entities to aim at.")
-            .defaultValue(EntityType.PLAYER)
+            .defaultValue(EntityTypes.PLAYER)
             .build()
     );
 

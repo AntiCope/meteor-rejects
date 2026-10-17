@@ -29,7 +29,7 @@ public class Rendering extends Module {
 			.defaultValue(true)
             .onChanged(onChanged -> {
                 if(this.isActive()) {
-                    mc.levelRenderer.allChanged();
+                    rebuildChunks();
                 }
             })
 			.build()
@@ -72,12 +72,17 @@ public class Rendering extends Module {
 
     @Override
     public void onActivate() {
-        mc.levelRenderer.allChanged();
+        rebuildChunks();
     }
 
     @Override
     public void onDeactivate() {
-        mc.levelRenderer.allChanged();
+        rebuildChunks();
+    }
+
+    private void rebuildChunks() {
+        if (mc.level == null || mc.gameRenderer == null) return;
+        mc.levelRenderer.invalidateCompiledGeometry(mc.level, mc.options, mc.gameRenderer.mainCamera(), mc.getBlockColors());
     }
 
     public void onChanged(Shader s) {

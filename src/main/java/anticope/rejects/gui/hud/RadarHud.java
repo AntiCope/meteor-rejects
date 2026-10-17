@@ -15,6 +15,7 @@ import meteordevelopment.meteorclient.utils.render.color.SettingColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.phys.Vec3;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ public class RadarHud extends HudElement {
     private final Setting<Set<EntityType<?>>> entities = sgGeneral.add(new EntityTypeListSetting.Builder()
             .name("entities")
             .description("Select specific entities.")
-            .defaultValue(EntityType.PLAYER)
+            .defaultValue(EntityTypes.PLAYER)
             .build()
     );
 

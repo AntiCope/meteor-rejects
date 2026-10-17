@@ -2,7 +2,8 @@ package anticope.rejects.utils.accounts;
 
 import anticope.rejects.MeteorRejectsAddon;
 import com.mojang.authlib.exceptions.AuthenticationException;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
+import com.mojang.authlib.minecraft.SessionService;
+import com.mojang.authlib.services.MinecraftServicesDiscoveryService;
 import meteordevelopment.meteorclient.systems.accounts.Account;
 import meteordevelopment.meteorclient.systems.accounts.AccountType;
 import meteordevelopment.meteorclient.utils.misc.NbtException;
@@ -35,8 +36,8 @@ public class CustomYggdrasilAccount extends Account<CustomYggdrasilAccount> {
     @Override
     public boolean login() {
         try {
-            CustomYggdrasilLogin.LocalYggdrasilAuthenticationService service = new CustomYggdrasilLogin.LocalYggdrasilAuthenticationService(java.net.Proxy.NO_PROXY, server);
-            MinecraftSessionService sessService = new CustomYggdrasilLogin.LocalYggdrasilMinecraftSessionService(service, service.server);
+            MinecraftServicesDiscoveryService service = CustomYggdrasilLogin.discoveryService(java.net.Proxy.NO_PROXY, server);
+            SessionService sessService = new CustomYggdrasilLogin.LocalYggdrasilMinecraftSessionService(service, server);
             applyLoginEnvironment(service);
 
             User session = CustomYggdrasilLogin.login(name, password, server);

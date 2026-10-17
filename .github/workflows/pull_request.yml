@@ -11,11 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    - name: Set up JDK 25
       uses: actions/setup-java@v4.7.0
       with:
-        java-version: 21
-        distribution: 'zulu'
+        java-version: 25
+        distribution: 'temurin'
+    # meteordevelopment:meteor-client:26.3-SNAPSHOT is not published on any public Maven
+    # repository yet (Meteor Client PR #6679 is still open), so build the pinned Meteor
+    # Client commit and install it into the runner's local Maven repository, which
+    # build.gradle already resolves through mavenLocal().
+    - name: Checkout Meteor Client PR #6679
+      uses: actions/checkout@v4
+      with:
+        repository: MeteorDevelopment/meteor-client
+        ref: 9a9600699248bb4f34be5f05b93e42ff5c695e22
+        path: meteor-client
+    - name: Verify pinned Meteor Client commit
+      working-directory: meteor-client
+      run: test "$(git rev-parse HEAD)" = "9a9600699248bb4f34be5f05b93e42ff5c695e22"
+    - name: Install Meteor Client into the local Maven repository
+      working-directory: meteor-client
+      run: |
+        chmod +x gradlew
+        ./gradlew publishToMavenLocal
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle

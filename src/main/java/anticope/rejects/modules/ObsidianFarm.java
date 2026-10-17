@@ -59,7 +59,7 @@ public class ObsidianFarm extends Module {
         if (obsidian == null) return;
 
         mc.gameMode.continueDestroyBlock(obsidian, Direction.UP);
-        mc.player.swing(InteractionHand.MAIN_HAND);
+        mc.player.swing(InteractionHand.MAIN_HAND, mc.player.getItemInHand(InteractionHand.MAIN_HAND).getAttackAnimation(), false);
 
         if (mc.player.blockPosition().below().equals(obsidian) && mc.level.getBlockState(obsidian).getBlock() != Blocks.OBSIDIAN) {
             allowBreakAgain = false;

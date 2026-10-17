@@ -9,17 +9,16 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.commands.Command;
 import meteordevelopment.meteorclient.commands.arguments.PlayerListEntryArgumentType;
 import meteordevelopment.meteorclient.utils.network.Http;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.codec.binary.Base64;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.PointerBuffer;
+import org.lwjgl.sdl.SDLDialog;
+import org.lwjgl.sdl.SDL_DialogFileFilter;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -27,30 +26,40 @@ public class SaveSkinCommand extends Command {
 
     private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Component.literal("An exception occurred"));
 
-    private final PointerBuffer filters;
+    private final SDL_DialogFileFilter.Buffer filters;
     private final Gson GSON = new Gson();
 
     public SaveSkinCommand() {
         super("save-skin", "Download a player's skin by name.", "skin", "skinsteal");
 
-        filters = BufferUtils.createPointerBuffer(1);
-
-        ByteBuffer pngFilter = MemoryUtil.memASCII("*.png");
-
-        filters.put(pngFilter);
-        filters.rewind();
+        // 26.3: GLFW/tinyfd was replaced by SDL. The dialog is asynchronous, so the filter
+        // strings have to stay allocated after this constructor returns.
+        MemoryStack stack = MemoryStack.stackPush();
+        filters = SDL_DialogFileFilter.malloc(1, stack);
+        filters.name(stack.UTF8("PNG Files")).pattern(stack.UTF8("png"));
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
+    public void build(LiteralArgumentBuilder<ClientSuggestionProvider> builder) {
         builder.then(argument("player", PlayerListEntryArgumentType.create()).executes(ctx -> {
             UUID id = PlayerListEntryArgumentType.get(ctx).getProfile().id();
-            String path = TinyFileDialogs.tinyfd_saveFileDialog("Save image", null, filters, null);
-            if (path == null) IO_EXCEPTION.create();
-            if (path != null) {
+
+            SDLDialog.SDL_ShowSaveFileDialog((_, file, _) -> {
+                if (file == 0) return;
+
+                long filePointer = MemoryUtil.memGetAddress(file);
+                if (filePointer == 0) return;
+
+                String path = MemoryUtil.memUTF8(filePointer);
+                if (path.isBlank()) return;
                 if (!path.endsWith(".png")) path += ".png";
-                saveSkin(id.toString(), path);
-            }
+
+                try {
+                    saveSkin(id.toString(), path);
+                } catch (CommandSyntaxException e) {
+                    error("An exception occurred while saving the skin.");
+                }
+            }, mc.getWindow().handle(), 0, filters, "");
 
             return SINGLE_SUCCESS;
         }));

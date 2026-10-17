@@ -4,36 +4,34 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import meteordevelopment.meteorclient.commands.Command;
-import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.PointerBuffer;
+import org.lwjgl.sdl.SDLDialog;
+import org.lwjgl.sdl.SDL_DialogFileFilter;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 public class TerrainExport extends Command {
 
     private final static SimpleCommandExceptionType IO_EXCEPTION = new SimpleCommandExceptionType(Component.literal("An IOException occurred"));
-    private final PointerBuffer filters;
+    private final SDL_DialogFileFilter.Buffer filters;
 
     public TerrainExport() {
         super("terrain-export", "Export an area to the c++ terrain finder format (very popbob command).");
 
-        filters = BufferUtils.createPointerBuffer(1);
-
-        ByteBuffer txtFilter = MemoryUtil.memASCII("*.txt");
-
-        filters.put(txtFilter);
-        filters.rewind();
+        // 26.3: GLFW/tinyfd was replaced by SDL. The dialog is asynchronous, so the filter
+        // strings have to stay allocated after this constructor returns.
+        MemoryStack stack = MemoryStack.stackPush();
+        filters = SDL_DialogFileFilter.malloc(1, stack);
+        filters.name(stack.UTF8("Text Files")).pattern(stack.UTF8("txt"));
     }
 
     @Override
-    public void build(LiteralArgumentBuilder<SharedSuggestionProvider> builder) {
+    public void build(LiteralArgumentBuilder<ClientSuggestionProvider> builder) {
         builder.then(argument("distance", IntegerArgumentType.integer(1)).executes(context -> {
             int distance = IntegerArgumentType.getInteger(context, "distance");
 
@@ -49,17 +47,26 @@ public class TerrainExport extends Command {
                 }
             }
 
-            String path = TinyFileDialogs.tinyfd_saveFileDialog("Save data", null, filters, null);
-            if (path == null) throw IO_EXCEPTION.create();
-            if (!path.endsWith(".txt"))
-                path += ".txt";
-            try {
-                FileWriter file = new FileWriter(path);
-                file.write(stringBuilder.toString().trim());
-                file.close();
-            } catch (IOException e) {
-                throw IO_EXCEPTION.create();
-            }
+            String data = stringBuilder.toString().trim();
+
+            SDLDialog.SDL_ShowSaveFileDialog((_, file, _) -> {
+                if (file == 0) return;
+
+                long filePointer = MemoryUtil.memGetAddress(file);
+                if (filePointer == 0) return;
+
+                String path = MemoryUtil.memUTF8(filePointer);
+                if (path.isBlank()) return;
+                if (!path.endsWith(".txt")) path += ".txt";
+
+                try {
+                    FileWriter out = new FileWriter(path);
+                    out.write(data);
+                    out.close();
+                } catch (IOException e) {
+                    error("An IOException occurred.");
+                }
+            }, mc.getWindow().handle(), 0, filters, "");
 
             return SINGLE_SUCCESS;
         }));

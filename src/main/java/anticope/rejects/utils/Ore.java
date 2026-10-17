@@ -22,9 +22,8 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.FeatureSorter;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
+import net.minecraft.world.level.levelgen.feature.AbstractOreFeature;
 import net.minecraft.world.level.levelgen.feature.ScatteredOreFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.placement.CountPlacement;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
@@ -51,7 +50,7 @@ public class Ore {
 
     public static Map<ResourceKey<Biome>, List<Ore>> getRegistry(Dimension dimension) {
 
-        HolderLookup.Provider registry = VanillaRegistries.createLookup();
+        HolderLookup.Provider registry = VanillaRegistries.createWorldLookup();
         HolderLookup.RegistryLookup<PlacedFeature> features = registry.lookupOrThrow(Registries.PLACED_FEATURE);
         var reg = registry.lookupOrThrow(Registries.WORLD_PRESET).getOrThrow(WorldPresets.NORMAL).value().createWorldDimensions().dimensions();
 
@@ -163,16 +162,16 @@ public class Ore {
             }
         }
 
-        FeatureConfiguration featureConfig = feature.feature().value().config();
-
-        if (featureConfig instanceof OreConfiguration oreFeatureConfig) {
-            this.discardOnAirChance = oreFeatureConfig.discardChanceOnAirExposure;
-            this.size = oreFeatureConfig.size;
+        // 26.3: the "feature configurations" package was removed. Ore features now carry their
+        // own target states / size / discard chance directly (AbstractOreFeature).
+        if (feature.feature().value() instanceof AbstractOreFeature oreFeature) {
+            this.discardOnAirChance = oreFeature.discardChanceOnAirExposure();
+            this.size = oreFeature.size();
         } else {
-            throw new IllegalStateException("config for " + feature + "is not OreFeatureConfig.class");
+            throw new IllegalStateException("feature for " + feature + " is not an ore feature");
         }
 
-        if (feature.feature().value().feature() instanceof ScatteredOreFeature) {
+        if (feature.feature().value() instanceof ScatteredOreFeature) {
             this.scattered = true;
         }
     }

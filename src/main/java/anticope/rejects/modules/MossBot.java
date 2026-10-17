@@ -24,6 +24,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 public class MossBot extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -57,7 +58,7 @@ public class MossBot extends Module {
             return;
         }
 
-        BlockPos bestBlock = BlockPos.withinManhattanStream(BlockPos.containing(mc.player.getEyePosition()), range.get(), range.get(), range.get())
+        BlockPos bestBlock = StreamSupport.stream(BlockPos.withinBoxByManhattanDistance(BlockPos.containing(mc.player.getEyePosition()), range.get(), range.get(), range.get()).spliterator(), false)
                 .filter(b -> mc.player.getEyePosition().distanceTo(Vec3.atCenterOf(b)) <= range.get() && !mossMap.containsKey(b))
                 .map(b -> Pair.of(b.immutable(), getMossSpots(b)))
                 .filter(p -> p.getRight() > 10)
@@ -81,7 +82,7 @@ public class MossBot extends Module {
             return 0;
         }
 
-        return (int) BlockPos.withinManhattanStream(pos, 3, 4, 3)
+        return (int) StreamSupport.stream(BlockPos.withinBoxByManhattanDistance(pos, 3, 4, 3).spliterator(), false)
                 .filter(b -> isMossGrowableOn(mc.level.getBlockState(b)) && mc.level.isEmptyBlock(b.above()))
                 .count();
     }

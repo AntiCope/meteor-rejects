@@ -197,7 +197,12 @@ public class PacketFly extends Module {
 
     private void teleportPacket(Vec3 pos, boolean shouldTeleport) {
         if (shouldTeleport) {
-            mc.player.connection.send(new ServerboundAcceptTeleportationPacket(++teleportID));
+            // 26.3: the teleport confirm packet now also carries the acknowledged position/rotation.
+            mc.player.connection.send(new ServerboundAcceptTeleportationPacket(
+                    ++teleportID,
+                    mc.player.getX(), mc.player.getY(), mc.player.getZ(),
+                    mc.player.getYRot(), mc.player.getXRot()
+            ));
         }
     }
 

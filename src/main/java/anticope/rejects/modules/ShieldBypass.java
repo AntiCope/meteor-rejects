@@ -12,16 +12,16 @@ import meteordevelopment.meteorclient.systems.modules.combat.KillAura;
 import meteordevelopment.meteorclient.utils.misc.input.KeyAction;
 import meteordevelopment.meteorclient.utils.player.InvUtils;
 import meteordevelopment.orbit.EventHandler;
-import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundAttackPacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
-import net.minecraft.network.protocol.game.ServerboundSwingPacket;
+import net.minecraft.network.protocol.game.ServerboundPunchPacket;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static com.mojang.blaze3d.platform.InputConstants.MOUSE_BUTTON_LEFT;
 
 public class ShieldBypass extends Module {
     private final SettingGroup sgGeneral = settings.getDefaultGroup();
@@ -40,7 +40,7 @@ public class ShieldBypass extends Module {
     @EventHandler
     private void onMouseButton(MouseClickEvent event) {
         if (Modules.get().isActive(KillAura.class)) return;
-        if (mc.screen == null && !mc.player.isUsingItem() && event.action == KeyAction.Press && event.button() == GLFW_MOUSE_BUTTON_LEFT) {
+        if (mc.gui.screen() == null && !mc.player.isUsingItem() && event.action == KeyAction.Press && event.button() == MOUSE_BUTTON_LEFT) {
             if (mc.hitResult instanceof EntityHitResult result) {
                 bypass(result.getEntity(), event);
             }
@@ -55,7 +55,7 @@ public class ShieldBypass extends Module {
 
     public void bypass(Entity target, Cancellable event) {
         if (target instanceof LivingEntity e && e.isBlocking()) {
-            if (ignoreAxe.get() && InvUtils.testInMainHand(i -> i.getItem() instanceof AxeItem)) return;
+            if (ignoreAxe.get() && InvUtils.testInMainHand(i -> i.is(ItemTags.AXES))) return;
 
             // Shield check
             Vec3 playerPos = new Vec3(mc.player.getX(), mc.player.getY(), mc.player.getZ());
@@ -86,8 +86,8 @@ public class ShieldBypass extends Module {
 
             mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(newPos.x(), newPos.y(), newPos.z(), true, false));
 
-            mc.getConnection().send(ServerboundInteractPacket.createAttackPacket(e, mc.player.isShiftKeyDown()));
-            mc.getConnection().send(new ServerboundSwingPacket(mc.player.getUsedItemHand()));
+            mc.getConnection().send(new ServerboundAttackPacket(e.getId()));
+            mc.getConnection().send(new ServerboundPunchPacket());
             mc.player.resetOnlyAttackStrengthTicker();
 
             mc.getConnection().send(new ServerboundMovePlayerPacket.Pos(mc.player.getX(), mc.player.getY(), mc.player.getZ(), true, mc.player.horizontalCollision));

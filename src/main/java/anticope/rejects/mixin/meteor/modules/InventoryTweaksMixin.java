@@ -12,7 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class InventoryTweaksMixin implements IInventoryTweaks {
     private Runnable callback;
 
-    @Inject(method = "lambda$steal$4", at = @At("RETURN"))
+    // The steal work runs inside a lambda handed to MeteorExecutor; its synthetic name has to
+    // match the Meteor Client build this addon is compiled against.
+    @Inject(method = "lambda$steal$0", at = @At("RETURN"))
     private void afterSteal(AbstractContainerMenu handler, CallbackInfo info) {
         if (callback != null) {
             callback.run();

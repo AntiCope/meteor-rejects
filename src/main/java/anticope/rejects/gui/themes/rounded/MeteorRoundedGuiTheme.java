@@ -50,7 +50,7 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
             .sliderMax(4)
             .onSliderRelease()
             .onChanged(aDouble -> {
-                if (mc.screen instanceof WidgetScreen) ((WidgetScreen) mc.screen).invalidate();
+                if (mc.gui.screen() instanceof WidgetScreen) ((WidgetScreen) mc.gui.screen()).invalidate();
             })
             .build()
     );
@@ -69,13 +69,17 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
             .build()
     );
 
+    public final Setting<Boolean> modulesHelpText = sgGeneral.add(new BoolSetting.Builder()
+            .name("modules-help-text")
+            .description("Displays help text for modules.")
+            .defaultValue(false)
+            .build()
+    );
+
     public final Setting<Boolean> hideHUD = sgGeneral.add(new BoolSetting.Builder()
             .name("hide-HUD")
             .description("Hide HUD when in GUI.")
             .defaultValue(false)
-            .onChanged(v -> {
-                if (mc.screen instanceof WidgetScreen) mc.options.hideGui = v;
-            })
             .build()
     );
 
@@ -385,6 +389,11 @@ public class MeteorRoundedGuiTheme extends GuiTheme {
     @Override
     public boolean categoryIcons() {
         return categoryIcons.get();
+    }
+
+    @Override
+    public boolean modulesHelpText() {
+        return modulesHelpText.get();
     }
 
     @Override

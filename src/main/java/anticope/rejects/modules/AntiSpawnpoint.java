@@ -34,7 +34,7 @@ public class AntiSpawnpoint extends Module {
         if (mc.level == null) return;
         if(!(event.packet instanceof ServerboundUseItemOnPacket)) return;
 
-        BlockPos blockPos = ((ServerboundUseItemOnPacket) event.packet).getHitResult().getBlockPos();
+        BlockPos blockPos = ((ServerboundUseItemOnPacket) event.packet).hitResult().getBlockPos();
         boolean IsOverWorld = mc.level.dimension() == Level.OVERWORLD;
         boolean IsNetherWorld = mc.level.dimension() == Level.NETHER;
         boolean BlockIsBed = mc.level.getBlockState(blockPos).getBlock() instanceof BedBlock;
@@ -43,11 +43,11 @@ public class AntiSpawnpoint extends Module {
         assert mc.player != null;
         if (fakeUse.get()) {
             if (BlockIsBed && IsOverWorld) {
-                mc.player.swing(InteractionHand.MAIN_HAND);
+                mc.player.swing(InteractionHand.MAIN_HAND, mc.player.getItemInHand(InteractionHand.MAIN_HAND).getInteractAnimation(), false);
                 mc.player.absSnapTo(blockPos.getX(),blockPos.above().getY(),blockPos.getZ());
             }
             else if (BlockIsAnchor && IsNetherWorld) {
-                mc.player.swing(InteractionHand.MAIN_HAND);
+                mc.player.swing(InteractionHand.MAIN_HAND, mc.player.getItemInHand(InteractionHand.MAIN_HAND).getInteractAnimation(), false);
             }
         }
 
