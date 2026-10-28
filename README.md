@@ -142,3 +142,4 @@
 - `Hidden Modules` - Hide modules from module gui. **requires restart when unhiding**
 - `Load System Fonts` - Disabling this for faster launch. You can put font into meteor-client/fonts folder. **requires restart to take effect**
 - `Duplicate Module Names` - Allow duplicate module names. Enable it when you have one module overriding another.
+
