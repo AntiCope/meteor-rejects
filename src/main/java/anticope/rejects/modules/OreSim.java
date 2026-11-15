@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 public class OreSim extends Module {
 
     private final Map<Long, Map<Ore, Set<Vec3>>> chunkRenderers = new ConcurrentHashMap<>();
+    private ClientLevel trackedLevel;
     private Seed worldSeed = null;
     private Map<ResourceKey<Biome>, List<Ore>> oreConfig;
     public List<BlockPos> oreGoals = new ArrayList<>();
@@ -136,7 +137,26 @@ public class OreSim extends Module {
 
     @EventHandler
     private void onTick(TickEvent.Pre event) {
-        if (mc.player == null || mc.level == null || oreConfig == null) return;
+        ClientLevel level = mc.level;
+
+        if (level != trackedLevel) {
+            chunkRenderers.clear();
+            oreGoals.clear();
+
+            if (level != null && mc.player != null) {
+                reload();
+            } else if (level == null) {
+                trackedLevel = null;
+            }
+        }
+
+        if (level != null) {
+            chunkRenderers.keySet().removeIf(chunkKey ->
+                    !level.hasChunk(ChunkPos.getX(chunkKey), ChunkPos.getZ(chunkKey))
+            );
+        }
+
+        if (mc.player == null || level == null || oreConfig == null) return;
 
         if (baritone() && BaritoneAPI.getProvider().getPrimaryBaritone().getMineProcess().isActive()) {
             oreGoals.clear();
@@ -202,6 +222,7 @@ public class OreSim extends Module {
     }
 
     private void reload() {
+        trackedLevel = mc.level;
         Seed seed = Seeds.get().getSeed();
         if (seed == null) return;
         worldSeed = seed;
